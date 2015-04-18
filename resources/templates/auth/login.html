@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Login</h1>
+
+<form method="POST" action="/login">
+    {% csrf-field %}
+
+    <label>Username
+        <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50"
+                value="{{username}}">
+    </label>
+
+    <label>Password:
+        <input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+               name="password">
+    </label>
+
+    <input type="submit" value="Login">
+
+</form>
+
+{% endblock %}

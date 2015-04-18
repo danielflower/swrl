@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-REGISTER
+
+<h1>Register</h1>
 
 <form method="POST" action="/register">
+    {% csrf-field %}
 
     <label>Username
         <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50">

@@ -21,13 +21,8 @@
                   :page template
                   :dev (env :dev)
                   :csrf-token *anti-forgery-token*
-                  :servlet-context
-                  (if-let [context (:servlet-context request)]
-                    ;; If we're not inside a serlvet environment (for
-                    ;; example when using mock requests), then
-                    ;; .getContextPath might not exist
-                    (try (.getContextPath context)
-                         (catch IllegalArgumentException _ context))))
+                  :user request
+                  )
         (parser/render-file (str template))
         response)
       "text/html; charset=utf-8")))

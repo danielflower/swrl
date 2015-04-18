@@ -14,13 +14,21 @@
 
 (defn registration-page []
   (layout/render "auth/register.html"))
+(defn login-page [& {:keys [username] } ]
+  (layout/render "auth/login.html" { :username username }))
 
 
+(defn login-success [user session]
+  (assoc session :user user)
+  (redirect "/")
+  )
 
-(defn login [username password]
+(defn attempt-login [username password {session :session}]
   (do
     (let [user (db/get-user username)]
-      (if (hashers/check password (:password user)) user nil)
+      (if (and user (hashers/check password (:password user)))
+        (login-success user session)
+        (login-page :username username ))
       )))
 
 
@@ -33,6 +41,8 @@
 
 
 (defroutes auth-routes
+           (GET "/login" [_] (login-page))
+           (POST "/login" [username password :as req] (attempt-login username password req))
            (GET "/register" [_] (registration-page))
            (POST "/register" [username email password confirmPassword]
                  (handle-registration username email password confirmPassword))
