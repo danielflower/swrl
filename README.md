@@ -1,19 +1,46 @@
-# yswrl
+# you-should-read-watch-listen
 
 FIXME
 
 ## Prerequisites
 
-You will need [Leiningen][1] 2.0 or above installed.
+You will need [Leiningen](https://github.com/technomancy/leiningen) 2.0 or above installed.
 
-[1]: https://github.com/technomancy/leiningen
+If using Cursive Clojure in IntelliJ, add a new run configuration of type `REPL - Local REPL` and choose to use leinengen.
+
+Install Postgres. Run init_db pointing to a folder where the data will be stored. E.g. in windows:
+
+    D:\apps\pgsql\9.4.1-3\bin> initdb D:\apps\pgsql\data
+
+Now you need to create a user and database for the project. 
+First start the postgres server with `"pg_ctl" -D "D:\apps\pgsql\data" -l logfile start`
+and then run `psql postgres` to open the SQL console: 
+
+    CREATE USER dev WITH PASSWORD 'password';
+    CREATE DATABASE yswrl WITH OWNER=dev ENCODING='UTF8' CONNECTION LIMIT=-1;
+
+If that fails due to incompatible encodings, [follow these instructions](http://stackoverflow.com/a/26915078/131578)
+
+You should be able to connect from intellij or another GUI using:
+
+    host=localhost
+    port=5432
+    database=yswrl
+    username=dev
+    password=password
 
 ## Running
+
+To run postgres:
+
+    "pg_ctl" -D "D:\apps\pgsql\data" -l logfile start
+
+To update the database:
+
+    lein ragtime migrate
+
+Note: you can use IntelliJ as a GUI for postgres.
 
 To start a web server for the application, run:
 
     lein ring server
-
-## License
-
-Copyright © 2015 FIXME

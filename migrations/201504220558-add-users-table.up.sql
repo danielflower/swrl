@@ -1,9 +1,10 @@
 CREATE TABLE users
-(id VARCHAR(20) PRIMARY KEY,
- first_name VARCHAR(30),
- last_name VARCHAR(30),
- email VARCHAR(30),
- admin BOOLEAN,
- last_login TIME,
- is_active BOOLEAN,
- pass VARCHAR(100));
+(
+  id         SERIAL PRIMARY KEY,
+  username   VARCHAR(50)  NOT NULL UNIQUE,
+  email      VARCHAR(100) NOT NULL,
+  admin      BOOLEAN      NOT NULL,
+  last_login TIME         NULL,
+  is_active  BOOLEAN      NOT NULL,
+  password   VARCHAR      NOT NULL
+);

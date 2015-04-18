@@ -1,7 +1,8 @@
 (ns yswrl.handler
   (:require [compojure.core :refer [defroutes routes]]
             [yswrl.routes.home :refer [home-routes]]
-            
+            [yswrl.routes.auth :refer [auth-routes]]
+
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
             [yswrl.session :as session]
@@ -51,7 +52,7 @@
 (def app
   (-> (routes
         home-routes
-        
+        auth-routes
         base-routes)
       development-middleware
       production-middleware))

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+REGISTER
+
+<form method="POST" action="/register">
+
+    <label>Username
+        <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50">
+    </label>
+
+    <label>Email
+        <input type="email" autocomplete="email" name="email" required maxlength="100">
+    </label>
+
+    <label>Password:
+        <input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+               name="password">
+    </label>
+    <label>Confirm Password:
+        <input type="password" required name="confirmPassword"
+               title="Please enter the same Password as above">
+    </label>
+
+    <input type="submit" value="Register">
+
+</form>
+
+{% endblock %}

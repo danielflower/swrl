@@ -16,11 +16,11 @@
                  [ring/ring-session-timeout "0.1.0"]
                  [ring-middleware-format "0.5.0"]
                  [noir-exception "0.2.3"]
+                 [korma "0.4.0"]
                  [bouncer "0.3.2"]
                  [prone "0.8.1"]
                  [buddy "0.5.1"]
                  [ragtime "0.3.8"]
-                 [yesql "0.5.0-rc1"]
                  [org.postgresql/postgresql "9.3-1102-jdbc41"]]
 
   :min-lein-version "2.0.0"
@@ -46,7 +46,7 @@
   :ragtime
   {:migrations ragtime.sql.files/migrations
    :database
-   "jdbc:postgresql://localhost/yswrl?user=db_user_name_here&password=db_user_password_here"}
+   "jdbc:postgresql://localhost/yswrl?user=dev&password=password"}
   
   
   
