@@ -4,43 +4,34 @@
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hey! You should read-watch-listen!</title>
 
-    <!-- scripts and styles -->
-    {% style "/css/tacit.min.css" %}
-    {% style "/css/screen.css" %}
+    <link href="/css/tacit.min.css" rel="stylesheet" type="text/css" />
+    <link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
 </head>
 <body>
 <nav>
+    <ul>
+        <li><a href="/">Home</a></li>
 
-    <div class="navbar-collapse collapse ">
-        <ul class="nav navbar-nav">
-            <li {% ifequal page
-            "home.html" %} class="active"{%endifequal%}>
-            <a href="/">Home</a>
-            </li>
+        {% if user %}
 
-            {% if user %}
+        Welcome, {{user.username}}
+        <li><a href="/logout">Log out</a></li>
 
-            Welcome, {{user.username}}
-            <li><a href="/logout">Log out</a></li>
+        {% else %}
 
-            {% else %}
+        <li><a href="/register">Register</a></li>
+        <li><a href="/login">Login</a></li>
 
-            <li><a href="/register">Register</a></li>
-            <li><a href="/login">Login</a></li>
-            {% endif %}
+        {% endif %}
 
-
-        </ul>
-    </div>
-
+    </ul>
 </nav>
 
-
-<div class="container">
+<main>
     {% block content %}
     {% endblock %}
-</div>
-
+</main>
 
 {% block page-scripts %}
 {% endblock %}
