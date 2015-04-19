@@ -44,3 +44,13 @@ Note: you can use IntelliJ as a GUI for postgres.
 To start a web server for the application, run:
 
     lein ring server
+
+## Deploying
+
+Run DB migrations from your local PC:
+
+    heroku run "lein ragtime migrate"
+
+Then deploy the app:
+
+    git push heroku master
