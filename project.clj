@@ -45,7 +45,7 @@
   
   :ragtime
   {:migrations ragtime.sql.files/migrations
-   :database (str "jdbc:" (or (System/getenv "JDBC_DATABASE_URL") "jdbc:postgresql://localhost/yswrl?user=dev&password=password"))}
+   :database (or (System/getenv "JDBC_DATABASE_URL") "jdbc:postgresql://localhost/yswrl?user=dev&password=password")}
   
   
   
