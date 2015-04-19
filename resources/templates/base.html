@@ -29,6 +29,9 @@
             <li {% ifequal page "login.html" %} class="active"{%endifequal%}>
             <a href="/login">Login</a>
             </li>
+            <li {% ifequal page "logout.html" %} class="active"{%endifequal%}>
+            <a href="/logout">Log out</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -39,7 +42,7 @@
       {% endblock %}
     </div>
 
-    Logged in as {{user.session.user}}
+    Logged in as {{user.username}}
 
     <script src="//code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
 

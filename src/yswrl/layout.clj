@@ -8,7 +8,7 @@
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [environ.core :refer [env]]))
 
-(parser/set-resource-path!  (clojure.java.io/resource "templates"))
+(parser/set-resource-path! (clojure.java.io/resource "templates"))
 
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
@@ -18,13 +18,13 @@
   (render [this request]
     (content-type
       (->> (assoc params
-                  :page template
-                  :dev (env :dev)
-                  :csrf-token *anti-forgery-token*
-                  :user request
-                  )
-        (parser/render-file (str template))
-        response)
+             :page template
+             :dev (env :dev)
+             :csrf-token *anti-forgery-token*
+             :user (get(get request :session) :user)
+             )
+           (parser/render-file (str template))
+           response)
       "text/html; charset=utf-8")))
 
 (defn render [template & [params]]
