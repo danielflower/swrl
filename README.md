@@ -47,9 +47,9 @@ To start a web server for the application, run:
 
 ## Deploying
 
-Run DB migrations from your local PC:
+Run DB migrations remotely from your dev machine to Heroku:
 
-    heroku run "lein ragtime migrate"
+    heroku run "lein do clean, ragtime migrate"
 
 Then deploy the app:
 
