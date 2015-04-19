@@ -49,7 +49,8 @@ To start a web server for the application, run:
 
 Run DB migrations remotely from your dev machine to Heroku:
 
-    heroku run "lein do clean, ragtime migrate"
+    set "JDBC_DATABASE_URL=jdbc:postgresql://ec2-107-20-159-103.compute-1.amazonaws.com:5432/dekbme81p64129?user=_________________&password=___________________&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+    lein ragtime migrate
 
 Then deploy the app:
 
