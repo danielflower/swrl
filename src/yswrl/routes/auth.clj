@@ -45,10 +45,10 @@
       )))
 
 
-(defn handle-registration [username email password confirmPassword]
+(defn handle-registration [username email password confirmPassword req]
   (do
     (db/create-user username email (hashers/encrypt password))
-    (redirect "/")))
+    (attempt-login username password req)))
 
 
 
@@ -61,6 +61,6 @@
            (GET "/logged-out" [_] (logged-out-page))
 
            (GET "/register" [_] (registration-page))
-           (POST "/register" [username email password confirmPassword]
-                 (handle-registration username email password confirmPassword))
+           (POST "/register" [username email password confirmPassword :as req]
+                 (handle-registration username email password confirmPassword req))
            )
