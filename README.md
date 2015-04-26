@@ -10,7 +10,7 @@ If using Cursive Clojure in IntelliJ, add a new run configuration of type `REPL 
 
 Install Postgres. Run init_db pointing to a folder where the data will be stored. E.g. in windows:
 
-    D:\apps\pgsql\9.4.1-3\bin> initdb D:\apps\pgsql\data
+    D:\apps\pgsql\9.4.1-3\bin> initdb --encoding="UTF8" D:\apps\pgsql\data
 
 Now you need to create a user and database for the project. 
 First start the postgres server with `"pg_ctl" -D "D:\apps\pgsql\data" -l logfile start`

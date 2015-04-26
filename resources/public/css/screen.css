@@ -4,3 +4,8 @@ body {
     height: 100%;
     padding-top: 40px;
 }
+
+.validation-error {
+    font-weight: bold;
+    color: Red;
+}

@@ -14,8 +14,10 @@
 
 (defn registration-page []
   (layout/render "auth/register.html"))
-(defn login-page [& {:keys [username]}]
-  (layout/render "auth/login.html" {:username username}))
+
+(defn login-page [& {:keys [username error]}]
+  (layout/render "auth/login.html" {:username username :error error}))
+
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
 
@@ -41,7 +43,7 @@
     (let [user (db/get-user username)]
       (if (and user (hashers/check password (:password user)))
         (login-success user req)
-        (login-page :username username))
+        (login-page :username username :error true))
       )))
 
 

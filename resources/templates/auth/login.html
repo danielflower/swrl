@@ -2,6 +2,12 @@
 {% block content %}
 <h1>Login</h1>
 
+{% if error %}
+
+<p class="validation-error">Sorry, you have entered an invalid username or password. Please try again.</p>
+
+{% endif %}
+
 <form method="POST" action="/login">
     {% csrf-field %}
 
