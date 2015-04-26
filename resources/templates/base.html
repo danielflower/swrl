@@ -16,6 +16,9 @@
         {% if user %}
 
         Welcome, {{user.username}}
+
+        <li><a href="/swirls/create">Create</a></li>
+
         <li><a href="/logout">Log out</a></li>
 
         {% else %}
@@ -24,6 +27,8 @@
         <li><a href="/login">Login</a></li>
 
         {% endif %}
+
+
 
     </ul>
 </nav>

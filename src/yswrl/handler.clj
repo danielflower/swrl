@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes routes]]
             [yswrl.routes.home :refer [home-routes]]
             [yswrl.routes.auth :refer [auth-routes]]
+            [yswrl.routes.swirls :refer [swirl-routes]]
 
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
@@ -53,6 +54,7 @@
   (-> (routes
         home-routes
         auth-routes
+        swirl-routes
         base-routes)
       development-middleware
       production-middleware))

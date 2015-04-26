@@ -21,6 +21,10 @@
 (defentity users
            (database db)
            )
+(defentity swirls
+           (database db)
+           )
+
 
 (defn create-user [username email password]
   (insert users

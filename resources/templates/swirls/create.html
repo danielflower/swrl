@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Create</h1>
+
+{% if error %}
+
+<p class="validation-error">Sorry, there was an error. Please try again.</p>
+
+{% endif %}
+
+<form method="POST" action="/swirls/create">
+    {% csrf-field %}
+
+    <label>Hey
+        <input type="text" name="who" maxlength="1000" placeholder="anyone" value="{{who}}">
+    </label>
+
+    <label>You should watch or read or listen to
+        <input type="text" name="subject" required maxlength="200" value="{{subject}}"
+                placeholder="Title of a movie, book, song, album, etc">
+    </label>
+
+    <label>Because
+        <input type="text" required name="review" value="{{review}}">
+    </label>
+
+    <input type="submit" value="Submit">
+
+</form>
+
+{% endblock %}
