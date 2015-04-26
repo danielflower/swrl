@@ -2,7 +2,7 @@
   (:require [yswrl.layout :as layout]
             [yswrl.db.swirls-repo :as repo]
             [compojure.core :refer [defroutes GET POST]]
-            [ring.util.response :refer [redirect response]]))
+            [ring.util.response :refer [redirect response not-found]]))
 
 
 (defn create-swirl-page [who subject review error]
@@ -15,8 +15,9 @@
 
 (defn view-swirl-page [id]
   (let [swirl (repo/get-swirl id)]
-    (layout/render "swirls/view.html" {:swirl swirl})))
-; TODO: if nil then 404
+    (if (nil? swirl)
+      (not-found nil)                                       ; how to give human readable response on 404?
+      (layout/render "swirls/view.html" {:swirl swirl}))))
 
 (defroutes swirl-routes
            (GET "/swirls/create" [_] (create-swirl-page "" "" "" nil))

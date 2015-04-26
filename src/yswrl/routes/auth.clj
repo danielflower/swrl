@@ -5,7 +5,7 @@
             [bouncer.core :as b]
             [bouncer.validators :as v]
             [buddy.hashers :as hashers]
-            [yswrl.db.core :as db]
+            [yswrl.db.auth-repo :as users]
             [ring.util.response :refer [redirect response]]))
 
 
@@ -40,7 +40,7 @@
 
 (defn attempt-login [username password req]
   (do
-    (let [user (db/get-user username)]
+    (let [user (users/get-user username)]
       (if (and user (hashers/check password (:password user)))
         (login-success user req)
         (login-page :username username :error true))
@@ -49,7 +49,7 @@
 
 (defn handle-registration [username email password confirmPassword req]
   (do
-    (db/create-user username email (hashers/encrypt password))
+    (users/create-user username email (hashers/encrypt password))
     (attempt-login username password req)))
 
 

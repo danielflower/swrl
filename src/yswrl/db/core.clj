@@ -18,19 +18,6 @@
 
 (defdb db (postgres (convert-db-uri db-uri)))
 
-(defentity users
-           (database db)
-           )
-(defentity swirls
-           (database db)
-           )
+(defentity users (database db))
+(defentity swirls (database db))
 
-
-(defn create-user [username email password]
-  (insert users
-          (values {:username username :email email :password password :admin false :is_active true})))
-
-(defn get-user [username]
-  (first (select users
-                 (where {:username username})
-                 (limit 1))))
