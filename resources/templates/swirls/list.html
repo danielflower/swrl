@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{pageTitle}}</h1>
+
+<ul>
+{% for swirl in swirls %}
+
+    <li><a href="/swirls/{{swirl.id}}">{{swirl.title}}</a></li>
+
+{% endfor %}
+</ul>
+
+{% endblock %}
