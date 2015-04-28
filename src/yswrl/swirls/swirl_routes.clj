@@ -4,15 +4,15 @@
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [redirect response not-found]]))
-(use '[clojure.string :only [split]])
 
 (defn create-swirl-page [who subject review error]
   (layout/render "swirls/create.html" {:who who :subject subject :review review :error error}))
 
 (defn handle-create-swirl [who subject review {session :session}]
-  (let [authorId (:id (:user session))]
-    (let [swirl (repo/create-swirl authorId subject review (split who #","))]
-      (redirect (str "/swirls/" (:id swirl))))))
+  (let [authorId (:id (:user session))
+        namesOrEmails (map (fn [x] (clojure.string/trim x)) (clojure.string/split who #","))
+        swirl (repo/create-swirl authorId subject review namesOrEmails)]
+      (redirect (str "/swirls/" (:id swirl)))))
 
 (defn view-swirl-page [id]
   (let [swirl (repo/get-swirl id)]

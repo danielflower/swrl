@@ -11,3 +11,10 @@
   (first (select users
                  (where {:username username})
                  (limit 1))))
+
+(defn get-users-by-username_or_email [usernames]
+  (select users
+          (fields :id :username :email)
+          (where (or {:username [in usernames]}
+                     {:email [in usernames]}))
+          ))
