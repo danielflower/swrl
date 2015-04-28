@@ -4,7 +4,7 @@
 <h1>You should consume {{swirl.title}}</h1>
 
 <div>
-    {{swirl.review}}
+    {{swirl.review|safe}}
 </div>
 
 <h2>Responses</h2>
@@ -13,7 +13,7 @@
     {% for resp in responses %}
 
     <li><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong>
-        <div>{{resp.full_response}}</div>
+        <div>{{ resp.full_response }}</div>
     </li>
 
     {% endfor %}
@@ -35,7 +35,7 @@
     </label>
 
     <label>Because
-        <input type="text" required name="full-response" value="{{full-response}}">
+        <textarea name="full-response" required>{{full-response}}</textarea>
     </label>
 
     <input type="submit" value="Submit">

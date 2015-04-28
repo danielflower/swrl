@@ -4,8 +4,18 @@ body {
     height: 100%;
     padding-top: 40px;
 }
+strong, b {
+    font-weight: bold;
+}
 
 .validation-error {
     font-weight: bold;
     color: Red;
+}
+
+.rte .editor {
+    border: 1px dashed grey;
+    width: 90%;
+    min-height: 300px;
+    overflow-y: visible;
 }

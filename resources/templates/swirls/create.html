@@ -18,12 +18,14 @@
 
     <label>You should watch or read or listen to
         <input type="text" name="subject" required maxlength="200" value="{{subject}}"
-                placeholder="Title of a movie, book, song, album, etc">
+               placeholder="Title of a movie, book, song, album, etc">
     </label>
 
-    <label>Because
-        <input type="text" required name="review" value="{{review}}">
-    </label>
+    <label for="review">Because</label>
+    <div class="rte">
+        <div class="editor"contenteditable="true"></div>
+        <textarea required id="review" name="review" style="display:none">&lt;b&gt;This is my&lt/b&gt; full response{{review}}</textarea>
+    </div>
 
     <input type="submit" value="Submit">
 
