@@ -1,8 +1,8 @@
 (ns yswrl.handler
   (:require [compojure.core :refer [defroutes routes]]
-            [yswrl.routes.home :refer [home-routes]]
-            [yswrl.routes.auth :refer [auth-routes]]
-            [yswrl.routes.swirls :refer [swirl-routes]]
+            [yswrl.home.home-routes :refer [home-routes]]
+            [yswrl.auth.auth-routes :refer [auth-routes]]
+            [yswrl.swirls.swirl-routes :refer [swirl-routes]]
 
             [yswrl.middleware
              :refer [development-middleware production-middleware]]

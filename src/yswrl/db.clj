@@ -1,4 +1,4 @@
-(ns yswrl.db.core)
+(ns yswrl.db)
 (use 'korma.db)
 (use 'korma.core)
 

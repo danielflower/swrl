@@ -1,7 +1,7 @@
-(ns yswrl.routes.swirls
+(ns yswrl.swirls.swirl-routes
   (:require [yswrl.layout :as layout]
-            [yswrl.db.swirls-repo :as repo]
-            [yswrl.db.auth-repo :as user-repo]
+            [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [redirect response not-found]]))
 (use '[clojure.string :only [split]])

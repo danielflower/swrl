@@ -1,5 +1,5 @@
-(ns yswrl.db.swirls-repo
-  (:require [yswrl.db.core :refer [swirls]])
+(ns yswrl.swirls.swirls-repo
+  (:require [yswrl.db :refer [swirls]])
   )
 (use 'korma.core)
 (use 'korma.db)

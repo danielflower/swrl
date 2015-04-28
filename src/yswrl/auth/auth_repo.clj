@@ -1,5 +1,5 @@
-(ns yswrl.db.auth-repo
-  (:require [yswrl.db.core :refer [users]])
+(ns yswrl.auth.auth-repo
+  (:require [yswrl.db :refer [users]])
   )
 (use 'korma.core)
 

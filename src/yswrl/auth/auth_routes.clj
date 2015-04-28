@@ -1,11 +1,11 @@
-(ns yswrl.routes.auth
+(ns yswrl.auth.auth-routes
   (:require [yswrl.layout :as layout]
             [compojure.core :refer [defroutes GET POST]]
             [clojure.java.io :as io]
             [bouncer.core :as b]
             [bouncer.validators :as v]
             [buddy.hashers :as hashers]
-            [yswrl.db.auth-repo :as users]
+            [yswrl.auth.auth-repo :as users]
             [ring.util.response :refer [redirect response]]))
 
 
