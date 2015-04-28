@@ -12,7 +12,7 @@
 <ul>
     {% for resp in responses %}
 
-    <li><a href="/swirls/by/{{user.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong>
+    <li><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong>
         <div>{{resp.full_response}}</div>
     </li>
 
