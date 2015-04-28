@@ -7,4 +7,35 @@
     {{swirl.review}}
 </div>
 
+<h2>Responses</h2>
+
+<ul>
+    {% for resp in responses %}
+
+    <li><a href="/swirls/by/{{user.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong></li>
+
+    {% endfor %}
+</ul>
+
+
+<h2>Your response</h2>
+
+<form method="POST" action="/swirls/{{swirl.id}}/respond">
+    {% csrf-field %}
+
+    <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+
+    <label>Summary
+        <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}">
+    </label>
+
+    <label>Because
+        <input type="text" required name="review" value="{{full-response}}">
+    </label>
+
+    <input type="submit" value="Submit">
+
+</form>
+
+
 {% endblock %}

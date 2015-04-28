@@ -24,6 +24,13 @@
          (map (fn [sug] (assoc sug :swirl_id swirlId :code (uuid))))
          )))
 
+(defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
+
+(defn create-response [swirld-id summary full-response author]
+  (insert db/swirl_responses
+          (values {:swirl_id swirld-id :responder (:id author) :summary summary :full_response full-response :date_responded (now)})
+          ))
+
 (defn create-swirl [authorId title review recipientNames]
   (transaction
     (let [swirl (insert db/swirls
@@ -36,6 +43,13 @@
   (first (select db/swirls
                  (where {:id id})
                  (limit 1))))
+
+(defn get-swirl-responses [swirld-id]
+  (select db/swirl_responses
+          (fields :summary :full_response :users.username :date_responded)
+          (join :inner db/users (= :users.id :swirl_responses.responder))
+          (where {:swirl_id swirld-id})
+          ))
 
 (defn get-swirls-authored-by [userId]
   (select db/swirls

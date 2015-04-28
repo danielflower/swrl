@@ -15,3 +15,5 @@ CREATE TABLE suggestions
   date_notified   TIMESTAMP    NULL,
   response_id     INT          NULL REFERENCES swirl_responses (id)
 );
+
+CREATE UNIQUE INDEX UQ_swirl_responses_responder ON swirl_responses (swirl_id, responder);

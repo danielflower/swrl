@@ -21,5 +21,5 @@
 (defentity users (database db))
 (defentity swirls (database db))
 (defentity suggestions (database db))
-(defentity swirl-responses (database db))
+(defentity swirl_responses (database db))
 
