@@ -12,30 +12,40 @@
 <ul>
     {% for resp in responses %}
 
-    <li><a href="/swirls/by/{{user.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong></li>
+    <li><a href="/swirls/by/{{user.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong>
+        <div>{{resp.full_response}}</div>
+    </li>
 
     {% endfor %}
 </ul>
 
 
+
 <h2>Your response</h2>
+
+{% if user %}
 
 <form method="POST" action="/swirls/{{swirl.id}}/respond">
     {% csrf-field %}
 
     <input type="hidden" name="swirl-id" value="{{swirl.id}}">
 
-    <label>Summary
+    <label>One word response?
         <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}">
     </label>
 
     <label>Because
-        <input type="text" required name="review" value="{{full-response}}">
+        <input type="text" required name="full-response" value="{{full-response}}">
     </label>
 
     <input type="submit" value="Submit">
 
 </form>
+
+{% else %}
+
+<p>Sign in to have your say.</p>
+{% endif %}
 
 
 {% endblock %}
