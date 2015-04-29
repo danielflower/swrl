@@ -13,6 +13,9 @@ strong, b {
     color: Red;
 }
 
+.rte textarea {
+    display: none;
+}
 .rte .editor {
     border-style: dashed;
     width: 90%;

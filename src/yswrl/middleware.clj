@@ -14,6 +14,12 @@
             [buddy.auth.backends.session :refer [session-backend]]
             ))
 
+
+(defn wrap-content-security-policy [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *"))))
+
 (defn log-request [handler]
   (fn [req]
     (timbre/debug req)
@@ -28,6 +34,7 @@
 
 (defn production-middleware [handler]
   (-> handler
+      (wrap-content-security-policy)
       (wrap-authentication (session-backend))
       (wrap-restful-format :formats [:json-kw :edn :transit-json :transit-msgpack])
       (wrap-idle-session-timeout
