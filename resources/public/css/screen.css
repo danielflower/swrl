@@ -14,8 +14,17 @@ strong, b {
 }
 
 .rte .editor {
-    border: 1px dashed grey;
+    border-style: dashed;
     width: 90%;
     min-height: 300px;
     overflow-y: visible;
+    margin: 10px;
+}
+
+.responses input, .responses textarea, .responses select, .responses button {
+    display: inline;
+}
+
+td.response {
+    font-weight: bold;
 }

@@ -15,13 +15,15 @@
             </tr>
             {% endfor %}
 
-            {% if user %}
+            {% if can-respond %}
             {% csrf-field %}
 
             <tr>
                 <td class="username">{{ user.username }}</td>
-                <td>            <input type="hidden" name="swirl-id" value="{{swirl.id}}">
-                    <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}" placeholder="Enter a one-word response">
+                <td>
+                    <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+                    <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}"
+                           placeholder="Enter a one-word response">
                     <input type="submit" value="Submit">
                 </td>
             </tr>
@@ -52,8 +54,6 @@
 </div>
 
 
-<h2>Your response</h2>
-
 {% if user %}
 
 <form method="POST" action="/swirls/{{swirl.id}}/comment">
@@ -61,7 +61,7 @@
 
     <input type="hidden" name="swirl-id" value="{{swirl.id}}">
 
-    <label>Comment
+    <label>Add your comment
         <textarea name="comment" required>{{current-comment}}</textarea>
     </label>
 

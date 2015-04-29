@@ -51,7 +51,7 @@
 
 (defn get-swirl-responses [swirld-id]
   (select db/swirl_responses
-          (fields :summary :users.username)
+          (fields :summary :users.username :responder)
           (join :inner db/users (= :users.id :swirl_responses.responder))
           (where {:swirl_id swirld-id})
           ))

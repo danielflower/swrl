@@ -21,10 +21,9 @@
                placeholder="Title of a movie, book, song, album, etc">
     </label>
 
-    <label for="review">Because</label>
     <div class="rte">
-        <div class="editor"contenteditable="true"></div>
-        <textarea required id="review" name="review" style="display:none">{{review}}</textarea>
+        <textarea name="review" style="display:none">{{review}}</textarea>
+        <article class="editor" contenteditable="true"></article>
     </div>
 
     <input type="submit" value="Submit">
