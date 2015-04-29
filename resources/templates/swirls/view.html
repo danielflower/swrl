@@ -3,44 +3,72 @@
 
 <h1>You should consume {{swirl.title}}</h1>
 
-<div>
-    {{swirl.review|safe}}
+<div class="responses">
+    <form method="POST" action="/swirls/{{swirl.id}}/respond">
+
+        <table>
+            {% for resp in responses %}
+            <tr>
+                <td class="username"><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said&nbsp;
+                </td>
+                <td class="response">{{resp.summary}}</td>
+            </tr>
+            {% endfor %}
+
+            {% if user %}
+            {% csrf-field %}
+
+            <tr>
+                <td class="username">{{ user.username }}</td>
+                <td>            <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+                    <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}" placeholder="Enter a one-word response">
+                    <input type="submit" value="Submit">
+                </td>
+            </tr>
+
+            {% endif %}
+
+        </table>
+    </form>
+
 </div>
 
-<h2>Responses</h2>
+<article>
+    {{swirl.review|safe}}
+</article>
 
-<ul>
-    {% for resp in responses %}
+<h2>Comments</h2>
 
-    <li><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said: <strong>{{resp.summary}}</strong>
-        <div>{{ resp.full_response }}</div>
-    </li>
+<div class="comments">
+    {% for comment in comments %}
+
+    <div>
+        <a href="/swirls/by/{{ comment.username|urlescape }}">{{comment.username}}</a> said:
+        <br>
+        {{ comment.html_content|safe }}
+    </div>
 
     {% endfor %}
-</ul>
-
+</div>
 
 
 <h2>Your response</h2>
 
 {% if user %}
 
-<form method="POST" action="/swirls/{{swirl.id}}/respond">
+<form method="POST" action="/swirls/{{swirl.id}}/comment">
     {% csrf-field %}
 
     <input type="hidden" name="swirl-id" value="{{swirl.id}}">
 
-    <label>One word response?
-        <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}">
-    </label>
-
-    <label>Because
-        <textarea name="full-response" required>{{full-response}}</textarea>
+    <label>Comment
+        <textarea name="comment" required>{{current-comment}}</textarea>
     </label>
 
     <input type="submit" value="Submit">
 
 </form>
+
 
 {% else %}
 

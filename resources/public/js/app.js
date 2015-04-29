@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     $(".rte").each(function (i, holder) {
         var textarea = $(holder).find("textarea").first();
@@ -9,7 +8,7 @@ $(document).ready(function () {
 
         $(holder).closest("form").on("submit", function () {
             textarea.val(editor.html());
-           return true;
+            return true;
         });
     });
 });

@@ -16,8 +16,9 @@
 
 (defn view-swirl-page [id]
   (if-let [swirl (repo/get-swirl id)]
-    (let [responses (repo/get-swirl-responses (:id swirl))]
-      (layout/render "swirls/view.html" {:swirl swirl :responses responses}))))
+    (let [responses (repo/get-swirl-responses (:id swirl))
+          comments (repo/get-swirl-comments (:id swirl))]
+      (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
@@ -26,14 +27,20 @@
 
 (defn session-from [req] (:user (:session req)))
 
-(defn handle-response [swirl-id summary full-response author]
+(defn handle-response [swirl-id summary author]
   (do
-    (repo/create-response swirl-id summary full-response author)
+    (repo/create-response swirl-id summary author)
+    (redirect (str "/swirls/" swirl-id))))
+
+(defn handle-comment [swirl-id comment author]
+  (do
+    (repo/create-comment swirl-id comment author)
     (redirect (str "/swirls/" swirl-id))))
 
 (defroutes swirl-routes
            (GET "/swirls/create" [_] (create-swirl-page "" "" "" nil))
            (POST "/swirls/create" [who subject review :as req] (handle-create-swirl who subject review req))
            (GET "/swirls/:id" [id] (view-swirl-page (Integer/parseInt id)))
-           (POST "/swirls/:id/respond" [id response-summary full-response :as req] (handle-response (Integer/parseInt id) response-summary full-response (session-from req)))
+           (POST "/swirls/:id/respond" [id response-summary :as req] (handle-response (Integer/parseInt id) response-summary (session-from req)))
+           (POST "/swirls/:id/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName)))

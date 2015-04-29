@@ -26,9 +26,14 @@
 
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
 
-(defn create-response [swirld-id summary full-response author]
+(defn create-response [swirld-id summary author]
   (insert db/swirl_responses
-          (values {:swirl_id swirld-id :responder (:id author) :summary summary :full_response full-response :date_responded (now)})
+          (values {:swirl_id swirld-id :responder (:id author) :summary summary :date_responded (now)})
+          ))
+
+(defn create-comment [swirld-id comment author]
+  (insert db/comments
+          (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
 (defn create-swirl [authorId title review recipientNames]
@@ -46,10 +51,17 @@
 
 (defn get-swirl-responses [swirld-id]
   (select db/swirl_responses
-          (fields :summary :full_response :users.username :date_responded)
+          (fields :summary :users.username)
           (join :inner db/users (= :users.id :swirl_responses.responder))
           (where {:swirl_id swirld-id})
           ))
+
+(defn get-swirl-comments [swirld-id]
+  (select db/comments
+          (fields :html_content :users.username :date_responded)
+          (join :inner db/users (= :users.id :comments.author_id))
+          (where {:swirl_id swirld-id})
+          (order :date_responded :asc)))
 
 (defn get-swirls-authored-by [userId]
   (select db/swirls
