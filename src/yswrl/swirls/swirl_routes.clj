@@ -30,8 +30,8 @@
 
 (defn session-from [req] (:user (:session req)))
 
-(defn handle-response [swirl-id summary author]
-  (do
+(defn handle-response [swirl-id response-button custom-response author]
+  (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)]
     (repo/create-response swirl-id summary author)
     (redirect (str "/swirls/" swirl-id))))
 
@@ -44,6 +44,6 @@
            (GET "/swirls/create" [_] (create-swirl-page "" "" "" nil))
            (POST "/swirls/create" [who subject review :as req] (handle-create-swirl who subject review (session-from req)))
            (GET "/swirls/:id" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
-           (POST "/swirls/:id/respond" [id response-summary :as req] (handle-response (Integer/parseInt id) response-summary (session-from req)))
+           (POST "/swirls/:id/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
            (POST "/swirls/:id/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName)))

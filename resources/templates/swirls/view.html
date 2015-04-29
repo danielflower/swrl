@@ -22,9 +22,15 @@
                 <td class="username">{{ user.username }}</td>
                 <td>
                     <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+
+                    <input type="submit" name="responseButton" value="Good">
+                    <input type="submit" name="responseButton" value="Bad">
+                    <input type="submit" name="responseButton" value="Meh">
+
+                    or
                     <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}"
                            placeholder="Enter a one-word response">
-                    <input type="submit" value="Submit">
+                    <input type="submit" name="responseButton" value="Submit">
                 </td>
             </tr>
 
