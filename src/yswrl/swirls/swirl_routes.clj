@@ -8,10 +8,15 @@
 (defn create-swirl-page [who subject review error]
   (layout/render "swirls/create.html" {:who who :subject subject :review review :error error}))
 
+(defn start-emailing-suggestions [swirl]
+  nil
+  )
+
 (defn handle-create-swirl [who subject review current-user]
   (let [authorId (:id current-user)
         namesOrEmails (map (fn [x] (clojure.string/trim x)) (clojure.string/split who #","))
         swirl (repo/create-swirl authorId subject review namesOrEmails)]
+    (start-emailing-suggestions swirl)
     (redirect (str "/swirls/" (:id swirl)))))
 
 (def not-nil? (complement nil?))

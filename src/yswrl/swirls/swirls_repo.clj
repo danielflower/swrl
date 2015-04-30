@@ -40,9 +40,9 @@
   (transaction
     (let [swirl (insert db/swirls
                         (values {:author_id authorId :title title :review review}))
-          ]
-      (insert db/suggestions (values (create-suggestions recipientNames (:id swirl))))
-      swirl)))
+          suggestions (create-suggestions recipientNames (:id swirl))]
+      (insert db/suggestions (values suggestions))
+      :swirl swirl)))
 
 (defn get-swirl [id]
   (first (select db/swirls
