@@ -34,13 +34,14 @@ WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason
 
 (defn suggestion-email-html [row]
   (let [values (assoc row :swirl_url (str "http://www.youshouldwatchreadlisten.com/swirls/" (:swirl_id row)))]
-    (render-file "/swirls/suggestion-email.html" values)))
+    (render-file "swirls/suggestion-email.html" values)))
 
 (defn send-unsent-suggestions []
   (try
     (let [unsent (get-unsent)]
       (timbre/info "Suggestion emailer processing" (count unsent) "suggestions")
-      (for [row unsent]
+      (doseq [row unsent]
+        (timbre/info "About to process" row)
         (let [[response]
               (send-email (:recipient_email row) (:recipient_email row) (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))
@@ -53,5 +54,5 @@ WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason
     :entries
     [{:id       "send-unsent-suggestions"
       :handler  (fn [_ _] (send-unsent-suggestions))
-      :schedule "/60 * * * * * *"
+      :schedule "/30 * * * * * *"
       :opts     {}}]))
