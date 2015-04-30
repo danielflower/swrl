@@ -2,17 +2,13 @@
 (use 'clj-mandrill.core)
 
 
-
-
-
-
 (defn wrap-mandrill-call [f & args]
     (let [env-var-name "MANDRILL_APIKEY"
           key (System/getenv env-var-name)]
       (if (clojure.string/blank? key)
         (do
           (println (str "Skipping email sending as the Mandrill key is not set as an environment value with key " env-var-name))
-          nil)
+          [{:email "", :status "error", :reject_reason "Mandrill not configured"}])
         (do
           (alter-var-root #'clj-mandrill.core/*mandrill-api-key* (constantly key))
           (apply f args)))))

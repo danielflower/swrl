@@ -44,6 +44,7 @@
       (insert db/suggestions (values suggestions))
       :swirl swirl)))
 
+
 (defn get-swirl [id]
   (first (select db/swirls
                  (where {:id id})

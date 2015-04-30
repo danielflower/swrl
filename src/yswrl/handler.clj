@@ -3,7 +3,7 @@
             [yswrl.home.home-routes :refer [home-routes]]
             [yswrl.auth.auth-routes :refer [auth-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
-
+            [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
             [yswrl.session :as session]
@@ -15,8 +15,8 @@
             [cronj.core :as cronj]))
 
 (defroutes base-routes
-  (route/resources "/")
-  (route/not-found "Not Found"))
+           (route/resources "/")
+           (route/not-found "Not Found"))
 
 (defn init
   "init will be called once when
@@ -26,11 +26,11 @@
   []
   (timbre/set-config!
     [:appenders :rotor]
-    {:min-level :info
-     :enabled? true
-     :async? false ; should be always false for rotor
+    {:min-level             :debug
+     :enabled?              true
+     :async?                false                           ; should be always false for rotor
      :max-message-per-msecs nil
-     :fn rotor/appender-fn})
+     :fn                    rotor/appender-fn})
 
   (timbre/set-config!
     [:shared-appender-config :rotor]
@@ -39,6 +39,7 @@
   (if (env :dev) (parser/cache-off!))
   ;;start the expired session cleanup job
   (cronj/start! session/cleanup-job)
+  (cronj/start! send-unsent-suggestions-job)
   (timbre/info "\n-=[ yswrl started successfully"
                (when (env :dev) "using the development profile") "]=-"))
 
@@ -48,6 +49,7 @@
   []
   (timbre/info "yswrl is shutting down...")
   (cronj/shutdown! session/cleanup-job)
+  (cronj/shutdown! send-unsent-suggestions-job)
   (timbre/info "shutdown complete!"))
 
 (def app
