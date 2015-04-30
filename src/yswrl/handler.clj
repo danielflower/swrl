@@ -24,17 +24,6 @@
    an app server such as Tomcat
    put any initialization code here"
   []
-  (timbre/set-config!
-    [:appenders :rotor]
-    {:min-level             :debug
-     :enabled?              true
-     :async?                false                           ; should be always false for rotor
-     :max-message-per-msecs nil
-     :fn                    rotor/appender-fn})
-
-  (timbre/set-config!
-    [:shared-appender-config :rotor]
-    {:path "yswrl.log" :max-size (* 512 1024) :backlog 10})
 
   (if (env :dev) (parser/cache-off!))
   ;;start the expired session cleanup job
