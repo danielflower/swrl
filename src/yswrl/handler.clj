@@ -9,7 +9,6 @@
             [yswrl.session :as session]
             [compojure.route :as route]
             [taoensso.timbre :as timbre]
-            [taoensso.timbre.appenders.rotor :as rotor]
             [selmer.parser :as parser]
             [environ.core :refer [env]]
             [cronj.core :as cronj]))

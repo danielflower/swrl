@@ -54,5 +54,5 @@ WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason
     :entries
     [{:id       "send-unsent-suggestions"
       :handler  (fn [_ _] (send-unsent-suggestions))
-      :schedule "/30 * * * * * *"
+      :schedule "* */60 * * * * *"                          ; should be 30 secs, but currently we force the send when creating a swirl anyway
       :opts     {}}]))

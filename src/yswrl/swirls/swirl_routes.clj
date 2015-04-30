@@ -1,6 +1,7 @@
 (ns yswrl.swirls.swirl-routes
   (:require [yswrl.layout :as layout]
             [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [redirect response not-found]]))
@@ -8,15 +9,11 @@
 (defn create-swirl-page [who subject review error]
   (layout/render "swirls/create.html" {:who who :subject subject :review review :error error}))
 
-(defn start-emailing-suggestions [swirl]
-  nil
-  )
-
 (defn handle-create-swirl [who subject review current-user]
   (let [authorId (:id current-user)
         namesOrEmails (map (fn [x] (clojure.string/trim x)) (clojure.string/split who #","))
         swirl (repo/create-swirl authorId subject review namesOrEmails)]
-    (start-emailing-suggestions swirl)
+    (send-unsent-suggestions)
     (redirect (str "/swirls/" (:id swirl)))))
 
 (def not-nil? (complement nil?))
