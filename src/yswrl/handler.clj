@@ -17,8 +17,8 @@
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
     (let [response (handler request)]
-      (assoc-in response [:headers "Cache-Control"] "max-age=31556926"))))
-
+      (if (not (nil? response))
+        (assoc-in response [:headers "Cache-Control"] "max-age=31556926")))))
 
 (defroutes base-routes
            (route/resources "/")
