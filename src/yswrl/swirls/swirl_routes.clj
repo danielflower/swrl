@@ -2,6 +2,7 @@
   (:require [yswrl.layout :as layout]
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
+            [yswrl.swirls.comment-notifier :refer [send-comment-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [redirect response not-found]]))
@@ -37,9 +38,10 @@
     (repo/create-response swirl-id summary author)
     (redirect (str "/swirls/" swirl-id))))
 
-(defn handle-comment [swirl-id comment author]
-  (do
-    (repo/create-comment swirl-id comment author)
+
+(defn handle-comment [swirl-id comment-content author]
+  (let [comment (repo/create-comment swirl-id comment-content author)]
+    (send-comment-notification-emails comment)
     (redirect (str "/swirls/" swirl-id))))
 
 (defroutes swirl-routes

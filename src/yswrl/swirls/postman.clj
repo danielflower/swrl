@@ -16,10 +16,10 @@
 (defn test-mandrill []
   (wrap-mandrill-call call-mandrill "users/ping" {}))
 
-(defn send-email [to-name to-email subject body]
+(defn send-email [to-list subject body]
   (wrap-mandrill-call send-message {
                  :html       body
                  :subject    subject
                  :from_email "noreply@youshouldwatchreadlisten.com"
                  :from_name  "noreply@youshouldwatchreadlisten.com"
-                 :to         [{:email to-email :name to-name}]}))
+                 :to         to-list}))
