@@ -13,8 +13,16 @@
             [environ.core :refer [env]]
             [cronj.core :as cronj]))
 
+
+(defn wrap-infinite-cache-policy [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc-in response [:headers "Cache-Control"] "max-age=31556926"))))
+
+
 (defroutes base-routes
            (route/resources "/")
+           (wrap-infinite-cache-policy (route/resources "/immutable" {:root "immutable"}))
            (route/not-found "Not Found"))
 
 (defn init
