@@ -3,23 +3,32 @@
 
 <h1>Register</h1>
 
+{% if errors %}
+<p class="validation-error">Sorry, there was a little problem with your details.</p>
+<p class="validation-error">{{errors.unknown}}</p>
+{% endif %}
+
 <form method="POST" action="/register">
     {% csrf-field %}
 
     <label>Username
-        <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50">
+        <span class="validation-error">{{errors.username}}</span>
+        <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50" value="{{username}}">
     </label>
 
     <label>Email
-        <input type="email" autocomplete="email" name="email" required maxlength="100">
+        <span class="validation-error">{{errors.email}}</span>
+        <input type="email" autocomplete="email" name="email" required maxlength="100" value="{{email}}">
     </label>
 
     <label>Password:
+        <span class="validation-error">{{errors.password}}</span>
         <input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-               name="password">
+               name="password" value="{{password}}">
     </label>
     <label>Confirm Password:
-        <input type="password" required name="confirmPassword"
+        <span class="validation-error">{{errors.confirm-password}}</span>
+        <input type="password" required name="confirmPassword" value="{{confirm-password}}"
                title="Please enter the same Password as above">
     </label>
 

@@ -26,12 +26,14 @@
         wrap-exceptions)
     handler))
 
+(def unsecure-key-for-dev-mode "93762d738951e53a")          ; in heroku, a value similar to this is stored in an env var. It just needs to be any non-changing value
+
 (defn production-middleware [handler]
   (-> handler
       (wrap-authentication (session-backend))
       (wrap-restful-format :formats [:json-kw :edn :transit-json :transit-msgpack])
       (wrap-defaults
         (-> site-defaults
-        (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") "93762d738951e53a")}))
+        (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") unsecure-key-for-dev-mode)}))
         (assoc-in [:session :cookie-name] "yswrl-session")))
       (wrap-internal-error :log #(timbre/error %))))

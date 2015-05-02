@@ -1,16 +1,16 @@
 (ns yswrl.auth.auth-routes
   (:require [yswrl.layout :as layout]
             [compojure.core :refer [defroutes GET POST]]
-            [clojure.java.io :as io]
             [bouncer.core :as b]
             [bouncer.validators :as v]
+            [taoensso.timbre :as log]
             [buddy.hashers :as hashers]
             [yswrl.auth.auth-repo :as users]
             [ring.util.response :refer [redirect response]]))
 
 
-(defn registration-page []
-  (layout/render "auth/register.html"))
+(defn registration-page [map]
+  (layout/render "auth/register.html" map))
 
 (defn login-page [& {:keys [username error]}]
   (layout/render "auth/login.html" {:username username :error error}))
@@ -24,9 +24,7 @@
     (->
       (redirect "/logged-out")
       (assoc :session newSession)
-      )
-
-    ))
+      )))
 
 (defn months [x] (* x 2419200))
 
@@ -42,22 +40,32 @@
         (assoc :session newSession)))))
 
 (defn attempt-login [username password remember-me? req]
-  (do
-    (println "Remember me? " remember-me?)
-    (let [user (users/get-user username)]
-      (if (and user (hashers/check password (:password user)))
-        (login-success user remember-me? req)
-        (login-page :username username :error true))
-      )))
+  (let [user (users/get-user username)]
+    (if (and user (hashers/check password (:password user)))
+      (login-success user remember-me? req)
+      (login-page :username username :error true))))
 
 
-(defn handle-registration [username email password confirmPassword req]
-  (do
-    (users/create-user username email (hashers/encrypt password))
-    (attempt-login username password false req)))
+(def registration-validator {:username v/required
+                             :email    [v/required [v/email :message "Please enter a valid email address"]]})
 
-
-
+(defn handle-registration [user req]
+  (let [errors (first (b/validate user registration-validator))]
+    (if errors
+      (do
+        (log/info "validation error on registration page" errors)
+        (registration-page (assoc user :errors errors)))
+      (do
+        (try
+          (users/create-user (user :username) (user :email) (hashers/encrypt (user :password)))
+          (attempt-login (user :username) (user :password) false req)
+          (catch Exception e
+            (let [message (cond
+                            (.contains (.getMessage e) "users_username_key") {:username '("A user with that username already exists. Please select a different username.")}
+                            (.contains (.getMessage e) "users_email_key") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
+                  :else {:unknown '("There was an unexpected error. Please try again later.")})]
+              (log/error "Error while registering user" user e)
+              (registration-page (assoc user :errors message)))))))))
 
 (defroutes auth-routes
            (GET "/login" [_] (login-page))
@@ -66,7 +74,7 @@
            (GET "/logout" [:as req] (handle-logout req))
            (GET "/logged-out" [_] (logged-out-page))
 
-           (GET "/register" [_] (registration-page))
+           (GET "/register" [_] (registration-page nil))
            (POST "/register" [username email password confirmPassword :as req]
-             (handle-registration username email password confirmPassword req))
+             (handle-registration {:username username :email email :password password :confirm-password confirmPassword} req))
            )
