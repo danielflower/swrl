@@ -1,24 +1,18 @@
 (ns yswrl.middleware
-  (:require [yswrl.session :as session]
-            [taoensso.timbre :as timbre]
+  (:require [taoensso.timbre :as timbre]
             [environ.core :refer [env]]
             [selmer.middleware :refer [wrap-error-page]]
             [prone.middleware :refer [wrap-exceptions]]
             [ring.util.response :refer [redirect]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [ring.middleware.session-timeout :refer [wrap-idle-session-timeout]]
             [noir-exception.core :refer [wrap-internal-error]]
-            [ring.middleware.session.memory :refer [memory-store]]
+            [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.format :refer [wrap-restful-format]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [buddy.auth.backends.session :refer [session-backend]]
             ))
 
 
-(defn wrap-content-security-policy [handler]
-  (fn [request]
-    (let [response (handler request)]
-      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *"))))
 
 (defn log-request [handler]
   (fn [req]
@@ -34,12 +28,10 @@
 
 (defn production-middleware [handler]
   (-> handler
-      (wrap-content-security-policy)
       (wrap-authentication (session-backend))
       (wrap-restful-format :formats [:json-kw :edn :transit-json :transit-msgpack])
-      (wrap-idle-session-timeout
-        {:timeout (* 60 30)
-         :timeout-response (redirect "/")})
       (wrap-defaults
-        (assoc-in site-defaults [:session :store] (memory-store session/mem)))
+        (-> site-defaults
+        (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") "93762d738951e53a")}))
+        (assoc-in [:session :cookie-name] "yswrl-session")))
       (wrap-internal-error :log #(timbre/error %))))

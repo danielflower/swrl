@@ -6,19 +6,21 @@
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
-            [yswrl.session :as session]
             [compojure.route :as route]
             [taoensso.timbre :as timbre]
             [selmer.parser :as parser]
             [environ.core :refer [env]]
             [cronj.core :as cronj]))
 
+(defn wrap-content-security-policy [handler]
+  (fn [request]
+    (if-let [response (handler request)]
+      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *"))))
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
-    (let [response (handler request)]
-      (if (not (nil? response))
-        (assoc-in response [:headers "Cache-Control"] "max-age=31556926")))))
+    (if-let [response (handler request)]
+      (assoc-in response [:headers "Cache-Control"] "max-age=31556926"))))
 
 (defroutes base-routes
            (route/resources "/")
@@ -33,8 +35,6 @@
   []
 
   (if (env :dev) (parser/cache-off!))
-  ;;start the expired session cleanup job
-  (cronj/start! session/cleanup-job)
   (cronj/start! send-unsent-suggestions-job)
   (timbre/info "\n-=[ yswrl started successfully"
                (when (env :dev) "using the development profile") "]=-"))
@@ -44,15 +44,14 @@
    shuts down, put any clean up code here"
   []
   (timbre/info "yswrl is shutting down...")
-  (cronj/shutdown! session/cleanup-job)
   (cronj/shutdown! send-unsent-suggestions-job)
   (timbre/info "shutdown complete!"))
 
 (def app
   (-> (routes
-        home-routes
-        auth-routes
-        swirl-routes
+        (wrap-content-security-policy home-routes)
+        (wrap-content-security-policy auth-routes)
+        (wrap-content-security-policy swirl-routes)
         base-routes)
       development-middleware
       production-middleware))
