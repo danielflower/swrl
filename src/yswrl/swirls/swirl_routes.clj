@@ -52,9 +52,9 @@
 (defroutes swirl-routes
            (GET "/swirls/create" [_] (create-swirl-page "" "" "" nil))
            (POST "/swirls/create" [who subject review :as req] (handle-create-swirl who subject review (session-from req)))
-           (GET "/swirls" [] (view-all-swirls 0))
+           (GET "/swirls" [] (view-all-swirls "0"))
            (GET "/swirls/:id" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
            (POST "/swirls/:id/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
            (POST "/swirls/:id/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
-           (GET "/swirls/from/:count" [count :as req] (view-all-swirls count))
+           (GET "/swirls/from/:count" [count] (view-all-swirls count))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName)))
