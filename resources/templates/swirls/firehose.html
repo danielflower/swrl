@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{pageTitle}}</h1>
+
+<ul>
+{% if swirls|empty? %}
+    We've run out of swirls. Gomen Nasai
+{% endif %}
+
+{% for swirl in swirls %}
+
+    <a href="/swirls/{{swirl.id}}">{{swirl.title}}</a> by <a href="/swirls/by/{{swirl.username}}">@{{swirl.username}}</a>
+
+
+    <article>
+        {{swirl.review|safe}}
+    </article>
+
+    <hr>
+
+{% endfor %}
+</ul>
+{% if countFrom = 20 %}<a href="/swirls/from/{{countFrom|add:-20}}">< Previous 20 swirls</a>
+{% endif %} |
+
+{% if swirls|length = 20 %}
+<a href="/swirls/from/{{countTo}}">Next 20 swirls ></a>
+{% endif %}
+{% endblock %}

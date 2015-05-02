@@ -64,6 +64,14 @@
           (where {:swirl_id swirld-id})
           (order :date_responded :asc)))
 
+(defn get-recent-swirls [swirl-count skip]
+  (select db/swirls
+          (fields :creation_date, :review, :title, :id, :users.username)
+          (join :inner db/users (= :swirls.author_id :users.id))
+          (offset skip)
+          (limit swirl-count)
+          (order :creation_date :asc)))
+
 (defn get-swirls-authored-by [userId]
   (select db/swirls
           (where {:author_id userId})))

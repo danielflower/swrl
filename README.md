@@ -55,3 +55,7 @@ Run DB migrations remotely from your dev machine to Heroku:
 Then deploy the app:
 
     git push heroku master
+    
+    
+## Data
+In fake_data.clj there are methods to create 10 users and 30 swirls.  This assumes you have a blank database currently (due to assuming the user IDs are from 0).  This can easily be improved and shall be in later iterations.
