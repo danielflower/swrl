@@ -54,6 +54,6 @@
            (GET "/forgot-password" [_] (forgot-password-page "" nil))
            (POST "/request-password-reset-email" [usernameOrEmail] (request-password-reset-email usernameOrEmail))
            (GET "/forgot-password-sent" [_] (forgot-password-sent-page))
-           (GET "/reset-password" [_] (reset-password-page "todo" nil))
+           (GET "/reset-password" [token] (reset-password-page token nil))
            (POST "/reset-password" [token newPassword :as req] (handle-reset-password token newPassword req)))
 
