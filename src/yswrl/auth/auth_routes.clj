@@ -16,6 +16,12 @@
 (defn login-page [& {:keys [username error]}]
   (layout/render "auth/login.html" {:username username :error error}))
 
+(defn forgot-password-page [usernameOrEmail error]
+  (layout/render "auth/forgot-password.html" {:usernameOrEmail usernameOrEmail :error error}))
+(defn forgot-password-sent-page []
+  (layout/render "auth/forgot-password-sent.html"))
+
+
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
 
@@ -70,6 +76,9 @@
 (defroutes auth-routes
            (GET "/login" [_] (login-page))
            (POST "/login" [username password remember :as req] (attempt-login username password (if (= "on" remember) true false) req))
+
+           (GET "/forgot-password" [_] (forgot-password-page "" nil))
+           (GET "/forgot-password-sent" [_] (forgot-password-sent-page))
 
            (GET "/logout" [:as req] (handle-logout req))
            (GET "/logged-out" [_] (logged-out-page))

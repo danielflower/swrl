@@ -23,18 +23,19 @@
   (if-let [swirl (repo/get-swirl id)]
     (let [responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          can-respond (and (not-nil? current-user) (not-any? (fn [c] (= (:id current-user) (:responder c))) responses)) ]
+          can-respond (and (not-nil? current-user) (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))]
       (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
-    (if-let [swirls (repo/get-swirls-authored-by (:id author))]
-      (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))))
-
+    (if (= authorName (author :username))
+      (let [swirls (repo/get-swirls-authored-by (:id author))]
+        (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
+      (redirect (str "/swirls/by/" (java.net.URLEncoder/encode (author :username) "UTF-8"))))))
 
 (defn view-all-swirls [count]
-    (if-let [swirls (repo/get-recent-swirls 20 count)]
-      (layout/render "swirls/firehose.html" {:pageTitle (str "Firehose") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+  (if-let [swirls (repo/get-recent-swirls 20 count)]
+    (layout/render "swirls/firehose.html" {:pageTitle (str "Firehose") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn session-from [req] (:user (:session req)))
 

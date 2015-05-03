@@ -26,3 +26,6 @@
 
 (defn query [sql & args]
   (exec-raw db [sql args] :results))
+
+(defn query-single [sql & args]
+  (first (apply query sql args)))
