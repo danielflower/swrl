@@ -61,3 +61,13 @@
         ; can't access email so can't test forgotten-password unfortunately. So just log in
 
         )))
+
+(deftest invalid-token-for-password-reset
+    (-> (session app)
+        (visit "/reset-password?token=someinvalidtoken")
+        (within [:h1]
+                (has (text? "Reset password")))
+        (fill-in "New password" "whatever")
+        (press "Change password")
+        (within [:.validation-error]
+                (has (text? "Sorry, that request was invalid. Please go to the login page and request a new password reset.")))))

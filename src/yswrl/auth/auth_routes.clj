@@ -16,8 +16,6 @@
 (defn login-page [& {:keys [username error]}]
   (layout/render "auth/login.html" {:username username :error error}))
 
-
-
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
 
@@ -42,11 +40,19 @@
         response
         (assoc :session newSession)))))
 
-(defn attempt-login [username password remember-me? req]
+(defn get-user-by-name-and-password [username password]
   (let [user (users/get-user username)]
     (if (and user (hashers/check password (:password user)))
-      (login-success user remember-me? req)
-      (login-page :username username :error true))))
+      user
+      nil)))
+
+(defn attempt-login [username password remember-me? req]
+  (if-let [user (get-user-by-name-and-password username password)]
+    (login-success user remember-me? req)
+    (login-page :username username :error true)))
+
+(defn hash-password [unhashed]
+  (hashers/encrypt unhashed))
 
 (defn handle-registration [user req]
   (let [errors (first (b/validate user {:username        [v/required [v/max-count 50]]
@@ -59,7 +65,7 @@
         (registration-page (assoc user :errors errors)))
       (do
         (try
-          (users/create-user (user :username) (user :email) (hashers/encrypt (user :password)))
+          (users/create-user (user :username) (user :email) (hash-password (user :password)))
           (attempt-login (user :username) (user :password) false req)
           (catch Exception e
             (let [message (cond
