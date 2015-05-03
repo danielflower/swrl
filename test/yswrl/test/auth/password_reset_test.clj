@@ -1,6 +1,6 @@
-(ns yswrl.test.auth.forgotten_password_email_test
+(ns yswrl.test.auth.password_reset_test
   (:require [yswrl.test.html-assert :refer :all]
-            [yswrl.auth.auth-routes :as auth])
+            [yswrl.auth.password-reset :as pr])
   (:use clojure.test
         ring.mock.request
         yswrl.handler
@@ -10,6 +10,6 @@
 
 (deftest forgotten-password
     (testing "An email with the user's name and link to reset can be created"
-      (let [html (auth/create-forgotten-email-body "canman" "atokenofmyappreciation")]
+      (let [html (pr/create-forgotten-email-body "canman" "atokenofmyappreciation")]
            (is (.contains html "Dear canman,") html)
            (is (.contains html "http://www.youshouldwatchreadlisten.com/reset-password?token=atokenofmyappreciation") html))))

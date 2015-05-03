@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes routes]]
             [yswrl.home.home-routes :refer [home-routes]]
             [yswrl.auth.auth-routes :refer [auth-routes]]
+            [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
             [yswrl.middleware
@@ -52,6 +53,7 @@
         (wrap-content-security-policy home-routes)
         (wrap-content-security-policy auth-routes)
         (wrap-content-security-policy swirl-routes)
+        (wrap-content-security-policy password-reset-routes)
         base-routes)
       development-middleware
       production-middleware))

@@ -16,10 +16,6 @@
 (defn login-page [& {:keys [username error]}]
   (layout/render "auth/login.html" {:username username :error error}))
 
-(defn forgot-password-page [usernameOrEmail error]
-  (layout/render "auth/forgot-password.html" {:usernameOrEmail usernameOrEmail :error error}))
-(defn forgot-password-sent-page []
-  (layout/render "auth/forgot-password-sent.html"))
 
 
 (defn logged-out-page []
@@ -73,26 +69,10 @@
               (log/error "Error while registering user" user e)
               (registration-page (assoc user :errors message)))))))))
 
-(defn create-forgotten-email-body [username token]
-  (yswrl.swirls.postman/email-body "auth/password-reset-email.html" { :username username :token token }))
-
-(defn request-password-reset-email [usernameOrEmail]
-  (let [user (first (users/get-users-by-username_or_email [usernameOrEmail]))]
-    (if user
-      (let [unhashed-token (str (java.util.UUID/randomUUID))
-            hashed-token (hashers/encrypt unhashed-token {:algorithm :sha256 :salt "salthylskjdflaskjdfkl"})
-            row (users/create-password-reset-request (:id user) hashed-token)]
-        (yswrl.swirls.postman/send-email [{:email (:email user) :name (:username user)}] "Password reset request" (create-forgotten-email-body (user :username) unhashed-token))
-        (redirect "forgot-password-sent"))
-      (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 
 (defroutes auth-routes
            (GET "/login" [_] (login-page))
            (POST "/login" [username password remember :as req] (attempt-login username password (if (= "on" remember) true false) req))
-
-           (GET "/forgot-password" [_] (forgot-password-page "" nil))
-           (POST "/request-password-reset-email" [usernameOrEmail] (request-password-reset-email usernameOrEmail))
-           (GET "/forgot-password-sent" [_] (forgot-password-sent-page))
 
            (GET "/logout" [:as req] (handle-logout req))
            (GET "/logged-out" [_] (logged-out-page))
