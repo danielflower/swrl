@@ -34,7 +34,7 @@
 
 (defn view-all-swirls [count]
     (if-let [swirls (repo/get-recent-swirls 20 count)]
-      (layout/render "swirls/firehose.html" {:pageTitle (str "Firehose") :swirls swirls :countFrom count :countTo (+ (Integer/parseInt count) 20)})))
+      (layout/render "swirls/firehose.html" {:pageTitle (str "Firehose") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn session-from [req] (:user (:session req)))
 
@@ -52,9 +52,9 @@
 (defroutes swirl-routes
            (GET "/swirls/create" [_] (create-swirl-page "" "" "" nil))
            (POST "/swirls/create" [who subject review :as req] (handle-create-swirl who subject review (session-from req)))
-           (GET "/swirls" [] (view-all-swirls "0"))
-           (GET "/swirls/:id" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
-           (POST "/swirls/:id/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
-           (POST "/swirls/:id/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
-           (GET "/swirls/from/:count" [count] (view-all-swirls count))
+           (GET "/swirls" [] (view-all-swirls 0))
+           (GET "/swirls/:id{[0-9]+}" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
+           (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
+           (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
+           (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName)))

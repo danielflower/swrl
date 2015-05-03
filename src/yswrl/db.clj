@@ -24,3 +24,5 @@
 (defentity swirl_responses (database db))
 (defentity comments (database db))
 
+(defn query [sql & args]
+  (exec-raw db [sql args] :results))

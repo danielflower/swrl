@@ -6,6 +6,7 @@
             [taoensso.timbre :as log]
             [buddy.hashers :as hashers]
             [yswrl.auth.auth-repo :as users]
+            [clojure.string :refer [trim]]
             [ring.util.response :refer [redirect response]]))
 
 
@@ -45,12 +46,11 @@
       (login-success user remember-me? req)
       (login-page :username username :error true))))
 
-
-(def registration-validator {:username v/required
-                             :email    [v/required [v/email :message "Please enter a valid email address"]]})
-
 (defn handle-registration [user req]
-  (let [errors (first (b/validate user registration-validator))]
+  (let [errors (first (b/validate user {:username [v/required [v/max-count 50]]
+                                        :email    [v/required [v/max-count 100] [v/email :message "Please enter a valid email address"]]
+                                        :password [v/required [v/min-count 8]]
+                                        :confirmPassword [v/required [(fn [confirmed] (= confirmed (user :password))) :message "Your passwords did not match"]]}))]
     (if errors
       (do
         (log/info "validation error on registration page" errors)
@@ -61,8 +61,8 @@
           (attempt-login (user :username) (user :password) false req)
           (catch Exception e
             (let [message (cond
-                            (.contains (.getMessage e) "users_username_key") {:username '("A user with that username already exists. Please select a different username.")}
-                            (.contains (.getMessage e) "users_email_key") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
+                            (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_username_key\"") {:username '("A user with that username already exists. Please select a different username.")}
+                            (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_email_key\"") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
                   :else {:unknown '("There was an unexpected error. Please try again later.")})]
               (log/error "Error while registering user" user e)
               (registration-page (assoc user :errors message)))))))))
@@ -76,5 +76,5 @@
 
            (GET "/register" [_] (registration-page nil))
            (POST "/register" [username email password confirmPassword :as req]
-             (handle-registration {:username username :email email :password password :confirm-password confirmPassword} req))
+             (handle-registration {:username (trim username) :email (trim email) :password password :confirmPassword confirmPassword} req))
            )

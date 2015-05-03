@@ -10,14 +10,14 @@
 
 
 (defn get-unsent []
-  (exec-raw "SELECT
+  (db/query "SELECT
   suggestions.id as suggestion_id, suggestions.swirl_id,
   swirls.title, author.username AS author_name,
   COALESCE(recipient.email, suggestions.recipient_email) AS recipient_email
 FROM ((suggestions INNER JOIN swirls ON swirls.id = suggestions.swirl_id)
     INNER JOIN users AS author ON author.id = swirls.author_id)
   LEFT JOIN users AS recipient ON recipient.id = suggestions.recipient_id
-WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason IS NULL)" :results))
+WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason IS NULL)"))
 
 
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
