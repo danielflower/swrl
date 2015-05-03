@@ -1,6 +1,12 @@
 (ns yswrl.swirls.postman
   (:require [taoensso.timbre :as timbre]))
 (use 'clj-mandrill.core)
+(use 'selmer.parser)
+
+
+
+(defn email-body [template-path model]
+    (render-file template-path model))
 
 (defn wrap-mandrill-call [f & args]
     (let [env-var-name "MANDRILL_APIKEY"

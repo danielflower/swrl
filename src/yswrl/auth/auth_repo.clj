@@ -17,3 +17,7 @@
                             (interpose ",")
                             (apply str))]
     (apply db/query (str "SELECT id, username, email FROM users WHERE LOWER(username) IN ( " question-marks " ) OR LOWER(email) IN ( " question-marks " )" ) (concat lowered lowered))))
+
+(defn create-password-reset-request [user-id, hashed-code]
+  (insert db/password_reset_requests
+          (values {:hashed_token hashed-code :user_id user-id})))

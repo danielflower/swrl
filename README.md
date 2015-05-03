@@ -45,6 +45,15 @@ To start a web server for the application, run:
 
     lein ring server
 
+## Testing
+
+While you can run `lein test` from the command line, it takes many seconds to
+start up and is too slow for TDD. Instead, start an interactive lein session
+and just run tests from from:
+
+    $ lein test-refresh
+    
+
 ## Deploying
 
 Run DB migrations remotely from your dev machine to Heroku:
@@ -55,7 +64,6 @@ Run DB migrations remotely from your dev machine to Heroku:
 Then deploy the app:
 
     git push heroku master
-    
     
 ## Data
 In fake_data.clj there are methods to create 10 users and 30 swirls.  This assumes you have a blank database currently (due to assuming the user IDs are from 0).  This can easily be improved and shall be in later iterations.

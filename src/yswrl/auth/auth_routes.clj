@@ -53,9 +53,9 @@
       (login-page :username username :error true))))
 
 (defn handle-registration [user req]
-  (let [errors (first (b/validate user {:username [v/required [v/max-count 50]]
-                                        :email    [v/required [v/max-count 100] [v/email :message "Please enter a valid email address"]]
-                                        :password [v/required [v/min-count 8]]
+  (let [errors (first (b/validate user {:username        [v/required [v/max-count 50]]
+                                        :email           [v/required [v/max-count 100] [v/email :message "Please enter a valid email address"]]
+                                        :password        [v/required [v/min-count 8]]
                                         :confirmPassword [v/required [(fn [confirmed] (= confirmed (user :password))) :message "Your passwords did not match"]]}))]
     (if errors
       (do
@@ -69,15 +69,24 @@
             (let [message (cond
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_username_key\"") {:username '("A user with that username already exists. Please select a different username.")}
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_email_key\"") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
-                  :else {:unknown '("There was an unexpected error. Please try again later.")})]
+                            :else {:unknown '("There was an unexpected error. Please try again later.")})]
               (log/error "Error while registering user" user e)
               (registration-page (assoc user :errors message)))))))))
+
+(defn request-password-reset-email [usernameOrEmail]
+  (let [user (first (users/get-users-by-username_or_email [usernameOrEmail]))]
+    (if user
+      (let [hashed-code (hashers/encrypt (str (java.util.UUID/randomUUID)) {:algorithm :sha256 :salt "salthylskjdflaskjdfkl"})
+            request (users/create-password-reset-request (:id user) hashed-code)]
+        (forgot-password-page usernameOrEmail "Something went wrong"))
+      (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 
 (defroutes auth-routes
            (GET "/login" [_] (login-page))
            (POST "/login" [username password remember :as req] (attempt-login username password (if (= "on" remember) true false) req))
 
            (GET "/forgot-password" [_] (forgot-password-page "" nil))
+           (POST "/request-password-reset-email" [usernameOrEmail] (request-password-reset-email usernameOrEmail))
            (GET "/forgot-password-sent" [_] (forgot-password-sent-page))
 
            (GET "/logout" [:as req] (handle-logout req))

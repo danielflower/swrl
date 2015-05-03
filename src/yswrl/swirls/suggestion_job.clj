@@ -1,10 +1,9 @@
 (ns yswrl.swirls.suggestion-job
   (:require [yswrl.db :as db]
-            [yswrl.swirls.postman :refer [send-email]]
+            [yswrl.swirls.postman :refer [send-email email-body]]
             [cronj.core :refer [cronj]]
             [taoensso.timbre :as timbre]))
 (use 'korma.core)
-(use 'selmer.parser)
 
 ; Checks the suggestions table and emails any outstanding suggestions
 
@@ -34,7 +33,7 @@ WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason
 
 (defn suggestion-email-html [row]
   (let [values (assoc row :swirl_url (str "http://www.youshouldwatchreadlisten.com/swirls/" (:swirl_id row)))]
-    (render-file "swirls/suggestion-email.html" values)))
+    (email-body "swirls/suggestion-email.html" values)))
 
 (defn send-unsent-suggestions []
   (try
