@@ -11,26 +11,24 @@
 <form method="POST" action="/register">
     {% csrf-field %}
 
-    <label>Username
-        <span class="validation-error">{{errors.username}}</span>
-        <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50" value="{{username}}">
-    </label>
+    <label for="username">Username</label>
+    <span class="validation-error">{{errors.username}}</span>
+    <input id="username" type="text" autocomplete="nickname" name="username" autofocus required maxlength="50"
+           value="{{username}}">
 
-    <label>Email
-        <span class="validation-error">{{errors.email}}</span>
-        <input type="email" autocomplete="email" name="email" required maxlength="100" value="{{email}}">
-    </label>
+    <label for="email">Email</label>
+    <span class="validation-error">{{errors.email}}</span>
+    <input id="email" type="email" autocomplete="email" name="email" required maxlength="100" value="{{email}}">
 
-    <label>Password:
-        <span class="validation-error">{{errors.password}}</span>
-        <input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-               name="password" value="{{password}}">
-    </label>
-    <label>Confirm Password:
-        <span class="validation-error">{{errors.confirmPassword}}</span>
-        <input type="password" required name="confirmPassword" value="{{confirmPassword}}"
-               title="Please enter the same Password as above">
-    </label>
+    <label for="password">Password</label>
+    <span class="validation-error">{{errors.password}}</span>
+    <input id="password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+           name="password" value="{{password}}">
+
+    <label for="confirmPassword">Confirm Password</label>
+    <span class="validation-error">{{errors.confirmPassword}}</span>
+    <input id="confirmPassword" type="password" required name="confirmPassword" value="{{confirmPassword}}"
+           title="Please enter the same Password as above">
 
     <input type="submit" value="Register">
 

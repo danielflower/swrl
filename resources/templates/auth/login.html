@@ -11,15 +11,13 @@
 <form method="POST" action="/login">
     {% csrf-field %}
 
-    <label>Username
-        <input type="text" autocomplete="nickname" name="username" autofocus required maxlength="50"
+    <label for="username">Username</label>
+        <input id="username" type="text" autocomplete="nickname" name="username" autofocus required maxlength="50"
                 value="{{username}}">
-    </label>
 
-    <label>Password:
-        <input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+    <label for="password">Password</label>
+        <input id="password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
                name="password">
-    </label>
     <p><a href="/forgot-password?username={{ username|default:""|urlescape }}">Forgot your password? Click here.</a></p>
 
     <label>

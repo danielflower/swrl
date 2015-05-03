@@ -73,12 +73,17 @@
               (log/error "Error while registering user" user e)
               (registration-page (assoc user :errors message)))))))))
 
+(defn create-forgotten-email-body [username token]
+  (yswrl.swirls.postman/email-body "auth/password-reset-email.html" { :username username :token token }))
+
 (defn request-password-reset-email [usernameOrEmail]
   (let [user (first (users/get-users-by-username_or_email [usernameOrEmail]))]
     (if user
-      (let [hashed-code (hashers/encrypt (str (java.util.UUID/randomUUID)) {:algorithm :sha256 :salt "salthylskjdflaskjdfkl"})
-            request (users/create-password-reset-request (:id user) hashed-code)]
-        (forgot-password-page usernameOrEmail "Something went wrong"))
+      (let [unhashed-token (str (java.util.UUID/randomUUID))
+            hashed-token (hashers/encrypt unhashed-token {:algorithm :sha256 :salt "salthylskjdflaskjdfkl"})
+            row (users/create-password-reset-request (:id user) hashed-token)]
+        (yswrl.swirls.postman/send-email [{:email (:email user) :name (:username user)}] "Password reset request" (create-forgotten-email-body (user :username) unhashed-token))
+        (redirect "forgot-password-sent"))
       (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 
 (defroutes auth-routes

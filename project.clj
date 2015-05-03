@@ -59,7 +59,7 @@
    :dev {:dependencies [[ring-mock "0.1.5"]
                         [ring/ring-devel "1.3.2"]
                         [pjstadig/humane-test-output "0.7.0"]
-                        [kerodon "0.6.0-SNAPSHOT"]]
+                        [kerodon "0.5.0"]]
          :source-paths ["env/dev/clj"]
 
 

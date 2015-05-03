@@ -9,3 +9,6 @@
 
 (defn user [username]
   (str base-url "/swirls/by/" (url-encode username)))
+
+(defn password-reset [token]
+  (str base-url "/reset-password?token=" (url-encode token)))

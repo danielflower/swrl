@@ -14,6 +14,7 @@
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 (filters/add-filter! :swirlurl links/swirl)
+(filters/add-filter! :passwordreseturl links/password-reset)
 
 (deftype RenderableTemplate [template params]
   Renderable
