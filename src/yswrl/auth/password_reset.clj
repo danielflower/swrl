@@ -7,11 +7,12 @@
             [clojure.string :refer [trim]]
             [ring.util.response :refer [redirect response]]
             [yswrl.swirls.postman :as postman]
-            [yswrl.db :as db]))
+            [yswrl.db :as db]
+            [yswrl.constraints :refer [max-length]]))
 (use 'korma.core)
 
 (defn forgot-password-page [usernameOrEmail error]
-  (layout/render "auth/forgot-password.html" {:usernameOrEmail usernameOrEmail :error error}))
+  (layout/render "auth/forgot-password.html" {:usernameOrEmail usernameOrEmail :error error :maxUsernameOrEmailLength (max (max-length :users :email) (max-length :users :username))}))
 
 (defn forgot-password-sent-page []
   (layout/render "auth/forgot-password-sent.html"))

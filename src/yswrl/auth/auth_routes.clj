@@ -7,14 +7,15 @@
             [buddy.hashers :as hashers]
             [yswrl.auth.auth-repo :as users]
             [clojure.string :refer [trim]]
-            [ring.util.response :refer [redirect response]]))
+            [ring.util.response :refer [redirect response]]
+            [yswrl.constraints :refer [max-length]]))
 
 
 (defn registration-page [map]
-  (layout/render "auth/register.html" map))
+  (layout/render "auth/register.html" (assoc map :max-username-length (max-length :users :username) :max-email-length (max-length :users :email))))
 
 (defn login-page [& {:keys [username error]}]
-  (layout/render "auth/login.html" {:username username :error error}))
+  (layout/render "auth/login.html" {:username username :error error :max-username-length (max-length :users :username)}))
 
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
@@ -55,8 +56,8 @@
   (hashers/encrypt unhashed))
 
 (defn handle-registration [user req]
-  (let [errors (first (b/validate user {:username        [v/required [v/max-count 50]]
-                                        :email           [v/required [v/max-count 100] [v/email :message "Please enter a valid email address"]]
+  (let [errors (first (b/validate user {:username        [v/required [v/max-count (max-length :users :username)]]
+                                        :email           [v/required [v/max-count (max-length :users :email)] [v/email :message "Please enter a valid email address"]]
                                         :password        [v/required [v/min-count 8]]
                                         :confirmPassword [v/required [(fn [confirmed] (= confirmed (user :password))) :message "Your passwords did not match"]]}))]
     (if errors
