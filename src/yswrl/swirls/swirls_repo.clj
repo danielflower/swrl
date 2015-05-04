@@ -75,3 +75,14 @@
 (defn get-swirls-authored-by [userId]
   (select db/swirls
           (where {:author_id userId})))
+
+
+(defn get-swirls-for [userId swirl-count skip]
+  (select db/swirls
+          (fields :creation_date, :review, :title, :id, :users.username)
+          (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
+          (join :inner db/users (= :swirls.author_id :users.id))
+          (where {:suggestions.recipient_id userId})
+          (offset skip)
+          (limit swirl-count)
+          (order :creation_date :asc)))

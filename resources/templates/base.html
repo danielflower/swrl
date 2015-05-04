@@ -13,6 +13,8 @@
     <ul>
         <li><a href="/">Home</a></li>
 
+        <li><a href="/swirls/inbox">Inbox</a></li>
+
         {% if user %}
 
         <li>Welcome, <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a></li>

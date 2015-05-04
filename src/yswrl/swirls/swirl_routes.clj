@@ -17,6 +17,13 @@
     (send-unsent-suggestions)
     (redirect (str "/swirls/" (:id swirl)))))
 
+(defn view-inbox [count current-user]
+  (let [userId (:id current-user)
+        swirls (repo/get-swirls-for userId 20 count)]
+    (println userId)
+    (layout/render "swirls/firehose.html" {:pageTitle (str "Inbox") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+
+
 (def not-nil? (complement nil?))
 
 (defn view-swirl-page [id current-user]
@@ -58,4 +65,6 @@
            (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
            (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
-           (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName)))
+           (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
+           (GET "/swirls/inbox" [:as req] (view-inbox 0 (session-from req)))
+           (GET "/swirls/inbox/:count{[0-9]+}" [:as req] (view-inbox count (session-from req))))
