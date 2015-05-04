@@ -1,8 +1,6 @@
 html,
 body {
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     height: 100%;
-    padding-top: 40px;
 }
 strong, b {
     font-weight: bold;
@@ -30,4 +28,25 @@ strong, b {
 
 td.response {
     font-weight: bold;
+}
+nav{
+    padding-bottom: 30px;
+    border-bottom: 2px solid #999;
+}
+nav ul{
+    margin: 0px;
+    text-align: left;
+}
+nav ul li{
+    display: inline;
+    list-style-type: none;
+    padding-right: 5px;
+}
+.row{
+    padding-bottom: 30px;
+
+}
+
+.right{
+    text-align: right;
 }

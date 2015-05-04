@@ -4,44 +4,54 @@
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Hey! You should read-watch-listen!</title>
 
-    <link href="/immutable/css/tacit-0.3.6.min.css" rel="stylesheet" type="text/css" />
-    <link href="/css/screen.css" rel="stylesheet" type="text/css" />
+    <link href="/immutable/css/skeleton.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/screen.css" rel="stylesheet" type="text/css"/>
 
 </head>
 <body>
-<nav>
-    <ul>
-        <li><a href="/">Home</a></li>
-
-        <li><a href="/swirls/inbox">Inbox</a></li>
-
-        {% if user %}
-
-        <li>Welcome, <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a></li>
-
-        <li><a href="/swirls/create">Create</a></li>
-
-        <li><a href="/logout">Log out</a></li>
-
-        {% else %}
-
-        <li><a href="/register">Register</a></li>
-        <li><a href="/login">Login</a></li>
-
-        {% endif %}
+<div class="container">
+    <div class="row">
+        <nav>
+            <div class="six columns">
+                <ul>
+                    <li>SWIRL</li>
+                    <li><a href="/swirls">Firehose</a></li>
 
 
+                    {% if user %}
 
-    </ul>
-</nav>
+                    <li><a href="/swirls/inbox">Inbox</a></li>
 
-<main>
-    {% block content %}
-    {% endblock %}
-</main>
+                    <li><a href="/swirls/create">Create</a></li>
 
-<script src="/immutable/js/jquery-2.1.3.min.js"></script>
-<script src="/js/app.js"></script>
+                    {% else %}
+
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/login">Login</a></li>
+
+                    {% endif %}
+
+
+                </ul>
+            </div>
+            <div class="six columns right">
+                {% if user %}
+                Welcome, <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">Log out</a>
+                {% endif %}
+            </div>
+        </nav>
+
+    </div>
+
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script src="/immutable/js/jquery-2.1.3.min.js"></script>
+    <script src="/js/app.js"></script>
+</div>
 </body>
 </html>
 

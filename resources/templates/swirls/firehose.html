@@ -22,7 +22,9 @@
 {% endfor %}
 </ul>
 {% if countFrom = 20 %}<a href="/swirls/from/{{ countFrom|add:-20 }}">&lt; Previous 20 swirls</a>
-{% endif %} |
+{% endif %}
+
+{% if all (countFrom = 20)  (swirls|length = 20) %}|{% endif %}
 
 {% if swirls|length = 20 %}
 <a href="/swirls/from/{{countTo}}">Next 20 swirls &gt;</a>
