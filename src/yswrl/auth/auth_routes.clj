@@ -3,7 +3,7 @@
             [compojure.core :refer [defroutes GET POST]]
             [bouncer.core :as b]
             [bouncer.validators :as v]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [buddy.hashers :as hashers]
             [yswrl.auth.auth-repo :as users]
             [clojure.string :refer [trim]]

@@ -3,12 +3,13 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
 
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.slf4j/slf4j-api "1.7.12"]
+                 [ch.qos.logback/logback-classic "1.1.3"]
+                 [org.slf4j/log4j-over-slf4j "1.7.12"]
+                 [org.clojure/tools.logging "0.3.1"]
+                 [org.clojure/clojure "1.6.0"]
                  [ring-server "0.4.0"]
                  [selmer "0.8.2"]
-                 [com.taoensso/timbre "3.4.0"]
-                 [com.taoensso/tower "3.0.2"]
-                 [markdown-clj "0.9.65"]
                  [clj-time "0.8.0"]
                  [clj-mandrill "0.1.0"]
                  [environ "1.0.0"]

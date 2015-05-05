@@ -1,5 +1,5 @@
 (ns yswrl.swirls.postman
-  (:require [taoensso.timbre :as timbre]))
+  (:require [clojure.tools.logging :as log]))
 (use 'clj-mandrill.core)
 (use 'selmer.parser)
 
@@ -13,7 +13,7 @@
           key (System/getenv env-var-name)]
       (if (clojure.string/blank? key)
         (do
-          (timbre/warn "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
+          (log/warn "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
           [{:email "", :status "error", :reject_reason "Mandrill not configured"}])
         (do
           (alter-var-root #'clj-mandrill.core/*mandrill-api-key* (constantly key))

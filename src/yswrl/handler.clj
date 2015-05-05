@@ -8,7 +8,7 @@
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
             [compojure.route :as route]
-            [taoensso.timbre :as timbre]
+            [clojure.tools.logging :as log]
             [selmer.parser :as parser]
             [environ.core :refer [env]]
             [cronj.core :as cronj]))
@@ -37,16 +37,16 @@
 
   (if (env :dev) (parser/cache-off!))
   (cronj/start! send-unsent-suggestions-job)
-  (timbre/info "\n-=[ yswrl started successfully"
+  (log/info "\n-=[ yswrl started successfully"
                (when (env :dev) "using the development profile") "]=-"))
 
 (defn destroy
   "destroy will be called when your application
    shuts down, put any clean up code here"
   []
-  (timbre/info "yswrl is shutting down...")
+  (log/info "yswrl is shutting down...")
   (cronj/shutdown! send-unsent-suggestions-job)
-  (timbre/info "shutdown complete!"))
+  (log/info "shutdown complete!"))
 
 (def app
   (-> (routes

@@ -2,7 +2,7 @@
   (:require [yswrl.db :as db]
             [yswrl.swirls.postman :refer [send-email email-body]]
             [cronj.core :refer [cronj]]
-            [taoensso.timbre :as timbre]))
+            [clojure.tools.logging :as log]))
 (use 'korma.core)
 
 ; Checks the suggestions table and emails any outstanding suggestions
@@ -38,15 +38,15 @@ WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason
 (defn send-unsent-suggestions []
   (try
     (let [unsent (get-unsent)]
-      (timbre/info "Suggestion emailer processing" (count unsent) "suggestions")
+      (log/info "Suggestion emailer processing" (count unsent) "suggestions")
       (doseq [row unsent]
-        (timbre/info "About to process" row)
+        (log/info "About to process" row)
         (let [[response]
               (send-email [{:email (:recipient_email row) :name (:recipient_email row)}] (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))
             (mark-suggestion-sent (:suggestion_id row) (:_id response))
             (mark-suggestion-failed (:suggestion_id row) (str (:status response) " " (:reject_reason response)))))))
-    (catch Exception e (timbre/error "Error sending suggestions" e))))
+    (catch Exception e (log/error "Error sending suggestions" e))))
 
 (def send-unsent-suggestions-job
   (cronj

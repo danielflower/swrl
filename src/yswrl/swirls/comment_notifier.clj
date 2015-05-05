@@ -2,7 +2,7 @@
   (:require [yswrl.db :as db]
             [yswrl.swirls.postman :as postman]
             [cronj.core :refer [cronj]]
-            [taoensso.timbre :as timbre]
+            [clojure.tools.logging :as log]
             [yswrl.swirls.swirls-repo :as repo]))
 (use 'korma.core)
 
@@ -22,12 +22,12 @@ AND id != ?" (:swirl_id comment) (:swirl_id comment) (:author_id comment)))
   (try
     (let [emails (email-addresses-of-swirl-author-and-commentors-excluding-current-comment-author comment)]
       (if (empty? emails)
-        (timbre/info "There is no one to email for" comment)
+        (log/info "There is no one to email for" comment)
         (do
-          (timbre/info "Going to email" comment "to" emails)
+          (log/info "Going to email" comment "to" emails)
           (let [swirl (repo/get-swirl (:swirl_id comment))
                 subject (str "New comment on " (:title swirl))
                 body (coment-notification-email-html swirl comment)
                 to (map (fn [row] {:email (:email row) :name (:email row)}) emails)]
             (postman/send-email to subject body)))))
-    (catch Exception e (timbre/error "Error sending comments email" e))))
+    (catch Exception e (log/error "Error sending comments email" e))))

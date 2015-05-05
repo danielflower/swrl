@@ -1,7 +1,6 @@
 (ns yswrl.layout
   (:require [selmer.parser :as parser]
             [selmer.filters :as filters]
-            [markdown.core :refer [md-to-html-string]]
             [ring.util.response :refer [content-type response]]
             [compojure.response :refer [Renderable]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
@@ -13,7 +12,6 @@
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
-(filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 (filters/add-filter! :swirlurl links/swirl)
 (filters/add-filter! :passwordreseturl links/password-reset)
 
