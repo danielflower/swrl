@@ -13,12 +13,12 @@
 
     <label for="username">Username</label>
     <span class="validation-error">{{errors.username}}</span>
-    <input id="username" type="text" autocomplete="nickname" name="username" autofocus required maxlength="{{max-username-length}}"
+    <input id="username" type="text" autocomplete="nickname" name="username" autofocus required maxlength="{{constraints.users.username.max-length}}"
            value="{{username}}">
 
     <label for="email">Email</label>
     <span class="validation-error">{{errors.email}}</span>
-    <input id="email" type="email" autocomplete="email" name="email" required maxlength="{{max-email-length}}" value="{{email}}">
+    <input id="email" type="email" autocomplete="email" name="email" required maxlength="{{constraints.users.email.max-length}}" value="{{email}}">
 
     <label for="password">Password</label>
     <span class="validation-error">{{errors.password}}</span>

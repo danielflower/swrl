@@ -12,7 +12,8 @@
     {% csrf-field %}
 
     <label for="username">Username</label>
-        <input id="username" type="text" autocomplete="nickname" name="username" autofocus required maxlength="{{max-username-length}}"
+        <input id="username" type="text" autocomplete="nickname" name="username" autofocus required
+               maxlength="{{constraints.users.username.max-length}}"
                 value="{{username}}">
 
     <label for="password">Password</label>

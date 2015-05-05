@@ -7,6 +7,7 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [environ.core :refer [env]]
+            [yswrl.constraints :refer [constraints]]
             [yswrl.links :as links]))
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
@@ -25,6 +26,7 @@
              :dev (env :dev)
              :csrf-token *anti-forgery-token*
              :user (get(get request :session) :user)
+             :constraints constraints
              )
            (parser/render-file (str template))
            response)

@@ -12,10 +12,10 @@
 
 
 (defn registration-page [map]
-  (layout/render "auth/register.html" (assoc map :max-username-length (max-length :users :username) :max-email-length (max-length :users :email))))
+  (layout/render "auth/register.html" map))
 
 (defn login-page [& {:keys [username error]}]
-  (layout/render "auth/login.html" {:username username :error error :max-username-length (max-length :users :username)}))
+  (layout/render "auth/login.html" {:username username :error error}))
 
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
