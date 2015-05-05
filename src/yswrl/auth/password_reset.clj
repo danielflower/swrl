@@ -43,7 +43,7 @@
       (let [token (create-reset-token)]
         (create-password-reset-request (:id user) (:hashed token))
         (postman/send-email [{:email (:email user) :name (:username user)}] "Password reset request" (create-forgotten-email-body (user :username) (:unhashed token)))
-        (redirect "forgot-password-sent"))
+        (redirect "/forgot-password-sent"))
       (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 
 (defn over-a-day-old [utc-date-time]
@@ -59,10 +59,9 @@
         (delete db/password_reset_requests (where {:user_id (user :id)}))
         (attempt-login (:username user) new-password false req)))))
 
-
 (defroutes password-reset-routes
-           (GET "/forgot-password" [_] (forgot-password-page "" nil))
-           (POST "/request-password-reset-email" [usernameOrEmail] (request-password-reset-email usernameOrEmail))
+           (GET "/forgot-password" [username] (forgot-password-page username nil))
+           (POST "/forgot-password" [usernameOrEmail] (request-password-reset-email usernameOrEmail))
            (GET "/forgot-password-sent" [_] (forgot-password-sent-page))
            (GET "/reset-password" [token] (reset-password-page token nil))
            (POST "/reset-password" [token newPassword :as req] (handle-reset-password token newPassword req)))
