@@ -25,6 +25,9 @@
 (defentity comments (database db))
 (defentity password_reset_requests (database db))
 
+(defn execute [sql & args]
+  (exec-raw db [sql args]))
+
 (defn query [sql & args]
   (exec-raw db [sql args] :results))
 

@@ -8,6 +8,8 @@
             [ring.util.response :refer [redirect response]]
             [yswrl.swirls.postman :as postman]
             [yswrl.db :as db]
+            [clj-time.core :as t]
+            [clj-time.coerce :as coerce]
             [yswrl.constraints :refer [max-length]]))
 (use 'korma.core)
 
@@ -44,12 +46,19 @@
         (redirect "forgot-password-sent"))
       (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 
+(defn over-a-day-old [utc-date-time]
+  (let [one-day-ago (t/minus (t/now) (t/hours 24))]
+    (t/before? utc-date-time one-day-ago)))
+
 (defn handle-reset-password [unhashed-token new-password req]
-  (if-let [result (first (select db/password_reset_requests (where {:hashed_token (hash-token unhashed-token)})))]
-    (let [user (users/get-user-by-id (:user_id result))]
-      (users/change-password (:user_id result) (hash-password new-password))
-      (attempt-login (:username user) new-password false req))
-    (reset-password-page nil "Sorry, that request was invalid. Please go to the login page and request a new password reset.")))
+  (let [result (first (select db/password_reset_requests (where {:hashed_token (hash-token unhashed-token)})))]
+    (if (or (nil? result) (over-a-day-old (coerce/from-sql-time (result :date_requested))))
+      (reset-password-page nil "Sorry, that request was invalid. Please go to the login page and request a new password reset.")
+      (let [user (users/get-user-by-id (:user_id result))]
+        (users/change-password (:user_id result) (hash-password new-password))
+        (delete db/password_reset_requests (where {:user_id (user :id)}))
+        (attempt-login (:username user) new-password false req)))))
+
 
 (defroutes password-reset-routes
            (GET "/forgot-password" [_] (forgot-password-page "" nil))
