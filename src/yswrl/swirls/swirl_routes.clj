@@ -57,8 +57,12 @@
 
 
 (defn handle-comment [swirl-id comment-content author]
-  (let [comment (repo/create-comment swirl-id comment-content author)]
+  (let [swirl (repo/get-swirl swirl-id)
+        comment (repo/create-comment swirl-id comment-content author)]
     (send-comment-notification-emails comment)
+    (if (not= (swirl :author_id) (author :id))
+      (do (network/store (swirl :author_id) :knows (author :id))
+          (network/store (author :id) :knows (swirl :author_id))))
     (redirect (str "/swirls/" swirl-id))))
 
 (defroutes swirl-routes
