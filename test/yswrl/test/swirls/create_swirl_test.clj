@@ -5,7 +5,7 @@
             [yswrl.db :as db])
   (:use clojure.test))
 
-(deftest networking
+(deftest create-swirl
 
   (let [author (create-test-user)
         friend (create-test-user)]
@@ -18,7 +18,8 @@
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
         (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_email = ? AND recipient_id IS NULL", (created :id) "someoneelse@example.org"))
         (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_id = ? AND recipient_email IS NULL", (created :id) (friend :id)))
-        (is (= (networking/get-relations (author :id) :knows) [(friend :id)]))
+        (is (= (networking/get-relations (author :id) :knows) [(user-to-relation friend)]))
+        (is (= (networking/get-relations (friend :id) :knows) [(user-to-relation author)]))
 
         ))
 

@@ -11,3 +11,6 @@
         req {}
         response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req {:algorithm :sha256})]
     (:user (:session response))))
+
+(defn user-to-relation [user]
+  {:user-id (user :id) :username (user :username)})
