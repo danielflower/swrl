@@ -10,6 +10,7 @@
             [ring.util.response :refer [redirect response]]
             [yswrl.constraints :refer [max-length]]))
 
+(def password-hash-options {:algorithm :bcrypt+sha512 })
 
 (defn registration-page [map]
   (layout/render "auth/register.html" map))
@@ -52,10 +53,10 @@
     (login-success user remember-me? req)
     (login-page :username username :error true)))
 
-(defn hash-password [unhashed]
-  (hashers/encrypt unhashed))
+(defn hash-password [unhashed options]
+  (hashers/encrypt unhashed options))
 
-(defn handle-registration [user req]
+(defn handle-registration [user req hash-options]
   (let [errors (first (b/validate user {:username        [v/required [v/max-count (max-length :users :username)]]
                                         :email           [v/required [v/max-count (max-length :users :email)] [v/email :message "Please enter a valid email address"]]
                                         :password        [v/required [v/min-count 8]]
@@ -66,7 +67,7 @@
         (registration-page (assoc user :errors errors)))
       (do
         (try
-          (users/create-user (user :username) (user :email) (hash-password (user :password)))
+          (users/create-user (user :username) (user :email) (hash-password (user :password) hash-options))
           (attempt-login (user :username) (user :password) false req)
           (catch Exception e
             (let [message (cond
@@ -86,5 +87,4 @@
 
            (GET "/register" [_] (registration-page nil))
            (POST "/register" [username email password confirmPassword :as req]
-             (handle-registration {:username (trim username) :email (trim email) :password password :confirmPassword confirmPassword} req))
-           )
+             (handle-registration {:username (trim username) :email (trim email) :password password :confirmPassword confirmPassword} req password-hash-options)))

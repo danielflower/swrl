@@ -15,7 +15,7 @@
         email (str username "@example.org")
         password "Abcd1234"
         req {}
-        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req)
+        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req {:algorithm :sha256})
         user (:user (:session response))
         user-id (:id user)]
 
@@ -29,15 +29,15 @@
             token (pr/create-reset-token)]
         (is (nil? failed-attempt))
         (pr/create-password-reset-request user-id (:hashed token))
-        (pr/handle-reset-password (:unhashed token) "HelloWorld" {})
+        (pr/handle-reset-password (:unhashed token) "HelloWorld" {} {:algorithm :sha256})
         (let [successful-attempt (auth/get-user-by-name-and-password username "HelloWorld")]
           (is (= user-id (:id successful-attempt))))))
 
     (testing "used tokens cannot be re-used"
       (let [token (pr/create-reset-token)
             _ (pr/create-password-reset-request user-id (:hashed token))
-            _ (pr/handle-reset-password (:unhashed token) "HelloWorld" {})
-            _ (pr/handle-reset-password (:unhashed token) "WontBeChanged" {})
+            _ (pr/handle-reset-password (:unhashed token) "HelloWorld" {} {:algorithm :sha256})
+            _ (pr/handle-reset-password (:unhashed token) "WontBeChanged" {} {:algorithm :sha256})
             successful-attempt (auth/get-user-by-name-and-password username "HelloWorld")]
         (is (= user-id (:id successful-attempt)))))
 
@@ -45,7 +45,7 @@
       (let [token (pr/create-reset-token)]
         (pr/create-password-reset-request user-id (:hashed token))
         (db/execute "UPDATE password_reset_requests SET date_requested = date_requested + INTERVAL '-25 hours' WHERE hashed_token = ?", (:hashed token))
-        (pr/handle-reset-password (:unhashed token) "HelloWorldo" {})
+        (pr/handle-reset-password (:unhashed token) "HelloWorldo" {} {:algorithm :sha256})
         (is (nil? (auth/get-user-by-name-and-password username "HelloWorldo"))))))
 
   (testing "Token hashing is determinstic"
