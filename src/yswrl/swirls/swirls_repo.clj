@@ -40,12 +40,13 @@
 (defn create-swirl [authorId title review recipientNames]
   (transaction
     (let [swirl (insert db/swirls
-                        (values {:author_id authorId :title title :review review}))
-          suggestions (create-suggestions recipientNames (:id swirl))
-          recipient-ids (map #(% :recipient_id) (filter #(and (not (nil? (% :recipient_id))) (not= (% :recipient_id) authorId)) suggestions))]
-      (insert db/suggestions (values suggestions))
-      (networking/store-multiple authorId :knows recipient-ids)
-      (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows authorId))
+                        (values {:author_id authorId :title title :review review}))]
+      (if (not-empty recipientNames)
+        (let [suggestions (create-suggestions recipientNames (:id swirl))
+              recipient-ids (map #(% :recipient_id) (filter #(and (not (nil? (% :recipient_id))) (not= (% :recipient_id) authorId)) suggestions))]
+          (insert db/suggestions (values suggestions))
+          (networking/store-multiple authorId :knows recipient-ids)
+          (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows authorId))))
       swirl)))
 
 

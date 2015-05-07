@@ -14,3 +14,6 @@
 
 (defn user-to-relation [user]
   {:user-id (user :id) :username (user :username)})
+
+(defn equal-ignoring-order? [& colls]
+  (apply = (map frequencies colls)))

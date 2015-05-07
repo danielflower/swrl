@@ -12,7 +12,7 @@
 
     (testing "A user can create a swirl and selected users will be included"
       (let [
-            created (repo/create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [ (friend :username) "someoneelse@example.org" ])
+            created (repo/create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) "someoneelse@example.org"])
             retrieved (repo/get-swirl (created :id))]
         (is (= (retrieved :title) "Some thing"))
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
@@ -22,5 +22,9 @@
         (is (= (networking/get-relations (friend :id) :knows) [(user-to-relation author)]))
 
         ))
+
+    (testing "Adding the same users again causes no issues"
+      (repo/create-swirl (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"])
+      (repo/create-swirl (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"]))
 
     ))

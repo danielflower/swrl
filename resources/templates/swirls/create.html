@@ -13,11 +13,15 @@
     {% csrf-field %}
 
     <label>Hey
-        <input type="text" name="who" maxlength="1000" placeholder="anyone" value="{{who}}">
+        {% for friend in contacts %}
+        <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
+        {% endfor %}
+        <input type="text" name="emails" maxlength="1000" placeholder="username or emails" value="{{who}}">
     </label>
 
     <label>You should watch or read or listen to
-        <input type="text" name="subject" required maxlength="200" value="{{subject}}"
+        <input type="text" name="subject" required maxlength="{{ constraints.swirls.title.max-length }}"
+               value="{{subject}}"
                placeholder="Title of a movie, book, song, album, etc">
     </label>
 

@@ -1,18 +1,22 @@
 (ns yswrl.swirls.swirl-routes
   (:require [yswrl.layout :as layout]
             [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.user.networking :as network]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
             [yswrl.swirls.comment-notifier :refer [send-comment-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [redirect response not-found]]))
 
-(defn create-swirl-page [who subject review error]
-  (layout/render "swirls/create.html" {:who who :subject subject :review review :error error}))
+(defn create-swirl-page [author who subject review error]
+  (let [contacts (network/get-relations (author :id) :knows)]
+    (layout/render "swirls/create.html" {:who who :subject subject :review review :contacts contacts :error error})))
 
-(defn handle-create-swirl [who subject review current-user]
+(defn handle-create-swirl [who emails subject review current-user]
   (let [authorId (:id current-user)
-        namesOrEmails (map (fn [x] (clojure.string/trim x)) (clojure.string/split who #","))
+        emails (map clojure.string/trim (clojure.string/split emails #"[,;]"))
+        namesOrEmails (filter (complement clojure.string/blank?) (distinct (concat (or who []) emails)))
+        _ (println "Creating for" namesOrEmails)
         swirl (repo/create-swirl authorId subject review namesOrEmails)]
     (send-unsent-suggestions)
     (redirect (str "/swirls/" (:id swirl)))))
@@ -58,8 +62,8 @@
     (redirect (str "/swirls/" swirl-id))))
 
 (defroutes swirl-routes
-           (GET "/swirls/create" [_] (create-swirl-page "" "" "" nil))
-           (POST "/swirls/create" [who subject review :as req] (handle-create-swirl who subject review (session-from req)))
+           (GET "/swirls/create" [:as req] (create-swirl-page (session-from req) "" "" "" nil))
+           (POST "/swirls/create" [who emails subject review :as req] (handle-create-swirl (if (vector? who) who [who]) emails subject review (session-from req)))
            (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
            (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
