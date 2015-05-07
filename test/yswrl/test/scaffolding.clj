@@ -1,6 +1,5 @@
 (ns yswrl.test.scaffolding
-  (:require [yswrl.test.html-assert :refer :all]
-            [yswrl.auth.auth-routes :as auth])
+  (:require [yswrl.auth.auth-routes :as auth])
   (:use clojure.test))
 
 (defn now [] (System/currentTimeMillis))

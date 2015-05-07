@@ -1,6 +1,5 @@
 (ns yswrl.test.user.networking-test
-  (:require [yswrl.test.html-assert :refer :all]
-            [yswrl.test.scaffolding :refer :all]
+  (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.user.networking :as networking])
   (:use clojure.test))
 

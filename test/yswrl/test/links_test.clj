@@ -14,6 +14,3 @@
   (testing "user links"
     (let [url (links/user "Dan & / co")]
       (is (= "http://www.youshouldwatchreadlisten.com/swirls/by/Dan+%26+%2F+co" url)))))
-
-
-

@@ -1,6 +1,5 @@
 (ns yswrl.test.auth.password_reset_test
-  (:require [yswrl.test.html-assert :refer :all]
-            [yswrl.test.scaffolding :refer :all]
+  (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.auth.password-reset :as pr]
             [yswrl.auth.auth-routes :as auth]
             [yswrl.db :as db])
