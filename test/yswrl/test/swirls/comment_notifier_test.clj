@@ -1,4 +1,4 @@
-(ns yswrl.swirls.comment-notifier-test
+(ns yswrl.test.swirls.comment-notifier-test
   (:use clojure.test)
   (:require [yswrl.swirls.comment-notifier :as cn]))
 

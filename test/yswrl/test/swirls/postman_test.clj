@@ -1,4 +1,4 @@
-(ns yswrl.swirls.postman-test
+(ns yswrl.test.swirls.postman-test
   (:use clojure.test)
   (:require [yswrl.swirls.postman :as postman]))
 

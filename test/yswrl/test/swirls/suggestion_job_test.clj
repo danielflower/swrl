@@ -1,4 +1,4 @@
-(ns yswrl.swirls.suggestion-job-test
+(ns yswrl.test.swirls.suggestion-job-test
   (:use clojure.test)
   (:require [yswrl.swirls.suggestion-job :as sug]))
 
