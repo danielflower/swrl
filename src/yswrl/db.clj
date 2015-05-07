@@ -34,3 +34,6 @@
 
 (defn query-single [sql & args]
   (first (apply query sql args)))
+
+(defn exists? [sql & args]
+  (> (count (apply query sql args)), 0))
