@@ -37,7 +37,7 @@
 
   (if (env :dev) (parser/cache-off!))
   (cronj/start! send-unsent-suggestions-job)
-  (log/info "\n-=[ yswrl started successfully"
+  (log/info "-=[ yswrl started successfully"
                (when (env :dev) "using the development profile") "]=-"))
 
 (defn destroy
