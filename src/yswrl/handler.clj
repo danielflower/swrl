@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes routes]]
             [yswrl.home.home-routes :refer [home-routes]]
             [yswrl.auth.auth-routes :refer [auth-routes]]
+            [yswrl.swirls.creation :refer [creation-routes]]
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
@@ -16,7 +17,7 @@
 (defn wrap-content-security-policy [handler]
   (fn [request]
     (if-let [response (handler request)]
-      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *"))))
+      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; child-src https://*.youtube.com http://*.youtube.com"))))
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
@@ -53,6 +54,7 @@
         (wrap-content-security-policy home-routes)
         (wrap-content-security-policy auth-routes)
         (wrap-content-security-policy swirl-routes)
+        (wrap-content-security-policy creation-routes)
         (wrap-content-security-policy password-reset-routes)
         base-routes)
       development-middleware

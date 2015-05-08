@@ -4,13 +4,13 @@
 
 (deftest links
   (testing "swirl URL creation"
-    (let [url (links/swirl 10)]
-      (is (= "http://www.youshouldwatchreadlisten.com/swirls/10" url))))
+    (is (= "/swirls/10" (links/swirl 10))))
 
   (testing "password reset link"
-    (let [url (links/password-reset "ADSF%&")]
-      (is (= "http://www.youshouldwatchreadlisten.com/reset-password?token=ADSF%25%26" url))))
+    (is (= "/reset-password?token=ADSF%25%26" (links/password-reset "ADSF%&"))))
 
   (testing "user links"
-    (let [url (links/user "Dan & / co")]
-      (is (= "http://www.youshouldwatchreadlisten.com/swirls/by/Dan+%26+%2F+co" url)))))
+    (is (= "/swirls/by/Dan+%26+%2F+co" (links/user "Dan & / co"))))
+
+  (testing "absolute URLs"
+    (is (= "http://www.youshouldwatchreadlisten.com/swirls/10" (links/absolute "/swirls/10")))))

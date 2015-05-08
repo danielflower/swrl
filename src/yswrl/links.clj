@@ -4,11 +4,17 @@
 
 (def base-url "http://www.youshouldwatchreadlisten.com")
 
+(defn absolute [relative]
+  (str base-url relative))
+
 (defn swirl [id]
-  (str base-url "/swirls/" id))
+  (str "/swirls/" id))
+
+(defn edit-swirl [id]
+  (str "/swirls/" id "/edit"))
 
 (defn user [username]
-  (str base-url "/swirls/by/" (url-encode username)))
+  (str "/swirls/by/" (url-encode username)))
 
 (defn password-reset [token]
-  (str base-url "/reset-password?token=" (url-encode token)))
+  (str "/reset-password?token=" (url-encode token)))

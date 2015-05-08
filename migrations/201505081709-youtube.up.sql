@@ -1,0 +1,2 @@
+ALTER TABLE swirls ADD COLUMN thumbnail_url VARCHAR NULL;
+ALTER TABLE swirls ADD COLUMN state CHAR(1) DEFAULT 'L';

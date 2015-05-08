@@ -12,6 +12,7 @@
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
+(filters/add-filter! :absoluteurl links/absolute)
 (filters/add-filter! :swirlurl links/swirl)
 (filters/add-filter! :passwordreseturl links/password-reset)
 

@@ -37,6 +37,10 @@
           (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
+(defn save-draft-swirl [author-id title review image-thumbnail]
+  (insert db/swirls
+          (values {:author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"})))
+
 (defn create-swirl [authorId title review recipientNames]
   (transaction
     (let [swirl (insert db/swirls
@@ -48,6 +52,22 @@
           (networking/store-multiple authorId :knows recipient-ids)
           (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows authorId))))
       swirl)))
+
+(defn publish-swirl
+  "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
+  swirl belonging to the author; otherwise false."
+  [swirl-id author-id title review recipientNames]
+  (transaction
+    (let [updated (update db/swirls
+                          (set-fields {:title title :review review :state "L"})
+                          (where {:id swirl-id :author_id author-id}))]
+      (if (not-empty recipientNames)
+        (let [suggestions (create-suggestions recipientNames swirl-id)
+              recipient-ids (map #(% :recipient_id) (filter #(and (not (nil? (% :recipient_id))) (not= (% :recipient_id) author-id)) suggestions))]
+          (insert db/suggestions (values suggestions))
+          (networking/store-multiple author-id :knows recipient-ids)
+          (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows author-id))))
+      (= updated 1))))
 
 
 (defn get-swirl [id]
