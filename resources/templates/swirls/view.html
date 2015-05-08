@@ -3,6 +3,18 @@
 
 <h1>You should consume {{swirl.title}}</h1>
 
+{% if can-edit %}
+
+<p class="swirl-admin-panel">
+    <a href="{{ swirl.id|swirlediturl }}">[edit this page]</a>
+</p>
+
+{% endif %}
+
+<article>
+    {{swirl.review|safe}}
+</article>
+
 <div class="responses">
     <form method="POST" action="/swirls/{{swirl.id}}/respond">
 
@@ -41,9 +53,6 @@
 
 </div>
 
-<article>
-    {{swirl.review|safe}}
-</article>
 
 <h2>Comments</h2>
 

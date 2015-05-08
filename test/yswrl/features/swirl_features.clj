@@ -18,6 +18,7 @@
 
 (defn save-url [session map key]
   (let [url (get-in session [:request :uri])]
+    (println key url)
     (swap! map (fn [old-val] (assoc old-val key url))))
   session)
 
@@ -49,6 +50,15 @@
           (within [:h1]
                   (has (text? "You should consume How to chop an ONION using CRYSTALS with Jamie Oliver")))
 
+          (follow "[edit this page]")
+          (fill-in "You should watch or read or listen to" "The onion video")
+          (press "Submit")
+          (follow-redirect)
+
+          (within [:h1]
+                  (has (text? "You should consume The onion video")))
+
+
           (follow "Log out")
           (follow-redirect)
 
@@ -58,7 +68,8 @@
           ; Other users can view the swirl....
           (visit (@test-state :view-swirl-uri))
           (within [:h1]
-                  (has (text? "You should consume How to chop an ONION using CRYSTALS with Jamie Oliver")))
+                  (has (text? "You should consume The onion video")))
+          (has (missing? [:.swirl-admin-panel]))
 
           ; ...but they can't edit the page
           (visit (@test-state :edit-swirl-uri))

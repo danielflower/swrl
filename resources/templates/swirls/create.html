@@ -9,7 +9,7 @@
 
 {% endif %}
 
-<form method="POST" action="/swirls/create">
+<form method="POST" action="{{ id|swirlediturl }}">
     {% csrf-field %}
 
     <label>Hey
@@ -19,11 +19,11 @@
         <input type="text" name="emails" maxlength="1000" placeholder="username or emails" value="{{who}}">
     </label>
 
-    <label>You should watch or read or listen to
-        <input type="text" name="subject" required maxlength="{{ constraints.swirls.title.max-length }}"
-               value="{{subject}}"
-               placeholder="Title of a movie, book, song, album, etc">
-    </label>
+    <label for="swirl-title">You should watch or read or listen to</label>
+    <input id="swirl-title" type="text" name="subject" required
+           maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
+           placeholder="Title of a movie, book, song, album, etc">
+
 
     <div class="rte">
         <textarea name="review">{{review}}</textarea>

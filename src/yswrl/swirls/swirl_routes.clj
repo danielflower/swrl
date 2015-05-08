@@ -13,7 +13,8 @@
     (if (not= (swirl :author_id) (author :id))
       nil
       (let [contacts (network/get-relations (author :id) :knows)]
-        (layout/render "swirls/create.html" {:subject  (swirl :title)
+        (layout/render "swirls/create.html" {:id swirl-id
+                                             :subject  (swirl :title)
                                              :review   (swirl :review)
                                              :contacts contacts})))))
 
@@ -43,8 +44,9 @@
   (if-let [swirl (repo/get-swirl id)]
     (let [responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          can-respond (and (not-nil? current-user) (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))]
-      (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond}))))
+          can-respond (and (not-nil? current-user) (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
+          can-edit (= (swirl :author_id) (current-user :id))]
+      (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond :can-edit can-edit}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]

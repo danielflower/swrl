@@ -14,6 +14,7 @@
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :absoluteurl links/absolute)
 (filters/add-filter! :swirlurl links/swirl)
+(filters/add-filter! :swirlediturl links/edit-swirl)
 (filters/add-filter! :img (fn [src] (if (nil? src) "" (str "<img src=\"" src "\">"))))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
