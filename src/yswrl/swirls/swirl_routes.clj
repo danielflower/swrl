@@ -18,19 +18,6 @@
                                              :review   (swirl :review)
                                              :contacts contacts})))))
 
-(defn create-swirl-page [author who subject review error]
-  (let [contacts (network/get-relations (author :id) :knows)]
-    (layout/render "swirls/create.html" {:who who :subject subject :review review :contacts contacts :error error})))
-
-(defn handle-create-swirl [who emails subject review current-user]
-  (let [authorId (:id current-user)
-        emails (map clojure.string/trim (clojure.string/split emails #"[,;]"))
-        namesOrEmails (filter (complement clojure.string/blank?) (distinct (concat (or who []) emails)))
-        _ (println "Creating for" namesOrEmails)
-        swirl (repo/create-swirl authorId subject review namesOrEmails)]
-    (send-unsent-suggestions)
-    (redirect (str "/swirls/" (:id swirl)))))
-
 (defn view-inbox [count current-user]
   (let [userId (:id current-user)
         swirls (repo/get-swirls-for userId 20 count)]
@@ -85,13 +72,8 @@
       nil)))
 
 (defroutes swirl-routes
-           (GET "/swirls/create" [:as req] (create-swirl-page (session-from req) "" "" "" nil))
-
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (edit-swirl-page (session-from req) (Integer/parseInt id)))
            (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (publish-swirl (session-from req) (Integer/parseInt id) who emails subject review))
-
-           (POST "/swirls/create" [who emails subject review :as req] (handle-create-swirl (if (vector? who) who [who]) emails subject review (session-from req)))
-
            (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
            (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))

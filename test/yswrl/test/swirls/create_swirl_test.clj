@@ -5,14 +5,14 @@
             [yswrl.db :as db])
   (:use clojure.test))
 
-(deftest create-swirl
+(deftest create-swirl-test
 
   (let [author (create-test-user)
         friend (create-test-user)]
 
     (testing "A user can create a swirl and selected users will be included"
       (let [
-            created (repo/create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) "someoneelse@example.org"])
+            created (create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) "someoneelse@example.org"])
             retrieved (repo/get-swirl (created :id))]
         (is (= (retrieved :title) "Some thing"))
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
@@ -24,7 +24,7 @@
         ))
 
     (testing "Adding the same users again causes no issues"
-      (repo/create-swirl (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"])
-      (repo/create-swirl (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"]))
+      (create-swirl (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"])
+      (create-swirl (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"]))
 
     ))

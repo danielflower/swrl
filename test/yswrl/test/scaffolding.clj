@@ -1,5 +1,6 @@
 (ns yswrl.test.scaffolding
-  (:require [yswrl.auth.auth-routes :as auth])
+  (:require [yswrl.auth.auth-routes :as auth]
+            [yswrl.swirls.swirls-repo :as swirls-repo])
   (:use clojure.test))
 
 (defn now [] (System/currentTimeMillis))
@@ -19,3 +20,8 @@
 
 (defn equal-ignoring-order? [& colls]
   (apply = (map frequencies colls)))
+
+(defn create-swirl [authorId title review recipientNames]
+  (let [swirl (swirls-repo/save-draft-swirl authorId title review nil)]
+    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames)
+    swirl))

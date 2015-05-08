@@ -1,5 +1,5 @@
 (ns yswrl.test.fake_data
-  (:require [yswrl.db :as db]
+  (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.swirls.swirls-repo :as swirl]
             [yswrl.auth.auth-repo :as user])
   )
@@ -85,6 +85,6 @@
 
 (defn createData []
   (for [x (range 30)]
-    (swirl/create-swirl (+ 1 (rand-int 9)) (nth books (rand-int (count books))) (nth reviews (rand-int (count reviews))) " ")
+    (create-swirl (+ 1 (rand-int 9)) (nth books (rand-int (count books))) (nth reviews (rand-int (count reviews))) " ")
     )
   )
