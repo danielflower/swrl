@@ -4,10 +4,12 @@
 
 (defn now [] (System/currentTimeMillis))
 
+(def test-user-password "Abcd1234")
+
 (defn create-test-user []
   (let [username (str "test-user-" (now))
         email (str username "@example.org")
-        password "Abcd1234"
+        password test-user-password
         req {}
         response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req {:algorithm :sha256})]
     (:user (:session response))))

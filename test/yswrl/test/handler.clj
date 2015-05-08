@@ -7,7 +7,7 @@
   (testing "main route"
     (let [response (app (request :get "/"))]
       (is (= 200 (:status response)))
-      (is (= "default-src 'self'; img-src *" ((:headers response) "Content-Security-Policy")))
+      (is (= "default-src 'self'; img-src *; child-src https://*.youtube.com http://*.youtube.com" ((:headers response) "Content-Security-Policy")))
       (is (= nil ((:headers response) "Cache-Control")))))
 
   (testing "immutable folder likes big caches and you know it can't lie"

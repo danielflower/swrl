@@ -6,15 +6,16 @@
             [yswrl.swirls.comment-notifier :refer [send-comment-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
-            [ring.util.response :refer [redirect response not-found]]))
+            [ring.util.response :refer [status redirect response not-found]]))
 
 (defn edit-swirl-page [author swirl-id]
-  (let [contacts (network/get-relations (author :id) :knows)
-        swirl (repo/get-swirl swirl-id)]
-    (layout/render "swirls/create.html" {:subject  (swirl :title)
-                                         :review   (swirl :review)
-                                         :contacts contacts})))
-
+  (if-let [swirl (repo/get-swirl swirl-id)]
+    (if (not= (swirl :author_id) (author :id))
+      nil
+      (let [contacts (network/get-relations (author :id) :knows)]
+        (layout/render "swirls/create.html" {:subject  (swirl :title)
+                                             :review   (swirl :review)
+                                             :contacts contacts})))))
 
 (defn create-swirl-page [author who subject review error]
   (let [contacts (network/get-relations (author :id) :knows)]
