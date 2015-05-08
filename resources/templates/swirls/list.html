@@ -6,7 +6,9 @@
 <ul>
 {% for swirl in swirls %}
 
-    <li><a href="/swirls/{{swirl.id}}">{{swirl.title}}</a></li>
+    <li><a href="/swirls/{{swirl.id}}">
+        {{swirl.thumbnail_url|img|safe}}
+        {{swirl.title}}</a></li>
 
 {% endfor %}
 </ul>

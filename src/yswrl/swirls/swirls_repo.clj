@@ -91,20 +91,21 @@
 
 (defn get-recent-swirls [swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username)
+          (fields :creation_date, :review, :title, :id, :users.username :thumbnail_url)
           (join :inner db/users (= :swirls.author_id :users.id))
+          (where {:state "L"})
           (offset skip)
           (limit swirl-count)
           (order :creation_date :asc)))
 
 (defn get-swirls-authored-by [userId]
   (select db/swirls
-          (where {:author_id userId})))
+          (where {:author_id userId :state "L"})))
 
 
 (defn get-swirls-for [userId swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username)
+          (fields :creation_date, :review, :title, :id, :users.username :thumbnail_url)
           (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
           (join :inner db/users (= :swirls.author_id :users.id))
           (where {:suggestions.recipient_id userId})
