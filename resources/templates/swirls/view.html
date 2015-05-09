@@ -16,40 +16,44 @@
 </article>
 
 <div class="responses">
+
+    {% if can-respond %}
+
+    <h2>Seen it? What did you think?</h2>
+
     <form method="POST" action="/swirls/{{swirl.id}}/respond">
+        {% csrf-field %}
+        <input type="hidden" name="swirl-id" value="{{swirl.id}}">
 
-        <table>
-            {% for resp in responses %}
-            <tr>
-                <td class="username"><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said&nbsp;
-                </td>
-                <td class="response">{{resp.summary}}</td>
-            </tr>
-            {% endfor %}
+        <input type="submit" name="responseButton" value="Loved it">
+        <input type="submit" name="responseButton" value="Hated it">
+        <input type="submit" name="responseButton" value="Meh">
 
-            {% if can-respond %}
-            {% csrf-field %}
+        or
+        <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
+               value="{{response-summary}}"
+               placeholder="Enter a short response">
+        <input type="submit" name="responseButton" value="Submit">
 
-            <tr>
-                <td class="username">{{ user.username }}</td>
-                <td>
-                    <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+        <p>Don't want to see it?
+            <input type="submit" name="responseButton" value="Not interested">
+        </p>
 
-                    <input type="submit" name="responseButton" value="Good">
-                    <input type="submit" name="responseButton" value="Bad">
-                    <input type="submit" name="responseButton" value="Meh">
 
-                    or
-                    <input type="text" name="response-summary" maxlength="1000" value="{{response-summary}}"
-                           placeholder="Enter a one-word response">
-                    <input type="submit" name="responseButton" value="Submit">
-                </td>
-            </tr>
-
-            {% endif %}
-
-        </table>
     </form>
+
+    {% endif %}
+
+
+    <table>
+        {% for resp in responses %}
+        <tr>
+            <td class="username"><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said&nbsp;
+            </td>
+            <td class="response">{{resp.summary}}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
 </div>
 

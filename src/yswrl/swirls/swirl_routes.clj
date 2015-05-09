@@ -44,12 +44,13 @@
 (defn view-swirl-page [id suggestion-code current-user]
   (if-let [swirl (repo/get-swirl id)]
     (let [is-logged-in (not-nil? current-user)
+          is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          can-respond (and is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
-          can-edit (and is-logged-in (= (swirl :author_id) (current-user :id)))]
-      (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info}))))
+          can-respond (and (not is-author) is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
+          can-edit is-author]
+      (layout/render "swirls/view.html" {:swirl swirl :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
