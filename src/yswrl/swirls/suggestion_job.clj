@@ -1,5 +1,6 @@
 (ns yswrl.swirls.suggestion-job
   (:require [yswrl.db :as db]
+            [yswrl.links :as linky]
             [yswrl.swirls.postman :refer [send-email email-body]]
             [cronj.core :refer [cronj]]
             [clojure.tools.logging :as log]))
@@ -10,7 +11,7 @@
 
 (defn get-unsent []
   (db/query "SELECT
-  suggestions.id as suggestion_id, suggestions.swirl_id,
+  suggestions.id as suggestion_id, suggestions.code, suggestions.swirl_id,
   swirls.title, author.username AS author_name,
   COALESCE(recipient.email, suggestions.recipient_email) AS recipient_email
 FROM ((suggestions INNER JOIN swirls ON swirls.id = suggestions.swirl_id)
@@ -32,8 +33,7 @@ WHERE (suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason
           (where {:id [= suggestion-id]})))
 
 (defn suggestion-email-html [row]
-  (let [values (assoc row :swirl_url (str "http://www.youshouldwatchreadlisten.com/swirls/" (:swirl_id row)))]
-    (email-body "swirls/suggestion-email.html" values)))
+  (email-body "swirls/suggestion-email.html" row))
 
 (defn send-unsent-suggestions []
   (try
