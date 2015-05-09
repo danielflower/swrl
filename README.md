@@ -28,6 +28,13 @@ You should be able to connect from intellij or another GUI using:
     database=yswrl
     username=dev
     password=password
+    
+##Or Alternatively
+Installing stuff sucks. Wouldn't it be great if everything was scripted and just worked?
+
+Prerequisite: Install Vagrant and Virtual Box.
+
+To run: Vagrant up. Then, as above.
 
 ## Running
 
