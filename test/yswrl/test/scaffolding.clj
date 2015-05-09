@@ -7,9 +7,8 @@
 
 (def test-user-password "Abcd1234")
 
-(defn create-test-user []
-  (let [username (str "test-user-" (now))
-        email (str username "@example.org")
+(defn create-test-user [ & {:keys [username] :or {username (str "test-user-" (now))}}]
+  (let [email (str username "@example.org")
         password test-user-password
         req {}
         response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req nil {:algorithm :sha256})]

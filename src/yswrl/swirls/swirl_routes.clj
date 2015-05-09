@@ -35,7 +35,7 @@
       (if-let [sug (repo/get-suggestion (UUID/fromString suggestion-code))]
         (if (nil? (sug :recipient_id))
           (let [email (sug :recipient_email)
-                username (.substring email 0 (max 0 (.indexOf email "@")))]
+                username (user-repo/suggest-username (.substring email 0 (max 0 (.indexOf email "@"))))]
             {:register-username username :register-email email})
           (if-let [user (user-repo/get-user-by-id (sug :recipient_id))]
             { :login-username (user :username)}))))

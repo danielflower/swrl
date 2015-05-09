@@ -25,3 +25,18 @@
                             (interpose ",")
                             (apply str))]
     (apply db/query (str "SELECT id, username, email FROM users WHERE LOWER(username) IN ( " question-marks " ) OR LOWER(email) IN ( " question-marks " )" ) (concat lowered lowered))))
+
+(defn user-exists [username]
+  (db/exists? "SELECT 1 FROM users WHERE username = ?" username))
+
+
+(defn- search-username [desired-name suffix]
+  (let [current (str desired-name suffix)]
+    (if (user-exists current)
+      (recur desired-name (inc suffix))
+      current)))
+
+(defn suggest-username [desired-name]
+  (if (not (user-exists desired-name))
+    desired-name
+    (search-username desired-name 1)))
