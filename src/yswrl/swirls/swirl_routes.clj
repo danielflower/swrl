@@ -36,7 +36,9 @@
         (if (nil? (sug :recipient_id))
           (let [email (sug :recipient_email)
                 username (.substring email 0 (max 0 (.indexOf email "@")))]
-            {:register-username username :register-email email}))))
+            {:register-username username :register-email email})
+          (if-let [user (user-repo/get-user-by-id (sug :recipient_id))]
+            { :login-username (user :username)}))))
     (catch Exception e (log/warn "Error while getting logister info" suggestion-code e))))
 
 (defn view-swirl-page [id suggestion-code current-user]
