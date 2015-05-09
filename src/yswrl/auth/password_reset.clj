@@ -57,7 +57,7 @@
       (let [user (users/get-user-by-id (:user_id result))]
         (users/change-password (:user_id result) (hash-password new-password hash-options))
         (delete db/password_reset_requests (where {:user_id (user :id)}))
-        (attempt-login (:username user) new-password false req)))))
+        (attempt-login (:username user) new-password false nil req)))))
 
 (defroutes password-reset-routes
            (GET "/forgot-password" [username] (forgot-password-page username nil))

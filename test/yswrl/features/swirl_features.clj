@@ -1,6 +1,7 @@
 (ns yswrl.features.swirl-features
   (:require [yswrl.handler :refer [app]]
             [yswrl.test.scaffolding :as s]
+            [yswrl.links :as linky]
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]))
@@ -18,62 +19,106 @@
 
 (defn save-url [session map key]
   (let [url (get-in session [:request :uri])]
-    (println key url)
     (swap! map (fn [old-val] (assoc old-val key url))))
   session)
+
+(defn log-out [session]
+  (-> session
+      (follow "Log out")
+      (follow-redirect)))
+
+(defn submit [session name]
+  (-> session
+      (press name)
+      (follow-redirect)))
+
+
+(defn assert-swirl-title-in-header [session title]
+  (-> session
+      (within [:h1]
+              (has (text? (str "You should consume " title))))
+      ))
+
 
 (deftest swirl-security
   (let [user1 (s/create-test-user)
         user2 (s/create-test-user)
         test-state (atom {})]
 
-    (let [session (session app)]
-      (-> session
-          (visit "/")
-          ; Login as user 1
-          (follow "Login")
-          (login-as user1)
+    (-> (session app)
+        (visit "/")
+        ; Login as user 1
+        (follow "Login")
+        (login-as user1)
 
-          ; Create a swirl
-          (follow "Create")
-          (fill-in "Enter a YouTube video URL" "https://www.youtube.com/watch?v=TllPrdbZ-VI")
-          (press "Go")
-          (follow-redirect)
+        ; Create a swirl
+        (follow "Create")
+        (fill-in "Enter a YouTube video URL" "https://www.youtube.com/watch?v=TllPrdbZ-VI")
+        (submit "Go")
 
-          (save-url test-state :edit-swirl-uri)
+        (save-url test-state :edit-swirl-uri)
 
-          (press "Submit")
-          (follow-redirect)
+        (submit "Submit")
 
-          (save-url test-state :view-swirl-uri)
+        (save-url test-state :view-swirl-uri)
 
-          (within [:h1]
-                  (has (text? "You should consume How to chop an ONION using CRYSTALS with Jamie Oliver")))
+        (assert-swirl-title-in-header "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-          (follow "[edit this page]")
-          (fill-in "You should watch or read or listen to" "The onion video")
-          (press "Submit")
-          (follow-redirect)
+        (follow "[edit this page]")
+        (fill-in "You should watch or read or listen to" "The onion video")
+        (submit "Submit")
 
-          (within [:h1]
-                  (has (text? "You should consume The onion video")))
+        (assert-swirl-title-in-header "The onion video")
 
+        (log-out)
+        ;(follow "Log out")
+        ;(follow-redirect)
 
-          (follow "Log out")
-          (follow-redirect)
+        (follow "Login")
+        (login-as user2)
 
-          (follow "Login")
-          (login-as user2)
+        ; Other users can view the swirl....
+        (visit (@test-state :view-swirl-uri))
+        (within [:h1]
+                (has (text? "You should consume The onion video")))
+        (has (missing? [:.swirl-admin-panel]))
 
-          ; Other users can view the swirl....
-          (visit (@test-state :view-swirl-uri))
-          (within [:h1]
-                  (has (text? "You should consume The onion video")))
-          (has (missing? [:.swirl-admin-panel]))
+        ; ...but they can't edit the page
+        (visit (@test-state :edit-swirl-uri))
+        (has (status? 404))
+        (has (text? "Not Found"))
+        )))
 
-          ; ...but they can't edit the page
-          (visit (@test-state :edit-swirl-uri))
-          (has (status? 404))
-          (has (text? "Not Found"))
+(deftest quick-login
+  (let [user (s/create-test-user)
+        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
+    (-> (session app)
 
-          ))))
+        ; when not logged in, the page can be viewed
+        (visit (linky/swirl (swirl :id)))
+        (assert-swirl-title-in-header (swirl :title))
+
+        ; ...and the user can log in from the page and be redirected
+        (login-as user)
+        (assert-swirl-title-in-header (swirl :title))
+
+        )))
+
+(deftest quick-register
+  (let [user (s/create-test-user)
+        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
+    (-> (session app)
+
+        ; when not logged in, the page can be viewed
+        (visit (linky/swirl (swirl :id)))
+        (assert-swirl-title-in-header (swirl :title))
+
+        ; ...and the user can register from the page and be redirected
+        (fill-in "Username" (str "Ampter-Jamp" (s/now)))
+        (fill-in "Email" (str "ampter" (s/now) "@example.org"))
+        (fill-in "Password" "A#~$&#(@*~$&__f 1234")
+        (submit "Register")
+
+        (assert-swirl-title-in-header (swirl :title))
+
+        )))

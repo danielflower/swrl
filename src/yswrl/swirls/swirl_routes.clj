@@ -29,10 +29,11 @@
 
 (defn view-swirl-page [id current-user]
   (if-let [swirl (repo/get-swirl id)]
-    (let [responses (repo/get-swirl-responses (:id swirl))
+    (let [is-logged-in (not-nil? current-user)
+          responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          can-respond (and (not-nil? current-user) (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
-          can-edit (= (swirl :author_id) (current-user :id))]
+          can-respond (and is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
+          can-edit (and is-logged-in (= (swirl :author_id) (current-user :id)))]
       (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond :can-edit can-edit}))))
 
 (defn view-swirls-by [authorName]

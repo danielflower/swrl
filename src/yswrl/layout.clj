@@ -28,6 +28,7 @@
              :csrf-token *anti-forgery-token*
              :user (get(get request :session) :user)
              :constraints constraints
+             :request request
              )
            (parser/render-file (str template))
            response)

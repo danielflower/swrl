@@ -1,0 +1,46 @@
+<div class="logister">
+
+    <div class="logister--panel login">
+        <h4>Login</h4>
+
+        <form method="POST" action="/login">
+            {% csrf-field %}
+            <input type="hidden" name="return-url" value="{{request.uri}}">
+
+            <label>Username<input type="text" autocomplete="nickname" name="username" required
+                   maxlength="{{constraints.users.username.max-length}}"></label>
+
+            <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+                   name="password"></label>
+
+            <p><a href="/forgot-password">Forgot your password? Click here.</a></p>
+            <label>
+                <input type="checkbox" name="remember"> Keep me logged in
+            </label>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+    <div class="logister--panel register">
+        <h4>Register</h4>
+
+        <form method="POST" action="/register" class="register-form">
+            {% csrf-field %}
+            <input type="hidden" name="return-url" value="{{request.uri}}">
+
+            <label>Username<input
+                    type="text" autocomplete="nickname" name="username" required
+                   maxlength="{{constraints.users.username.max-length}}" value="{{register-username}}"></label>
+
+            <label>Email<input id="email" type="email" autocomplete="email" name="email" required
+                   maxlength="{{constraints.users.email.max-length}}" value="{{register-email}}"></label>
+
+            <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+                   name="password" value="{{password}}"></label>
+
+            <input type="submit" value="Register">
+
+        </form>
+    </div>
+
+</div>

@@ -13,7 +13,7 @@
         email (str username "@example.org")
         password "Abcd1234"
         req {}
-        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req {:algorithm :sha256})
+        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req nil {:algorithm :sha256})
         user (:user (:session response))
         user-id (:id user)]
 

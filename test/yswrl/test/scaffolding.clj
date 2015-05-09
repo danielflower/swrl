@@ -12,7 +12,7 @@
         email (str username "@example.org")
         password test-user-password
         req {}
-        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req {:algorithm :sha256})]
+        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req nil {:algorithm :sha256})]
     (:user (:session response))))
 
 (defn user-to-relation [user]

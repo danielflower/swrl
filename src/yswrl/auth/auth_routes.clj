@@ -31,9 +31,12 @@
 
 (defn months [x] (* x 2419200))
 
-(defn login-success [user remember-me? {session :session}]
-  (let [newSession (assoc session :user user)
-        response (redirect "/")]
+(defn redirect-url [return-url]
+  (or return-url "/"))
+
+(defn login-success [user remember-me? return-url req]
+  (let [newSession (assoc (req :session) :user user)
+        response (redirect (redirect-url return-url))]
     (if (true? remember-me?)
       (->
         response
@@ -48,27 +51,27 @@
       user
       nil)))
 
-(defn attempt-login [username password remember-me? req]
+(defn attempt-login [username password remember-me? return-url req]
   (if-let [user (get-user-by-name-and-password username password)]
-    (login-success user remember-me? req)
+    (login-success user remember-me? return-url req)
     (login-page :username username :error true)))
 
 (defn hash-password [unhashed options]
   (hashers/encrypt unhashed options))
 
-(defn handle-registration [user req hash-options]
+(defn handle-registration [user req return-url hash-options]
   (let [errors (first (b/validate user {:username        [v/required [v/max-count (max-length :users :username)]]
                                         :email           [v/required [v/max-count (max-length :users :email)] [v/email :message "Please enter a valid email address"]]
                                         :password        [v/required [v/min-count 8]]
-                                        :confirmPassword [v/required [(fn [confirmed] (= confirmed (user :password))) :message "Your passwords did not match"]]}))]
+                                        :confirmPassword [[(fn [confirmed] (or (nil? confirmed) (= confirmed (user :password)))) :message "Your passwords did not match"]]}))]
     (if errors
       (do
-        (log/info "validation error on registration page" errors)
+        (log/info "validation error on registration page" errors (user :email))
         (registration-page (assoc user :errors errors)))
       (do
         (try
           (users/create-user (user :username) (user :email) (hash-password (user :password) hash-options))
-          (attempt-login (user :username) (user :password) false req)
+          (attempt-login (user :username) (user :password) false return-url req)
           (catch Exception e
             (let [message (cond
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_username_key\"") {:username '("A user with that username already exists. Please select a different username.")}
@@ -80,11 +83,11 @@
 
 (defroutes auth-routes
            (GET "/login" [_] (login-page))
-           (POST "/login" [username password remember :as req] (attempt-login username password (if (= "on" remember) true false) req))
+           (POST "/login" [username password remember return-url :as req] (attempt-login username password (if (= "on" remember) true false) return-url req))
 
            (GET "/logout" [:as req] (handle-logout req))
            (GET "/logged-out" [_] (logged-out-page))
 
            (GET "/register" [_] (registration-page nil))
-           (POST "/register" [username email password confirmPassword :as req]
-             (handle-registration {:username (trim username) :email (trim email) :password password :confirmPassword confirmPassword} req password-hash-options)))
+           (POST "/register" [username email password confirmPassword return-url :as req]
+             (handle-registration {:username (trim username) :email (trim email) :password password :confirmPassword confirmPassword} req return-url password-hash-options)))
