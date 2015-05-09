@@ -13,7 +13,7 @@
     (if (not= (swirl :author_id) (author :id))
       nil
       (let [contacts (network/get-relations (author :id) :knows)]
-        (layout/render "swirls/create.html" {:id swirl-id
+        (layout/render "swirls/create.html" {:id       swirl-id
                                              :subject  (swirl :title)
                                              :review   (swirl :review)
                                              :contacts contacts})))))
@@ -69,7 +69,9 @@
   (let [emails (map clojure.string/trim (clojure.string/split emails #"[,;]"))
         namesOrEmails (filter (complement clojure.string/blank?) (distinct (concat (or who []) emails)))]
     (if (repo/publish-swirl id (author :id) subject review namesOrEmails)
-      (redirect (yswrl.links/swirl id))
+      (do
+        (send-unsent-suggestions)
+        (redirect (yswrl.links/swirl id)))
       nil)))
 
 (defroutes swirl-routes
