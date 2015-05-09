@@ -6,7 +6,9 @@
             [yswrl.swirls.comment-notifier :refer [send-comment-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
-            [ring.util.response :refer [status redirect response not-found]]))
+            [ring.util.response :refer [status redirect response not-found]]
+            [clojure.tools.logging :as log])
+  (:import (java.util UUID)))
 
 (defn edit-swirl-page [author swirl-id]
   (if-let [swirl (repo/get-swirl swirl-id)]
@@ -27,14 +29,25 @@
 
 (def not-nil? (complement nil?))
 
-(defn view-swirl-page [id current-user]
+(defn logister-info [is-logged-in suggestion-code]
+  (try
+    (if (and (not is-logged-in) (not-nil? suggestion-code))
+      (if-let [sug (repo/get-suggestion (UUID/fromString suggestion-code))]
+        (if (nil? (sug :recipient_id))
+          (let [email (sug :recipient_email)
+                username (.substring email 0 (max 0 (.indexOf email "@")))]
+            {:register-username username :register-email email}))))
+    (catch Exception e (log/warn "Error while getting logister info" suggestion-code e))))
+
+(defn view-swirl-page [id suggestion-code current-user]
   (if-let [swirl (repo/get-swirl id)]
     (let [is-logged-in (not-nil? current-user)
+          logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
           can-respond (and is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
           can-edit (and is-logged-in (= (swirl :author_id) (current-user :id)))]
-      (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond :can-edit can-edit}))))
+      (layout/render "swirls/view.html" {:swirl swirl :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
@@ -78,7 +91,7 @@
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (edit-swirl-page (session-from req) (Integer/parseInt id)))
            (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (publish-swirl (session-from req) (Integer/parseInt id) who emails subject review))
            (GET "/swirls" [] (view-all-swirls 0))
-           (GET "/swirls/:id{[0-9]+}" [id :as req] (view-swirl-page (Integer/parseInt id) (session-from req)))
+           (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
            (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
            (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))

@@ -17,6 +17,11 @@
   (let [found-user-names (concat (map (fn [user] (:username user)) found-users) (map (fn [user] (:email user)) found-users))]
     (filter (fn [name] (not-in? found-user-names name)) all-names)))
 
+(defn get-suggestion [code]
+  (first (select db/suggestions
+          (fields :recipient_id :recipient_email)
+          (where {:code code}))))
+
 (defn create-suggestions [recipientUserIdsOrEmailAddresses swirlId]
   (let [found-users (auth/get-users-by-username_or_email (distinct recipientUserIdsOrEmailAddresses))]
     (->> found-users
