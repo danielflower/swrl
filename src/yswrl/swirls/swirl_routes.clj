@@ -4,6 +4,7 @@
             [yswrl.user.networking :as network]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
             [yswrl.swirls.comment-notifier :refer [send-comment-notification-emails]]
+            [yswrl.swirls.response-notifier :refer [send-response-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.response :refer [status redirect response not-found]]
@@ -66,8 +67,9 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response author]
-  (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)]
-    (repo/create-response swirl-id summary author)
+  (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
+        swirl-response (repo/create-response swirl-id summary author)]
+    (send-response-notification-emails swirl-response author)
     (redirect (yswrl.links/swirl swirl-id))))
 
 

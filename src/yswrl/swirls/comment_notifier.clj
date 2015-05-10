@@ -14,8 +14,8 @@
 )
 AND id != ?" (:swirl_id comment) (:swirl_id comment) (:author_id comment)))
 
-(defn coment-notification-email-html [swirl comment]
-  (let [values {:swirl swirl :comment comment :swirl_url (str "http://www.youshouldwatchreadlisten.com/swirls/" (:swirl_id comment))}]
+(defn comment-notification-email-html [swirl comment]
+  (let [values {:swirl swirl :comment comment }]
     (postman/email-body "swirls/comment-notification-email.html" values)))
 
 (defn send-comment-notification-emails [comment]
@@ -27,7 +27,7 @@ AND id != ?" (:swirl_id comment) (:swirl_id comment) (:author_id comment)))
           (log/info "Going to email" comment "to" emails)
           (let [swirl (repo/get-swirl (:swirl_id comment))
                 subject (str "New comment on " (:title swirl))
-                body (coment-notification-email-html swirl comment)
+                body (comment-notification-email-html swirl comment)
                 to (map (fn [row] {:email (:email row) :name (:email row)}) emails)]
             (postman/send-email to subject body)))))
     (catch Exception e (log/error "Error sending comments email" e))))
