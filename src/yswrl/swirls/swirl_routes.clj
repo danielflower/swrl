@@ -39,7 +39,7 @@
                 username (user-repo/suggest-username (.substring email 0 (max 0 (.indexOf email "@"))))]
             {:register-username username :register-email email})
           (if-let [user (user-repo/get-user-by-id (sug :recipient_id))]
-            { :login-username (user :username)}))))
+            {:login-username (user :username)}))))
     (catch Exception e (log/warn "Error while getting logister info" suggestion-code e))))
 
 (defn view-swirl-page [id suggestion-code current-user]
@@ -83,18 +83,28 @@
     (redirect (str "/swirls/" swirl-id))))
 
 
-(defn publish-swirl [author id who emails subject review]
-  (let [emails (map clojure.string/trim (clojure.string/split emails #"[,;]"))
-        namesOrEmails (filter (complement clojure.string/blank?) (distinct (concat (or who []) emails)))]
-    (if (repo/publish-swirl id (author :id) subject review namesOrEmails)
+(defn publish-swirl [author id usernames-and-emails-to-notify subject review]
+    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
       (do
         (send-unsent-suggestions)
         (redirect (yswrl.links/swirl id)))
-      nil)))
+      nil))
+
+(defn usernames-and-emails-from-request [checkboxes-raw textbox-raw]
+  (let [textbox (if (clojure.string/blank? textbox-raw)
+                  []
+                  (map #(.trim %) (clojure.string/split textbox-raw #"[,;]")))
+        checkboxes (if (vector? checkboxes-raw)
+                     checkboxes-raw
+                     (if (clojure.string/blank? checkboxes-raw)
+                       []
+                       [(.trim checkboxes-raw)]))
+        ]
+    (distinct (concat checkboxes textbox))))
 
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (edit-swirl-page (session-from req) (Integer/parseInt id)))
-           (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (publish-swirl (session-from req) (Integer/parseInt id) who emails subject review))
+           (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (publish-swirl (session-from req) (Integer/parseInt id) (usernames-and-emails-from-request who emails) subject review))
            (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
            (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
