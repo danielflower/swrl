@@ -14,6 +14,7 @@
 (use 'korma.core)
 
 (defn forgot-password-page [usernameOrEmail error]
+  (throw (NullPointerException. "Just testing error handling messages"))
   (layout/render "auth/forgot-password.html" {:usernameOrEmail usernameOrEmail :error error :maxUsernameOrEmailLength (max (max-length :users :email) (max-length :users :username))}))
 
 (defn forgot-password-sent-page []

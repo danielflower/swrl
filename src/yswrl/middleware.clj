@@ -28,6 +28,10 @@
 
 (def unsecure-key-for-dev-mode "93762d738951e53a")          ; in heroku, a value similar to this is stored in an env var. It just needs to be any non-changing value
 
+(defn get-unhandled-error-text [ex]
+  (let [stack-strings (map #(str %) (.getStackTrace ex)) ]
+  (str "Unhandled exception: " ex \newline " at " (clojure.string/join (str \newline "    ") stack-strings))))
+
 (defn production-middleware [handler]
   (-> handler
       (wrap-authentication (session-backend))
@@ -36,4 +40,4 @@
         (-> site-defaults
         (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") unsecure-key-for-dev-mode)}))
         (assoc-in [:session :cookie-name] "yswrl-session")))
-      (wrap-internal-error :log #(log/error %))))
+      (wrap-internal-error :log #(log/error (get-unhandled-error-text %)))))
