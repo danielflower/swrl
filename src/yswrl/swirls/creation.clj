@@ -4,6 +4,7 @@
             [yswrl.swirls.swirls-repo :as repo]
             [compojure.core :refer [defroutes GET POST]]
             [clj-http.client :as client]
+            [clojure.data.codec.base64 :as b64]
             [clojure.xml :as xml]
             [clj-time.core :as t]
             [ring.util.response :refer [redirect response not-found]])
@@ -12,28 +13,34 @@
 
 (def youtube-api-key
   "AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg")
+
 (def amazon-key "tDwOEE+vRplK8EhmRhrt8BIuxZi1NvSYbmpwxTv5")
+
 (defn start-page []
   (layout/render "swirls/start.html"))
 
 (defn session-from [req] (:user (:session req)))
 
-(defn params [bookname] (hash-map
+(defn params [bookname] (sorted-map
                           :AWSAccessKeyId "AKIAIO3J752UN7X4HUWA"
                           :AssociateTag "corejavaint0d-20"
                           :Keywords bookname
                           :Operation "ItemSearch"
-                          :ResponseGroup "Images%2CItemAttributes"
+                          :ResponseGroup "Images,ItemAttributes"
                           :SearchIndex "Books"
                           :Service "AWSECommerceService"
                           :Timestamp (str (t/now))
                           :Version "2011-08-01"
                           ))
 
-(defn string-to-sign [params] (str "GET\nwebservices.amazon.com\n/onca/xml\n" (ring.util.codec/url-encode params)))
+(defn string-to-sign [pms]
+  (str "GET\n
+  webservices.amazon.com\n
+  /onca/xml\n"
+       (ring.util.codec/form-encode pms)))
 
 (defn secretKeyInst [key mac]
-  (SecretKeySpec. (.getBytes key) (.getAlgorithm mac)))
+  (SecretKeySpec. (.getBytes key "UTF-8") (.getAlgorithm mac)))
 
 (defn sign [key string]
   "Returns the signature of a string with a given
@@ -42,23 +49,24 @@
         secretKey (secretKeyInst key mac)]
     (-> (doto mac
           (.init secretKey)
-          (.update (.getBytes string)))
-
-        .doFinal)))
+        ))
+    (.doFinal mac (.getBytes string "UTF-8"))))
 
 
 (defn toHexString [bytes]
   "Convert bytes to a String"
-  (apply str (map #(format "%x" %) bytes)))
+  (ring.util.codec/url-encode (String. (b64/encode bytes) )))
+
+(defn createEncryptedUrl [paz]
+  (str "http://webservices.amazon.com/onca/xml?"
+       (ring.util.codec/form-encode paz) "&Signature="
+       (toHexString
+         (sign amazon-key
+               (string-to-sign paz)))))
 
 (defn url-to-call [bookname]
-  (let
-    [paz (params bookname)]
-  (str "http://webservices.amazon.com/onca/xml?"
-        (ring.util.codec/form-encode paz) "&Signature="
-        (toHexString
-          (sign amazon-key
-                (string-to-sign paz))))))
+  (createEncryptedUrl (params bookname)))
+
 
 
 (defn handle-amazon-creation [bookname author]
