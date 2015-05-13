@@ -18,6 +18,17 @@
         </form>
     </div>
 
+
+
+    <div>
+        <h1>Album</h1>
+        <form method="POST" action="/create/album">
+            {% csrf-field %}
+            <label>iTunes album ID<input type="text" name="itunes-album-id" required></label>
+            <input type="submit" value="Go">
+        </form>
+    </div>
+
 </div>
 
 {% endblock %}

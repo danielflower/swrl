@@ -3,11 +3,13 @@
             [yswrl.swirls.swirls-repo :as swirls-repo])
   (:use clojure.test))
 
+(def counter (atom 0))
+
 (defn now [] (System/currentTimeMillis))
 
 (def test-user-password "Abcd1234")
 
-(defn create-test-user [ & {:keys [username] :or {username (str "test-user-" (now))}}]
+(defn create-test-user [ & {:keys [username] :or {username (str "test-user-" (now) "_" (swap! counter inc))}}]
   (let [email (str username "@example.org")
         password test-user-password
         req {}

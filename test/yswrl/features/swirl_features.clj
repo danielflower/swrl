@@ -71,8 +71,6 @@
         (assert-swirl-title-in-header "The onion video")
 
         (log-out)
-        ;(follow "Log out")
-        ;(follow-redirect)
 
         (follow "Login")
         (login-as user2)

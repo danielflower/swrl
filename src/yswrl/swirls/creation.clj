@@ -6,6 +6,7 @@
             [clj-http.client :as client]
             [ring.util.response :refer [redirect response not-found]]))
 
+
 (def youtube-api-key
   "AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg")
 
@@ -27,7 +28,35 @@
     (let [swirl (repo/save-draft-swirl (author :id) title review thumbnail-url)]
       (redirect (links/edit-swirl (swirl :id))))))
 
+(defn search-albums [search-term]
+  (let [encoded (links/url-encode search-term)
+        url (str "https://itunes.apple.com/search?term=" encoded "&media=music&entity=album")
+        result (client/get url {:accept :json :as :json})]
+    (result :body))
+  )
+
+(defn get-itunes-album [itunes-collection-id]
+  (let [url (str "https://itunes.apple.com/lookup?id=" itunes-collection-id "&entity=song")
+        result (client/get url {:accept :json :as :json})
+        body (result :body)
+        album (first (body :results))]
+    {:title       (album :collectionName)
+     :artist-name (album :artistName)
+     :thumbnail-url "/blah.jpg"
+     :tracks      (map (fn [r] {:track-name (r :trackName)}) (rest (body :results)))}
+    ))
+
+(defn handle-album-creation [itunes-collection-id user]
+  (let [album (get-itunes-album itunes-collection-id)
+        title (album :title)
+        thumbnail-url (album :thumbnail-url)
+        review (str "<p>Check this out:</p>" album "<p>What do you think?</p>")]
+    (let [swirl (repo/save-draft-swirl (user :id) title review thumbnail-url)]
+      (redirect (links/edit-swirl (swirl :id))))))
+
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))
 
-           (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req))))
+           (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req)))
+           (POST "/create/album" [itunes-album-id :as req] (handle-album-creation itunes-album-id (session-from req))))
+

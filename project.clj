@@ -14,6 +14,7 @@
                  [clj-time "0.8.0"]
                  [clj-mandrill "0.1.0"]
                  [clj-http "1.1.2"]
+                 [clj-http-fake "1.0.1"]
                  [environ "1.0.0"]
                  [im.chit/cronj "1.4.3"]
                  [compojure "1.3.3"]
