@@ -17,16 +17,27 @@
 
 (defn session-from [req] (:user (:session req)))
 
-(defn handle-youtube-creation [youtube-url author]
-  (let [youtube-id (get (ring.util.codec/form-decode (.getQuery (java.net.URI/create youtube-url))) "v")
-        youtube-result-set (:body (client/get (str "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cplayer&id=" youtube-id "&key=" youtube-api-key) {:accept :json :as :json}))
+(defn youtube-id [url]
+  (get (ring.util.codec/form-decode (.getQuery (java.net.URI/create url))) "v"))
+
+(defn get-video-details [youtube-id]
+  (let [url (str "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cplayer&id=" youtube-id "&key=" youtube-api-key)
+        youtube-result-set (:body (client/get url {:accept :json :as :json}))
         video-info (first (youtube-result-set :items))
         title (get-in video-info [:snippet :title])
         thumbnail-url (get-in video-info [:snippet :thumbnails :default :url])
         iframe-html (get-in video-info [:player :embedHtml])
         review (str "<p>Check this out:</p>" iframe-html "<p>What do you think?</p>")]
-    (let [swirl (repo/save-draft-swirl (author :id) title review thumbnail-url)]
-      (redirect (links/edit-swirl (swirl :id))))))
+    {:title title
+     :thumbnail-url thumbnail-url
+     :iframe-html iframe-html
+     :review review}))
+
+(defn handle-youtube-creation [youtube-url author]
+  (let [youtube-id (youtube-id youtube-url)
+        info (get-video-details youtube-id)
+        swirl (repo/save-draft-swirl (author :id) (info :title) (info :review) (info :thumbnail-url))]
+      (redirect (links/edit-swirl (swirl :id)))))
 
 (defn search-albums [search-term]
   (let [encoded (links/url-encode search-term)

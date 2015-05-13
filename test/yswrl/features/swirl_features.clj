@@ -4,7 +4,9 @@
             [yswrl.links :as linky]
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
-            [clojure.test :refer :all]))
+            [clojure.test :refer :all])
+  (:use clj-http.fake)
+  (:use yswrl.fake.faker))
 
 (defn now [] (System/currentTimeMillis))
 
@@ -41,6 +43,7 @@
 
 
 (deftest swirl-security
+  (with-faked-responses
   (let [user1 (s/create-test-user)
         user2 (s/create-test-user)
         test-state (atom {})]
@@ -85,7 +88,7 @@
         (visit (@test-state :edit-swirl-uri))
         (has (status? 404))
         (has (text? "Not Found"))
-        )))
+        ))))
 
 (deftest quick-login
   (let [user (s/create-test-user)
