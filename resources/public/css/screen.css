@@ -62,3 +62,17 @@ nav ul li{
     flex-grow: 1;
     margin: 10px;
 }
+
+
+.search-result {
+    clear: both;
+    margin: 10px;
+    border: 1px solid #CCCCCC;
+}
+.search-result h5 {
+    padding: 0;
+    margin: 0;
+}
+.search-result img {
+    float: left;
+}

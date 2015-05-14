@@ -6,16 +6,24 @@
   (:use yswrl.fake.faker))
 
 
-(deftest creation-test
+(deftest itunes-test
 
 
-  (testing "Album titles, track listings, and thumbnail URLs can be extracted from youtube requests"
+  (testing "Album titles, track listings, and thumbnail URLs can be extracted from itunes searches"
     (with-faked-responses
       (is (= {:results [
-                        {:type "Album" :title "Mellon Collie and the Infinite Sadness (Deluxe Edition)" :artist "Smashing Pumpkins" :itunes-id 721291853 :thumbnail-url "http://is1.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.100x100-75.jpg"}
-                        {:type "Album" :title "Mellon Collie and the Infinite Sadness (Remastered)" :artist "Smashing Pumpkins" :itunes-id 721224313 :thumbnail-url "http://is3.mzstatic.com/image/pf/us/r30/Music/v4/1b/82/d7/1b82d7ab-f019-e3bc-2f9d-45ea878d1cef/05099997856559.100x100-75.jpg"}
+                        {:type "Album" :title "Mellon Collie and the Infinite Sadness (Deluxe Edition)" :artist "Smashing Pumpkins"
+                         :itunes-id 721291853 :thumbnail-url "http://is2.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.60x60-50.jpg"}
+
+                        {:type "Album" :title "Mellon Collie and the Infinite Sadness (Remastered)" :artist "Smashing Pumpkins"
+                         :itunes-id 721224313 :thumbnail-url "http://is3.mzstatic.com/image/pf/us/r30/Music/v4/1b/82/d7/1b82d7ab-f019-e3bc-2f9d-45ea878d1cef/05099997856559.60x60-50.jpg"}
                         ]
               } (itunes/search-albums "Mellon Collie")))))
+
+  (testing "Empty searchs retun empty arrays"
+    (is (= {:results []} (itunes/search-albums nil)))
+    (is (= {:results []} (itunes/search-albums "")))
+    (is (= {:results []} (itunes/search-albums " "))))
 
   ;(testing "The iTunes REST API can be called"
   ;  (with-fake-routes
