@@ -7,9 +7,10 @@
             [clojure.data.codec.base64 :as b64]
             [clojure.xml :as xml]
             [clj-time.core :as t]
+            [buddy.core.mac.hmac :as hmac]
+            [buddy.core.codecs :as codecs]
             [ring.util.response :refer [redirect response not-found]])
-  (:import (javax.crypto.spec SecretKeySpec)
-           (javax.crypto Mac)))
+  (:import (javax.crypto.spec SecretKeySpec)))
 
 (def youtube-api-key
   "AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg")
@@ -34,41 +35,31 @@
                           ))
 
 (defn string-to-sign [pms]
-  (str "GET\n
-  webservices.amazon.com\n
-  /onca/xml\n"
+  (str "GET\nwebservices.amazon.com\n/onca/xml\n"
        (ring.util.codec/form-encode pms)))
-
-(defn secretKeyInst [key mac]
-  (SecretKeySpec. (.getBytes key "UTF-8") (.getAlgorithm mac)))
 
 (defn sign [key string]
   "Returns the signature of a string with a given
     key, using a SHA-256 HMAC."
-  (let [mac (Mac/getInstance "HMACSHA256")
-        secretKey (secretKeyInst key mac)]
-    (-> (doto mac
-          (.init secretKey)
-        ))
-    (.doFinal mac (.getBytes string "UTF-8"))))
+  (-> (hmac/hash string key :sha256)
+      (codecs/bytes->base64))
+  )
 
-
-(defn toHexString [bytes]
-  "Convert bytes to a String"
-  (ring.util.codec/url-encode (String. (b64/encode bytes) )))
 
 (defn createEncryptedUrl [paz]
   (str "http://webservices.amazon.com/onca/xml?"
        (ring.util.codec/form-encode paz) "&Signature="
-       (toHexString
-         (sign amazon-key
+         (ring.util.codec/form-encode
+           (sign amazon-key
                (string-to-sign paz)))))
 
 (defn url-to-call [bookname]
   (createEncryptedUrl (params bookname)))
 
-
-
+(defn handle-amazon [bookname]
+  (xml/parse (:body (client/get
+                      (url-to-call bookname))))
+  )
 (defn handle-amazon-creation [bookname author]
   (let [amazon-result-set
         (xml/parse (:body (client/get
