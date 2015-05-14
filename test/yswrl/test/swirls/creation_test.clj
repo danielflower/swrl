@@ -1,7 +1,6 @@
 (ns yswrl.test.swirls.creation-test
   (:require [yswrl.test.scaffolding :refer :all]
-            [yswrl.swirls.creation :as creation]
-            [yswrl.test.swirls.album-lookup-result :refer :all])
+            [yswrl.swirls.creation :as creation])
   (:use clojure.test)
   (:use clj-http.fake)
   (:use yswrl.fake.faker))

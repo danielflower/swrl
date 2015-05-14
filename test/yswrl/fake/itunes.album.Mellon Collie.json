@@ -1,0 +1,51 @@
+{
+  "resultCount": 6,
+  "results": [
+    {
+      "wrapperType": "collection",
+      "collectionType": "Album",
+      "artistId": 1646302,
+      "collectionId": 721291853,
+      "amgArtistId": 5462,
+      "artistName": "Smashing Pumpkins",
+      "collectionName": "Mellon Collie and the Infinite Sadness (Deluxe Edition)",
+      "collectionCensoredName": "Mellon Collie and the Infinite Sadness (Deluxe Edition)",
+      "artistViewUrl": "https://itunes.apple.com/us/artist/smashing-pumpkins/id1646302?uo=4",
+      "collectionViewUrl": "https://itunes.apple.com/us/album/mellon-collie-infinite-sadness/id721291853?uo=4",
+      "artworkUrl60": "http://is2.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.60x60-50.jpg",
+      "artworkUrl100": "http://is1.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.100x100-75.jpg",
+      "collectionPrice": 39.99,
+      "collectionExplicitness": "explicit",
+      "contentAdvisoryRating": "Explicit",
+      "trackCount": 93,
+      "copyright": "? Compilation   2012 Virgin Records. All rights reserved. Unauthorized reproduction is a violation of applicable laws.  Manufactured by Virgin Records, Capitol Records, LLC, 150 Fifth Avenue, New York, NY 10011.",
+      "country": "USA",
+      "currency": "USD",
+      "releaseDate": "2012-11-30T08:00:00Z",
+      "primaryGenreName": "Alternative"
+    },
+    {
+      "wrapperType": "collection",
+      "collectionType": "Album",
+      "artistId": 1646302,
+      "collectionId": 721224313,
+      "amgArtistId": 5462,
+      "artistName": "Smashing Pumpkins",
+      "collectionName": "Mellon Collie and the Infinite Sadness (Remastered)",
+      "collectionCensoredName": "Mellon Collie and the Infinite Sadness (Remastered)",
+      "artistViewUrl": "https://itunes.apple.com/us/artist/smashing-pumpkins/id1646302?uo=4",
+      "collectionViewUrl": "https://itunes.apple.com/us/album/mellon-collie-infinite-sadness/id721224313?uo=4",
+      "artworkUrl60": "http://is3.mzstatic.com/image/pf/us/r30/Music/v4/1b/82/d7/1b82d7ab-f019-e3bc-2f9d-45ea878d1cef/05099997856559.60x60-50.jpg",
+      "artworkUrl100": "http://is3.mzstatic.com/image/pf/us/r30/Music/v4/1b/82/d7/1b82d7ab-f019-e3bc-2f9d-45ea878d1cef/05099997856559.100x100-75.jpg",
+      "collectionPrice": 14.99,
+      "collectionExplicitness": "explicit",
+      "contentAdvisoryRating": "Explicit",
+      "trackCount": 29,
+      "copyright": "?   2012 Virgin Records. All rights reserved. Unauthorized reproduction is a violation of applicable laws.  Manufactured by Virgin Records, Capitol Records, LLC, 150 Fifth Avenue, New York, NY 10011.",
+      "country": "USA",
+      "currency": "USD",
+      "releaseDate": "2012-11-30T08:00:00Z",
+      "primaryGenreName": "Alternative"
+    }
+  ]
+}

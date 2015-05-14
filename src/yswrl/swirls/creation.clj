@@ -4,7 +4,8 @@
             [yswrl.swirls.swirls-repo :as repo]
             [compojure.core :refer [defroutes GET POST]]
             [clj-http.client :as client]
-            [ring.util.response :refer [redirect response not-found]]))
+            [ring.util.response :refer [redirect response not-found]]
+            [yswrl.swirls.itunes :refer [get-itunes-album]]))
 
 
 (def youtube-api-key
@@ -39,23 +40,6 @@
         swirl (repo/save-draft-swirl (author :id) (info :title) (info :review) (info :thumbnail-url))]
       (redirect (links/edit-swirl (swirl :id)))))
 
-(defn search-albums [search-term]
-  (let [encoded (links/url-encode search-term)
-        url (str "https://itunes.apple.com/search?term=" encoded "&media=music&entity=album")
-        result (client/get url {:accept :json :as :json})]
-    (result :body))
-  )
-
-(defn get-itunes-album [itunes-collection-id]
-  (let [url (str "https://itunes.apple.com/lookup?id=" itunes-collection-id "&entity=song")
-        result (client/get url {:accept :json :as :json})
-        body (result :body)
-        album (first (body :results))]
-    {:title       (album :collectionName)
-     :artist-name (album :artistName)
-     :thumbnail-url "/blah.jpg"
-     :tracks      (map (fn [r] {:track-name (r :trackName)}) (rest (body :results)))}
-    ))
 
 (defn handle-album-creation [itunes-collection-id user]
   (let [album (get-itunes-album itunes-collection-id)
@@ -64,6 +48,8 @@
         review (str "<p>Check this out:</p>" album "<p>What do you think?</p>")]
     (let [swirl (repo/save-draft-swirl (user :id) title review thumbnail-url)]
       (redirect (links/edit-swirl (swirl :id))))))
+
+
 
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))
