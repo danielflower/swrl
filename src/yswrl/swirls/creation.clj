@@ -4,7 +4,6 @@
             [yswrl.swirls.swirls-repo :as repo]
             [compojure.core :refer [defroutes GET POST]]
             [clj-http.client :as client]
-            [clojure.data.codec.base64 :as b64]
             [clojure.xml :as xml]
             [clj-time.core :as t]
             [buddy.core.mac.hmac :as hmac]
@@ -49,19 +48,18 @@
 (defn createEncryptedUrl [paz]
   (str "http://webservices.amazon.com/onca/xml?"
        (ring.util.codec/form-encode paz) "&Signature="
-         (ring.util.codec/form-encode
-           (sign amazon-key
+       (ring.util.codec/form-encode
+         (sign amazon-key
                (string-to-sign paz)))))
 
 (defn url-to-call [bookname]
   (createEncryptedUrl (params bookname)))
 
 (defn handle-amazon [bookname]
-  (xml/parse (:body (client/get
-                      (url-to-call bookname))))
-  )
+  (clojure.zip/xml-zip(xml/parse (url-to-call bookname))))
+
 (defn handle-amazon-creation [bookname author]
-  (let [amazon-result-set
+  (let [SO
         (xml/parse (:body (client/get
                             (url-to-call bookname))))]))
 

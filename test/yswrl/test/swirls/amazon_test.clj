@@ -53,9 +53,4 @@
         (.equals urlToCall
                  (str "NpX9t1jcz6wR2CCLKfG%2B8Pt2RxQli9QbAZu3dHpifXc%3D")) urlToCall))))
 
-(deftest xml-handling
-  (testing "Handling XML from real call"
-    (let [urlToCall (amazon/handle-amazon "horcrux")]
-      (is
-        (.equals urlToCall
-                 (str "j7bZM0LXZ9eXeZruTqWm2DIvDYVUU3wxPPpp%2BiXxzQc%3D")) urlToCall))))
+
