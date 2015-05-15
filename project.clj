@@ -26,6 +26,7 @@
                  [prone "0.8.1"]
                  [buddy "0.5.1"]
                  [ragtime "0.3.8"]
+                 [org.clojure/data.zip "0.1.1"]
                  [org.postgresql/postgresql "9.3-1102-jdbc41"]]
 
   :min-lein-version "2.0.0"

@@ -6,20 +6,69 @@
             [clj-http.client :as client]
             [ring.util.response :refer [redirect response not-found]]
             [yswrl.swirls.itunes :as itunes]))
+            [clojure.xml :as xml]
+            [clj-time.core :as t]
+            [buddy.core.mac.hmac :as hmac]
+            [buddy.core.codecs :as codecs]
+            [ring.util.response :refer [redirect response not-found]])
+  (:import (javax.crypto.spec SecretKeySpec)))
 
 
 (def youtube-api-key
   "AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg")
 
+(def amazon-key "tDwOEE+vRplK8EhmRhrt8BIuxZi1NvSYbmpwxTv5")
+
 (defn start-page []
   (layout/render "swirls/start.html"))
 
-
-
 (defn session-from [req] (:user (:session req)))
+
+(defn params [bookname] (sorted-map
+                          :AWSAccessKeyId "AKIAIO3J752UN7X4HUWA"
+                          :AssociateTag "corejavaint0d-20"
+                          :Keywords bookname
+                          :Operation "ItemSearch"
+                          :ResponseGroup "Images,ItemAttributes"
+                          :SearchIndex "Books"
+                          :Service "AWSECommerceService"
+                          :Timestamp (str (t/now))
+                          :Version "2011-08-01"
+                          ))
+
+(defn string-to-sign [pms]
+  (str "GET\nwebservices.amazon.com\n/onca/xml\n"
+       (ring.util.codec/form-encode pms)))
 
 (defn youtube-id [url]
   (get (ring.util.codec/form-decode (.getQuery (java.net.URI/create url))) "v"))
+
+(defn sign [key string]
+  "Returns the signature of a string with a given
+    key, using a SHA-256 HMAC."
+  (-> (hmac/hash string key :sha256)
+      (codecs/bytes->base64))
+  )
+
+
+(defn createEncryptedUrl [paz]
+  (str "http://webservices.amazon.com/onca/xml?"
+       (ring.util.codec/form-encode paz) "&Signature="
+       (ring.util.codec/form-encode
+         (sign amazon-key
+               (string-to-sign paz)))))
+
+(defn url-to-call [bookname]
+  (createEncryptedUrl (params bookname)))
+
+(defn handle-amazon [bookname]
+  (clojure.zip/xml-zip(xml/parse (url-to-call bookname))))
+
+(defn handle-amazon-creation [bookname author]
+  (let [SO
+        (xml/parse (:body (client/get
+                            (url-to-call bookname))))]))
+
 
 (defn get-video-details [youtube-id]
   (let [url (str "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cplayer&id=" youtube-id "&key=" youtube-api-key)
@@ -63,3 +112,5 @@
            (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req)))
            (GET "/create/album" [itunes-album-id :as req] (handle-album-creation itunes-album-id (session-from req))))
 
+           (POST "/create/amazon" [book-name :as req] (handle-amazon-creation book-name (session-from req)))
+           (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req))))
