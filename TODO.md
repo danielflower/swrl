@@ -9,3 +9,8 @@ Throw anything down in here big or small.
 - Swirl Creation: Should be less "open text field".  Each swirl should have a "media" (normally an image), Some default text (blurb/ track listing) and a 
 "note from me", e.g. why I want you to check this awesome thing out.
 - Make website not look pants.
+- When a user registers as result of suggestion, immediately add suggester and suggestee to each other's network.
+
+# Chores
+
+- correct mime types on immutable area 

@@ -15,8 +15,8 @@
 (defn registration-page [map]
   (layout/render "auth/register.html" map))
 
-(defn login-page [& {:keys [username error]}]
-  (layout/render "auth/login.html" {:username username :error error}))
+(defn login-page [& {:keys [username error return-url]}]
+  (layout/render "auth/login.html" {:username username :error error :return-url return-url}))
 
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
@@ -32,7 +32,9 @@
 (defn months [x] (* x 2419200))
 
 (defn redirect-url [return-url]
-  (or return-url "/"))
+  (if (or (clojure.string/blank? return-url) (not (.startsWith return-url "/")))
+    "/"
+    return-url))
 
 (defn login-success [user remember-me? return-url req]
   (let [newSession (assoc (req :session) :user user)
@@ -54,7 +56,7 @@
 (defn attempt-login [username password remember-me? return-url req]
   (if-let [user (get-user-by-name-and-password username password)]
     (login-success user remember-me? return-url req)
-    (login-page :username username :error true)))
+    (login-page :username username :error true :return-url return-url)))
 
 (defn hash-password [unhashed options]
   (hashers/encrypt unhashed options))
@@ -82,7 +84,7 @@
 
 
 (defroutes auth-routes
-           (GET "/login" [_] (login-page))
+           (GET "/login" [return-url] (login-page :return-url return-url))
            (POST "/login" [username password remember return-url :as req] (attempt-login username password (if (= "on" remember) true false) return-url req))
 
            (GET "/logout" [:as req] (handle-logout req))

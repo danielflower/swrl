@@ -7,7 +7,8 @@
             [ring.util.response :refer [redirect response not-found]]
             [yswrl.swirls.itunes :as itunes]
             [yswrl.swirls.amazon :as amazon]
-            [ring.util.response :refer [redirect response not-found]]))
+            [ring.util.response :refer [redirect response not-found]]
+            [yswrl.auth.guard :as guard]))
 
 
 (def youtube-api-key
@@ -49,6 +50,7 @@
         thumbnail-url (album :thumbnail-url)
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
         review (str "<img src=\"" thumbnail-url "\"><p>Track listing:</p><ol>" track-html "</ol><p>What do you think?</p>")]
+    (println "User is" user)
     (let [swirl (repo/save-draft-swirl (user :id) title review thumbnail-url)]
       (redirect (links/edit-swirl (swirl :id))))))
 
@@ -77,7 +79,7 @@
            (GET "/search/music" [search-term] (search-music-page search-term))
            (GET "/search/books" [search-term] (search-books-page search-term))
 
-           (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req)))
-           (GET "/create/album" [itunes-album-id :as req] (handle-album-creation itunes-album-id (session-from req)))
-           (GET "/create/book" [book-id :as req] (handle-book-creation book-id (session-from req)))
+           (GET "/create/youtube" [youtube-url :as req] (guard/requires-login #(handle-youtube-creation youtube-url (session-from req))))
+           (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req))))
+           (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req))))
            )

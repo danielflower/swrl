@@ -17,21 +17,14 @@
                 <ul>
                     <li>SWIRL</li>
                     <li><a href="/swirls">Firehose</a></li>
-
-
-                    {% if user %}
-
-                    <li><a href="/swirls/inbox">Inbox</a></li>
-
                     <li><a href="/swirls/start">Create</a></li>
 
+                    {% if user %}
+                    <li><a href="/swirls/inbox">Inbox</a></li>
                     {% else %}
-
                     <li><a href="/register">Register</a></li>
                     <li><a href="/login">Login</a></li>
-
                     {% endif %}
-
 
                 </ul>
             </div>

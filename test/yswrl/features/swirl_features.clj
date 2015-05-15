@@ -90,6 +90,32 @@
         (has (text? "Not Found"))
         ))))
 
+
+(deftest itunes-album-swirl-creation
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+          (follow "Music")
+
+          (fill-in "Search" "Mellon Collie")
+          (press "Search")
+
+          (follow "Mellon Collie and the Infinite Sadness (Remastered)")
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          (fill-in "You should watch or read or listen to" "Mellon Collie and the Infinite Sadness")
+          (submit "Submit")
+
+          (assert-swirl-title-in-header "Mellon Collie and the Infinite Sadness")
+          ))))
+
 (deftest quick-login
   (let [user (s/create-test-user)
         swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
