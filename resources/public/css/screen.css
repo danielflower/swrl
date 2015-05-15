@@ -67,7 +67,7 @@ nav ul li{
 .search-result {
     clear: both;
     margin: 10px;
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCCCCC;overflow: auto;
 }
 .search-result h5 {
     padding: 0;

@@ -5,69 +5,22 @@
             [compojure.core :refer [defroutes GET POST]]
             [clj-http.client :as client]
             [ring.util.response :refer [redirect response not-found]]
-            [yswrl.swirls.itunes :as itunes]))
-            [clojure.xml :as xml]
-            [clj-time.core :as t]
-            [buddy.core.mac.hmac :as hmac]
-            [buddy.core.codecs :as codecs]
-            [ring.util.response :refer [redirect response not-found]])
-  (:import (javax.crypto.spec SecretKeySpec)))
+            [yswrl.swirls.itunes :as itunes]
+            [yswrl.swirls.amazon :as amazon]
+            [ring.util.response :refer [redirect response not-found]]))
 
 
 (def youtube-api-key
   "AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg")
-
-(def amazon-key "tDwOEE+vRplK8EhmRhrt8BIuxZi1NvSYbmpwxTv5")
 
 (defn start-page []
   (layout/render "swirls/start.html"))
 
 (defn session-from [req] (:user (:session req)))
 
-(defn params [bookname] (sorted-map
-                          :AWSAccessKeyId "AKIAIO3J752UN7X4HUWA"
-                          :AssociateTag "corejavaint0d-20"
-                          :Keywords bookname
-                          :Operation "ItemSearch"
-                          :ResponseGroup "Images,ItemAttributes"
-                          :SearchIndex "Books"
-                          :Service "AWSECommerceService"
-                          :Timestamp (str (t/now))
-                          :Version "2011-08-01"
-                          ))
-
-(defn string-to-sign [pms]
-  (str "GET\nwebservices.amazon.com\n/onca/xml\n"
-       (ring.util.codec/form-encode pms)))
-
 (defn youtube-id [url]
   (get (ring.util.codec/form-decode (.getQuery (java.net.URI/create url))) "v"))
 
-(defn sign [key string]
-  "Returns the signature of a string with a given
-    key, using a SHA-256 HMAC."
-  (-> (hmac/hash string key :sha256)
-      (codecs/bytes->base64))
-  )
-
-
-(defn createEncryptedUrl [paz]
-  (str "http://webservices.amazon.com/onca/xml?"
-       (ring.util.codec/form-encode paz) "&Signature="
-       (ring.util.codec/form-encode
-         (sign amazon-key
-               (string-to-sign paz)))))
-
-(defn url-to-call [bookname]
-  (createEncryptedUrl (params bookname)))
-
-(defn handle-amazon [bookname]
-  (clojure.zip/xml-zip(xml/parse (url-to-call bookname))))
-
-(defn handle-amazon-creation [bookname author]
-  (let [SO
-        (xml/parse (:body (client/get
-                            (url-to-call bookname))))]))
 
 
 (defn get-video-details [youtube-id]
@@ -99,18 +52,32 @@
     (let [swirl (repo/save-draft-swirl (user :id) title review thumbnail-url)]
       (redirect (links/edit-swirl (swirl :id))))))
 
+(defn handle-book-creation [asin user]
+  (let [book (amazon/get-book asin)
+        title (str (book :title) " by " (book :author))
+        big-img-url (book :big-img-url)
+        book-html (book :blurb)
+        review (str "<img src=\"" big-img-url "\"><p>Blurb:</p>" book-html "<p>What do you think?</p>")]
+    (let [swirl (repo/save-draft-swirl (user :id) title review big-img-url)]
+      (redirect (links/edit-swirl (swirl :id))))))
+
 
 
 (defn search-music-page [search-term]
   (let [search-result (itunes/search-albums search-term)]
     (layout/render "swirls/search.html" {:search-term search-term :search-result search-result})))
 
+(defn search-books-page [search-term]
+  (let [search-result (amazon/search-books search-term)]
+    (println search-result)
+    (layout/render "swirls/search_books.html" {:search-term search-term :search-result search-result})))
+
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))
            (GET "/search/music" [search-term] (search-music-page search-term))
+           (GET "/search/books" [search-term] (search-books-page search-term))
 
            (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req)))
-           (GET "/create/album" [itunes-album-id :as req] (handle-album-creation itunes-album-id (session-from req))))
-
-           (POST "/create/amazon" [book-name :as req] (handle-amazon-creation book-name (session-from req)))
-           (POST "/create/youtube" [youtube-url :as req] (handle-youtube-creation youtube-url (session-from req))))
+           (GET "/create/album" [itunes-album-id :as req] (handle-album-creation itunes-album-id (session-from req)))
+           (GET "/create/book" [book-id :as req] (handle-book-creation book-id (session-from req)))
+           )

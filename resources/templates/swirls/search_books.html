@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Search</h1>
+
+{% if error %}
+
+<p class="validation-error">Sorry, there was an error. Please try again.</p>
+
+{% endif %}
+
+<form method="GET">
+
+    <label>Search
+        <input type="search" name="search-term" maxlength="1000" placeholder="Book or Author" value="{{search-term}}">
+    </label>
+
+    <input type="submit" value="Search">
+
+</form>
+
+{% for result in search-result.results %}
+<div class="search-result">
+
+    <img src="{{ result.thumbnail-url }}" width="60" height="90">
+    <h5><a href="/create/book?book-id={{ result.book-id }}">{{ result.title }}</a></h5>
+    By <em>{{ result.author }}</em>
+
+</div>
+{% endfor %}
+
+{% endblock %}

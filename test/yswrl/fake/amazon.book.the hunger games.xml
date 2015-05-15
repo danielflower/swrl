@@ -1,0 +1,455 @@
+<ItemSearchResponse xmlns="http://webservices.amazon.com/AWSECommerceService/2011-08-01">
+  <script/>
+  <OperationRequest>
+    <HTTPHeaders>
+      <Header Name="UserAgent" Value="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36"/>
+    </HTTPHeaders>
+    <RequestId>cca78fa5-143f-44ab-a353-f7ef2953f136</RequestId>
+    <Arguments>
+      <Argument Name="AWSAccessKeyId" Value="AKIAIO3J752UN7X4HUWA"/>
+      <Argument Name="AssociateTag" Value="corejavaint0d-20"/>
+      <Argument Name="Keywords" Value="the hunger games"/>
+      <Argument Name="Operation" Value="ItemSearch"/>
+      <Argument Name="ResponseGroup" Value="Images,ItemAttributes"/>
+      <Argument Name="SearchIndex" Value="All"/>
+      <Argument Name="Service" Value="AWSECommerceService"/>
+      <Argument Name="Timestamp" Value="2015-05-15T03:07:47.000Z"/>
+      <Argument Name="Version" Value="2011-08-01"/>
+      <Argument Name="Signature" Value="x/kA7exEpH4AunUUB06E+yhKXCzmAIgYbIXBCN3v+oA="/>
+    </Arguments>
+    <RequestProcessingTime>0.0646150000000000</RequestProcessingTime>
+  </OperationRequest>
+  <Items>
+    <Request>
+      <IsValid>True</IsValid>
+      <ItemSearchRequest>
+        <Keywords>the hunger games</Keywords>
+        <ResponseGroup>Images</ResponseGroup>
+        <ResponseGroup>ItemAttributes</ResponseGroup>
+        <SearchIndex>Books</SearchIndex>
+      </ItemSearchRequest>
+    </Request>
+    <TotalResults>2376</TotalResults>
+    <TotalPages>238</TotalPages>
+    <MoreSearchResultsUrl>
+      http://www.amazon.com/gp/redirect.html?camp=2025&creative=386001&location=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fsearch%3Fkeywords%3Dthe%2Bhunger%2Bgames%26url%3Dsearch-alias%253Dstripbooks&linkCode=xm2&tag=corejavaint0d-20&SubscriptionId=AKIAIO3J752UN7X4HUWA
+    </MoreSearchResultsUrl>
+    <Item>
+    <ASIN>0439023521</ASIN>
+    <DetailPageURL>
+      http://www.amazon.com/The-Hunger-Games-Book-1/dp/0439023521%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0439023521
+    </DetailPageURL>
+    <ItemLinks>
+      <ItemLink>
+        <Description>Technical Details</Description>
+        <URL>
+          http://www.amazon.com/The-Hunger-Games-Book-1/dp/tech-data/0439023521%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+      <ItemLink>
+        <Description>Add To Baby Registry</Description>
+        <URL>
+          http://www.amazon.com/gp/registry/baby/add-item.html%3Fasin.0%3D0439023521%26SubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+      <ItemLink>
+        <Description>Add To Wedding Registry</Description>
+        <URL>
+          http://www.amazon.com/gp/registry/wedding/add-item.html%3Fasin.0%3D0439023521%26SubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+      <ItemLink>
+        <Description>Add To Wishlist</Description>
+        <URL>
+          http://www.amazon.com/gp/registry/wishlist/add-item.html%3Fasin.0%3D0439023521%26SubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+      <ItemLink>
+        <Description>Tell A Friend</Description>
+        <URL>
+          http://www.amazon.com/gp/pdp/taf/0439023521%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+      <ItemLink>
+        <Description>All Customer Reviews</Description>
+        <URL>
+          http://www.amazon.com/review/product/0439023521%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+      <ItemLink>
+        <Description>All Offers</Description>
+        <URL>
+          http://www.amazon.com/gp/offer-listing/0439023521%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3D0439023521
+        </URL>
+      </ItemLink>
+    </ItemLinks>
+    <SmallImage>
+      <URL>
+        http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL75_.jpg
+      </URL>
+      <Height Units="pixels">75</Height>
+      <Width Units="pixels">50</Width>
+    </SmallImage>
+    <MediumImage>
+      <URL>
+        http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL160_.jpg
+      </URL>
+      <Height Units="pixels">160</Height>
+      <Width Units="pixels">107</Width>
+    </MediumImage>
+    <LargeImage>
+      <URL>
+        http://ecx.images-amazon.com/images/I/41bOj-am1RL.jpg
+      </URL>
+      <Height Units="pixels">500</Height>
+      <Width Units="pixels">333</Width>
+    </LargeImage>
+    <ImageSets>
+      <ImageSet Category="primary">
+        <SwatchImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL30_.jpg
+          </URL>
+          <Height Units="pixels">30</Height>
+          <Width Units="pixels">20</Width>
+        </SwatchImage>
+        <SmallImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL75_.jpg
+          </URL>
+          <Height Units="pixels">75</Height>
+          <Width Units="pixels">50</Width>
+        </SmallImage>
+        <ThumbnailImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL75_.jpg
+          </URL>
+          <Height Units="pixels">75</Height>
+          <Width Units="pixels">50</Width>
+        </ThumbnailImage>
+        <TinyImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL110_.jpg
+          </URL>
+          <Height Units="pixels">110</Height>
+          <Width Units="pixels">73</Width>
+        </TinyImage>
+        <MediumImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/41bOj-am1RL._SL160_.jpg
+          </URL>
+          <Height Units="pixels">160</Height>
+          <Width Units="pixels">107</Width>
+        </MediumImage>
+        <LargeImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/41bOj-am1RL.jpg
+          </URL>
+          <Height Units="pixels">500</Height>
+          <Width Units="pixels">333</Width>
+        </LargeImage>
+      </ImageSet>
+      <ImageSet Category="variant">
+        <SwatchImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/515jRjVy2vL._SL30_.jpg
+          </URL>
+          <Height Units="pixels">30</Height>
+          <Width Units="pixels">20</Width>
+        </SwatchImage>
+        <SmallImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/515jRjVy2vL._SL75_.jpg
+          </URL>
+          <Height Units="pixels">75</Height>
+          <Width Units="pixels">50</Width>
+        </SmallImage>
+        <ThumbnailImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/515jRjVy2vL._SL75_.jpg
+          </URL>
+          <Height Units="pixels">75</Height>
+          <Width Units="pixels">50</Width>
+        </ThumbnailImage>
+        <TinyImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/515jRjVy2vL._SL110_.jpg
+          </URL>
+          <Height Units="pixels">110</Height>
+          <Width Units="pixels">74</Width>
+        </TinyImage>
+        <MediumImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/515jRjVy2vL._SL160_.jpg
+          </URL>
+          <Height Units="pixels">160</Height>
+          <Width Units="pixels">108</Width>
+        </MediumImage>
+        <LargeImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/515jRjVy2vL.jpg
+          </URL>
+          <Height Units="pixels">500</Height>
+          <Width Units="pixels">336</Width>
+        </LargeImage>
+      </ImageSet>
+      <ImageSet Category="variant">
+        <SwatchImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/310txJJ7uBL._SL30_.jpg
+          </URL>
+          <Height Units="pixels">30</Height>
+          <Width Units="pixels">22</Width>
+        </SwatchImage>
+        <SmallImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/310txJJ7uBL._SL75_.jpg
+          </URL>
+          <Height Units="pixels">75</Height>
+          <Width Units="pixels">56</Width>
+        </SmallImage>
+        <ThumbnailImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/310txJJ7uBL._SL75_.jpg
+          </URL>
+          <Height Units="pixels">75</Height>
+          <Width Units="pixels">56</Width>
+        </ThumbnailImage>
+        <TinyImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/310txJJ7uBL._SL110_.jpg
+          </URL>
+          <Height Units="pixels">110</Height>
+          <Width Units="pixels">82</Width>
+        </TinyImage>
+        <MediumImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/310txJJ7uBL._SL160_.jpg
+          </URL>
+          <Height Units="pixels">160</Height>
+          <Width Units="pixels">120</Width>
+        </MediumImage>
+        <LargeImage>
+          <URL>
+            http://ecx.images-amazon.com/images/I/310txJJ7uBL.jpg
+          </URL>
+          <Height Units="pixels">500</Height>
+          <Width Units="pixels">375</Width>
+        </LargeImage>
+      </ImageSet>
+    </ImageSets>
+    <ItemAttributes>
+      <Author>Suzanne Collins</Author>
+      <Binding>Paperback</Binding>
+      <Brand>Scholastic Press</Brand>
+      <CatalogNumberList>
+        <CatalogNumberListElement>HP-1259</CatalogNumberListElement>
+        <CatalogNumberListElement>948672</CatalogNumberListElement>
+      </CatalogNumberList>
+      <EAN>9780439023528</EAN>
+      <EANList>
+        <EANListElement>9780439023528</EANListElement>
+      </EANList>
+      <Edition>Reprint</Edition>
+      <Feature>hardcover</Feature>
+      <Format>AC-3</Format>
+      <ISBN>9780439023528</ISBN>
+      <ItemDimensions>
+        <Height Units="hundredths-inches">850</Height>
+        <Length Units="hundredths-inches">100</Length>
+        <Weight Units="hundredths-pounds">70</Weight>
+        <Width Units="hundredths-inches">550</Width>
+      </ItemDimensions>
+      <Label>Scholastic Press</Label>
+      <Languages>
+        <Language>
+          <Name>English</Name>
+          <Type>Published</Type>
+        </Language>
+        <Language>
+          <Name>English</Name>
+          <Type>Dictionary</Type>
+        </Language>
+        <Language>
+          <Name>English</Name>
+          <Type>Original Language</Type>
+        </Language>
+        <Language>
+          <Name>English</Name>
+          <Type>Unknown</Type>
+        </Language>
+      </Languages>
+      <ListPrice>
+        <Amount>1099</Amount>
+        <CurrencyCode>USD</CurrencyCode>
+        <FormattedPrice>$10.99</FormattedPrice>
+      </ListPrice>
+      <Manufacturer>Scholastic Press</Manufacturer>
+      <MPN>9780439023528</MPN>
+      <NumberOfItems>1</NumberOfItems>
+      <NumberOfPages>384</NumberOfPages>
+      <PackageDimensions>
+        <Height Units="hundredths-inches">100</Height>
+        <Length Units="hundredths-inches">840</Length>
+        <Weight Units="hundredths-pounds">75</Weight>
+        <Width Units="hundredths-inches">520</Width>
+      </PackageDimensions>
+      <PackageQuantity>1</PackageQuantity>
+      <PartNumber>9780439023528</PartNumber>
+      <ProductGroup>Book</ProductGroup>
+      <ProductTypeName>ABIS_BOOK</ProductTypeName>
+      <PublicationDate>2010-07-03</PublicationDate>
+      <Publisher>Scholastic Press</Publisher>
+      <Studio>Scholastic Press</Studio>
+      <Title>The Hunger Games (Book 1)</Title>
+    </ItemAttributes>
+  </Item>
+
+    <Item>
+      <ASIN>B0075N4OK2</ASIN>
+      <DetailPageURL>
+        http://www.amazon.com/Hunger-Games-Trilogy-Catching-Mockingjay/dp/B0075N4OK2%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3DB0075N4OK2
+      </DetailPageURL>
+      <ItemLinks>
+        <ItemLink>
+          <Description>Technical Details</Description>
+          <URL>
+            http://www.amazon.com/Hunger-Games-Trilogy-Catching-Mockingjay/dp/tech-data/B0075N4OK2%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+        <ItemLink>
+          <Description>Add To Baby Registry</Description>
+          <URL>
+            http://www.amazon.com/gp/registry/baby/add-item.html%3Fasin.0%3DB0075N4OK2%26SubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+        <ItemLink>
+          <Description>Add To Wedding Registry</Description>
+          <URL>
+            http://www.amazon.com/gp/registry/wedding/add-item.html%3Fasin.0%3DB0075N4OK2%26SubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+        <ItemLink>
+          <Description>Add To Wishlist</Description>
+          <URL>
+            http://www.amazon.com/gp/registry/wishlist/add-item.html%3Fasin.0%3DB0075N4OK2%26SubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+        <ItemLink>
+          <Description>Tell A Friend</Description>
+          <URL>
+            http://www.amazon.com/gp/pdp/taf/B0075N4OK2%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+        <ItemLink>
+          <Description>All Customer Reviews</Description>
+          <URL>
+            http://www.amazon.com/review/product/B0075N4OK2%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+        <ItemLink>
+          <Description>All Offers</Description>
+          <URL>
+            http://www.amazon.com/gp/offer-listing/B0075N4OK2%3FSubscriptionId%3DAKIAIO3J752UN7X4HUWA%26tag%3Dcorejavaint0d-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D386001%26creativeASIN%3DB0075N4OK2
+          </URL>
+        </ItemLink>
+      </ItemLinks>
+      <ImageSets>
+        <ImageSet Category="variant">
+          <SwatchImage>
+            <URL>
+              http://ecx.images-amazon.com/images/I/31XWc6gbQLL._SL30_.jpg
+            </URL>
+            <Height Units="pixels">30</Height>
+            <Width Units="pixels">27</Width>
+          </SwatchImage>
+          <SmallImage>
+            <URL>
+              http://ecx.images-amazon.com/images/I/31XWc6gbQLL._SL75_.jpg
+            </URL>
+            <Height Units="pixels">75</Height>
+            <Width Units="pixels">68</Width>
+          </SmallImage>
+          <ThumbnailImage>
+            <URL>
+              http://ecx.images-amazon.com/images/I/31XWc6gbQLL._SL75_.jpg
+            </URL>
+            <Height Units="pixels">75</Height>
+            <Width Units="pixels">68</Width>
+          </ThumbnailImage>
+          <TinyImage>
+            <URL>
+              http://ecx.images-amazon.com/images/I/31XWc6gbQLL._SL110_.jpg
+            </URL>
+            <Height Units="pixels">110</Height>
+            <Width Units="pixels">100</Width>
+          </TinyImage>
+          <MediumImage>
+            <URL>
+              http://ecx.images-amazon.com/images/I/31XWc6gbQLL._SL160_.jpg
+            </URL>
+            <Height Units="pixels">160</Height>
+            <Width Units="pixels">146</Width>
+          </MediumImage>
+          <LargeImage>
+            <URL>
+              http://ecx.images-amazon.com/images/I/31XWc6gbQLL.jpg
+            </URL>
+            <Height Units="pixels">252</Height>
+            <Width Units="pixels">230</Width>
+          </LargeImage>
+        </ImageSet>
+      </ImageSets>
+      <ItemAttributes>
+        <Author>Suzanne Collins</Author>
+        <Binding>Hardcover</Binding>
+        <EAN>0030788707686</EAN>
+        <EANList>
+          <EANListElement>0030788707686</EANListElement>
+        </EANList>
+        <Feature>The Hunger Games Trilogy Boxed Set</Feature>
+        <Feature>Suzanne Collins</Feature>
+        <IsEligibleForTradeIn>1</IsEligibleForTradeIn>
+        <ItemDimensions>
+          <Height Units="hundredths-inches">550</Height>
+          <Length Units="hundredths-inches">980</Length>
+          <Width Units="hundredths-inches">400</Width>
+        </ItemDimensions>
+        <Label>Scholastic Press</Label>
+        <Languages>
+          <Language>
+            <Name>English</Name>
+            <Type>Published</Type>
+          </Language>
+          <Language>
+            <Name>English</Name>
+            <Type>Unknown</Type>
+          </Language>
+        </Languages>
+        <Manufacturer>Scholastic Press</Manufacturer>
+        <PackageDimensions>
+          <Height Units="hundredths-inches">360</Height>
+          <Length Units="hundredths-inches">890</Length>
+          <Weight Units="hundredths-pounds">330</Weight>
+          <Width Units="hundredths-inches">600</Width>
+        </PackageDimensions>
+        <ProductGroup>Book</ProductGroup>
+        <ProductTypeName>HOME</ProductTypeName>
+        <Publisher>Scholastic Press</Publisher>
+        <Studio>Scholastic Press</Studio>
+          <Title>
+            The Hunger Games Trilogy (The Hunger Games / Catching Fire / Mockingjay)
+          </Title>
+        <TradeInValue>
+          <Amount>193</Amount>
+          <CurrencyCode>USD</CurrencyCode>
+          <FormattedPrice>$1.93</FormattedPrice>
+        </TradeInValue>
+        <UPC>030788707686</UPC>
+        <UPCList>
+          <UPCListElement>030788707686</UPCListElement>
+        </UPCList>
+      </ItemAttributes>
+    </Item>
+    </Items>
+</ItemSearchResponse>
