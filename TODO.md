@@ -11,6 +11,3 @@ Throw anything down in here big or small.
 - Make website not look pants.
 - When a user registers as result of suggestion, immediately add suggester and suggestee to each other's network.
 
-# Chores
-
-- correct mime types on immutable area 
