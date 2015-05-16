@@ -2,6 +2,7 @@ html,
 body {
     width: 100%;
     height: 100%;
+    background-color: #E4E4E4;
 }
 
 .validation-error {
@@ -29,7 +30,9 @@ td.response {
 }
 nav{
     padding-bottom: 30px;
-    border-bottom: 2px solid #999;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.0812398);
+    height: 30px;
+    color: #737373;
 }
 nav ul{
     margin: 0px;
@@ -38,7 +41,28 @@ nav ul{
 nav ul li{
     display: inline;
     list-style-type: none;
-    padding-right: 5px;
+
+}
+nav ul li a{
+     display: inline;
+     list-style-type: none;
+     padding: 10px;
+     font-size: 1em;
+         color: #737373;
+    text-decoration: none;
+
+ }
+.logo{
+    height: 1em;
+    border-radius: 100%;
+    border: solid #737373 4px;
+}
+nav h1{
+    font-size: 1.3em;
+    display: inline;
+    vertical-align: top;
+    padding-left: 10px;
+
 }
 .row{
     padding-bottom: 30px;
@@ -73,6 +97,23 @@ nav ul li{
     padding: 0;
     margin: 0;
 }
+.container{
+    max-width: 1190px;
+    background-color: white;
+    padding: 60px;
+}
 .search-result img {
     float: left;
+}
+@media (min-width: 400px) {
+    .container {
+        width: 90%;
+    }
+}
+
+/* For devices larger than 550px */
+@media (min-width: 550px) {
+    .container {
+        width: 90%;
+    }
 }
