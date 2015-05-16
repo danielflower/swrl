@@ -9,7 +9,7 @@
 
   (testing "url Params are in order"
     (let [urlToCall (amazon/search-url "javainterviewbootcamp")]
-      (is (.contains urlToCall (str "http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAIO3J752UN7X4HUWA&AssociateTag=corejavaint0d-20&Keywords=javainterviewbootcamp&Operation=ItemSearch&ResponseGroup=Images%2CItemAttributes&SearchIndex=Books&Service=AWSECommerceService&")) urlToCall)))
+      (is (.contains urlToCall (str "http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAIO3J752UN7X4HUWA&AssociateTag=corejavaint0d-20&Keywords=javainterviewbootcamp&Operation=ItemSearch&ResponseGroup=Images%2CItemAttributes%2CEditorialReview&SearchIndex=Books&Service=AWSECommerceService&")) urlToCall)))
 
   (testing "Amazon URL is correctly generated"
     (let [urlToCall (amazon/createEncryptedUrl (sorted-map
