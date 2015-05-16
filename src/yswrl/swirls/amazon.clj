@@ -72,7 +72,8 @@
         zip-data (zip/xml-zip result-data)
         book (xml1-> zip-data :Items :Item)]
     (println url)
-    {:title       (apply str (xml-> book :ItemAttributes :Title text))
+    {:url         (apply str (xml-> book :DetailPageURL text))
+     :title       (apply str (xml-> book :ItemAttributes :Title text))
      :author      (apply str (xml-> book :ItemAttributes :Author text))
      :big-img-url (apply str (xml-> book :LargeImage :URL text))
      :blurb       (apply str (xml-> book :EditorialReviews :EditorialReview :Content text))

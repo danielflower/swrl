@@ -59,7 +59,8 @@
         title (str (book :title) " by " (book :author))
         big-img-url (book :big-img-url)
         book-html (book :blurb)
-        review (str "<img src=\"" big-img-url "\"><p>Blurb:</p>" book-html "<p>What do you think?</p>")]
+        url (book :url)
+        review (str "<img src=\"" big-img-url "\"><p><a href=\"" url "\">Buy now from Amazon</a><p>Blurb:</p>" book-html "<p>What do you think?</p>")]
     (let [swirl (repo/save-draft-swirl (user :id) title review big-img-url)]
       (redirect (links/edit-swirl (swirl :id))))))
 
