@@ -9,8 +9,7 @@
 <div>
 
     <div>
-        <form method="POST" action="/create/youtube">
-            {% csrf-field %}
+        <form method="GET" action="/create/youtube">
             <img src="/immutable/images/YouTube-logo-20150508.png" width="773" height="481">
             <label for="youtube-url-box">Enter a YouTube video URL</label>
             <input id="youtube-url-box" type="url" name="youtube-url" required>

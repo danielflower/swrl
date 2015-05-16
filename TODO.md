@@ -10,3 +10,5 @@ Throw anything down in here big or small.
 "note from me", e.g. why I want you to check this awesome thing out.
 - Make website not look pants.
 - Swirls should be a group convo. on http://www.youshouldwatchreadlisten.com/swirls/37 Dan said "Did I ever mention you guys should read this?". Which guys? I DON'T KNOW!
+- When a user registers as result of suggestion, immediately add suggester and suggestee to each other's network.
+

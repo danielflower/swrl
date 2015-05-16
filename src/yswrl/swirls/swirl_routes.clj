@@ -7,8 +7,10 @@
             [yswrl.swirls.response-notifier :refer [send-response-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
+            [yswrl.links :as links]
             [ring.util.response :refer [status redirect response not-found]]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [yswrl.auth.guard :as guard])
   (:import (java.util UUID)))
 
 (defn edit-swirl-page [author swirl-id]
@@ -58,7 +60,7 @@
     (if (= authorName (author :username))
       (let [swirls (repo/get-swirls-authored-by (:id author))]
         (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
-      (redirect (str "/swirls/by/" (java.net.URLEncoder/encode (author :username) "UTF-8"))))))
+      (redirect (str "/swirls/by/" (links/url-encode (author :username)))))))
 
 (defn view-all-swirls [count]
   (if-let [swirls (repo/get-recent-swirls 20 count)]
@@ -103,13 +105,13 @@
     (distinct (concat checkboxes textbox))))
 
 (defroutes swirl-routes
-           (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (edit-swirl-page (session-from req) (Integer/parseInt id)))
-           (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (publish-swirl (session-from req) (Integer/parseInt id) (usernames-and-emails-from-request who emails) subject review))
+           (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Integer/parseInt id))))
+           (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Integer/parseInt id) (usernames-and-emails-from-request who emails) subject review)))
            (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
-           (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (handle-response (Integer/parseInt id) responseButton response-summary (session-from req)))
-           (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (handle-comment (Integer/parseInt id) comment (session-from req)))
+           (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Integer/parseInt id) responseButton response-summary (session-from req))))
+           (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (guard/requires-login #(handle-comment (Integer/parseInt id) comment (session-from req))))
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
-           (GET "/swirls/inbox" [:as req] (view-inbox 0 (session-from req)))
-           (GET "/swirls/inbox/:count{[0-9]+}" [:as req] (view-inbox count (session-from req))))
+           (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
+           (GET "/swirls/inbox/:count{[0-9]+}" [:as req] (guard/requires-login #(view-inbox count (session-from req)))))

@@ -8,7 +8,7 @@
 
 {% endif %}
 
-<form method="POST" action="/login">
+<form method="POST" action="/login?return-url={{ return-url|default:"/"|urlescape }}">
     {% csrf-field %}
 
     <label for="username">Username</label>
