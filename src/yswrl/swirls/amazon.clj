@@ -34,7 +34,8 @@
 
 (defn createEncryptedUrl [paz]
   (let [to-sign (string-to-sign paz)
-        signed (sign amazon-key to-sign)
+        encoded (clojure.string/replace to-sign "+" "%20")
+        signed (sign amazon-key encoded)
         encodedSignature (ring.util.codec/form-encode signed)]
     (str "http://webservices.amazon.com/onca/xml?" (ring.util.codec/form-encode paz) "&Signature=" encodedSignature)))
 
@@ -51,7 +52,7 @@
 (defn search-books [search-term]
   (if (clojure.string/blank? search-term)
     {:results []}
-    (let [result (handle-amazon (ring.util.codec/url-encode search-term))] {
+    (let [result (handle-amazon search-term)] {
                                                                             :results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
                                                                                                    :title           (apply str (xml-> r :ItemAttributes :Title text))
                                                                                                    :author          (apply str (xml-> r :ItemAttributes :Author text))
