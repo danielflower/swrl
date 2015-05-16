@@ -6,8 +6,8 @@
 
     <link href="/immutable/css/normalize-3.0.2.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/css/skeleton-2.0.4.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="/immutable/css/font-awesome.min.css" type="text/css">
     <link href="/css/screen.css" rel="stylesheet" type="text/css"/>
-
 </head>
 <body>
 <div class="container"> <nav>
@@ -32,7 +32,7 @@
             </div>
             <div class="five columns right">
                 {% if user %}
-                Welcome, <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">Log out</a>
+                WELCOME <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">LOG OUT</a>
                 {% endif %}
             </div>
 

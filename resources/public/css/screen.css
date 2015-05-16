@@ -33,6 +33,7 @@ nav{
     border-bottom: 1px solid rgba(0, 0, 0, 0.0812398);
     height: 30px;
     color: #737373;
+    margin-bottom: 50px;
 }
 nav ul{
     margin: 0px;
@@ -90,20 +91,41 @@ nav h1{
 
 .search-result {
     clear: both;
-    margin: 10px;
+    margin: -1px;
     border: 1px solid #CCCCCC;overflow: auto;
-}
-.search-result h5 {
-    padding: 0;
-    margin: 0;
+    padding: 15px;
 }
 .container{
     max-width: 1190px;
     background-color: white;
     padding: 60px;
 }
+
+.search-result h5 {
+    padding: 0;
+    margin: 0;
+    display: inline;
+    letter-spacing: 1px;
+}
 .search-result img {
     float: left;
+    padding-left:10px;
+    padding-right:35px;
+}
+.search-result a{
+    text-transform: uppercase;
+    text-decoration: none;
+    color:#737373;
+}
+.search-result em{
+    text-transform: uppercase;
+    color:#737373;
+    font-size: 1em;
+    letter-spacing: 0.5px;
+}
+.pad{
+    padding-left: 10px;
+    padding-right: 10px;
 }
 @media (min-width: 400px) {
     .container {
@@ -116,4 +138,14 @@ nav h1{
     .container {
         width: 90%;
     }
+}
+
+input[type="search"]{
+     width:100%;
+     font-size: 50px;
+     height: inherit;
+ }
+
+.center{
+    text-align: center;
 }
