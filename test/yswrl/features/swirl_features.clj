@@ -7,6 +7,7 @@
             [clojure.test :refer :all])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
+(selmer.parser/cache-off!)
 
 (defn now [] (System/currentTimeMillis))
 

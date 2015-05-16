@@ -3,9 +3,9 @@
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]))
+(selmer.parser/cache-off!)
 
 (defn now [] (System/currentTimeMillis))
-
 
 (deftest homepage-greeting
   (-> (session app)
