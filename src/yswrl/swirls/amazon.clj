@@ -17,9 +17,11 @@
               :AssociateTag "corejavaint0d-20"
               :ResponseGroup "Images,ItemAttributes,EditorialReview"
               :Service "AWSECommerceService"
-              :Timestamp (str (t/now))
               :Version "2011-08-01"
               ))
+
+(defn timestamp [parameters]
+  (assoc parameters :Timestamp (str (t/now))))
 
 (defn string-to-sign [pms]
   (str "GET\nwebservices.amazon.com\n/onca/xml\n"
@@ -37,7 +39,7 @@
     (str "http://webservices.amazon.com/onca/xml?" (ring.util.codec/form-encode paz) "&Signature=" encodedSignature)))
 
 (defn search-url [bookname]
-  (createEncryptedUrl (assoc params :Keywords bookname :Operation "ItemSearch" :SearchIndex "Books"
+  (createEncryptedUrl (assoc (timestamp params) :Keywords bookname :Operation "ItemSearch" :SearchIndex "Books"
                                     )))
 
 (defn handle-amazon [bookname]
@@ -60,7 +62,7 @@
 
 
 (defn item-url [item-id]
-  (createEncryptedUrl (assoc params :idType "ASIN" :ItemId item-id :Operation "ItemLookup")))
+  (createEncryptedUrl (assoc (timestamp params) :idType "ASIN" :ItemId item-id :Operation "ItemLookup")))
 
 (defn get-book [asin]
   (let [url (item-url asin)

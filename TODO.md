@@ -9,3 +9,4 @@ Throw anything down in here big or small.
 - Swirl Creation: Should be less "open text field".  Each swirl should have a "media" (normally an image), Some default text (blurb/ track listing) and a 
 "note from me", e.g. why I want you to check this awesome thing out.
 - Make website not look pants.
+- Swirls should be a group convo. on http://www.youshouldwatchreadlisten.com/swirls/37 Dan said "Did I ever mention you guys should read this?". Which guys? I DON'T KNOW!
