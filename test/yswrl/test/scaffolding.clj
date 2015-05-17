@@ -22,7 +22,7 @@
 (defn equal-ignoring-order? [& colls]
   (apply = (map frequencies colls)))
 
-(defn create-swirl [authorId title review recipientNames & {:keys [itunes_collection_id]}]
-  (let [swirl (swirls-repo/save-draft-swirl authorId title review nil)]
+(defn create-swirl [authorId title review recipientNames optional-values]
+  (let [swirl (swirls-repo/save-draft-swirl authorId title review nil optional-values)]
     (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames)
     swirl))

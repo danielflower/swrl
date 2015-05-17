@@ -119,7 +119,7 @@
 
 (deftest quick-login
   (let [user (s/create-test-user)
-        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
+        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [], {})]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
@@ -134,7 +134,7 @@
 
 (deftest quick-register
   (let [user (s/create-test-user)
-        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
+        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [], {})]
     (-> (session app)
 
         ; when not logged in, the page can be viewed

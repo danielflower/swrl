@@ -18,3 +18,7 @@
 
 (defn password-reset [token]
   (str "/reset-password?token=" (url-encode token)))
+
+(defn itunes-album [album-id]
+  (str "https://itunes.apple.com/us/album/id" album-id "?at=")
+  )

@@ -12,7 +12,7 @@
 
     (testing "A user can create a swirl and selected users will be included"
       (let [
-            created (create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) "someoneelse@example.org"])
+            created (create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) "someoneelse@example.org"], {})
             retrieved (repo/get-swirl (created :id))]
         (is (= (retrieved :title) "Some thing"))
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
@@ -26,14 +26,14 @@
 
     (testing "Optional extras can be added"
       (let [
-            created (create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [])
+            created (create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [], {:itunes-collection-id 1234})
             retrieved (repo/get-swirl (created :id))]
-        (is (nil? (retrieved :itunes_album_id)))
+        (is (= 1234 (retrieved :itunes-collection-id)))
 
         ))
 
     (testing "Adding the same users again causes no issues"
-      (create-swirl (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"])
-      (create-swirl (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"]))
+      (create-swirl (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"], {})
+      (create-swirl (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"], {}))
 
     ))

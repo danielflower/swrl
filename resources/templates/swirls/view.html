@@ -11,6 +11,8 @@
 
 {% endif %}
 
+{% include "swirls/affiliate-links.html" %}
+
 <article>
     {{swirl.review|safe}}
 </article>
@@ -71,6 +73,8 @@
 
     {% endfor %}
 </div>
+
+{% include "swirls/affiliate-links.html" %}
 
 
 {% if user %}

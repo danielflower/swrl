@@ -13,4 +13,11 @@
     (is (= "/swirls/by/Dan+%26+%2F+co" (links/user "Dan & / co"))))
 
   (testing "absolute URLs"
-    (is (= "http://www.youshouldwatchreadlisten.com/swirls/10" (links/absolute "/swirls/10")))))
+    (is (= "http://www.youshouldwatchreadlisten.com/swirls/10" (links/absolute "/swirls/10"))))
+
+
+  (testing "itunes album"
+    (is (= "https://itunes.apple.com/us/album/id721224313?at=" (links/itunes-album 721224313))))
+
+
+  )
