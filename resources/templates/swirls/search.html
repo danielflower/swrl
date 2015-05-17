@@ -1,30 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="buffer">
 
-<h1>Search</h1>
+    {% if error %}
 
-{% if error %}
+    <p class="validation-error">Sorry, there was an error. Please try again.</p>
 
-<p class="validation-error">Sorry, there was an error. Please try again.</p>
+    {% endif %}
 
-{% endif %}
+    <form method="GET">
+        <div class="row">
+            <div class="ten columns">
+                <input type="search" name="search-term" class="searchbox" maxlength="1000" placeholder="Album or Song"
+                       value="{{search-term}}">
+            </div>
+            <div class="two columns center">
+                <input type="submit" value="Search"></div>
+        </div>
 
-<form method="GET">
+    </form>
 
-    <label>Search<input type="search" name="search-term" maxlength="1000" placeholder="Album or song title" value="{{search-term}}"></label>
+    {% for result in search-result.results %}
+    <div class="search-result">
 
-    <input type="submit" value="Search">
+        <img src="{{ result.thumbnail-url }}" width="60" height="60">
+        <h5><a href="/create/album?itunes-album-id={{ result.itunes-id }}">{{ result.title }}</a></h5>
+        By <em>{{ result.artist }}</em>
 
-</form>
-
-{% for result in search-result.results %}
-<div class="search-result">
-
-    <img src="{{ result.thumbnail-url }}" width="60" height="60">
-    <h5><a href="/create/album?itunes-album-id={{ result.itunes-id }}">{{ result.title }}</a></h5>
-    By <em>{{ result.artist }}</em>
-
-</div>
+    </div>
 {% endfor %}
+</div>
 
 {% endblock %}
