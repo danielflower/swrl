@@ -11,7 +11,7 @@
   (-> (session app)
       (visit "/")
       (within [:h1]
-                (has (text? "Welcome to yswrl")))))
+                (has (text? "Welcome to Swirl")))))
 
 (deftest registration
   (let [username (str "test-user" (now))
