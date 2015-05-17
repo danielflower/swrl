@@ -69,21 +69,21 @@
 
 (defn get-swirl-responses [swirld-id]
   (select db/swirl-responses
-          (fields :summary :users.username :responder)
+          (fields :summary :users.username :users.email_md5 :responder)
           (join :inner db/users (= :users.id :swirl_responses.responder))
           (where {:swirl_id swirld-id})
           ))
 
 (defn get-swirl-comments [swirld-id]
   (select db/comments
-          (fields :html_content :users.username :date_responded)
+          (fields :html_content :users.username :users.email_md5 :date_responded)
           (join :inner db/users (= :users.id :comments.author_id))
           (where {:swirl_id swirld-id})
           (order :date_responded :asc)))
 
 (defn get-recent-swirls [swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username :thumbnail_url)
+          (fields :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/users (= :swirls.author_id :users.id))
           (where {:state "L"})
           (offset skip)

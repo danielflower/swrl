@@ -47,15 +47,13 @@
     {% endif %}
 
 
-    <table>
+    <div class="responses">
         {% for resp in responses %}
-        <tr>
-            <td class="username"><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said&nbsp;
-            </td>
-            <td class="response">{{resp.summary}}</td>
-        </tr>
+        {{ resp.email_md5|gravatar-img:40 }}
+        <span class="username"><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said</span>
+        <span class="response">{{resp.summary}}</span>
         {% endfor %}
-    </table>
+    </div>
 
 </div>
 
@@ -65,10 +63,15 @@
 <div class="comments">
     {% for comment in comments %}
 
-    <div>
-        <a href="/swirls/by/{{ comment.username|urlescape }}">{{comment.username}}</a> said:
-        <br>
-        {{ comment.html_content|safe }}
+    <div class="comment">
+        {{ comment.email_md5|gravatar-img:40 }}
+
+        <div class="comment-body">
+            <a class="user-link" href="/swirls/by/{{ comment.username|urlescape }}">{{comment.username}}</a>
+            {{ comment.html_content|linebreaks|safe }}
+
+            <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
+        </div>
     </div>
 
     {% endfor %}
@@ -77,16 +80,18 @@
 
 {% if user %}
 
-<form method="POST" action="/swirls/{{swirl.id}}/comment">
+
+<form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
     {% csrf-field %}
 
     <input type="hidden" name="swirl-id" value="{{swirl.id}}">
 
-    <label>Add your comment
-        <textarea name="comment" required>{{current-comment}}</textarea>
-    </label>
-
-    <input type="submit" value="Submit">
+    {{ user.email_md5|gravatar-img:40 }}
+    <div class="comment-body">
+        <a class="user-link" href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a>
+        <textarea name="comment" required placeholder="Add your comment">{{current-comment}}</textarea>
+        <input type="submit" value="Add comment">
+    </div>
 
 </form>
 

@@ -5,8 +5,8 @@
         <div class="profile"> {% if user %}
 
             <div class="headprofile">
-                <img class="gravatar" src="http://www.gravatar.com/avatar/123">
 
+                {{ user.email_md5|gravatar-img:80 }}
                 <a href="/swirls/by/{{ user.username|urlescape }}">@{{user.username}}</a>
             </div>
             <div class="inbox">
@@ -26,7 +26,7 @@
 
         {% for swirl in swirls %}
         <div class="swirl">
-            <img class="gravatar" src="http://www.gravatar.com/avatar/123?s=40">
+            {{ swirl.email_md5|gravatar-img:40 }}
 
             <div class="swirl-content">
                 <a href="/swirls/{{swirl.id}}">{{swirl.title}}</a> by <a href="/swirls/by/{{swirl.username}}">@{{swirl.username}}</a>

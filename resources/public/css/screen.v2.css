@@ -31,7 +31,7 @@ a{
     display: inline;
 }
 
-td.response {
+span.response {
     font-weight: bold;
 }
 .gravatar{
@@ -42,8 +42,39 @@ td.response {
 }
 .swirl-content{
     margin-left:60px;
-
 }
+
+.comment {
+    clear: both;
+    margin-bottom: 30px;
+}
+
+.comment textarea {
+    display: block;
+}
+
+.comment .user-link {
+    display: block;
+    font-weight: bold;
+}
+
+.comment .gravatar {
+    float: left;
+}
+
+.comment textarea {
+    width: 80%;
+}
+
+.comment .comment-body {
+    margin-left: 50px;
+}
+
+.comment time {
+    display: block;
+    color: #AAAAAA;
+}
+
 article{
     padding-top: 20px;
 }

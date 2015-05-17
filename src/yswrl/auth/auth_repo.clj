@@ -1,12 +1,16 @@
 (ns yswrl.auth.auth-repo
   (:require [yswrl.db :refer [users]]
-            [yswrl.db :as db])
+            [yswrl.db :as db]
+            [buddy.core.hash :as hash]
+            [buddy.core.codecs :refer :all])
   )
 (use 'korma.core)
 
 (defn create-user [username email password]
-  (insert users
-          (values {:username username :email email :password password :admin false :is_active true})))
+  (let [email-md5 (-> (hash/md5 email)
+                      (bytes->hex))]
+    (insert users
+            (values {:username username :email email :password password :admin false :is_active true :email_md5 email-md5}))))
 
 (defn change-password [user-id hashed-password]
   (update users
@@ -24,7 +28,7 @@
         question-marks (->> (repeat (count lowered) "?")
                             (interpose ",")
                             (apply str))]
-    (apply db/query (str "SELECT id, username, email FROM users WHERE LOWER(username) IN ( " question-marks " ) OR LOWER(email) IN ( " question-marks " )" ) (concat lowered lowered))))
+    (apply db/query (str "SELECT id, username, email FROM users WHERE LOWER(username) IN ( " question-marks " ) OR LOWER(email) IN ( " question-marks " )") (concat lowered lowered))))
 
 (defn user-exists [username]
   (db/exists? "SELECT 1 FROM users WHERE username = ?" username))

@@ -9,8 +9,14 @@
 
 (def test-user-password "Abcd1234")
 
-(defn create-test-user [ & {:keys [username] :or {username (str "test-user-" (now) "_" (swap! counter inc))}}]
-  (let [email (str username "@example.org")
+(defn unique-username []
+  (str "test-user-" (now) "_" (swap! counter inc)))
+
+(defn unique-email [username]
+  (str username "@example.org"))
+
+(defn create-test-user [ & {:keys [username] :or {username (unique-username)}}]
+  (let [email (unique-email username)
         password test-user-password
         req {}
         response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req nil {:algorithm :sha256})]
