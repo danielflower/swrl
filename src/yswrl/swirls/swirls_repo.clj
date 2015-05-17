@@ -33,7 +33,7 @@
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
 
 (defn create-response [swirld-id summary author]
-  (insert db/swirl_responses
+  (insert db/swirl-responses
           (values {:swirl_id swirld-id :responder (:id author) :summary summary :date_responded (now)})
           ))
 
@@ -42,9 +42,9 @@
           (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
-(defn save-draft-swirl [author-id title review image-thumbnail]
+(defn save-draft-swirl [author-id title review image-thumbnail optional-values]
   (insert db/swirls
-          (values {:author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"})))
+          (values (merge {:author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
 
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
@@ -68,7 +68,7 @@
                  (limit 1))))
 
 (defn get-swirl-responses [swirld-id]
-  (select db/swirl_responses
+  (select db/swirl-responses
           (fields :summary :users.username :responder)
           (join :inner db/users (= :users.id :swirl_responses.responder))
           (where {:swirl_id swirld-id})

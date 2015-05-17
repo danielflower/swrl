@@ -11,4 +11,11 @@ Throw anything down in here big or small.
 - Make website not look pants.
 - Swirls should be a group convo. on http://www.youshouldwatchreadlisten.com/swirls/37 Dan said "Did I ever mention you guys should read this?". Which guys? I DON'T KNOW!
 - When a user registers as result of suggestion, immediately add suggester and suggestee to each other's network.
+- Make logins not case sensitive
+- Make test-refersh not cache html
 
+## Security
+
+- Parse out evil tags like `script` from rich taxt editors. Already uses the `enlive` lib to handle HTML parsing, so we should reuse that.
+- HTTPS
+- Is the long-lived cookie for remember-me secure?

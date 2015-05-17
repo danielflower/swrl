@@ -10,29 +10,30 @@
     <link href="/css/screen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<div class="container"> <nav>
+<div class="container">
+
+    <nav>
     <div class="row">
 
             <div class="five columns">
                 <ul>
-                    <li><a href="/swirls">FIREHOSE</a></li>
-                    <li><a href="/swirls/start">CREATE</a></li>
+                    <li><a href="/swirls">Firehose</a></li>
+                    <li><a href="/swirls/start">Create</a></li>
 
                     {% if user %}
-                    <li><a href="/swirls/inbox">INBOX</a></li>
+                    <li><a href="/swirls/inbox">Inbox</a></li>
                     {% else %}
-                    <li><a href="/register">REGISTER</a></li>
-                    <li><a href="/login">LOGIN</a></li>
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/login">Login</a></li>
                     {% endif %}
 
                 </ul>
             </div>
-            <div class="two columns">
-                <img src="/immutable/images/logo.png" class="logo"/><h1>Swirl</h1>
-            </div>
+            <div class="two columns site-header"><img src="/immutable/images/logo.png" class="logo"/>
+                <span class="site-title">Swirl</span></div>
             <div class="five columns right">
                 {% if user %}
-                WELCOME <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">LOG OUT</a>
+                Welcome <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">Log out</a>
                 {% endif %}
             </div>
 

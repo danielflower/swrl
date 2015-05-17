@@ -1,0 +1,1 @@
+ALTER TABLE swirls DROP COLUMN itunes_collection_id;

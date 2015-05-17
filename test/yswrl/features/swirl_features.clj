@@ -7,6 +7,7 @@
             [clojure.test :refer :all])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
+(selmer.parser/cache-off!)
 
 (defn now [] (System/currentTimeMillis))
 
@@ -118,7 +119,7 @@
 
 (deftest quick-login
   (let [user (s/create-test-user)
-        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
+        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [], {})]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
@@ -133,7 +134,7 @@
 
 (deftest quick-register
   (let [user (s/create-test-user)
-        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [])]
+        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [], {})]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
