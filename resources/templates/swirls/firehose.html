@@ -2,16 +2,21 @@
 {% block content %}
 <div class="row">
     <div class="three columns ">
-        <div class="profile">
+        <div class="profile"> {% if user %}
+
             <div class="headprofile">
                 <img class="gravatar" src="http://www.gravatar.com/avatar/123">
 
-                <a href="/swirls/by/{{ user.username|urlescape }}">@{{user.username}}</a></div>
+                <a href="/swirls/by/{{ user.username|urlescape }}">@{{user.username}}</a>
+            </div>
             <div class="inbox">
                 <div class="left">6 <br/>New Swirls</div>
                 <div>10 <br/>sent</div>
             </div>
+            {% endif %}
+
         </div>
+
     </div>
     <div class="nine columns firehose-content">
         <h1>{{pageTitle}}</h1>
