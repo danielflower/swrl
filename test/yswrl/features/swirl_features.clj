@@ -100,7 +100,7 @@
           (visit "/swirls/start")
 
           (fill-in "Album or Song Title" "Mellon Collie")
-          (press "Go")
+          (press :#album-search-go-button)
 
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
 
