@@ -33,7 +33,7 @@
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
 
 (defn create-response [swirld-id summary author]
-  (insert db/swirl_responses
+  (insert db/swirl-responses
           (values {:swirl_id swirld-id :responder (:id author) :summary summary :date_responded (now)})
           ))
 
@@ -68,7 +68,7 @@
                  (limit 1))))
 
 (defn get-swirl-responses [swirld-id]
-  (select db/swirl_responses
+  (select db/swirl-responses
           (fields :summary :users.username :responder)
           (join :inner db/users (= :users.id :swirl_responses.responder))
           (where {:swirl_id swirld-id})

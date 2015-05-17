@@ -64,7 +64,7 @@
 
 (defn view-all-swirls [count]
   (if-let [swirls (repo/get-recent-swirls 20 count)]
-    (layout/render "swirls/firehose.html" {:pageTitle (str "Firehose") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+    (layout/render "swirls/firehose.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn session-from [req] (:user (:session req)))
 

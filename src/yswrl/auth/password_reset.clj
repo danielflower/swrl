@@ -23,7 +23,7 @@
   (layout/render "auth/reset-password.html" {:token token :error error}))
 
 (defn create-password-reset-request [user-id, hashed-code]
-  (insert db/password_reset_requests
+  (insert db/password-reset-requests
           (values {:hashed_token hashed-code :user_id user-id})))
 
 (defn create-forgotten-email-body [username token]
@@ -51,12 +51,12 @@
     (t/before? utc-date-time one-day-ago)))
 
 (defn handle-reset-password [unhashed-token new-password req hash-options]
-  (let [result (first (select db/password_reset_requests (where {:hashed_token (hash-token unhashed-token)})))]
+  (let [result (first (select db/password-reset-requests (where {:hashed_token (hash-token unhashed-token)})))]
     (if (or (nil? result) (over-a-day-old (coerce/from-sql-time (result :date_requested))))
       (reset-password-page nil "Sorry, that request was invalid. Please go to the login page and request a new password reset.")
       (let [user (users/get-user-by-id (:user_id result))]
         (users/change-password (:user_id result) (hash-password new-password hash-options))
-        (delete db/password_reset_requests (where {:user_id (user :id)}))
+        (delete db/password-reset-requests (where {:user_id (user :id)}))
         (attempt-login (:username user) new-password false nil req)))))
 
 (defroutes password-reset-routes

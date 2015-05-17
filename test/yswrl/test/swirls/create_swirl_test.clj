@@ -20,6 +20,15 @@
         (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_id = ? AND recipient_email IS NULL", (created :id) (friend :id)))
         (is (= (networking/get-relations (author :id) :knows) [(user-to-relation friend)]))
         (is (= (networking/get-relations (friend :id) :knows) [(user-to-relation author)]))
+        (is (nil? (retrieved :itunes_album_id)))
+
+        ))
+
+    (testing "Optional extras can be added"
+      (let [
+            created (create-swirl (author :id) "Some thing" "Boz it's really <b>great</b>.", [])
+            retrieved (repo/get-swirl (created :id))]
+        (is (nil? (retrieved :itunes_album_id)))
 
         ))
 
