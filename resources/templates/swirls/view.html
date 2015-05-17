@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block head %}
+<meta property="og:site_name" content="Swirl">
+<meta property="og:title" content="You should consume {{swirl.title}}" />
+<meta property="og:image" content="{{swirl.thumbnail_url}}" />
+<meta property="og:type" content="video">
+{% endblock %}
 {% block content %}
 
 
