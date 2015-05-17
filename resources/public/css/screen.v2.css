@@ -75,6 +75,14 @@ span.response {
     color: #AAAAAA;
 }
 
+header img {
+    float: left;
+}
+header .byline {
+    margin-left: 80px;
+    height: 80px;
+}
+
 article{
     padding-top: 20px;
 }
@@ -85,6 +93,7 @@ article img {
     clear: both;
     margin-left: 30px;
 }
+
 .profile{
     margin-top:50px;
 }

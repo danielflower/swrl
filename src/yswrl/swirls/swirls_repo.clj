@@ -64,6 +64,8 @@
 
 (defn get-swirl [id]
   (first (select db/swirls
+                 (fields :id :author_id :title :review :creation_date :itunes_collection_id :users.username :users.email_md5)
+                 (join :inner db/users (= :users.id :swirls.author_id))
                  (where {:id id})
                  (limit 1))))
 

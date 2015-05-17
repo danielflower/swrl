@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>You should consume {{swirl.title}}</h1>
+
+<header>
+    <h1 class="headline">You should consume {{swirl.title}}</h1>
+    {{ swirl.email_md5|gravatar-img:60 }}
+    <div class="byline">
+        <address class="author">By <a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a></address>
+        on <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>
+    </div>
+</header>
+
 
 {% if can-edit %}
 
@@ -50,7 +59,7 @@
     <div class="responses">
         {% for resp in responses %}
         {{ resp.email_md5|gravatar-img:40 }}
-        <span class="username"><a href="/swirls/by/{{resp.username | urlescape}}">{{resp.username}}</a> said</span>
+        <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
         <span class="response">{{resp.summary}}</span>
         {% endfor %}
     </div>
@@ -67,7 +76,7 @@
         {{ comment.email_md5|gravatar-img:40 }}
 
         <div class="comment-body">
-            <a class="user-link" href="/swirls/by/{{ comment.username|urlescape }}">{{comment.username}}</a>
+            <a class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
             {{ comment.html_content|linebreaks|safe }}
 
             <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
@@ -88,7 +97,7 @@
 
     {{ user.email_md5|gravatar-img:40 }}
     <div class="comment-body">
-        <a class="user-link" href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a>
+        <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
         <textarea name="comment" required placeholder="Add your comment">{{current-comment}}</textarea>
         <input type="submit" value="Add comment">
     </div>
