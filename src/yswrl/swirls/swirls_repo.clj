@@ -105,4 +105,4 @@
           (where {:suggestions.recipient_id userId})
           (offset skip)
           (limit swirl-count)
-          (order :creation_date :asc)))
+          (order :creation_date :desc)))
