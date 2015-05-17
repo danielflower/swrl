@@ -7,7 +7,7 @@
 <meta property="article:published_time" content="{{swirl.creation_date}}">
 {% endblock %}
 {% block content %}
-
+<div class="buffer">
 
 <header>
     <h1 class="headline">You should consume {{swirl.title}}</h1>
@@ -36,7 +36,7 @@
 <div class="responses">
 
     {% if can-respond %}
-
+    <hr/>
     <h2>Seen it? What did you think?</h2>
 
     <form method="POST" action="/swirls/{{swirl.id}}/respond">
@@ -115,11 +115,11 @@
 {% else %}
 
 <p>Sign in to have your say.</p>
-
 {% include "auth/logister.html" %}
 
 {% endif %}
 
 {% include "swirls/affiliate-links.html" %}
 
+</div>
 {% endblock %}

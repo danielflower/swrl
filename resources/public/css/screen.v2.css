@@ -126,7 +126,13 @@ h1{
     text-transform: uppercase;
     font-size: 20px;
 }
-
+h2{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #737373;
+    text-transform: uppercase;
+    font-size: 17px;
+}
 nav {
     padding-bottom: 30px;
     padding-top: 60px;
