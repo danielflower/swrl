@@ -98,10 +98,9 @@
 
       (-> (session app)
           (visit "/swirls/start")
-          (follow "Music")
 
-          (fill-in "Search" "Mellon Collie")
-          (press "Search")
+          (fill-in "Album or Song Title" "Mellon Collie")
+          (press "Go")
 
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
 
