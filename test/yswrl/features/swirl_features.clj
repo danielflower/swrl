@@ -42,6 +42,25 @@
               (has (text? (str "You should consume " title))))
       ))
 
+(deftest firehose-can-load
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls")
+          (within [:h1]
+                  (has (text? "Firehose")))
+
+          (follow "Login")
+          (login-as user)
+
+          (visit "/swirls")
+          (within [:h1]
+                  (has (text? "Firehose")))
+
+          ))))
+
+
 
 (deftest swirl-security
   (with-faked-responses
