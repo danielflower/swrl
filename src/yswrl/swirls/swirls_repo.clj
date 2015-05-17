@@ -90,7 +90,7 @@
           (where {:state "L"})
           (offset skip)
           (limit swirl-count)
-          (order :creation_date :asc)))
+          (order :creation_date :desc)))
 
 (defn get-swirls-authored-by [userId]
   (select db/swirls
