@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="buffer">
+<h1>Facebook Login</h1>
+<form method="get" action="/facebook_login">
+    <input type="submit" value="Login with Facebook">
+</form>
 <h1>Login</h1>
 
 {% if error %}

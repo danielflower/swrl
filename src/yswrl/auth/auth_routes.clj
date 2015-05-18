@@ -1,14 +1,14 @@
 (ns yswrl.auth.auth-routes
-  (:require [yswrl.layout :as layout]
-            [compojure.core :refer [defroutes GET POST]]
-            [bouncer.core :as b]
-            [bouncer.validators :as v]
-            [clojure.tools.logging :as log]
-            [buddy.hashers :as hashers]
-            [yswrl.auth.auth-repo :as users]
-            [clojure.string :refer [trim]]
-            [ring.util.response :refer [redirect response]]
-            [yswrl.constraints :refer [max-length]]))
+    (:require [yswrl.layout :as layout]
+      [compojure.core :refer [defroutes GET POST]]
+      [bouncer.core :as b]
+      [bouncer.validators :as v]
+      [clojure.tools.logging :as log]
+      [buddy.hashers :as hashers]
+      [yswrl.auth.auth-repo :as users]
+      [clojure.string :refer [trim]]
+      [ring.util.response :refer [redirect response]]
+      [yswrl.constraints :refer [max-length]] [yswrl.auth.auth-repo :as user]))
 
 (def password-hash-options {:algorithm :bcrypt+sha512 })
 
@@ -58,6 +58,7 @@
     (login-success user remember-me? return-url req)
     (login-page :username username :error true :return-url return-url)))
 
+
 (defn hash-password [unhashed options]
   (hashers/encrypt unhashed options))
 
@@ -82,6 +83,14 @@
               (log/error "Error while registering user" user e)
               (registration-page (assoc user :errors message)))))))))
 
+(defn attempt-thirdparty-login [username email return-url req]
+      (if-let [user (users/get-user-by-email email)]
+          (login-success user true return-url req)
+          (do
+              (handle-registration {:username username :email email :password "shouldrandomise" :confirmPassword "shouldrandomise"}
+                                   req return-url password-hash-options)
+              (login-success (users/get-user username) true return-url req)
+              )))
 
 (defroutes auth-routes
            (GET "/login" [return-url] (login-page :return-url return-url))

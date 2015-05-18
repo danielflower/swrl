@@ -5,6 +5,7 @@
             [yswrl.swirls.creation :refer [creation-routes]]
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
+            [yswrl.auth.facebook-login :refer [facebook-routes]]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
@@ -56,6 +57,7 @@
         (wrap-content-security-policy swirl-routes)
         (wrap-content-security-policy creation-routes)
         (wrap-content-security-policy password-reset-routes)
+        (wrap-content-security-policy facebook-routes)
         base-routes)
       development-middleware
       production-middleware))

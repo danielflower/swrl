@@ -13,7 +13,35 @@
     (let [user (s/create-test-user)]
       (is (repo/user-exists (user :username)))))
 
-  (testing "Username suggestions take the desired name if it's not already taken"
+ (testing "Can tell you if an email doesn't exist"
+    (is (not (repo/user-exists "thisemaildoesntexist"))))
+
+  (testing "Can tell you if an email does exist"
+     (let [user (s/create-test-user)]
+         (is (repo/user-exists-by-email (user :email)))))
+
+ (testing "Creating a duplicate user throws an error"
+          (let [user (s/create-test-user)
+                error (try ((repo/create-user (:username user) (:email user) (:password user)))
+                           (catch Exception e
+                             (.getMessage e)))]
+               (is (.contains error "violates unique constraint \"users_email_key\""))))
+
+ (testing "Creating a user with an email of an existing user throws an error"
+          (let [user (s/create-test-user)
+                error (try ((repo/create-user (s/unique-username) (:email user) (:password user)))
+                           (catch Exception e
+                             (.getMessage e)))]
+               (is (.contains error "violates unique constraint \"users_email_key\""))))
+
+ (testing "Creating a user with a username of an existing user throws an error"
+          (let [user (s/create-test-user)
+                error (try ((repo/create-user (user :username) (s/unique-email (s/unique-username)) (:password user)))
+                           (catch Exception e
+                             (.getMessage e)))]
+               (is (.contains error "violates unique constraint \"users_username_key\""))))
+
+ (testing "Username suggestions take the desired name if it's not already taken"
       (is (= "non-existant-user-234" (repo/suggest-username "non-existant-user-234"))))
 
   (testing "When users are created their email is hashed and stored"

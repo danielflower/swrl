@@ -19,6 +19,10 @@
 
 (defn get-user [username]
   (db/query-single "SELECT * FROM users WHERE LOWER(username) = ?" (clojure.string/lower-case username)))
+
+(defn get-user-by-email [email]
+      (db/query-single "SELECT * FROM users WHERE LOWER(email) = ?" (clojure.string/lower-case email)))
+
 (defn get-user-by-id [id]
   (db/query-single "SELECT * FROM users WHERE id = ?" id))
 
@@ -34,6 +38,10 @@
   (db/exists? "SELECT 1 FROM users WHERE username = ?" username))
 
 
+(defn user-exists-by-email [email]
+      (db/exists? "SELECT 1 FROM users WHERE email = ?" email))
+
+
 (defn- search-username [desired-name suffix]
   (let [current (str desired-name suffix)]
     (if (user-exists current)
@@ -44,3 +52,4 @@
   (if (not (user-exists desired-name))
     desired-name
     (search-username desired-name 1)))
+
