@@ -4,7 +4,8 @@
             [yswrl.links :as linky]
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
-            [clojure.test :refer :all])
+            [clojure.test :refer :all]
+            [yswrl.swirls.swirls-repo :as repo])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
 (selmer.parser/cache-off!)
@@ -166,5 +167,19 @@
         (submit "Register")
 
         (assert-swirl-title-in-header (swirl :title))
+
+        )))
+
+(deftest swirl-responses
+  (let [author (s/create-test-user)
+        responder (s/create-test-user)
+        non-responder (s/create-test-user)
+        swirl (s/create-swirl (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"], {})
+        _ (repo/create-response (swirl :id) "HOT" responder)]
+    (-> (session app)
+
+        (visit (linky/swirl (swirl :id)))
+        (within [:.response] (has (some-text? (str (responder :username) " said HOT"))))
+        (within [:.non-responders] (has (some-text? (str "Yet to respond: " (non-responder :username)))))
 
         )))

@@ -51,9 +51,10 @@
           logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
+          non-responders (repo/get-non-responders (:id swirl))
           can-respond (and (not is-author) is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
           can-edit is-author]
-      (layout/render "swirls/view.html" {:swirl swirl :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info}))))
+      (layout/render "swirls/view.html" {:swirl swirl :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]

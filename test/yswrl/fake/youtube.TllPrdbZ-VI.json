@@ -46,7 +46,7 @@
         }
       },
       "player": {
-        "embedHtml": "<iframe type='text/html' src='http://www.youtube.com/embed/TllPrdbZ-VI' width='640' height='360' frameborder='0' allowfullscreen='true'/>"
+        "embedHtml": "<iframe type=\"text/html\" src=\"http://www.youtube.com/embed/TllPrdbZ-VI\" width=\"640\" height=\"360\" frameborder=\"0\" allowfullscreen=\"true\"></iframe>"
       }
     }
   ]

@@ -50,7 +50,6 @@
         thumbnail-url (album :thumbnail-url)
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
         review (str "<img src=\"" thumbnail-url "\"><p>Track listing:</p><ol>" track-html "</ol><p>What do you think?</p>")]
-    (println "User is" user)
     (let [swirl (repo/save-draft-swirl (user :id) title review thumbnail-url, {:itunes-collection-id (Long/parseLong itunes-collection-id)})]
       (redirect (links/edit-swirl (swirl :id))))))
 

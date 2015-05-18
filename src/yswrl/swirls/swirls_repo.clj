@@ -106,3 +106,9 @@
           (offset skip)
           (limit swirl-count)
           (order :creation_date :desc)))
+
+(defn get-non-responders [swirl-id]
+  (db/query "SELECT users.username, users.email_md5 FROM
+  (suggestions INNER JOIN users ON users.id = suggestions.recipient_id)
+  LEFT JOIN swirl_responses ON swirl_responses.swirl_id = suggestions.swirl_id AND swirl_responses.responder = suggestions.recipient_id
+WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))

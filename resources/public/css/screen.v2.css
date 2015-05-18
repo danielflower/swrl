@@ -31,7 +31,7 @@ a{
     display: inline;
 }
 
-span.response {
+.response-text {
     font-weight: bold;
 }
 .gravatar{
