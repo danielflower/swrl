@@ -9,7 +9,7 @@
 (deftest response-notifier-test
   (testing "an HTML template is created with links to the swirl"
     (let [html (rn/response-notification-email-html some-swirl some-response some-user)]
-      (is (.contains html (str "<a href=\"http://www.youshouldwatchreadlisten.com/swirls/1\">This &lt;great&gt; thing</a>")) html)
+      (is (.contains html (str "<a href=\"http://www.swrl.co/swirls/1\">This &lt;great&gt; thing</a>")) html)
       (is (.contains html (str "<h2>&lt;Sucked&gt;</h2>")) html))))
 
 

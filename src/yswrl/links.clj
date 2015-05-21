@@ -2,7 +2,7 @@
 
 (defn url-encode [val] (java.net.URLEncoder/encode val "UTF-8"))
 
-(def base-url "http://www.youshouldwatchreadlisten.com")
+(def base-url "http://www.swrl.co")
 
 (defn absolute [relative]
   (str base-url relative))

@@ -13,7 +13,7 @@
     (is (= "/swirls/by/Dan+%26+%2F+co" (links/user "Dan & / co"))))
 
   (testing "absolute URLs"
-    (is (= "http://www.youshouldwatchreadlisten.com/swirls/10" (links/absolute "/swirls/10"))))
+    (is (= "http://www.swrl.co/swirls/10" (links/absolute "/swirls/10"))))
 
 
   (testing "itunes album"
@@ -22,8 +22,6 @@
   (testing "gravatar URLs include the hash"
     (is (= "http://www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346?s=40&d=monsterid"
            (links/gravatar-url "0bc83cb571cd1c50ba6f3e8a78ef1346" 40)))
-    ;(is (= "http://www.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e?s=40&d=monsterid"
-    ;       (links/gravatar-url nil 40)))
     )
 
   )
