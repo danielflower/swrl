@@ -87,11 +87,11 @@
 
 
 (defn publish-swirl [author id usernames-and-emails-to-notify subject review]
-    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
-      (do
-        (send-unsent-suggestions)
-        (redirect (yswrl.links/swirl id)))
-      nil))
+  (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
+    (do
+      (send-unsent-suggestions)
+      (redirect (yswrl.links/swirl id)))
+    nil))
 
 (defn usernames-and-emails-from-request [checkboxes-raw textbox-raw]
   (let [textbox (if (clojure.string/blank? textbox-raw)

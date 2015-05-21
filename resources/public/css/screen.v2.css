@@ -291,3 +291,12 @@ input[type="search"] {
 .center {
     text-align: center;
 }
+
+.user-select-box label {
+    display: inline;
+    background-color: #5c9bce;
+    border: 1px solid #0FA0CE;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 0 5px 5px 0;
+}
