@@ -37,10 +37,10 @@
       (follow-redirect)))
 
 
-(defn assert-swirl-title-in-header [session title]
+(defn assert-swirl-title-in-header [session verb title]
   (-> session
       (within [:h1]
-              (has (text? (str "You should consume " title))))
+              (has (text? (str "You should " verb " " title))))
       ))
 
 (deftest firehose-can-load
@@ -86,13 +86,13 @@
 
         (save-url test-state :view-swirl-uri)
 
-        (assert-swirl-title-in-header "How to chop an ONION using CRYSTALS with Jamie Oliver")
+        (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
         (follow "[edit this page]")
         (fill-in "You should watch or read or listen to" "The onion video")
         (submit "Submit")
 
-        (assert-swirl-title-in-header "The onion video")
+        (assert-swirl-title-in-header "watch" "The onion video")
 
         (log-out)
 
@@ -101,8 +101,7 @@
 
         ; Other users can view the swirl....
         (visit (@test-state :view-swirl-uri))
-        (within [:h1]
-                (has (text? "You should consume The onion video")))
+        (assert-swirl-title-in-header "watch" "The onion video")
         (has (missing? [:.swirl-admin-panel]))
 
         ; ...but they can't edit the page
@@ -133,32 +132,35 @@
           (fill-in "You should watch or read or listen to" "Mellon Collie and the Infinite Sadness")
           (submit "Submit")
 
-          (assert-swirl-title-in-header "Mellon Collie and the Infinite Sadness")
+          (assert-swirl-title-in-header "listen to" "Mellon Collie and the Infinite Sadness")
+
+          (within [:title] (has (text? "You should listen to Mellon Collie and the Infinite Sadness")))
+
           ))))
 
 (deftest quick-login
   (let [user (s/create-test-user)
-        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [], {})]
+        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [], {})]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
         (visit (linky/swirl (swirl :id)))
-        (assert-swirl-title-in-header (swirl :title))
+        (assert-swirl-title-in-header "see" (swirl :title))
 
         ; ...and the user can log in from the page and be redirected
         (login-as user)
-        (assert-swirl-title-in-header (swirl :title))
+        (assert-swirl-title-in-header "see" (swirl :title))
 
         )))
 
 (deftest quick-register
   (let [user (s/create-test-user)
-        swirl (s/create-swirl (user :id) "Great swirls" "This is a great swirl" [], {})]
+        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [], {})]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
         (visit (linky/swirl (swirl :id)))
-        (assert-swirl-title-in-header (swirl :title))
+        (assert-swirl-title-in-header "see" (swirl :title))
 
         ; ...and the user can register from the page and be redirected
         (fill-in "Username" (str "Ampter-Jamp" (s/now)))
@@ -166,7 +168,7 @@
         (fill-in "Password" "A#~$&#(@*~$&__f 1234")
         (submit "Register")
 
-        (assert-swirl-title-in-header (swirl :title))
+        (assert-swirl-title-in-header "see" (swirl :title))
 
         )))
 
@@ -174,7 +176,7 @@
   (let [author (s/create-test-user)
         responder (s/create-test-user)
         non-responder (s/create-test-user)
-        swirl (s/create-swirl (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"], {})
+        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"], {})
         _ (repo/create-response (swirl :id) "HOT" responder)]
     (-> (session app)
 

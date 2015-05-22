@@ -15,6 +15,7 @@ Throw anything down in here big or small.
 - Store the type of thing a swirl is
 - auto-select friends when creating a swirl
 - spotify integration
+- Generate plain text versions of emails so links are rendered correctly
 
 ## Security
 

@@ -10,7 +10,8 @@
             [yswrl.links :as links]
             [ring.util.response :refer [status redirect response not-found]]
             [clojure.tools.logging :as log]
-            [yswrl.auth.guard :as guard])
+            [yswrl.auth.guard :as guard]
+            [yswrl.swirls.types :refer [type-of]])
   (:import (java.util UUID)))
 
 (defn edit-swirl-page [author swirl-id]
@@ -53,8 +54,10 @@
           comments (repo/get-swirl-comments (:id swirl))
           non-responders (repo/get-non-responders (:id swirl))
           can-respond (and (not is-author) is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
+          type (type-of swirl)
+          title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           can-edit is-author]
-      (layout/render "swirls/view.html" {:swirl swirl :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
+      (layout/render "swirls/view.html" {:title title :swirl swirl :type type :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]

@@ -42,9 +42,9 @@
           (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
-(defn save-draft-swirl [author-id title review image-thumbnail optional-values]
+(defn save-draft-swirl [type author-id title review image-thumbnail optional-values]
   (insert db/swirls
-          (values (merge {:author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
+          (values (merge {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
 
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
@@ -64,7 +64,7 @@
 
 (defn get-swirl [id]
   (first (select db/swirls
-                 (fields :id :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
+                 (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
                  (join :inner db/users (= :users.id :swirls.author_id))
                  (where {:id id})
                  (limit 1))))
@@ -85,7 +85,7 @@
 
 (defn get-recent-swirls [swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
+          (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/users (= :swirls.author_id :users.id))
           (where {:state "L"})
           (offset skip)
@@ -99,7 +99,7 @@
 
 (defn get-swirls-for [userId swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username :thumbnail_url)
+          (fields :type :creation_date, :review, :title, :id, :users.username :thumbnail_url)
           (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
           (join :inner db/users (= :swirls.author_id :users.id))
           (where {:suggestions.recipient_id userId})

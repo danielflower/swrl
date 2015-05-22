@@ -40,7 +40,7 @@
 (defn handle-youtube-creation [youtube-url author]
   (let [youtube-id (youtube-id youtube-url)
         info (get-video-details youtube-id)
-        swirl (repo/save-draft-swirl (author :id) (info :title) (info :review) (info :thumbnail-url), {})]
+        swirl (repo/save-draft-swirl "youtube" (author :id) (info :title) (info :review) (info :thumbnail-url), {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
 
@@ -50,7 +50,7 @@
         thumbnail-url (album :thumbnail-url)
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
         review (str "<img src=\"" thumbnail-url "\"><p>Track listing:</p><ol>" track-html "</ol><p>What do you think?</p>")]
-    (let [swirl (repo/save-draft-swirl (user :id) title review thumbnail-url, {:itunes-collection-id (Long/parseLong itunes-collection-id)})]
+    (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url, {:itunes-collection-id (Long/parseLong itunes-collection-id)})]
       (redirect (links/edit-swirl (swirl :id))))))
 
 (defn handle-book-creation [asin user]
@@ -60,7 +60,7 @@
         book-html (book :blurb)
         url (book :url)
         review (str "<img src=\"" big-img-url "\"><p><a href=\"" url "\">Buy now from Amazon</a><p>Blurb:</p>" book-html "<p>What do you think?</p>")]
-    (let [swirl (repo/save-draft-swirl (user :id) title review big-img-url, {})]
+    (let [swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url, {})]
       (redirect (links/edit-swirl (swirl :id))))))
 
 
