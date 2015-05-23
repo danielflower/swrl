@@ -33,6 +33,13 @@ a{
     margin-bottom: 10px;
 }
 
+/* Hack to make sure floated images don't overflow past the review */
+.rte .editor:after, article:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 #swirl-title {
     width: 90%;
 }

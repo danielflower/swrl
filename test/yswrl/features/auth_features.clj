@@ -7,12 +7,6 @@
 
 (defn now [] (System/currentTimeMillis))
 
-(deftest homepage-greeting
-  (-> (session app)
-      (visit "/")
-      (within [:h1]
-                (has (text? "Welcome to Swirl")))))
-
 (deftest registration
   (let [username (str "test-user" (now))
         email (str username "@example.org")

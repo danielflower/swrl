@@ -38,14 +38,15 @@
      :iframe-html   iframe-html
      :review        review}))
 
-(defn handle-youtube-creation [youtube-url author]
+(defn handle-youtube-creation [youtube-url author _]
   (let [youtube-id (youtube-id (str youtube-url))
         info (get-video-details youtube-id)
         swirl (repo/save-draft-swirl "youtube" (author :id) (info :title) (info :review) (info :thumbnail-url), {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
-(defn handle-website-creation [url author]
-  (let [swirl (repo/save-draft-swirl "website" (author :id) "This website" (str "Check out <a href=\"" url "\">" url "</a>") nil, {})]
+(defn handle-website-creation [url author title]
+  (let [swirl-title (or title "This website")
+        swirl (repo/save-draft-swirl "website" (author :id) swirl-title (str "Check out <a href=\"" url "\">" url "</a>") nil, {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn- host-ends-with [host test]
@@ -88,10 +89,10 @@
   (let [[_ result] (re-find #"/([0-9A-Z]{10})(?:[/?]|$)" url)]
     result))
 
-(defn handle-itunes-creation [url user]
+(defn handle-itunes-creation [url user _]
   (handle-album-creation (itunes-id-from-url (str url)) user))
 
-(defn handle-amazon-creation [url user]
+(defn handle-amazon-creation [url user _]
   (handle-book-creation (asin-from-url (str url)) user))
 
 (defn handler-for [url]
@@ -102,15 +103,15 @@
           :else handle-website-creation)
     ))
 
-(defn handle-creation-from-url [url author]
-  ((handler-for url) url author))
+(defn handle-creation-from-url [url title author]
+  ((handler-for url) url author title))
 
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))
            (GET "/search/music" [search-term] (search-music-page search-term))
            (GET "/search/books" [search-term] (search-books-page search-term))
 
-           (GET "/create/from-url" [url :as req] (guard/requires-login #(handle-creation-from-url (URL. url) (session-from req))))
+           (GET "/create/from-url" [url title :as req] (guard/requires-login #(handle-creation-from-url (URL. url) title (session-from req))))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req))))
            (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req))))
            )
