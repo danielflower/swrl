@@ -318,6 +318,6 @@ input[type="search"] {
     margin: 0 5px 5px 0;
 }
 
-.install-chrome-extension-box {
+.chrome-only, .chrome-extension-installed, .install-chrome-extension-box {
     display: none;
 }

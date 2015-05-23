@@ -35,15 +35,26 @@ $(document).ready(function () {
 
 
     var chrome = window.chrome;
-    if (chrome && chrome.app && !chrome.app.isInstalled) {
-        $('.install-chrome-extension-box').css('display', 'block');
-        $('.add-to-chrome-button').click(function () {
-            console.log('running');
-            chrome.webstore.install(undefined,
-                function (suc) { console.log('success', suc); },
-                function (err) { console.log('failure', err); }
-            );
-        });
+    if (chrome && chrome.app) {
+        $('.chrome-only').css('display', 'block');
+
+        if (chrome.app.isInstalled) {
+            $('.chrome-extension-installed').css('display', 'block');
+        } else {
+            $('.install-chrome-extension-box').css('display', 'block');
+            $('.add-to-chrome-button').click(function () {
+                console.log('running');
+                chrome.webstore.install(undefined,
+                    function (suc) {
+                        $('.chrome-extension-installed').css('display', 'block');
+                        console.log('Installation succeeded', suc);
+                    },
+                    function (err) {
+                        console.log('Installation failed', err);
+                    }
+                );
+            });
+        }
     }
 
 });
