@@ -33,4 +33,13 @@ $(document).ready(function () {
         }
     });
 
+
+    if (window.chrome && !chrome.app.isInstalled) {
+        $('.install-chrome-extension-box').css('display', 'block');
+        $('.add-to-chrome-button').click(function () {
+            console.log('running');
+            chrome.webstore.install(null, function () { console.log('success'); }, function () { console.log('failure'); });
+        });
+    }
+
 });
