@@ -12,10 +12,16 @@ Throw anything down in here big or small.
 - When a user registers as result of suggestion, immediately add suggester and suggestee to each other's network.
 - Fix dates for [open graph](http://ogp.me/) and do profile linking etc
 - Make the inbox only show the right things 
-- Store the type of thing a swirl is
-- auto-select friends when creating a swirl
+- Change type="youtube" to type="video"
 - spotify integration
 - Generate plain text versions of emails so links are rendered correctly
+- Merge login and register pages, and honour return URLs during registration
+
+## Bugs
+
+- When editing a swirl, the already-added users are re-added and then added to the suggestion table again
+  * add unique constraint on swirl_id / recipient_id
+  * make it impossible to unselect people (they've already been emailed) or let them remove people (?)
 
 ## Tech debt
 
