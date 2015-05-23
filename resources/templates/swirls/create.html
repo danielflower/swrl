@@ -21,7 +21,7 @@
         <input type="text" name="emails" maxlength="1000" placeholder="username or emails" value="{{who}}">
     </div>
 
-    <label for="swirl-title">You should watch or read or listen to</label>
+    <label for="swirl-title">You should {{type.words.watch}}</label>
     <input id="swirl-title" type="text" name="subject" required
            maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
            placeholder="Title of a movie, book, song, album, etc">
@@ -33,7 +33,7 @@
         <article class="editor" contenteditable="true"></article>
     </div>
 
-    <input type="submit" value="Submit">
+    <input type="submit" value="Save changes">
 
 </form>
 </div>

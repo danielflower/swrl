@@ -22,6 +22,7 @@
         (layout/render "swirls/create.html" {:id       swirl-id
                                              :subject  (swirl :title)
                                              :review   (swirl :review)
+                                             :type (type-of swirl)
                                              :contacts contacts})))))
 
 (defn view-inbox [count current-user]

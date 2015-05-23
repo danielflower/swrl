@@ -8,7 +8,8 @@
             [yswrl.swirls.itunes :as itunes]
             [yswrl.swirls.amazon :as amazon]
             [ring.util.response :refer [redirect response not-found]]
-            [yswrl.auth.guard :as guard]))
+            [yswrl.auth.guard :as guard])
+  (:import (java.net URL)))
 
 
 (def youtube-api-key
@@ -38,11 +39,23 @@
      :review        review}))
 
 (defn handle-youtube-creation [youtube-url author]
-  (let [youtube-id (youtube-id youtube-url)
+  (let [youtube-id (youtube-id (str youtube-url))
         info (get-video-details youtube-id)
         swirl (repo/save-draft-swirl "youtube" (author :id) (info :title) (info :review) (info :thumbnail-url), {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
+(defn handle-website-creation [url author]
+  (let [swirl (repo/save-draft-swirl "website" (author :id) "This website" (str "Check out <a href=\"" url "\">" url "</a>") nil, {})]
+    (redirect (links/edit-swirl (swirl :id)))))
+
+(defn handler-for [url]
+  (let [host (.getHost url)]
+    (cond (or (= host "youtube.com") (.endsWith host ".youtube.com")) handle-youtube-creation
+      :else handle-website-creation)
+  ))
+
+(defn handle-creation-from-url [url author]
+  ((handler-for url) url author))
 
 (defn handle-album-creation [itunes-collection-id user]
   (let [album (itunes/get-itunes-album itunes-collection-id)
@@ -79,7 +92,7 @@
            (GET "/search/music" [search-term] (search-music-page search-term))
            (GET "/search/books" [search-term] (search-books-page search-term))
 
-           (GET "/create/youtube" [youtube-url :as req] (guard/requires-login #(handle-youtube-creation youtube-url (session-from req))))
+           (GET "/create/from-url" [url :as req] (guard/requires-login #(handle-creation-from-url (URL. url) (session-from req))))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req))))
            (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req))))
            )

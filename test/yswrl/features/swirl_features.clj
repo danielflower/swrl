@@ -77,20 +77,20 @@
 
         ; Create a swirl
         (follow "Create")
-        (fill-in "Enter a YouTube video URL" "https://www.youtube.com/watch?v=TllPrdbZ-VI")
+        (fill-in "Enter a website link" "https://www.youtube.com/watch?v=TllPrdbZ-VI")
         (submit "Go")
 
         (save-url test-state :edit-swirl-uri)
 
-        (submit "Submit")
+        (submit "Save changes")
 
         (save-url test-state :view-swirl-uri)
 
         (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
         (follow "[edit this page]")
-        (fill-in "You should watch or read or listen to" "The onion video")
-        (submit "Submit")
+        (fill-in "You should watch" "The onion video")
+        (submit "Save changes")
 
         (assert-swirl-title-in-header "watch" "The onion video")
 
@@ -129,12 +129,38 @@
           (login-as user)
           (follow-redirect)
 
-          (fill-in "You should watch or read or listen to" "Mellon Collie and the Infinite Sadness")
-          (submit "Submit")
+          (fill-in "You should listen to" "Mellon Collie and the Infinite Sadness")
+          (submit "Save changes")
 
           (assert-swirl-title-in-header "listen to" "Mellon Collie and the Infinite Sadness")
 
           (within [:title] (has (text? "You should listen to Mellon Collie and the Infinite Sadness")))
+
+          ))))
+
+
+(deftest website-swirl-creation
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "Enter a website link" "http://jakearchibald.com/2013/progressive-enhancement-still-important/")
+          (press :#website-create-go-button)
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          (fill-in "You should see" "A website")
+          (submit "Save changes")
+
+          (assert-swirl-title-in-header "see" "A website")
+
+          (within [:title] (has (text? "You should see A website")))
 
           ))))
 

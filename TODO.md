@@ -17,8 +17,15 @@ Throw anything down in here big or small.
 - spotify integration
 - Generate plain text versions of emails so links are rendered correctly
 
+## Tech debt
+
+- Change the session storage to store only the user ID (or better yet, a session token) and load the user from that
+on each request. Right now the whole user object is stored in a cookie, and if the user table changes the cookie data
+is out of date.
+
 ## Security
 
 - Parse out evil tags like `script` from rich taxt editors. Already uses the `enlive` lib to handle HTML parsing, so we should reuse that.
 - HTTPS
 - Is the long-lived cookie for remember-me secure?
+- Some HTML is generated directly in clojure outside of the templating lang, and so is not properly encoded. 

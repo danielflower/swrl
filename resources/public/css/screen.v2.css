@@ -20,11 +20,21 @@ a{
 }
 
 .rte .editor {
-    border-style: dashed;
     width: 90%;
     min-height: 300px;
     overflow-y: visible;
-    margin: 10px;
+
+    background-color: #fff;
+    border: 1px solid #D1D1D1;
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+
+#swirl-title {
+    width: 90%;
 }
 
 .responses input, .responses textarea, .responses select, .responses button {
