@@ -48,14 +48,9 @@
   (let [swirl (repo/save-draft-swirl "website" (author :id) "This website" (str "Check out <a href=\"" url "\">" url "</a>") nil, {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
-(defn handler-for [url]
-  (let [host (.getHost url)]
-    (cond (or (= host "youtube.com") (.endsWith host ".youtube.com")) handle-youtube-creation
-      :else handle-website-creation)
-  ))
+(defn- host-ends-with [host test]
+  (or (= host test) (.endsWith host (str "." test))))
 
-(defn handle-creation-from-url [url author]
-  ((handler-for url) url author))
 
 (defn handle-album-creation [itunes-collection-id user]
   (let [album (itunes/get-itunes-album itunes-collection-id)
@@ -68,15 +63,18 @@
 
 (defn handle-book-creation [asin user]
   (let [book (amazon/get-book asin)
-        title (str (book :title) " by " (book :author))
+        publish-line (if (clojure.string/blank? (book :author)) "" (str " by " (book :author)))
+        title (str (book :title) publish-line)
         big-img-url (book :big-img-url)
         book-html (book :blurb)
         url (book :url)
-        review (str "<img src=\"" big-img-url "\"><p><a href=\"" url "\">Buy now from Amazon</a><p>Blurb:</p>" book-html "<p>What do you think?</p>")]
-    (let [swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url, {})]
-      (redirect (links/edit-swirl (swirl :id))))))
+        review (str "<img src=\"" big-img-url "\"><p><a href=\"" url "\">Buy now from Amazon</a><p>Blurb:</p>" book-html "<p>What do you think?</p>")
+        swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url, {})]
+    (redirect (links/edit-swirl (swirl :id)))))
 
-
+(defn itunes-id-from-url [url]
+  (let [[_ result] (re-find #"/id([\d]+)" url)]
+    result))
 
 (defn search-music-page [search-term]
   (let [search-result (itunes/search-albums search-term)]
@@ -84,8 +82,28 @@
 
 (defn search-books-page [search-term]
   (let [search-result (amazon/search-books search-term)]
-    (println search-result)
     (layout/render "swirls/search_books.html" {:search-term search-term :search-result search-result})))
+
+(defn asin-from-url [url]
+  (let [[_ result] (re-find #"/([0-9A-Z]{10})(?:[/?]|$)" url)]
+    result))
+
+(defn handle-itunes-creation [url user]
+  (handle-album-creation (itunes-id-from-url (str url)) user))
+
+(defn handle-amazon-creation [url user]
+  (handle-book-creation (asin-from-url (str url)) user))
+
+(defn handler-for [url]
+  (let [host (.getHost url)]
+    (cond (host-ends-with host "youtube.com") handle-youtube-creation
+          (host-ends-with host "amazon.com") handle-amazon-creation
+          (host-ends-with host "itunes.apple.com") handle-itunes-creation
+          :else handle-website-creation)
+    ))
+
+(defn handle-creation-from-url [url author]
+  ((handler-for url) url author))
 
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))

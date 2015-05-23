@@ -28,11 +28,30 @@
     (is (= c/handle-youtube-creation (c/handler-for (URL. "https://m.youtube.com/watch?v=7Hfz6A9ExPU&list=RD7Hfz6A9ExPU"))))
     (is (= c/handle-youtube-creation (c/handler-for (URL. "http://www.youtube.com/watch?v=7Hfz6A9ExPU"))))
     (is (= c/handle-youtube-creation (c/handler-for (URL. "http://youtube.com/watch?v=7Hfz6A9ExPU"))))
-    (is (= c/handle-youtube-creation (c/handler-for (URL. "http://m.youtube.com/watch?v=7Hfz6A9ExPU&list=RD7Hfz6A9ExPU#wat"))))
+    (is (= c/handle-youtube-creation (c/handler-for (URL. "http://m.youtube.com/watch?v=7Hfz6A9ExPU&list=RD7Hfz6A9ExPU#wat")))))
 
-    )
+  (testing "iTunes handler for iTunes"
+    (is (= c/handle-itunes-creation (c/handler-for (URL. "https://itunes.apple.com/us/album/am/id663097964")))))
+
+
+    (testing "iTunes ID extraction"
+    (is (= "663097964" (c/itunes-id-from-url "https://itunes.apple.com/us/album/am/id663097964"))))
+
+  (testing "All Amazon.com links go to the amazon creation handler"
+    (is (= c/handle-amazon-creation (c/handler-for (URL. "http://www.amazon.com/Shogun-James-Clavell/dp/0440178002/ref=sr_1_1?ie=UTF8&qid=1432370486&sr=8-1&keywords=shogun")))))
 
   (testing "All other URLs use a generic website generation handler"
-    (is (= c/handle-website-creation (c/handler-for (URL. "https://notyoutube.com/watch?v=blash"))))
+    (is (= c/handle-website-creation (c/handler-for (URL. "https://notyoutube.com/watch?v=blash")))))
 
-  ))
+  (testing "Asin extraction"
+    (is (= "0440178002" (c/asin-from-url "http://www.amazon.com/Shogun-James-Clavell/dp/0440178002/ref=sr_1_1?ie=UTF8&qid=1432370486&sr=8-1&keywords=shogun")))
+    (is (= "B0015T963C" (c/asin-from-url "http://www.amazon.com/Kindle-Wireless-Reading-Display-Generation/dp/B0015T963C")))
+    (is (= "B0015T963C" (c/asin-from-url "http://www.amazon.com/dp/B0015T963C")))
+    (is (= "B0015T963C" (c/asin-from-url "http://www.amazon.com/gp/product/B0015T963C")))
+    (is (= "B0015T963C" (c/asin-from-url "http://www.amazon.com/gp/product/glance/B0015T963C")))
+    )
+
+  (testing "Asin extraction is nil if not found"
+    (is (nil? (c/asin-from-url "http://www.amazon.com/Shogun-James-Clavell/dp/ef=sr_1_1?ie=UTF8&qid=1432370486&sr=8-1&keywords=shogun"))))
+
+  )
