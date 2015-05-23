@@ -38,7 +38,7 @@ $(document).ready(function () {
         $('.install-chrome-extension-box').css('display', 'block');
         $('.add-to-chrome-button').click(function () {
             console.log('running');
-            chrome.webstore.install(null, function () { console.log('success'); }, function () { console.log('failure'); });
+            chrome.webstore.install(undefined, function (suc) { console.log('success', suc); }, function (err) { console.log('failure', err); });
         });
     }
 
