@@ -34,11 +34,15 @@ $(document).ready(function () {
     });
 
 
-    if (window.chrome && !chrome.app.isInstalled) {
+    var chrome = window.chrome;
+    if (chrome && chrome.app && !chrome.app.isInstalled) {
         $('.install-chrome-extension-box').css('display', 'block');
         $('.add-to-chrome-button').click(function () {
             console.log('running');
-            chrome.webstore.install(undefined, function (suc) { console.log('success', suc); }, function (err) { console.log('failure', err); });
+            chrome.webstore.install(undefined,
+                function (suc) { console.log('success', suc); },
+                function (err) { console.log('failure', err); }
+            );
         });
     }
 
