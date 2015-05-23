@@ -7,7 +7,7 @@
   (layout/render "home/home.html"))
 
 (defn bookmarklet-page []
-  (layout/render "home/bookmarklet.html" { :bookmarklet (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+escape(location.href)+'&title='+escape(document.title);}());")) ) }))
+  (layout/render "home/bookmarklet.html" { :bookmarklet (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());")) ) }))
 
 
 (defroutes home-routes
