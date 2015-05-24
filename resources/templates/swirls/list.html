@@ -1,16 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="buffer">
+    <h1>{{pageTitle}}</h1>
 
-<h1>{{pageTitle}}</h1>
+    {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 
-<ul>
-{% for swirl in swirls %}
-
-    <li><a href="/swirls/{{swirl.id}}">
-        {{swirl.thumbnail_url|img|safe}}
-        {{swirl.title}}</a></li>
-
-{% endfor %}
-</ul>
-
+</div>
 {% endblock %}

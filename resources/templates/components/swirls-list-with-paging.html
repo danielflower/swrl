@@ -1,0 +1,16 @@
+{% if swirls|empty? %}
+We've run out of swirls. Gomen Nasai
+{% endif %}
+
+{% for swirl in swirls %}
+{% include "components/mini-swirl.html" with swirl=swirl %}
+{% endfor %}
+
+{% if countFrom = 20 %}<a href="/swirls/from/{{ countFrom|add:-20 }}">&lt; Previous 20 swirls</a>
+{% endif %}
+
+{% if all (countFrom = 20) (swirls|length = 20) %}|{% endif %}
+
+{% if swirls|length = 20 %}
+<a href="/swirls/from/{{countTo}}">Next 20 swirls &gt;</a>
+{% endif %}

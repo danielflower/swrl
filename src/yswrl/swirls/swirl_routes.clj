@@ -28,13 +28,13 @@
 (defn view-inbox [count current-user]
   (let [swirls (repo/get-swirls-awaiting-response (:id current-user) 2000 count)
         responses (repo/get-response-count-for-user (:id current-user))]
-    (layout/render "swirls/firehose.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
+    (layout/render "swirls/list-with-profile.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
 (defn view-inbox-by-response [count current-user submitted-response]
   (println "Submitted response:" submitted-response)
   (let [swirls (repo/get-swirls-by-response (:id current-user) 2000 count submitted-response)
         responses (repo/get-response-count-for-user (:id current-user))]
-    (layout/render "swirls/firehose.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
+    (layout/render "swirls/list-with-profile.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
 (def not-nil? (complement nil?))
 
@@ -73,7 +73,7 @@
 
 (defn view-all-swirls [count]
   (if-let [swirls (repo/get-recent-swirls 20 count)]
-    (layout/render "swirls/firehose.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+    (layout/render "swirls/list.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn session-from [req] (:user (:session req)))
 
