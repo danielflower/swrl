@@ -11,7 +11,6 @@ Throw anything down in here big or small.
 - Make website not look pants.
 - When a user registers as result of suggestion, immediately add suggester and suggestee to each other's network.
 - Fix dates for [open graph](http://ogp.me/) and do profile linking etc
-- Make the inbox only show the right things 
 - Change type="youtube" to type="video"
 - spotify integration
 - Generate plain text versions of emails so links are rendered correctly
@@ -22,6 +21,7 @@ Throw anything down in here big or small.
 - When editing a swirl, the already-added users are re-added and then added to the suggestion table again
   * add unique constraint on swirl_id / recipient_id
   * make it impossible to unselect people (they've already been emailed) or let them remove people (?)
+- Paging doesn't work in the paging component because it hard-codes the paging URLs
 
 ## Tech debt
 
