@@ -321,3 +321,11 @@ input[type="search"] {
 .chrome-only, .chrome-extension-installed, .install-chrome-extension-box {
     display: none;
 }
+
+.response-group {
+    margin-top: 40px;
+}
+.response-group a.button {
+    display: block;
+    width: 100%;
+}

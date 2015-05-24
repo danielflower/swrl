@@ -9,10 +9,16 @@
                 {{ user.email_md5|gravatar-img:80 }}
                 <a href="/swirls/by/{{ user.username|urlescape }}">@{{user.username}}</a>
             </div>
-            <div class="inbox">
-                <div class="left">6 <br/>New Swirls</div>
-                <div>10 <br/>sent</div>
+
+            {% if response-counts|not-empty %}
+            <div class="response-group">
+                <h2>Your tagged items</h2>
+                {% for rc in response-counts %}
+                <a href="{{ rc.summary|inboxlink }}" class="button">{{rc.summary}} ({{rc.count}})</a>
+                {% endfor %}
             </div>
+            {% endif %}
+
             {% endif %}
 
         </div>

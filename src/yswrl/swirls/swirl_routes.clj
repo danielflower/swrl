@@ -22,15 +22,19 @@
         (layout/render "swirls/create.html" {:id       swirl-id
                                              :subject  (swirl :title)
                                              :review   (swirl :review)
-                                             :type (type-of swirl)
+                                             :type     (type-of swirl)
                                              :contacts contacts})))))
 
 (defn view-inbox [count current-user]
-  (let [userId (:id current-user)
-        swirls (repo/get-swirls-for userId 20 count)]
-    (println userId)
-    (layout/render "swirls/firehose.html" {:pageTitle (str "Inbox") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+  (let [swirls (repo/get-swirls-awaiting-response (:id current-user) 2000 count)
+        responses (repo/get-response-count-for-user (:id current-user))]
+    (layout/render "swirls/firehose.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
+(defn view-inbox-by-response [count current-user submitted-response]
+  (println "Submitted response:" submitted-response)
+  (let [swirls (repo/get-swirls-by-response (:id current-user) 2000 count submitted-response)
+        responses (repo/get-response-count-for-user (:id current-user))]
+    (layout/render "swirls/firehose.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
 (def not-nil? (complement nil?))
 
@@ -119,4 +123,4 @@
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
-           (GET "/swirls/inbox/:count{[0-9]+}" [:as req] (guard/requires-login #(view-inbox count (session-from req)))))
+           (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))
