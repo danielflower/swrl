@@ -38,7 +38,7 @@
                 <span class="site-title">Swirl</span></div>
             <div class="five columns right">
                 {% if user %}
-                Welcome <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">Log out</a>
+                Welcome <a href="{{ user.username|user-url }}">{{user.username}}</a> | <a href="/logout">Log out</a>
                 {% endif %}
             </div>
 

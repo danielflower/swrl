@@ -69,7 +69,7 @@
     (if (= authorName (author :username))
       (let [swirls (repo/get-swirls-authored-by (:id author))]
         (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
-      (redirect (str "/swirls/by/" (links/url-encode (author :username)))))))
+      (redirect (links/user (author :username))))))
 
 (defn view-all-swirls [count]
   (if-let [swirls (repo/get-recent-swirls 20 count)]

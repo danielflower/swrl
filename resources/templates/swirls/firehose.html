@@ -7,7 +7,7 @@
             <div class="headprofile">
 
                 {{ user.email_md5|gravatar-img:80 }}
-                <a href="/swirls/by/{{ user.username|urlescape }}">@{{user.username}}</a>
+                <a href="{{ user.username|user-url }}">@{{user.username}}</a>
             </div>
 
             {% if response-counts|not-empty %}
@@ -35,7 +35,8 @@
             {{ swirl.email_md5|gravatar-img:40 }}
 
             <div class="swirl-content">
-                <a href="/swirls/{{swirl.id}}">{{swirl.title}}</a> by <a href="/swirls/by/{{swirl.username}}">@{{swirl.username}}</a>
+                <a href="/swirls/{{swirl.id}}">{{swirl.title}}</a> by
+                <a href="{{swirl.username|user-url}}">@{{swirl.username}}</a>
 
 
                 <article>
