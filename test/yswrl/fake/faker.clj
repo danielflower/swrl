@@ -22,7 +22,16 @@
                            ; Run an amazon albums search
                            "http://webservices.amazon.com/onca/xml"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/amazon.book." ((form-decode (req :query-string)) "Keywords") ".xml"))})
+                           ;
 
+                           ; get the facebook access token
+                           #"https:\/\/graph\.facebook\.com\/oauth\/access_token.*"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/facebook.oauth.access_token."((form-decode (req :query-string)) "code") ".txt"))})
+                           ;
+
+                           ; get the facebook user details
+                           #"https:\/\/graph\.facebook\.com\/me\?access_token=.*"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/facebook.user-details." ((form-decode (req :query-string)) "access_token") ".json"))})
                            }
         body
         ))

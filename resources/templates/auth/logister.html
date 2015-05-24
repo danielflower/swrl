@@ -3,6 +3,14 @@
     <div class="logister--panel login">
         <h4>Login</h4>
 
+        <h5>Thirdparty Logins</h5>
+        <form method="POST" action="/facebook_login">
+            {% csrf-field %}
+            <input type="hidden" name="return-url" value="{{request.uri}}">
+            <input type="image" src="/immutable/images/facebook-login-button-20150524.png" alt="Login with Facebook">
+        </form>
+
+        <h5>Direct Login</h5>
         <form method="POST" action="/login">
             {% csrf-field %}
             <input type="hidden" name="return-url" value="{{request.uri}}">

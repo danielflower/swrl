@@ -7,7 +7,6 @@
                  [ch.qos.logback/logback-classic "1.1.3"]
                  [org.slf4j/log4j-over-slf4j "1.7.12"]
                  [org.clojure/tools.logging "0.3.1"]
-
                  [org.clojure/clojure "1.6.0"]
                  [ring-server "0.4.0"]
                  [selmer "0.8.2"]

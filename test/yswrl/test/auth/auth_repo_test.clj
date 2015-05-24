@@ -14,7 +14,7 @@
       (is (repo/user-exists (user :username)))))
 
  (testing "Can tell you if an email doesn't exist"
-    (is (not (repo/user-exists "thisemaildoesntexist"))))
+    (is (not (repo/user-exists-by-email "thisemaildoesntexist"))))
 
   (testing "Can tell you if an email does exist"
      (let [user (s/create-test-user)]

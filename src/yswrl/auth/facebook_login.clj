@@ -4,42 +4,76 @@
             [ring.util.response :refer [redirect]]
             [clj-http.client :as client]
             [cheshire.core :as parse]
-            [yswrl.links :as links]
+            [clojure.tools.logging :as log]
             [yswrl.auth.auth-routes :as routes])
-  (:import (java.net URLEncoder)))
+  )
 
+(def APP_ID (or (System/getenv "FACEBOOK_APP_ID")
+                "894319820613855"))
+(def APP_SECRET (or (System/getenv "FACEBOOK_APP_SECRET")
+                                   "b3ef0cc194e2abcfacd1ba32b085da2f"))
 
-(def APP_ID "894319820613855")
-(def APP_SECRET "b3ef0cc194e2abcfacd1ba32b085da2f")
-(def REDIRECT_URI "http://localhost:3000/auth_facebook")
+(defn facebook_redirect_uri [req]
+  (str (clojure.string/replace (req :scheme) #":" "") "://" (req :server-name) ":" (req :server-port) "/facebook_auth"))
 
-(defn facebook-oauth2 [return-url]
+(defn facebook-oauth2 [req]
   {:authorization-uri "https://graph.facebook.com/oauth/authorize"
    :access-token-uri  "https://graph.facebook.com/oauth/access_token"
-   :redirect-uri      REDIRECT_URI
+   :redirect-uri      (facebook_redirect_uri req)
    :client-id APP_ID
    :client-secret APP_SECRET
    :access-query-param :access_token
    :scope ["email"]
+   :response_type "code"
    :grant-type "authorization_code"}
-   ;:state {return-url :return-url}
-   )
+  )
 
-(defn facebook [params]
+(defn facebook-error [req error-message]
+  (log/error "Facebook login failure: " error-message req)
+  (routes/login-page :return-url (get-in req [:session :return-url]) :fb-errors true :error-message error-message))
+
+(defn get-facebook-code [req]
+  (get-in req [:query-params "code"]))
+
+(defn get-facebook-access-token [code req]
   (let [access-token-response (:body (client/get (str "https://graph.facebook.com/oauth/access_token?"
                                                       "client_id=" APP_ID
-                                                      "&redirect_uri=" REDIRECT_URI
+                                                      "&redirect_uri=" (facebook_redirect_uri req)
                                                       "&client_secret=" APP_SECRET
-                                                      "&code=" (get params "code"))))
-        access-token (get (re-find #"access_token=(.*?)&expires=" access-token-response) 1)
-        user-details (-> (client/get (str "https://graph.facebook.com/me?access_token=" access-token))
-                         :body
-                         (parse/parse-string))]
-      (routes/attempt-thirdparty-login (get user-details "name") (get user-details "email") (get params "return-url") {} ))
-      )
+                                                      "&code=" code)))]
+    (get (re-find #"access_token=(.*?)&expires=" access-token-response) 1))
+  )
 
+(defn get-facebook-user-details [access-token]
+  (println access-token)
+  (-> (client/get (str "https://graph.facebook.com/me?access_token=" access-token))
+      :body
+      (parse/parse-string))
+  )
+
+(defn handle-facebook-auth-response [req]
+  (if-let [code (get-facebook-code req)]
+    (if-let [access-token (get-facebook-access-token code req)]
+      (if-let [user-details (get-facebook-user-details access-token)]
+        (if-let [email (get user-details "email")]
+          (if-let [username (get user-details "name")]
+            (routes/attempt-thirdparty-login username email (get-in req [:session :return-url]) req)
+            (facebook-error req "Cannot get username from Facebook details"))
+          (facebook-error req "Cannot get email from Facebook details"))
+        (facebook-error req "Cannot get User Details from Facebook. Did you login and authorise the application?"))
+      (facebook-error req "Cannot get the access token from Facebook. Did you login and authorise the application?"))
+    (facebook-error req "Facebook Oauth unsuccessful. Did you login and authorise the application?"))
+  )
+
+(defn handle-facebook-login [return-url req]
+  (let [return-url (routes/redirect-url return-url)
+        newSession (assoc (req :session) :return-url return-url)
+        response (redirect
+                   (:uri (oauth2/make-auth-request (facebook-oauth2 req))))]
+    (-> response (assoc :session newSession)))
+  )
 
 (defroutes facebook-routes
-           (GET "/auth_facebook" {params :query-params} (facebook params))
-           (GET "/facebook_login" [return-url] (redirect
-                                       (:uri (oauth2/make-auth-request (facebook-oauth2 return-url))))))
+           (GET "/facebook_auth" [:as req] (handle-facebook-auth-response req))
+            (POST "/facebook_login" [return-url :as req] (handle-facebook-login return-url req))
+           )

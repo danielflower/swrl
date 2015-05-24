@@ -1,37 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="buffer">
-<h1>Facebook Login</h1>
-<form method="get" action="/facebook_login">
-    <input type="submit" value="Login with Facebook">
-</form>
-<h1>Login</h1>
-
-{% if error %}
-
-<p class="validation-error">Sorry, you have entered an invalid username or password. Please try again.</p>
-
-{% endif %}
-
-<form method="POST" action="/login?return-url={{ return-url|default:"/"|urlescape }}">
-    {% csrf-field %}
-
-    <label for="username">Username</label>
-        <input id="username" type="text" autocomplete="nickname" name="username" autofocus required
-               maxlength="{{constraints.users.username.max-length}}"
-                value="{{username}}">
-
-    <label for="password">Password</label>
-        <input id="password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-               name="password">
-    <p><a href="/forgot-password?username={{ username|default:""|urlescape }}">Forgot your password? Click here.</a></p>
-
-    <label>
-        <input type="checkbox" name="remember"> Keep me logged in
-    </label>
-
-    <input type="submit" value="Login">
-
-</form>
+    {% include "auth/login-box.html" %}
 </div>
 {% endblock %}
