@@ -70,6 +70,14 @@ Run DB migrations remotely from your dev machine to Heroku:
 
 Then deploy the app:
 
+Pre-reqs:
+    install the heroku cli (https://toolbelt.heroku.com/ or `brew install heroku` on mac)
+    Ensure your SSH key is added to your heroku account
+    Add heroku as a remote git repo: `git remote add heroku git@heroku.com:youshouldwatchreadlisten.git`
+    
+Deploy:
+
+    heroku login
     git push heroku master
     
 ## Data
