@@ -45,7 +45,6 @@
   )
 
 (defn get-facebook-user-details [access-token]
-  (println access-token)
   (-> (client/get (str "https://graph.facebook.com/me?access_token=" access-token))
       :body
       (parse/parse-string))
