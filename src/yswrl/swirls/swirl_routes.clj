@@ -10,7 +10,8 @@
             [yswrl.links :as links]
             [ring.util.response :refer [status redirect response not-found]]
             [clojure.tools.logging :as log]
-            [yswrl.auth.guard :as guard])
+            [yswrl.auth.guard :as guard]
+            [yswrl.swirls.types :refer [type-of]])
   (:import (java.util UUID)))
 
 (defn edit-swirl-page [author swirl-id]
@@ -21,14 +22,19 @@
         (layout/render "swirls/create.html" {:id       swirl-id
                                              :subject  (swirl :title)
                                              :review   (swirl :review)
+                                             :type     (type-of swirl)
                                              :contacts contacts})))))
 
 (defn view-inbox [count current-user]
-  (let [userId (:id current-user)
-        swirls (repo/get-swirls-for userId 20 count)]
-    (println userId)
-    (layout/render "swirls/firehose.html" {:pageTitle (str "Inbox") :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+  (let [swirls (repo/get-swirls-awaiting-response (:id current-user) 2000 count)
+        responses (repo/get-response-count-for-user (:id current-user))]
+    (layout/render "swirls/list-with-profile.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
+(defn view-inbox-by-response [count current-user submitted-response]
+  (println "Submitted response:" submitted-response)
+  (let [swirls (repo/get-swirls-by-response (:id current-user) 2000 count submitted-response)
+        responses (repo/get-response-count-for-user (:id current-user))]
+    (layout/render "swirls/list-with-profile.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
 (def not-nil? (complement nil?))
 
@@ -51,20 +57,23 @@
           logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
+          non-responders (repo/get-non-responders (:id swirl))
           can-respond (and (not is-author) is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
+          type (type-of swirl)
+          title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           can-edit is-author]
-      (layout/render "swirls/view.html" {:swirl swirl :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info}))))
+      (layout/render "swirls/view.html" {:title title :swirl swirl :type type :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
     (if (= authorName (author :username))
       (let [swirls (repo/get-swirls-authored-by (:id author))]
         (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
-      (redirect (str "/swirls/by/" (links/url-encode (author :username)))))))
+      (redirect (links/user (author :username))))))
 
 (defn view-all-swirls [count]
   (if-let [swirls (repo/get-recent-swirls 20 count)]
-    (layout/render "swirls/firehose.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+    (layout/render "swirls/list.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn session-from [req] (:user (:session req)))
 
@@ -86,11 +95,11 @@
 
 
 (defn publish-swirl [author id usernames-and-emails-to-notify subject review]
-    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
-      (do
-        (send-unsent-suggestions)
-        (redirect (yswrl.links/swirl id)))
-      nil))
+  (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
+    (do
+      (send-unsent-suggestions)
+      (redirect (yswrl.links/swirl id)))
+    nil))
 
 (defn usernames-and-emails-from-request [checkboxes-raw textbox-raw]
   (let [textbox (if (clojure.string/blank? textbox-raw)
@@ -114,4 +123,4 @@
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
-           (GET "/swirls/inbox/:count{[0-9]+}" [:as req] (guard/requires-login #(view-inbox count (session-from req)))))
+           (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))

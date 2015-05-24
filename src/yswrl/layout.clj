@@ -16,11 +16,13 @@
 (filters/add-filter! :swirlurl links/swirl)
 (filters/add-filter! :swirlediturl links/edit-swirl)
 (filters/add-filter! :itunesalbum links/itunes-album)
+(filters/add-filter! :inboxlink links/inbox)
 (filters/add-filter! :user-url links/user)
 (filters/add-filter! :img (fn [src] (if (nil? src) "" (str "<img src=\"" src "\">"))))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
 (filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
+
 
 (deftype RenderableTemplate [template params]
   Renderable

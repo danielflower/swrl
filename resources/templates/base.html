@@ -2,12 +2,13 @@
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Hey! You should read-watch-listen!</title>
+    <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <link href="/immutable/css/normalize-3.0.2.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/css/skeleton-2.0.4.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="/immutable/css/font-awesome.min.css" type="text/css">
     <link href="/css/screen.v2.css" rel="stylesheet" type="text/css"/>
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
     {% block head %}
     {% endblock %}
@@ -21,6 +22,7 @@
             <div class="five columns">
                 <ul>
                     <li><a href="/swirls">Firehose</a></li>
+                    <li><a href="/how-to-add">How to add</a></li>
                     <li><a href="/swirls/start">Create</a></li>
 
                     {% if user %}
@@ -36,13 +38,12 @@
                 <span class="site-title">Swirl</span></div>
             <div class="five columns right">
                 {% if user %}
-                Welcome <a href="/swirls/by/{{ user.username|urlescape }}">{{user.username}}</a> | <a href="/logout">Log out</a>
+                Welcome <a href="{{ user.username|user-url }}">{{user.username}}</a> | <a href="/logout">Log out</a>
                 {% endif %}
             </div>
 
 
     </div></nav>
-
 
     <main>
         {% block content %}

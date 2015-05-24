@@ -14,17 +14,18 @@
 <form method="POST" action="{{ id|swirlediturl }}">
     {% csrf-field %}
 
-    <label>Hey
+    <div class="user-select-box"><strong>To:</strong>
         {% for friend in contacts %}
-        <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
+        <label><input type="checkbox" name="who" value="{{ friend.username }}" checked>{{ friend.username }}</label>
         {% endfor %}
         <input type="text" name="emails" maxlength="1000" placeholder="username or emails" value="{{who}}">
-    </label>
+    </div>
 
-    <label for="swirl-title">You should watch or read or listen to</label>
+    <label for="swirl-title">You should {{type.words.watch}}</label>
     <input id="swirl-title" type="text" name="subject" required
            maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
            placeholder="Title of a movie, book, song, album, etc">
+
 
 
     <div class="rte">
@@ -32,7 +33,7 @@
         <article class="editor" contenteditable="true"></article>
     </div>
 
-    <input type="submit" value="Submit">
+    <input type="submit" value="Save changes" class="button-primary">
 
 </form>
 </div>

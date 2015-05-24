@@ -1,8 +1,8 @@
 (ns yswrl.links)
 
-(defn url-encode [val] (java.net.URLEncoder/encode val "UTF-8"))
+(defn url-encode [val] (.replaceAll (java.net.URLEncoder/encode val "UTF-8") "\\+" "%20"))
 
-(def base-url "http://www.youshouldwatchreadlisten.com")
+(def base-url "http://www.swrl.co")
 
 (defn absolute [relative]
   (str base-url relative))
@@ -24,3 +24,6 @@
 
 (defn gravatar-url [hash size]
   (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid"))
+
+(defn inbox [response]
+  (str "/swirls/inbox/" (.toLowerCase (url-encode response))))

@@ -20,18 +20,35 @@ a{
 }
 
 .rte .editor {
-    border-style: dashed;
     width: 90%;
     min-height: 300px;
     overflow-y: visible;
-    margin: 10px;
+
+    background-color: #fff;
+    border: 1px solid #D1D1D1;
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+
+/* Hack to make sure floated images don't overflow past the review */
+.rte .editor:after, article:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#swirl-title {
+    width: 90%;
 }
 
 .responses input, .responses textarea, .responses select, .responses button {
     display: inline;
 }
 
-span.response {
+.response-text {
     font-weight: bold;
 }
 .gravatar{
@@ -290,4 +307,25 @@ input[type="search"] {
 
 .center {
     text-align: center;
+}
+
+.user-select-box label {
+    display: inline;
+    background-color: #5c9bce;
+    border: 1px solid #0FA0CE;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 0 5px 5px 0;
+}
+
+.chrome-only, .chrome-extension-installed, .install-chrome-extension-box {
+    display: none;
+}
+
+.response-group {
+    margin-top: 40px;
+}
+.response-group a.button {
+    display: block;
+    width: 100%;
 }

@@ -10,11 +10,14 @@
     (is (= "/reset-password?token=ADSF%25%26" (links/password-reset "ADSF%&"))))
 
   (testing "user links"
-    (is (= "/swirls/by/Dan+%26+%2F+co" (links/user "Dan & / co"))))
+    (is (= "/swirls/by/Dan%20%26%20%2F%20co" (links/user "Dan & / co"))))
 
   (testing "absolute URLs"
-    (is (= "http://www.youshouldwatchreadlisten.com/swirls/10" (links/absolute "/swirls/10"))))
+    (is (= "http://www.swrl.co/swirls/10" (links/absolute "/swirls/10"))))
 
+  (testing "inbox by response"
+    (is (= "/swirls/inbox/hot" (links/inbox "hot")))
+    (is (= "/swirls/inbox/loved%20it" (links/inbox "Loved It"))))
 
   (testing "itunes album"
     (is (= "https://itunes.apple.com/us/album/id721224313?at=" (links/itunes-album 721224313))))
@@ -22,8 +25,6 @@
   (testing "gravatar URLs include the hash"
     (is (= "http://www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346?s=40&d=monsterid"
            (links/gravatar-url "0bc83cb571cd1c50ba6f3e8a78ef1346" 40)))
-    ;(is (= "http://www.gravatar.com/avatar/d41d8cd98f00b204e9800998ecf8427e?s=40&d=monsterid"
-    ;       (links/gravatar-url nil 40)))
     )
 
   )

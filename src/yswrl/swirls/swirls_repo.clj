@@ -19,8 +19,8 @@
 
 (defn get-suggestion [code]
   (first (select db/suggestions
-          (fields :recipient_id :recipient_email)
-          (where {:code code}))))
+                 (fields :recipient_id :recipient_email)
+                 (where {:code code}))))
 
 (defn create-suggestions [recipientUserIdsOrEmailAddresses swirlId]
   (let [found-users (auth/get-users-by-username_or_email (distinct recipientUserIdsOrEmailAddresses))]
@@ -32,19 +32,28 @@
 
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
 
-(defn create-response [swirld-id summary author]
-  (insert db/swirl-responses
-          (values {:swirl_id swirld-id :responder (:id author) :summary summary :date_responded (now)})
-          ))
+(defn create-response [swirl-id summary author]
+  (transaction
+    (let [response
+          (insert db/swirl-responses
+                  (values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)})
+                  )]
+      (update db/suggestions
+              (set-fields {:response_id (response :id)})
+              (where (or
+                       {:swirl_id swirl-id :recipient_id (author :id)}
+                       {:swirl_id swirl-id :recipient_email (author :email)}
+                       )))
+      response)))
 
 (defn create-comment [swirld-id comment author]
   (insert db/comments
           (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
-(defn save-draft-swirl [author-id title review image-thumbnail optional-values]
+(defn save-draft-swirl [type author-id title review image-thumbnail optional-values]
   (insert db/swirls
-          (values (merge {:author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
+          (values (merge {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
 
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
@@ -64,7 +73,7 @@
 
 (defn get-swirl [id]
   (first (select db/swirls
-                 (fields :id :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
+                 (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
                  (join :inner db/users (= :users.id :swirls.author_id))
                  (where {:id id})
                  (limit 1))))
@@ -85,24 +94,42 @@
 
 (defn get-recent-swirls [swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
+          (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/users (= :swirls.author_id :users.id))
           (where {:state "L"})
           (offset skip)
           (limit swirl-count)
           (order :creation_date :desc)))
 
-(defn get-swirls-authored-by [userId]
+(defn get-swirls-authored-by [user-id]
   (select db/swirls
-          (where {:author_id userId :state "L"})))
+          (where {:author_id user-id :state "L"})
+          (order :creation_date :desc)))
 
 
-(defn get-swirls-for [userId swirl-count skip]
+(defn get-swirls-awaiting-response [userId swirl-count skip]
   (select db/swirls
-          (fields :creation_date, :review, :title, :id, :users.username :thumbnail_url)
+          (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
           (join :inner db/users (= :swirls.author_id :users.id))
-          (where {:suggestions.recipient_id userId})
+          (where {:suggestions.recipient_id userId :suggestions.response_id nil})
           (offset skip)
           (limit swirl-count)
           (order :creation_date :desc)))
+
+(defn get-response-count-for-user [user-id]
+  (db/query "SELECT summary, count(1) AS count FROM swirl_responses WHERE responder = ? GROUP BY summary ORDER BY summary" user-id))
+
+(defn get-swirls-by-response [user-id swirl-count skip response]
+  (db/query "SELECT swirls.type, swirls.creation_date, swirls.review, swirls.title, swirls.id, users.username, users.email_md5, swirls.thumbnail_url
+  FROM (swirls INNER JOIN swirl_responses ON swirls.id = swirl_responses.swirl_id)
+  INNER JOIN users ON swirls.author_id = users.id
+  WHERE (swirl_responses.responder = ? AND LOWER(swirl_responses.summary) = ?)
+  ORDER BY swirls.creation_date DESC
+  LIMIT ? OFFSET ?" user-id (clojure.string/lower-case response) swirl-count skip))
+
+(defn get-non-responders [swirl-id]
+  (db/query "SELECT users.username, users.email_md5 FROM
+  (suggestions INNER JOIN users ON users.id = suggestions.recipient_id)
+  LEFT JOIN swirl_responses ON swirl_responses.swirl_id = suggestions.swirl_id AND swirl_responses.responder = suggestions.recipient_id
+WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))

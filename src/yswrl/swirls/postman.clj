@@ -26,6 +26,6 @@
   (wrap-mandrill-call send-message {
                  :html       body
                  :subject    subject
-                 :from_email "noreply@youshouldwatchreadlisten.com"
-                 :from_name  "noreply@youshouldwatchreadlisten.com"
+                 :from_email "noreply@swrl.co"
+                 :from_name  "noreply@swrl.co"
                  :to         to-list}))

@@ -20,7 +20,7 @@
     (testing "An email with the user's name and link to reset can be created"
       (let [html (pr/create-forgotten-email-body "canman" "atokenofmyappreciation")]
         (is (.contains html "Dear canman,") html)
-        (is (.contains html "http://www.youshouldwatchreadlisten.com/reset-password?token=atokenofmyappreciation") html)))
+        (is (.contains html "http://www.swrl.co/reset-password?token=atokenofmyappreciation") html)))
 
     (testing "A password for a user can be reset"
       (let [failed-attempt (auth/get-user-by-name-and-password username "HelloWorld")
