@@ -23,6 +23,9 @@
     (testing "the same user can not be suggested twice"
       (println "Adding" (swirl :id))
       (repo/add-suggestions (swirl :id) (author :id) [(non-responder :username)])
+      (is (= [{:username (responder :username) :user-id (responder :id)}
+              {:username (non-responder :username) :user-id (non-responder :id)}]
+             (repo/get-suggestion-usernames (swirl :id))))
       (is (= 1 (count (repo/get-non-responders (swirl :id))))))
 
     (testing "get-swirls-awaiting-response"

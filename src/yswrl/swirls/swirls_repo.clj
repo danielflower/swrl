@@ -71,12 +71,11 @@
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
   swirl belonging to the author; otherwise false."
   [swirl-id author-id title review recipient-names-or-emails]
-  (transaction
-    (let [updated (update db/swirls
-                          (set-fields {:title title :review review :state "L"})
-                          (where {:id swirl-id :author_id author-id}))]
-      (add-suggestions swirl-id author-id recipient-names-or-emails)
-      (= updated 1))))
+  (let [updated (update db/swirls
+                        (set-fields {:title title :review review :state "L"})
+                        (where {:id swirl-id :author_id author-id}))]
+    (add-suggestions swirl-id author-id recipient-names-or-emails)
+    (= updated 1)))
 
 (defn get-swirl [id]
   (first (select db/swirls
@@ -140,3 +139,10 @@
   (suggestions INNER JOIN users ON users.id = suggestions.recipient_id)
   LEFT JOIN swirl_responses ON swirl_responses.swirl_id = suggestions.swirl_id AND swirl_responses.responder = suggestions.recipient_id
 WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
+
+(defn get-suggestion-usernames [swirl-id]
+  (select db/suggestions
+          (fields :users.username [:users.id :user-id])
+          (join :inner db/users (= :suggestions.recipient_id :users.id))
+          (where {:swirl_id swirl-id})
+          (order :users.username :asc)))

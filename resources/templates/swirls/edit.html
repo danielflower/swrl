@@ -15,8 +15,12 @@
     {% csrf-field %}
 
     <div class="user-select-box"><strong>To:</strong>
+        {% for friend in already-suggested %}
+        <label title="This cannot be unselected as an email has already been sent to them"
+                ><input type="checkbox" value="{{ friend.username }}" checked disabled>{{ friend.username }}</label>
+        {% endfor %}
         {% for friend in contacts %}
-        <label><input type="checkbox" name="who" value="{{ friend.username }}" checked>{{ friend.username }}</label>
+        <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
         {% endfor %}
         <input type="text" name="emails" maxlength="1000" placeholder="username or emails" value="{{who}}">
     </div>
