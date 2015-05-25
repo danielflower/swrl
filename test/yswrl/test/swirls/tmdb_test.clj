@@ -48,4 +48,8 @@
       (is (= 401
             (tmdb/get-tmdb-id-from-imdb-id "tt0333766")))))
 
+  (testing "tmdb id is nil if bad IMDB ID is given"
+    (with-faked-responses
+      (is (= nil
+             (tmdb/get-tmdb-id-from-imdb-id "nope")))))
   )
