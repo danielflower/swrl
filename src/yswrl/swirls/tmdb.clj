@@ -32,3 +32,10 @@
      :tagline (let [tagline (body :tagline)] (if (clojure.string/blank? tagline) "None" tagline) )
      :genres        (map (fn [r] {:genre (r :name)}) (body :genres))}
     ))
+
+(defn get-tmdb-id-from-imdb-id [imdb-id]
+  (let [url (str "https://api.themoviedb.org/3/find/" imdb-id "?api_key=" TMDB-API-KEY "&external_source=imdb_id")
+        result (client/get url {:accept :json :as :json})
+        body (result :body)]
+        (:id (first (:movie_results body)))
+    ))

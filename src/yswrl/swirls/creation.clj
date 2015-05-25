@@ -10,7 +10,7 @@
             [ring.util.response :refer [redirect response not-found]]
             [yswrl.auth.guard :as guard]
             [yswrl.swirls.tmdb :as tmdb])
-  (:import (java.net URL)))
+  (:import (java.net URL URI)))
 
 
 (def youtube-api-key
@@ -22,7 +22,7 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn youtube-id [url]
-  (get (ring.util.codec/form-decode (.getQuery (java.net.URI/create url))) "v"))
+  (get (ring.util.codec/form-decode (.getQuery (URI/create url))) "v"))
 
 
 (defn imdb-url [imdb-id]
@@ -79,7 +79,7 @@
 (defn handle-movie-creation [tmdb-id user]
   (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
         review (str "<img src=\"" (movie :large-image-url) "\"><p>"
-        "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>"
+        (if (not (clojure.string/blank? (movie :url))) (str "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>") "")
         "<a href=\"" (imdb-url (movie :imdb-id)) "\">IMDB Link</a>"
         "<p>Tagline: " (movie :tagline) "</p>"
         "<p>Movie Overview:</p>" (movie :overview)
@@ -94,6 +94,10 @@
 
 (defn tmdb-id-from-url [url]
   (let [[_ result] (re-find #"/movie/([\d]+)\-.*" url)]
+    result))
+
+(defn imdb-id-from-url [url]
+  (let [[_ result] (re-find #"/title/([^\#\?\/]+)" url)]
     result))
 
 (defn search-music-page [search-term]
@@ -121,12 +125,16 @@
 (defn handle-tmdb-creation [url user _]
   (handle-movie-creation (tmdb-id-from-url (str url)) user))
 
+(defn handle-imdb-creation [url user _]
+  (handle-movie-creation (tmdb/get-tmdb-id-from-imdb-id (imdb-id-from-url (str url))) user))
+
 (defn handler-for [url]
   (let [host (.getHost url)]
     (cond (host-ends-with host "youtube.com") handle-youtube-creation
           (host-ends-with host "amazon.com") handle-amazon-creation
           (host-ends-with host "itunes.apple.com") handle-itunes-creation
           (host-ends-with host "themoviedb.org") handle-tmdb-creation
+          (host-ends-with host "imdb.com") handle-imdb-creation
           :else handle-website-creation)
     ))
 

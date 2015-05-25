@@ -40,9 +40,15 @@
                            ;
 
                            ;get a movie from tmdb id
-                           #"https:\/\/api\.themoviedb\.org/3/movie/(.+)?api_key=(.+)"
-                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.*)$" (req :uri) ) 1) ".json" ))} )
+                           #"https:\/\/api\.themoviedb\.org/3/movie/(.+)\?api_key=(.+)"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.+)$" (req :uri) ) 1) ".json" ))} )
                            ;
+
+                           ;get a movie from imdb id
+                           #"https:\/\/api\.themoviedb\.org/3/find/(.+)\?api_key=(.+)&external_source=imdb_id"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri) ) 1) ".json"))})
+                           ;
+
                            }
         body
         ))

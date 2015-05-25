@@ -43,5 +43,9 @@
                     {:genre "Romance"}]}
              (tmdb/get-movie-from-tmdb-id 401)))))
 
+  (testing "Can get the tmdb id from an IMDB ID"
+    (with-faked-responses
+      (is (= 401
+            (tmdb/get-tmdb-id-from-imdb-id "tt0333766")))))
 
   )

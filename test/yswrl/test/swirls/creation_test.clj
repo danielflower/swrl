@@ -43,6 +43,9 @@
   (testing "All tmdb links go to the tmdb creation handler"
     (is (= c/handle-tmdb-creation (c/handler-for (URL. "https://www.themoviedb.org/movie/401-garden-state")))))
 
+  (testing "All imdb links go to the imdb creation handler"
+    (is (= c/handle-imdb-creation (c/handler-for (URL. "http://www.imdb.com/title/tt0333766/")))))
+
   (testing "All other URLs use a generic website generation handler"
     (is (= c/handle-website-creation (c/handler-for (URL. "https://notyoutube.com/watch?v=blash")))))
 
@@ -64,5 +67,11 @@
   (testing "can get tmdb-id from TMDB URL"
     (is (= "401"
            (c/tmdb-id-from-url "https://www.themoviedb.org/movie/401-garden-state"))))
+
+  (testing "can get imdb-id from IMDB URL"
+    (is (= "tt0333766" (c/imdb-id-from-url "http://www.imdb.com/title/tt0333766")))
+    (is (= "tt0333766" (c/imdb-id-from-url "http://www.imdb.com/title/tt0333766/")))
+    (is (= "tt0333766" (c/imdb-id-from-url "http://www.imdb.com/title/tt0333766?some_key=value")))
+    (is (= "tt0333766" (c/imdb-id-from-url "http://www.imdb.com/title/tt0333766#_=_"))))
 
   )
