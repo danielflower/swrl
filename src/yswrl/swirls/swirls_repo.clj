@@ -1,8 +1,9 @@
 (ns yswrl.swirls.swirls-repo
   (:require [yswrl.db :as db]
             [yswrl.user.networking :as networking]
-            [yswrl.auth.auth-repo :as auth])
-  )
+            [yswrl.auth.auth-repo :as auth]
+            [clojure.tools.logging :as log])
+  (:import (org.postgresql.util PSQLException)))
 (use 'korma.core)
 (use 'korma.db)
 
@@ -55,20 +56,26 @@
   (insert db/swirls
           (values (merge {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
 
+(defn add-suggestions [swirl-id author-id recipient-names-or-emails]
+  (if (not-empty recipient-names-or-emails)
+    (let [suggestions (create-suggestions recipient-names-or-emails swirl-id)
+          recipient-ids (map #(% :recipient_id) (filter #(and (not (nil? (% :recipient_id))) (not= (% :recipient_id) author-id)) suggestions))]
+
+      (doseq [sug suggestions]
+        (try (insert db/suggestions (values sug))
+             (catch PSQLException e (log/warn "Error while saving suggestion - okay to ignore if unique violation" e))))
+      (networking/store-multiple author-id :knows recipient-ids)
+      (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows author-id)))))
+
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
   swirl belonging to the author; otherwise false."
-  [swirl-id author-id title review recipientNames]
+  [swirl-id author-id title review recipient-names-or-emails]
   (transaction
     (let [updated (update db/swirls
                           (set-fields {:title title :review review :state "L"})
                           (where {:id swirl-id :author_id author-id}))]
-      (if (not-empty recipientNames)
-        (let [suggestions (create-suggestions recipientNames swirl-id)
-              recipient-ids (map #(% :recipient_id) (filter #(and (not (nil? (% :recipient_id))) (not= (% :recipient_id) author-id)) suggestions))]
-          (insert db/suggestions (values suggestions))
-          (networking/store-multiple author-id :knows recipient-ids)
-          (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows author-id))))
+      (add-suggestions swirl-id author-id recipient-names-or-emails)
       (= updated 1))))
 
 (defn get-swirl [id]

@@ -1,0 +1,2 @@
+DROP INDEX suggestions_swirl_id_recipient_id_idx;
+DROP INDEX suggestions_swirl_id_recipient_email_idx;
