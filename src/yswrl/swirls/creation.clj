@@ -92,6 +92,10 @@
   (let [[_ result] (re-find #"/id([\d]+)" url)]
     result))
 
+(defn tmdb-id-from-url [url]
+  (let [[_ result] (re-find #"/movie/([\d]+)\-.*" url)]
+    result))
+
 (defn search-music-page [search-term]
   (let [search-result (itunes/search-albums search-term)]
     (layout/render "swirls/search.html" {:search-term search-term :search-result search-result})))
@@ -114,11 +118,15 @@
 (defn handle-amazon-creation [url user _]
   (handle-book-creation (asin-from-url (str url)) user))
 
+(defn handle-tmdb-creation [url user _]
+  (handle-movie-creation (tmdb-id-from-url (str url)) user))
+
 (defn handler-for [url]
   (let [host (.getHost url)]
     (cond (host-ends-with host "youtube.com") handle-youtube-creation
           (host-ends-with host "amazon.com") handle-amazon-creation
           (host-ends-with host "itunes.apple.com") handle-itunes-creation
+          (host-ends-with host "themoviedb.org") handle-tmdb-creation
           :else handle-website-creation)
     ))
 

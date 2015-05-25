@@ -40,6 +40,9 @@
   (testing "All Amazon.com links go to the amazon creation handler"
     (is (= c/handle-amazon-creation (c/handler-for (URL. "http://www.amazon.com/Shogun-James-Clavell/dp/0440178002/ref=sr_1_1?ie=UTF8&qid=1432370486&sr=8-1&keywords=shogun")))))
 
+  (testing "All tmdb links go to the tmdb creation handler"
+    (is (= c/handle-tmdb-creation (c/handler-for (URL. "https://www.themoviedb.org/movie/401-garden-state")))))
+
   (testing "All other URLs use a generic website generation handler"
     (is (= c/handle-website-creation (c/handler-for (URL. "https://notyoutube.com/watch?v=blash")))))
 
@@ -57,5 +60,9 @@
   (testing "Can generate correct IMDB URL from imdb-id"
     (is (= "http://www.imdb.com/title/tt0333766"
         (c/imdb-url "tt0333766"))))
+
+  (testing "can get tmdb-id from TMDB URL"
+    (is (= "401"
+           (c/tmdb-id-from-url "https://www.themoviedb.org/movie/401-garden-state"))))
 
   )
