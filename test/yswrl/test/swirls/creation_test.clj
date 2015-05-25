@@ -54,4 +54,8 @@
   (testing "Asin extraction is nil if not found"
     (is (nil? (c/asin-from-url "http://www.amazon.com/Shogun-James-Clavell/dp/ef=sr_1_1?ie=UTF8&qid=1432370486&sr=8-1&keywords=shogun"))))
 
+  (testing "Can generate correct IMDB URL from imdb-id"
+    (is (= "http://www.imdb.com/title/tt0333766"
+        (c/imdb-url "tt0333766"))))
+
   )

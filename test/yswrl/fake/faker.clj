@@ -32,6 +32,17 @@
                            ; get the facebook user details
                            #"https:\/\/graph\.facebook\.com\/me\?access_token=.*"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/facebook.user-details." ((form-decode (req :query-string)) "access_token") ".json"))})
+                           ;
+
+                           ; Run a tmdb movie search
+                           #"https:\/\/api\.themoviedb\.org/3/search/movie\?api_key=(.+)&query=(.+)"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-search." ((form-decode (req :query-string)) "query") ".json"))})
+                           ;
+
+                           ;get a movie from tmdb id
+                           #"https:\/\/api\.themoviedb\.org/3/movie/(.+)?api_key=(.+)"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.*)$" (req :uri) ) 1) ".json" ))} )
+                           ;
                            }
         body
         ))

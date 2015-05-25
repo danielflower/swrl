@@ -29,6 +29,15 @@
                        :default-not-seen-responses [ "Not interested" "Watch it later" ]
                        }
 
+            "movie" {
+                     :words {
+                             :watch "watch"
+                             :seen "seen"
+                             }
+                     :default-seen-responses ["Loved it" "Hated it" "Meh"]
+                     :default-not-seen-responses [ "Not interested" "Watch it later" ]
+                     }
+
             "website" {
                        :words {
                                :watch "see"

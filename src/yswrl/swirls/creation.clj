@@ -8,7 +8,8 @@
             [yswrl.swirls.itunes :as itunes]
             [yswrl.swirls.amazon :as amazon]
             [ring.util.response :refer [redirect response not-found]]
-            [yswrl.auth.guard :as guard])
+            [yswrl.auth.guard :as guard]
+            [yswrl.swirls.tmdb :as tmdb])
   (:import (java.net URL)))
 
 
@@ -24,6 +25,8 @@
   (get (ring.util.codec/form-decode (.getQuery (java.net.URI/create url))) "v"))
 
 
+(defn imdb-url [imdb-id]
+  (str "http://www.imdb.com/title/" imdb-id))
 
 (defn get-video-details [youtube-id]
   (let [url (str "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cplayer&id=" youtube-id "&key=" youtube-api-key)
@@ -73,6 +76,18 @@
         swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url, {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
+(defn handle-movie-creation [tmdb-id user]
+  (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
+        review (str "<img src=\"" (movie :large-image-url) "\"><p>"
+        "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>"
+        "<a href=\"" (imdb-url (movie :imdb-id)) "\">IMDB Link</a>"
+        "<p>Tagline: " (movie :tagline) "</p>"
+        "<p>Movie Overview:</p>" (movie :overview)
+        "</br></br><p>What do you think?</p>")
+        swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url) {})]
+    (redirect (links/edit-swirl (swirl :id)))
+    ))
+
 (defn itunes-id-from-url [url]
   (let [[_ result] (re-find #"/id([\d]+)" url)]
     result))
@@ -84,6 +99,10 @@
 (defn search-books-page [search-term]
   (let [search-result (amazon/search-books search-term)]
     (layout/render "swirls/search_books.html" {:search-term search-term :search-result search-result})))
+
+(defn search-movies-page [search-term]
+  (let [search-result (tmdb/search-movies search-term)]
+    (layout/render "swirls/search_movies.html" {:search-term search-term :search-result search-result})))
 
 (defn asin-from-url [url]
   (let [[_ result] (re-find #"/([0-9A-Z]{10})(?:[/?]|$)" url)]
@@ -106,12 +125,15 @@
 (defn handle-creation-from-url [url title author]
   ((handler-for url) url author title))
 
+
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))
            (GET "/search/music" [search-term] (search-music-page search-term))
            (GET "/search/books" [search-term] (search-books-page search-term))
+           (GET "/search/movies" [search-term] (search-movies-page search-term))
 
            (GET "/create/from-url" [url title :as req] (guard/requires-login #(handle-creation-from-url (URL. url) title (session-from req))))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req))))
            (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req))))
+           (GET "/create/movie" [tmdb-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req))))
            )
