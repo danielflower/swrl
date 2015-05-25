@@ -18,12 +18,15 @@
   (if-let [swirl (repo/get-swirl swirl-id)]
     (if (not= (swirl :author_id) (author :id))
       nil
-      (let [contacts (network/get-relations (author :id) :knows)]
-        (layout/render "swirls/create.html" {:id       swirl-id
-                                             :subject  (swirl :title)
-                                             :review   (swirl :review)
-                                             :type     (type-of swirl)
-                                             :contacts contacts})))))
+      (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
+            contacts (network/get-relations (author :id) :knows)
+            not-added (filter #(not (contains? already-suggested %)) contacts)]
+        (layout/render "swirls/edit.html" {:id                swirl-id
+                                           :subject           (swirl :title)
+                                           :review            (swirl :review)
+                                           :type              (type-of swirl)
+                                           :contacts          not-added
+                                           :already-suggested already-suggested})))))
 
 (defn view-inbox [count current-user]
   (let [swirls (repo/get-swirls-awaiting-response (:id current-user) 2000 count)
