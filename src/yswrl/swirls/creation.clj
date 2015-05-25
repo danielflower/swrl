@@ -76,17 +76,23 @@
         swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url, {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
-(defn handle-movie-creation [tmdb-id user]
-  (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
-        review (str "<img src=\"" (movie :large-image-url) "\"><p>"
-        (if (not (clojure.string/blank? (movie :url))) (str "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>") "")
-        "<a href=\"" (imdb-url (movie :imdb-id)) "\">IMDB Link</a>"
-        "<p>Tagline: " (movie :tagline) "</p>"
-        "<p>Movie Overview:</p>" (movie :overview)
-        "</br></br><p>What do you think?</p>")
-        swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url) {})]
-    (redirect (links/edit-swirl (swirl :id)))
-    ))
+(defn handle-movie-creation
+  ( [tmdb-id user url]
+   (if tmdb-id
+         (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
+          review (str "<img src=\"" (movie :large-image-url) "\"><p>"
+          (if (not (clojure.string/blank? (movie :url))) (str "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>") "")
+          "<a href=\"" (imdb-url (movie :imdb-id)) "\">IMDB Link</a>"
+          "<p>Tagline: " (movie :tagline) "</p>"
+          "<p>Movie Overview:</p>" (movie :overview)
+          "</br></br><p>What do you think?</p>")
+          swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url) {})]
+           (redirect (links/edit-swirl (swirl :id)))
+           )
+         (handle-website-creation url user nil))
+     )
+  ( [tmdb-id user]
+   (handle-movie-creation tmdb-id user nil)))
 
 (defn itunes-id-from-url [url]
   (let [[_ result] (re-find #"/id([\d]+)" url)]
@@ -126,7 +132,7 @@
   (handle-movie-creation (tmdb-id-from-url (str url)) user))
 
 (defn handle-imdb-creation [url user _]
-  (handle-movie-creation (tmdb/get-tmdb-id-from-imdb-id (imdb-id-from-url (str url))) user))
+  (handle-movie-creation (tmdb/get-tmdb-id-from-imdb-id (imdb-id-from-url (str url))) user url))
 
 (defn handler-for [url]
   (let [host (.getHost url)]
