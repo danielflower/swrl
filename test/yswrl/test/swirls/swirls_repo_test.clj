@@ -20,6 +20,11 @@
                :summary   "HOT"}]
              (repo/get-swirl-responses (swirl :id)))))
 
+    (testing "the same user can not be suggested twice"
+      (println "Adding" (swirl :id))
+      (repo/add-suggestions (swirl :id) (author :id) [(non-responder :username)])
+      (is (= 1 (count (repo/get-non-responders (swirl :id))))))
+
     (testing "get-swirls-awaiting-response"
       (testing "returns non-responded swirls when the user has pending swirls to respond to"
         (let [results (repo/get-swirls-awaiting-response (non-responder :id) 100 0)]
