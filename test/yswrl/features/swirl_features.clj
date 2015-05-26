@@ -166,7 +166,7 @@
 
 (deftest quick-login
   (let [user (s/create-test-user)
-        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [], {})]
+        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [])]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
@@ -181,7 +181,7 @@
 
 (deftest quick-register
   (let [user (s/create-test-user)
-        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [], {})]
+        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [])]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
@@ -202,7 +202,7 @@
   (let [author (s/create-test-user)
         responder (s/create-test-user)
         non-responder (s/create-test-user)
-        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"], {})
+        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         _ (repo/create-response (swirl :id) "HOT" responder)]
     (-> (session app)
 

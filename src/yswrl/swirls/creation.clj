@@ -9,7 +9,8 @@
             [yswrl.swirls.amazon :as amazon]
             [ring.util.response :refer [redirect response not-found]]
             [yswrl.auth.guard :as guard]
-            [yswrl.swirls.tmdb :as tmdb])
+            [yswrl.swirls.tmdb :as tmdb]
+            [yswrl.swirls.swirl-links :as link-types])
   (:import (java.net URL URI)))
 
 
@@ -44,12 +45,14 @@
 (defn handle-youtube-creation [youtube-url author _]
   (let [youtube-id (youtube-id (str youtube-url))
         info (get-video-details youtube-id)
-        swirl (repo/save-draft-swirl "youtube" (author :id) (info :title) (info :review) (info :thumbnail-url), {})]
+        swirl (repo/save-draft-swirl "youtube" (author :id) (info :title) (info :review) (info :thumbnail-url))]
+    (repo/add-link (swirl :id) (link-types/youtube-id :code) youtube-id)
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn handle-website-creation [url author title]
   (let [swirl-title (or title "This website")
-        swirl (repo/save-draft-swirl "website" (author :id) swirl-title (str "Check out <a href=\"" url "\">" url "</a>") nil, {})]
+        swirl (repo/save-draft-swirl "website" (author :id) swirl-title (str "Check out <a href=\"" url "\">" url "</a>") nil)]
+    (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn- host-ends-with [host test]
@@ -62,7 +65,8 @@
         thumbnail-url (album :thumbnail-url)
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
         review (str "<img src=\"" thumbnail-url "\"><p>Track listing:</p><ol>" track-html "</ol><p>What do you think?</p>")]
-    (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url, {:itunes-collection-id (Long/parseLong itunes-collection-id)})]
+    (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url)]
+      (repo/add-link (swirl :id) (link-types/itunes-id :code) itunes-collection-id)
       (redirect (links/edit-swirl (swirl :id))))))
 
 (defn handle-book-creation [asin user]
@@ -72,8 +76,10 @@
         big-img-url (book :big-img-url)
         book-html (book :blurb)
         url (book :url)
-        review (str "<img src=\"" big-img-url "\"><p><a href=\"" url "\">Buy now from Amazon</a><p>Blurb:</p>" book-html "<p>What do you think?</p>")
-        swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url, {})]
+        review (str "<img src=\"" big-img-url "\"><p>Blurb:</p>" book-html "<p>What do you think?</p>")
+        swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url)]
+    (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
+    (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn handle-movie-creation
@@ -82,11 +88,11 @@
          (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
           review (str "<img src=\"" (movie :large-image-url) "\"><p>"
           (if (not (clojure.string/blank? (movie :url))) (str "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>") "")
-          "<a href=\"" (imdb-url (movie :imdb-id)) "\">IMDB Link</a>"
           "<p>Tagline: " (movie :tagline) "</p>"
           "<p>Movie Overview:</p>" (movie :overview)
           "</br></br><p>What do you think?</p>")
-          swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url) {})]
+          swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url))]
+           (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
            (redirect (links/edit-swirl (swirl :id)))
            )
          (handle-website-creation url user nil))

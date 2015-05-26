@@ -2,7 +2,8 @@
   (:require [yswrl.db :as db]
             [yswrl.user.networking :as networking]
             [yswrl.auth.auth-repo :as auth]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [yswrl.swirls.swirl-links :as swirl-links])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.core)
 (use 'korma.db)
@@ -52,9 +53,17 @@
           (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
-(defn save-draft-swirl [type author-id title review image-thumbnail optional-values]
+(defn save-draft-swirl [type author-id title review image-thumbnail]
   (insert db/swirls
-          (values (merge {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"} optional-values))))
+          (values {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"})))
+
+(defn add-link [swirl-id link-type-code link-value]
+  (insert db/swirl-links
+          (values {:swirl_id swirl-id :type_code link-type-code :code link-value})))
+
+(defn get-links [swirl-id]
+  (let [links (select db/swirl-links (where {:swirl_id swirl-id}))]
+    (map #(assoc % :type (swirl-links/link-type-of (% :type_code))) links)))
 
 (defn add-suggestions [swirl-id author-id recipient-names-or-emails]
   (if (not-empty recipient-names-or-emails)
@@ -146,3 +155,5 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
           (join :inner db/users (= :suggestions.recipient_id :users.id))
           (where {:swirl_id swirl-id})
           (order :users.username :asc)))
+
+

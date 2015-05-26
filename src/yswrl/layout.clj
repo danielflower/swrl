@@ -24,6 +24,7 @@
 (filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
 
 
+
 (deftype RenderableTemplate [template params]
   Renderable
   (render [this request]

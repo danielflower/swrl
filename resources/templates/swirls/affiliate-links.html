@@ -1,8 +1,32 @@
 <div class="affiliates">
 
-    {% if swirl.itunes-collection-id %}
+    {% for link in swirl-links %}
 
-    <a href="{{ swirl.itunes-collection-id|itunesalbum }}"><img src="/immutable/images/Get_it_on_iTunes_Badge_US_1114.svg" width="110" height="40" alt="Buy on iTunes"></a>
-    {% endif %}
+    <div class="swirl-link">
+
+        {% ifequal link.type_code "I" %}
+        <a href="{{ link.code|itunesalbum }}"><img
+                src="/immutable/images/Get_it_on_iTunes_Badge_US_1114.svg" width="110" height="40" alt="Buy on iTunes"></a>
+        {% endifequal %}
+
+        {% ifequal link.type_code "Y" %}
+        <a href="https://www.youtube.com/watch?v={{ link.code }}">Watch on <i class="fa fa-youtube fa-3x"></i></a>
+        {% endifequal %}
+
+        {% ifequal link.type_code "Z" %}
+        <a href="{{ link.code }}/"><img
+                src="/immutable/images/amazon-buy-button_198x88.jpg" width="198" height="88" alt="Buy at Amazon"></a>
+        {% endifequal %}
+
+        {% ifequal link.type_code "W" %}
+        <a href="{{ link.code }}">Go to website &gt;&gt;</a>
+        {% endifequal %}
+
+        {% ifequal link.type_code "M" %}
+        <a href="http://www.imdb.com/title/{{ link.code }}/"><img src="/immutable/images/imdb_icon.png" width="120" height="61" alt="View at IMDb.com"></a>
+        {% endifequal %}
+
+    </div>
+    {% endfor %}
 
 </div>
