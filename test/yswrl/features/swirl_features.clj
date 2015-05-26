@@ -182,7 +182,60 @@
           (login-as user)
           (follow-redirect)
 
-          (fill-in "You should watch" "Garden State")
+          ;Don't need to fill in as should be this by default:
+          ;(fill-in "You should watch" "Garden State")
+          (submit "Save changes")
+
+          (assert-swirl-title-in-header "watch" "Garden State")
+
+          (within [:title] (has (text? "You should watch Garden State")))
+
+          ))))
+
+(deftest website-swirl-creation-from-tmdb-link
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "Enter a website link" "https://www.themoviedb.org/movie/401-garden-state")
+          (press :#website-create-go-button)
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          ;Don't need to fill in as should be this by default:
+          ;(fill-in "You should watch" "Garden State")
+          (submit "Save changes")
+
+          (assert-swirl-title-in-header "watch" "Garden State")
+
+          (within [:title] (has (text? "You should watch Garden State")))
+
+          ))))
+
+(deftest website-swirl-creation-from-tmdb-link
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "Enter a website link" "http://www.imdb.com/title/tt0333766")
+          (press :#website-create-go-button)
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          ;Don't need to fill in as should be this by default:
+          ;(fill-in "You should watch" "Garden State")
           (submit "Save changes")
 
           (assert-swirl-title-in-header "watch" "Garden State")
