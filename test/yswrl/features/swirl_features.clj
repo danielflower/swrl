@@ -164,6 +164,33 @@
 
           ))))
 
+(deftest movie-swirl-creation
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "Movie Title" "garden state")
+          (press :#movie-search-go-button)
+
+          (follow "Garden State")
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          (fill-in "You should watch" "Garden State")
+          (submit "Save changes")
+
+          (assert-swirl-title-in-header "watch" "Garden State")
+
+          (within [:title] (has (text? "You should watch Garden State")))
+
+          ))))
+
 (deftest quick-login
   (let [user (s/create-test-user)
         swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [], {})]
