@@ -218,7 +218,7 @@
 
           ))))
 
-(deftest website-swirl-creation-from-tmdb-link
+(deftest website-swirl-creation-from-imdb-link
   (with-faked-responses
     (let [user (s/create-test-user)]
 
@@ -243,6 +243,33 @@
           (within [:title] (has (text? "You should watch Garden State")))
 
           ))))
+
+(deftest website-swirl-creation-with-title-extraction
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "Enter a website link" "http://jakearchibald.com/2013/progressive-enhancement-still-important/")
+          (press :#website-create-go-button)
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          ;Don't need to fill in as should be this by default:
+          ;(fill-in "You should watch" "Garden State")
+          (submit "Save changes")
+
+          (assert-swirl-title-in-header "see" "Progressive enhancement is still important - JakeArchibald.com")
+
+          (within [:title] (has (text? "You should see Progressive enhancement is still important - JakeArchibald.com")))
+
+          ))))
+
 
 (deftest quick-login
   (let [user (s/create-test-user)

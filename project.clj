@@ -28,7 +28,8 @@
                  [org.clojure/data.zip "0.1.1"]
                  [org.clojure/data.xml "0.0.8"]
                  [org.postgresql/postgresql "9.3-1102-jdbc41"]
-                 [clj-oauth2 "0.2.0"]]
+                 [clj-oauth2 "0.2.0"]
+                 [enlive "1.1.5"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "yswrl.jar"

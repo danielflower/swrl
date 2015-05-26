@@ -35,18 +35,28 @@
                            ;
 
                            ; Run a tmdb movie search
-                           #"https:\/\/api\.themoviedb\.org/3/search/movie\?api_key=(.+)&query=(.+)"
+                           #"https:\/\/api\.themoviedb\.org\/3\/search\/movie\?api_key=(.+)&query=(.+)"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-search." ((form-decode (req :query-string)) "query") ".json"))})
                            ;
 
                            ;get a movie from tmdb id
-                           #"https:\/\/api\.themoviedb\.org/3/movie/(.+)\?api_key=(.+)"
+                           #"https:\/\/api\.themoviedb\.org\/3\/movie\/(.+)\?api_key=(.+)"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.+)$" (req :uri) ) 1) ".json" ))} )
                            ;
 
                            ;get a movie from imdb id
-                           #"https:\/\/api\.themoviedb\.org/3/find/(.+)\?api_key=(.+)&external_source=imdb_id"
+                           #"https:\/\/api\.themoviedb\.org\/3\/find\/(.+)\?api_key=(.+)&external_source=imdb_id"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri) ) 1) ".json"))})
+                           ;
+
+                           ;get metadata from an imdb url
+                           #"http:\/\/www\.imdb\.com\/title\/tt1486217\/\?ref_=nv_sr_1"
+                           (fn [_] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/website.get-metadata.imdb.html"))})
+                           ;
+
+                           ;get metadata from an imdb url
+                           #"http:\/\/jakearchibald\.com\/2013\/progressive\-enhancement\-still\-important/"
+                           (fn [_] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/website.get-metadata.jakearchibald.html"))})
                            ;
 
                            }

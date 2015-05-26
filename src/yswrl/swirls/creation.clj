@@ -9,7 +9,8 @@
             [yswrl.swirls.amazon :as amazon]
             [ring.util.response :refer [redirect response not-found]]
             [yswrl.auth.guard :as guard]
-            [yswrl.swirls.tmdb :as tmdb])
+            [yswrl.swirls.tmdb :as tmdb]
+            [yswrl.swirls.website :as website])
   (:import (java.net URL URI)))
 
 
@@ -48,8 +49,12 @@
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn handle-website-creation [url author title]
-  (let [swirl-title (or title "This website")
-        swirl (repo/save-draft-swirl "website" (author :id) swirl-title (str "Check out <a href=\"" url "\">" url "</a>") nil, {})]
+  (let [metadata (website/get-metadata url)
+        swirl-title (or title (metadata :title) "This website")
+        review (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>"
+                    "<p>Check out: <a href=\"" url "\">" url "</a></p>"
+                    (metadata :description))
+        swirl (repo/save-draft-swirl "website" (author :id) swirl-title review nil, {})]
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn- host-ends-with [host test]
