@@ -54,10 +54,10 @@
 (defn handle-website-creation [url author title]
   (let [metadata (website/get-metadata url)
         swirl-title (or title (metadata :title) "This website")
-        review (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>"
+        review (str (if (not (clojure.string/blank? (metadata :image-url))) (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>") "" )
                     "<p>Check out: <a href=\"" url "\">" url "</a></p>"
                     (metadata :description))
-        swirl (repo/save-draft-swirl "website" (author :id) swirl-title review nil, {})]
+        swirl (repo/save-draft-swirl "website" (author :id) swirl-title review nil)]
   (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id)))))
 
