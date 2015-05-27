@@ -21,13 +21,13 @@
 (defdb db (postgres (convert-db-uri db-uri)))
 
 (defentity users (database db))
+
 (defentity swirls (database db)
            (prepare (fn [v] (rename-keys v {:itunes-collection-id :itunes_collection_id})))
            (transform (fn [v] (rename-keys v {:itunes_collection_id :itunes-collection-id}))))
 (defentity suggestions (database db))
-(defentity swirl-responses
-           (table :swirl_responses)
-           (database db))
+(defentity swirl-links (table :swirl_links) (database db))
+(defentity swirl-responses (table :swirl_responses) (database db))
 (defentity comments (database db))
 (defentity password-reset-requests
            (table :password_reset_requests)

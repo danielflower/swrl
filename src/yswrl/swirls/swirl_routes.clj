@@ -64,8 +64,9 @@
           can-respond (and (not is-author) is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
           type (type-of swirl)
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
+          swirl-links (repo/get-links id)
           can-edit is-author]
-      (layout/render "swirls/view.html" {:title title :swirl swirl :type type :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
+      (layout/render "swirls/view.html" {:title title :swirl swirl :swirl-links swirl-links :type type :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]

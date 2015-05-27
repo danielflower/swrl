@@ -85,6 +85,6 @@
 
 (defn createData []
   (for [x (range 30)]
-    (create-swirl "book" (+ 1 (rand-int 9)) (nth books (rand-int (count books))) (nth reviews (rand-int (count reviews))) " " , {})
+    (create-swirl "book" (+ 1 (rand-int 9)) (nth books (rand-int (count books))) (nth reviews (rand-int (count reviews))) " ")
     )
   )

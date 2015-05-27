@@ -1,6 +1,7 @@
 (ns yswrl.test.swirls.swirls-repo-test
   (:require [yswrl.test.scaffolding :as s]
-            [yswrl.swirls.swirls-repo :as repo])
+            [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.swirls.swirl-links :as swirl-links])
   (:use clojure.test)
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
@@ -10,7 +11,7 @@
   (let [author (s/create-test-user)
         responder (s/create-test-user)
         non-responder (s/create-test-user)
-        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"], {})
+        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         _ (repo/create-response (swirl :id) "HOT" responder)]
 
     (testing "Responses can be gotten"
@@ -50,6 +51,14 @@
       (testing "lookups are case insensitive"
         (is (= (repo/get-swirls-by-response (responder :id) 100 0 "HOT")
                (repo/get-swirls-by-response (responder :id) 100 0 "hOt")))))
+
+    (testing "links can be added and when retrieved the type information is appended"
+      (let [_ (repo/add-link (swirl :id) "I" "123456781234567812345678")
+            _ (repo/add-link (swirl :id) "A" "SJJKSDHFJKSDHFJK")
+            swirl-links (repo/get-links (swirl :id))
+            itunes (first swirl-links)]
+        (is (= 2 (count swirl-links)))
+        (is (= swirl-links/itunes-id (itunes :type)))))
 
     (testing "all responses for a user can be gotten"
       (is (= [{:summary "HOT" :count 1}] (repo/get-response-count-for-user (responder :id))))
