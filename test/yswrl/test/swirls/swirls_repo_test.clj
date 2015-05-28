@@ -14,12 +14,20 @@
         swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         _ (repo/create-response (swirl :id) "HOT" responder)]
 
-    (testing "Responses can be gotten"
+    (testing "Responses can be gotten and changed"
       (is (= [{:responder (responder :id),
                :email_md5 (responder :email_md5),
                :username  (responder :username),
                :summary   "HOT"}]
-             (repo/get-swirl-responses (swirl :id)))))
+             (repo/get-swirl-responses (swirl :id))))
+      (repo/create-response (swirl :id) "Not interested" responder)
+      (is (= [{:responder (responder :id),
+               :email_md5 (responder :email_md5),
+               :username  (responder :username),
+               :summary   "Not interested"}] (repo/get-swirl-responses (swirl :id))))
+      (repo/create-response (swirl :id) "HOT" responder))
+
+
 
     (testing "the same user can not be suggested twice"
       (println "Adding" (swirl :id))
@@ -63,6 +71,11 @@
     (testing "all responses for a user can be gotten"
       (is (= [{:summary "HOT" :count 1}] (repo/get-response-count-for-user (responder :id))))
       (is (= [] (repo/get-response-count-for-user (non-responder :id)))))
+
+    (testing "most recent respones by type can be gotten"
+      (is (= ["HOT"] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["blah"])))
+      (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["HOT"])))
+      (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) "whatever" []))))
 
     (testing "People who have not responded can be got"
       (is (= [{:email_md5 (non-responder :email_md5),

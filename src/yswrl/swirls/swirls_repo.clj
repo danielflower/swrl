@@ -37,9 +37,10 @@
 (defn create-response [swirl-id summary author]
   (transaction
     (let [response
-          (insert db/swirl-responses
-                  (values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)})
-                  )]
+          (if (= 0 (update db/swirl-responses (set-fields {:summary summary}) (where {:swirl_id swirl-id :responder (author :id)})))
+            (insert db/swirl-responses
+                    (values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
+            (first (select db/swirl-responses (where {:swirl_id swirl-id :responder (author :id)}))))]
       (update db/suggestions
               (set-fields {:response_id (response :id)})
               (where (or
@@ -135,6 +136,14 @@
 (defn get-response-count-for-user [user-id]
   (db/query "SELECT summary, count(1) AS count FROM swirl_responses WHERE responder = ? GROUP BY summary ORDER BY summary" user-id))
 
+(defn get-recent-responses-by-user-and-type [user-id swirl-type excluded]
+  (map #(% :summary) (select db/swirl-responses
+                                       (fields :summary)
+                                       (join :inner db/swirls (= :swirls.id :swirl_responses.swirl_id))
+                                       (where {:responder user-id :swirls.type swirl-type :summary [not-in excluded]})
+                                       (order :date_responded :desc)
+                                       (limit 5))))
+
 (defn get-swirls-by-response [user-id swirl-count skip response]
   (db/query "SELECT swirls.type, swirls.creation_date, swirls.review, swirls.title, swirls.id, users.username, users.email_md5, swirls.thumbnail_url
   FROM (swirls INNER JOIN swirl_responses ON swirls.id = swirl_responses.swirl_id)
@@ -155,5 +164,7 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
           (join :inner db/users (= :suggestions.recipient_id :users.id))
           (where {:swirl_id swirl-id})
           (order :users.username :asc)))
+
+
 
 

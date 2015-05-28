@@ -37,33 +37,6 @@
 
     <div class="responses">
 
-        {% if can-respond %}
-        <hr/>
-        <h2>Seen it? What did you think?</h2>
-
-        <form method="POST" action="/swirls/{{swirl.id}}/respond">
-            {% csrf-field %}
-            <input type="hidden" name="swirl-id" value="{{swirl.id}}">
-
-            <input type="submit" name="responseButton" value="Loved it">
-            <input type="submit" name="responseButton" value="Hated it">
-            <input type="submit" name="responseButton" value="Meh">
-
-            or
-            <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
-                   value="{{response-summary}}"
-                   placeholder="Enter a short response">
-            <input type="submit" name="responseButton" value="Submit">
-
-            <p>Don't want to see it?
-                <input type="submit" name="responseButton" value="Not interested">
-            </p>
-
-
-        </form>
-
-        {% endif %}
-
         {% for resp in responses %}
         <div class="response">
 
@@ -80,6 +53,37 @@
             <span class="username">{{non-responder.username}}</span>
             {% endfor %}
         </div>
+
+        {% if can-respond %}
+        <hr/>
+        <h2>{{type.words.seen-it}}? What did you think?</h2>
+
+        <form method="POST" action="/swirls/{{swirl.id}}/respond">
+            {% csrf-field %}
+            <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+
+            {% for response in seen-response-options %}
+            <input type="submit" name="responseButton" value="{{ response }}" {% ifequal response response-of-current-user.summary %}disabled class="button-primary"{% endifequal %}>
+            {% endfor %}
+
+            or
+            <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
+                   value="{{response-summary}}"
+                   placeholder="Enter a short response">
+            <input type="submit" name="responseButton" value="Submit">
+
+            <p>Haven't {{type.words.seen-it}} yet?
+                {% for response in not-seen-response-options %}
+                <input type="submit" name="responseButton" value="{{ response }}" {% ifequal response response-of-current-user.summary %}disabled class="button-primary"{% endifequal %}>
+                {% endfor %}
+            </p>
+
+
+        </form>
+
+        {% endif %}
+
+
 
 
     </div>

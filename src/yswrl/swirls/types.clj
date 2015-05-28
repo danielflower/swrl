@@ -6,54 +6,48 @@
                     :words {
                             :watch "read"
                             :seen "read"
+                            :seen-it "seen it"
                             }
-                    :default-seen-responses [ "Loved it" "Hated it" "Meh" ]
-                    :default-not-seen-responses [ "Not interested" "Read it later" ]
                     }
 
             "album" {
                      :words {
                              :watch "listen to"
                              :seen "heard"
+                             :seen-it "heard it"
                              }
-                     :default-seen-responses [ "Loved it" "Hated it" "Meh" ]
-                     :default-not-seen-responses [ "Not interested" "Later" ]
                      }
 
             "video" {
                        :words {
                                :watch "watch"
                                :seen "seen"
+                               :seen-it "watched it"
                                }
-                       :default-seen-responses [ "Loved it" "Hated it" "Meh" ]
-                       :default-not-seen-responses [ "Not interested" "Watch it later" ]
                        }
 
             "movie" {
                      :words {
                              :watch "watch"
                              :seen "seen"
+                             :seen-it "seen it"
                              }
-                     :default-seen-responses ["Loved it" "Hated it" "Meh"]
-                     :default-not-seen-responses [ "Not interested" "Watch it later" ]
                      }
 
             "website" {
                        :words {
                                :watch "see"
                                :seen "seen"
+                               :seen-it "visited it"
                                }
-                       :default-seen-responses [ "Interesting" "Boring" "Meh" ]
-                       :default-not-seen-responses [ "Not interested" "Later" ]
                        }
 
             "generic" {
                        :words {
                                :watch "see"
                                :seen "seen"
+                               :seen-it "seen it"
                                }
-                       :default-seen-responses [ "Wow" "What the..." "Meh" ]
-                       :default-not-seen-responses [ "Not interested" "Later" ]
                        }
 
             })

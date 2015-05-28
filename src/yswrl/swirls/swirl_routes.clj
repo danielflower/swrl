@@ -14,6 +14,9 @@
             [yswrl.swirls.types :refer [type-of]])
   (:import (java.util UUID)))
 
+(def seen-responses ["Loved it", "Not bad", "Meh"])
+(def not-seen-responses ["Later", "Not interested"])
+
 (defn edit-swirl-page [author swirl-id]
   (if-let [swirl (repo/get-swirl swirl-id)]
     (if (not= (swirl :author_id) (author :id))
@@ -53,6 +56,11 @@
             {:login-username (user :username)}))))
     (catch Exception e (log/warn "Error while getting logister info" suggestion-code e))))
 
+(defn in?
+  "true if seq contains elm"
+  [seq elm]
+  (some #(= elm %) seq))
+
 (defn view-swirl-page [id suggestion-code current-user]
   (if-let [swirl (repo/get-swirl id)]
     (let [is-logged-in (not-nil? current-user)
@@ -61,12 +69,23 @@
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
           non-responders (repo/get-non-responders (:id swirl))
-          can-respond (and (not is-author) is-logged-in (not-any? (fn [c] (= (:id current-user) (:responder c))) responses))
+          can-respond (and (not is-author) is-logged-in)
+          response-of-current-user (if is-logged-in (first (filter #(= (:id current-user) (:responder %)) responses)) nil)
           type (type-of swirl)
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           swirl-links (repo/get-links id)
+          seen-response-options (if can-respond
+                                  (distinct (concat seen-responses
+                                                    (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) (concat seen-responses not-seen-responses)))
+                                                    (if (and (not (nil? response-of-current-user)) (not (in? not-seen-responses (response-of-current-user :summary)))) [(response-of-current-user :summary)] [])))
+                                  [])
+
           can-edit is-author]
-      (layout/render "swirls/view.html" {:title title :swirl swirl :swirl-links swirl-links :type type :is-author is-author :responses responses :comments comments :can-respond can-respond :can-edit can-edit :logister-info logister-info :non-responders non-responders}))))
+      (layout/render "swirls/view.html" {
+                                         :title                    title :swirl swirl :swirl-links swirl-links :type type :is-author is-author
+                                         :responses                responses :comments comments :can-respond can-respond :can-edit can-edit
+                                         :logister-info            logister-info :non-responders non-responders
+                                         :response-of-current-user response-of-current-user :seen-response-options seen-response-options :not-seen-response-options not-seen-responses}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
