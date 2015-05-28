@@ -20,7 +20,7 @@
                      :default-not-seen-responses [ "Not interested" "Later" ]
                      }
 
-            "youtube" {
+            "video" {
                        :words {
                                :watch "watch"
                                :seen "seen"

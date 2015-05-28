@@ -47,7 +47,7 @@
 (defn handle-youtube-creation [youtube-url author _]
   (let [youtube-id (youtube-id (str youtube-url))
         info (get-video-details youtube-id)
-        swirl (repo/save-draft-swirl "youtube" (author :id) (info :title) (info :review) (info :thumbnail-url))]
+        swirl (repo/save-draft-swirl "video" (author :id) (info :title) (info :review) (info :thumbnail-url))]
     (repo/add-link (swirl :id) (link-types/youtube-id :code) youtube-id)
     (redirect (links/edit-swirl (swirl :id)))))
 
