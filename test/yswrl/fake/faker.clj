@@ -4,10 +4,6 @@
 (defmacro with-faked-responses [body]
   (list 'with-fake-routes {
 
-                           ; Get YouTube video info
-                           #"https:\/\/www\.googleapis\.com\/youtube\/v3\/videos\?part=snippet%2Cplayer&id=(.+)&key=AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg"
-                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/youtube." ((form-decode (req :query-string)) "id") ".json"))})
-
 
                            ; Run an iTunes albums search
                            #"https:\/\/itunes\.apple\.com\/search\?term=(.+)&media=music&entity=album"
@@ -64,6 +60,13 @@
                            "https://vimeo.com/3718294"
                            (fn [_] {:status 200 :headers {} :body (slurp "test/yswrl/fake/vimeo.3718294.html")})
                            ;
+
+
+                           ; Get YouTube video info
+                           "https://www.youtube.com/watch?v=TllPrdbZ-VI"
+                           (fn [_] {:status 200 :headers {} :body (slurp "test/yswrl/fake/youtube.onions.html")})
+                           ;
+
 
                            }
         body

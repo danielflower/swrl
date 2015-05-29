@@ -16,41 +16,13 @@
             [yswrl.swirls.swirl-links :as link-types])
   (:import (java.net URL URI)))
 
-
-(def youtube-api-key
-  "AIzaSyCuxJgvMSqJbJxVYAUOINsoTjs2DuFsLMg")
-
 (defn start-page []
   (layout/render "swirls/start.html"))
 
 (defn session-from [req] (:user (:session req)))
 
-(defn youtube-id [url]
-  (get (ring.util.codec/form-decode (.getQuery (URI/create url))) "v"))
-
-
 (defn imdb-url [imdb-id]
   (str "http://www.imdb.com/title/" imdb-id))
-
-(defn get-video-details [youtube-id]
-  (let [url (str "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cplayer&id=" youtube-id "&key=" youtube-api-key)
-        youtube-result-set (:body (client/get url {:accept :json :as :json}))
-        video-info (first (youtube-result-set :items))
-        title (get-in video-info [:snippet :title])
-        thumbnail-url (get-in video-info [:snippet :thumbnails :default :url])
-        iframe-html (get-in video-info [:player :embedHtml])
-        review (str "<p>Check this out:</p>" iframe-html "<p>What do you think?</p>")]
-    {:title         title
-     :thumbnail-url thumbnail-url
-     :iframe-html   iframe-html
-     :review        review}))
-
-(defn handle-youtube-creation [youtube-url author _]
-  (let [youtube-id (youtube-id (str youtube-url))
-        info (get-video-details youtube-id)
-        swirl (repo/save-draft-swirl "video" (author :id) (info :title) (info :review) (info :thumbnail-url))]
-    (repo/add-link (swirl :id) (link-types/youtube-id :code) youtube-id)
-    (redirect (links/edit-swirl (swirl :id)))))
 
 (defn handle-website-creation [url author title]
   (let [metadata (website/get-metadata url)
@@ -151,8 +123,7 @@
 
 (defn handler-for [url]
   (let [host (.getHost url)]
-    (cond (host-ends-with host "youtube.com") handle-youtube-creation
-          (host-ends-with host "amazon.com") handle-amazon-creation
+    (cond (host-ends-with host "amazon.com") handle-amazon-creation
           (host-ends-with host "itunes.apple.com") handle-itunes-creation
           (host-ends-with host "themoviedb.org") handle-tmdb-creation
           (host-ends-with host "imdb.com") handle-imdb-creation

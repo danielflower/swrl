@@ -21,10 +21,6 @@
               :code "M"
               :name "IMDB ID"
               })
-(def youtube-id {
-                 :code "Y"
-                 :name "Youtube ID"
-                 })
 
 (def link-types {
 
@@ -32,8 +28,7 @@
                  (amazon-asin :code) amazon-asin,
                  (amazon-url :code) amazon-url,
                  (website-url :code) website-url,
-                 (imdb-id :code) imdb-id,
-                 (youtube-id :code) youtube-id
+                 (imdb-id :code) imdb-id
 
                  })
 

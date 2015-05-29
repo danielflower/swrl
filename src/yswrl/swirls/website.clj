@@ -30,7 +30,7 @@
                 url (clojure.string/replace raw-url "autoplay=1" "autoplay=0")
                 width (meta-value html "og:video:width" "640")
                 height (meta-value html "og:video:height" "320")]
-            (str "<iframe sandbox=\"\" width=\"" width "\" height=\"" height "\" src=\"" url "\" frameborder=\"0\" allowfullscreen></iframe>"))
+            (str "<iframe sandbox=\"allow-scripts allow-same-origin\" width=\"" width "\" height=\"" height "\" src=\"" url "\" frameborder=\"0\" allowfullscreen></iframe>"))
           nil)
         :else nil))
 
