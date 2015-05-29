@@ -1,51 +1,59 @@
 (ns yswrl.swirls.types)
 
+
+
 (def types {
 
-            "book" {
-                    :words {
-                            :watch "read"
-                            :seen "read"
-                            :seen-it "seen it"
-                            }
-                    }
-
-            "album" {
-                     :words {
-                             :watch "listen to"
-                             :seen "heard"
-                             :seen-it "heard it"
-                             }
-                     }
-
-            "video" {
+            "book"    {
+                       :name  "book"
                        :words {
-                               :watch "watch"
-                               :seen "seen"
+                               :watch   "read"
+                               :seen    "read"
+                               :seen-it "seen it"
+                               }
+                       }
+
+            "album"   {
+                       :name  "album"
+                       :words {
+                               :watch   "listen to"
+                               :seen    "heard"
+                               :seen-it "heard it"
+                               }
+                       }
+
+            "video"   {
+                       :name  "video"
+                       :words {
+                               :watch   "watch"
+                               :seen    "seen"
                                :seen-it "watched it"
                                }
                        }
 
-            "movie" {
-                     :words {
-                             :watch "watch"
-                             :seen "seen"
-                             :seen-it "seen it"
-                             }
-                     }
+            "movie"   {
+                       :name  "movie"
+                       :words {
+                               :watch   "watch"
+                               :seen    "seen"
+                               :seen-it "seen it"
+                               }
+                       }
 
             "website" {
+                       :name  "website"
                        :words {
-                               :watch "see"
-                               :seen "seen"
+                               :watch   "see"
+                               :seen    "seen"
                                :seen-it "visited it"
                                }
                        }
 
             "generic" {
+                       :name  "generic"
                        :words {
-                               :watch "see"
-                               :seen "seen"
+                               :watch   "see"
+                               :seen    "seen"
                                :seen-it "seen it"
                                }
                        }
@@ -57,3 +65,8 @@
     type
     (throw (Exception. (str "No type found for" swirl)))
     ))
+
+(defn from-open-graph-type [og-type]
+  (if-let [type (get types og-type)]
+    (type :name)
+    "website"))

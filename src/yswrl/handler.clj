@@ -18,7 +18,7 @@
 (defn wrap-content-security-policy [handler]
   (fn [request]
     (if-let [response (handler request)]
-      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; child-src https://*.youtube.com http://*.youtube.com"))))
+      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *"))))
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]

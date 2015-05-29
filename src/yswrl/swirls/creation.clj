@@ -12,6 +12,7 @@
             [yswrl.swirls.tmdb :as tmdb]
             [yswrl.swirls.website :as website]
             [yswrl.swirls.tmdb :as tmdb]
+            [clojure.tools.logging :as log]
             [yswrl.swirls.swirl-links :as link-types])
   (:import (java.net URL URI)))
 
@@ -53,12 +54,14 @@
 
 (defn handle-website-creation [url author title]
   (let [metadata (website/get-metadata url)
+        _ (log/info "Metadata for" url ":" metadata)
         swirl-title (or title (metadata :title) "This website")
-        review (str (if (not (clojure.string/blank? (metadata :image-url))) (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>") "" )
+        image-tag (if (not (nil? (metadata :image-url))) (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>") "")
+        review (str (or (metadata :embed-html) image-tag)
                     "<p>Check out: <a href=\"" url "\">" url "</a></p>"
                     (metadata :description))
-        swirl (repo/save-draft-swirl "website" (author :id) swirl-title review nil)]
-  (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
+        swirl (repo/save-draft-swirl "website" (author :id) swirl-title review (metadata :image-url))]
+    (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn- host-ends-with [host test]
@@ -89,21 +92,21 @@
     (redirect (links/edit-swirl (swirl :id)))))
 
 (defn handle-movie-creation
-  ( [tmdb-id user url]
+  ([tmdb-id user url]
    (if tmdb-id
-         (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
-          review (str "<img src=\"" (movie :large-image-url) "\"><p>"
-          (if (not (clojure.string/blank? (movie :url))) (str "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>") "")
-          "<p>Tagline: " (movie :tagline) "</p>"
-          "<p>Movie Overview:</p>" (movie :overview)
-          "</br></br><p>What do you think?</p>")
-          swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url))]
-           (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
-           (redirect (links/edit-swirl (swirl :id)))
-           )
-         (handle-website-creation url user nil))
-     )
-  ( [tmdb-id user]
+     (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
+           review (str "<img src=\"" (movie :large-image-url) "\"><p>"
+                       (if (not (clojure.string/blank? (movie :url))) (str "<a href=\"" (movie :url) "\">Official Movie Homepage</a></br>") "")
+                       "<p>Tagline: " (movie :tagline) "</p>"
+                       "<p>Movie Overview:</p>" (movie :overview)
+                       "</br></br><p>What do you think?</p>")
+           swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url))]
+       (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
+       (redirect (links/edit-swirl (swirl :id)))
+       )
+     (handle-website-creation url user nil))
+    )
+  ([tmdb-id user]
    (handle-movie-creation tmdb-id user nil)))
 
 (defn itunes-id-from-url [url]

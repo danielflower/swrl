@@ -59,6 +59,12 @@
                            (fn [_] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/website.get-metadata.jakearchibald.html"))})
                            ;
 
+
+                           ;vimeo video
+                           "https://vimeo.com/3718294"
+                           (fn [_] {:status 200 :headers {} :body (slurp "test/yswrl/fake/vimeo.3718294.html")})
+                           ;
+
                            }
         body
         ))
