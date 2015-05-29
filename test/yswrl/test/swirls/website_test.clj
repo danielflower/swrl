@@ -25,4 +25,12 @@
               }
              (website/get-metadata "http://jakearchibald.com/2013/progressive-enhancement-still-important/")))))
 
+  (testing "Handles a junk url nicely"
+    (with-faked-responses
+      (is (= {:title nil
+              :site-name nil
+              :image-url nil
+              :description nil
+              }
+             (website/get-metadata "http://www.fjljldjfjdsoifjsdf.com/")))))
   )
