@@ -119,6 +119,8 @@
 
 (defn get-swirls-authored-by [user-id]
   (select db/swirls
+          (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
+          (join :inner db/users (= :swirls.author_id :users.id))
           (where {:author_id user-id :state "L"})
           (order :creation_date :desc)))
 

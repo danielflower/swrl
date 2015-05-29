@@ -32,7 +32,7 @@
         review (str (or (metadata :embed-html) image-tag)
                     "<p>Check out: <a href=\"" url "\">" url "</a></p>"
                     (metadata :description))
-        swirl (repo/save-draft-swirl "website" (author :id) swirl-title review (metadata :image-url))]
+        swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url))]
     (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id)))))
 
