@@ -44,10 +44,10 @@
  (testing "Username suggestions take the desired name if it's not already taken"
       (is (= "non-existant-user-234" (repo/suggest-username "non-existant-user-234"))))
 
-  (testing "When users are created their email is hashed and stored"
+  (testing "When users are created their lowercase email is hashed and stored"
     (let [username (s/unique-username)
           email (s/unique-email username)
-          user (repo/create-user username email s/test-user-password)
+          user (repo/create-user username (.toUpperCase email) s/test-user-password)
           expected-hash (-> (hash/md5 email)
                             (bytes->hex))]
       (is (= expected-hash (user :email_md5)))))

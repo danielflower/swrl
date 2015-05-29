@@ -7,7 +7,8 @@
 (use 'korma.core)
 
 (defn create-user [username email password]
-  (let [email-md5 (-> (hash/md5 email)
+               (bytes->hex)))
+  (let [email-md5 (-> (hash/md5 (clojure.string/lower-case email))
                       (bytes->hex))]
     (insert users
             (values {:username username :email email :password password :admin false :is_active true :email_md5 email-md5}))))
