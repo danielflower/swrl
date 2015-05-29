@@ -15,7 +15,7 @@
   (:import (java.util UUID)))
 
 (def seen-responses ["Loved it", "Not bad", "Meh"])
-(def not-seen-responses ["Later", "Not interested"])
+(def not-seen-responses ["Later", "Not for me"])
 
 (defn edit-swirl-page [author swirl-id]
   (if-let [swirl (repo/get-swirl swirl-id)]
