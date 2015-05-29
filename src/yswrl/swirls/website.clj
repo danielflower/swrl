@@ -29,7 +29,7 @@
       (let [url (clojure.string/replace (clojure.string/replace raw-url "autoPlay=1" "autoPlay=0") "autoplay=1" "autoplay=0")
             width (meta-value html "og:video:width" "640")
             height (meta-value html "og:video:height" "320")]
-        (str "<iframe sandbox=\"allow-scripts allow-same-origin\" width=\"" width "\" height=\"" height "\" src=\"" url "\" frameborder=\"0\" allowfullscreen></iframe>")))))
+        (str "<iframe sandbox=\"allow-scripts allow-same-origin allow-popups\" width=\"" width "\" height=\"" height "\" src=\"" url "\" frameborder=\"0\" allowfullscreen></iframe>")))))
 
 (defn get-metadata [url]
   (let [resource (fetch-url url)

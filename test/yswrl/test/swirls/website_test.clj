@@ -35,7 +35,7 @@
               :site-name   "Vimeo"
               :image-url   "https://i.vimeocdn.com/video/5211842_1280x720.webp"
               :description "Vimeo HQ - 4:12pm  Blake needs to talk to Jack about the homepage... or at least he tries to."
-              :embed-html  "<iframe sandbox=\"allow-scripts allow-same-origin\" width=\"640\" height=\"360\" src=\"https://player.vimeo.com/video/3718294?autoplay=0\" frameborder=\"0\" allowfullscreen></iframe>"
+              :embed-html  "<iframe sandbox=\"allow-scripts allow-same-origin allow-popups\" width=\"640\" height=\"360\" src=\"https://player.vimeo.com/video/3718294?autoplay=0\" frameborder=\"0\" allowfullscreen></iframe>"
               :type        "video"
               }
              (website/get-metadata "http://exact.match.com/vimeo.3718294.html")))))
