@@ -38,7 +38,7 @@
               :embed-html "<iframe sandbox=\"allow-scripts allow-same-origin\" width=\"640\" height=\"360\" src=\"https://player.vimeo.com/video/3718294?autoplay=0\" frameborder=\"0\" allowfullscreen></iframe>"
               :type "video"
               }
-             (website/get-metadata "https://vimeo.com/3718294")))))
+             (website/get-metadata "http://exact.match.com/vimeo.3718294.html")))))
 
   (testing "Handles a junk url nicely"
     (with-faked-responses

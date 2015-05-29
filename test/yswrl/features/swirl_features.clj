@@ -77,7 +77,7 @@
 
         ; Create a swirl
         (follow "Create")
-        (fill-in "Enter a website link" "https://www.youtube.com/watch?v=TllPrdbZ-VI")
+        (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
         (submit "Go")
 
         (save-url test-state :edit-swirl-uri)

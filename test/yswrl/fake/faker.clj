@@ -4,7 +4,6 @@
 (defmacro with-faked-responses [body]
   (list 'with-fake-routes {
 
-
                            ; Run an iTunes albums search
                            #"https:\/\/itunes\.apple\.com\/search\?term=(.+)&media=music&entity=album"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/itunes.album-search." ((form-decode (req :query-string)) "term") ".json"))})
@@ -22,7 +21,7 @@
 
                            ; get the facebook access token
                            #"https:\/\/graph\.facebook\.com\/oauth\/access_token.*"
-                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/facebook.oauth.access_token."((form-decode (req :query-string)) "code") ".txt"))})
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/facebook.oauth.access_token." ((form-decode (req :query-string)) "code") ".txt"))})
                            ;
 
                            ; get the facebook user details
@@ -37,12 +36,12 @@
 
                            ;get a movie from tmdb id
                            #"https:\/\/api\.themoviedb\.org\/3\/movie\/(.+)\?api_key=(.+)"
-                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.+)$" (req :uri) ) 1) ".json" ))} )
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.+)$" (req :uri)) 1) ".json"))})
                            ;
 
                            ;get a movie from imdb id
                            #"https:\/\/api\.themoviedb\.org\/3\/find\/(.+)\?api_key=(.+)&external_source=imdb_id"
-                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri) ) 1) ".json"))})
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri)) 1) ".json"))})
                            ;
 
                            ;get metadata from an imdb url
@@ -55,18 +54,13 @@
                            (fn [_] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/website.get-metadata.jakearchibald.html"))})
                            ;
 
-
-                           ;vimeo video
-                           "https://vimeo.com/3718294"
-                           (fn [_] {:status 200 :headers {} :body (slurp "test/yswrl/fake/vimeo.3718294.html")})
-                           ;
-
-
                            ; Get YouTube video info
-                           "https://www.youtube.com/watch?v=TllPrdbZ-VI"
-                           (fn [_] {:status 200 :headers {} :body (slurp "test/yswrl/fake/youtube.onions.html")})
+                           #"http:\/\/exact\.match\.com\/(.+)"
+                           (fn [req]
+                             (let [page (get (re-find #"\/(.+)$" (req :uri)) 1)]
+                               (println "Loading" page)
+                               {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/exact/" page))}))
                            ;
-
 
                            }
         body
