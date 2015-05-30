@@ -83,11 +83,13 @@
 
     (testing "get-swirls-awaiting-response"
       (testing "returns non-responded swirls when the user has pending swirls to respond to"
+        (is (= 1 (repo/get-swirls-awaiting-response-count (non-responder :id))))
         (let [results (repo/get-swirls-awaiting-response (non-responder :id) 100 0)]
           (is (= 1 (count results)))
-          (is (= ((first results) :id) (swirl :id))))
-        )
+          (is (= ((first results) :id) (swirl :id)))))
+
       (testing "returns an empty list if all swirls are responded to"
+        (is (= 0 (repo/get-swirls-awaiting-response-count (responder :id))))
         (let [results (repo/get-swirls-awaiting-response (responder :id) 100 0)]
           (is (= 0 (count results)))
           )))

@@ -7,7 +7,8 @@
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [environ.core :refer [env]]
             [yswrl.constraints :refer [constraints]]
-            [yswrl.links :as links]))
+            [yswrl.links :as links]
+            [yswrl.swirls.swirls-repo :as swirls-repo]))
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
@@ -27,18 +28,22 @@
 (deftype RenderableTemplate [template params]
   Renderable
   (render [this request]
-    (content-type
-      (->> (assoc params
-             :page template
-             :dev (env :dev)
-             :csrf-token *anti-forgery-token*
-             :user (get(get request :session) :user)
-             :constraints constraints
-             :request request
-             )
-           (parser/render-file (str template))
-           response)
-      "text/html; charset=utf-8")))
+    (let [current-user (get (get request :session) :user)
+          unread-count (if current-user (swirls-repo/get-swirls-awaiting-response-count (get current-user :id nil)) nil)]
+
+      (content-type
+        (->> (assoc params
+               :page template
+               :dev (env :dev)
+               :csrf-token *anti-forgery-token*
+               :user current-user
+               :unread-count unread-count
+               :constraints constraints
+               :request request
+               )
+             (parser/render-file (str template))
+             response)
+        "text/html; charset=utf-8"))))
 
 (defn render [template & [params]]
   (RenderableTemplate. template params))

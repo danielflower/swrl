@@ -12,7 +12,7 @@
 
             {% if response-counts|not-empty %}
             <div class="response-group">
-                <a href="/swirls/inbox" class="button">Inbox</a>
+                <a href="/swirls/inbox" class="button">Inbox ({{unread-count}})</a>
 
                 <h2>Your tagged items</h2>
                 {% for rc in response-counts %}

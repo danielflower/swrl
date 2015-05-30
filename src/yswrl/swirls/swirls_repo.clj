@@ -125,12 +125,15 @@
 
 ; Queries to get a list of swirls
 
-(defn select-multiple-swirls [max-results skip]
+(def multiple-live-swirls
   (-> (select* db/swirls)
+      (where {:state states/live})))
+
+(defn select-multiple-swirls [max-results skip]
+  (-> multiple-live-swirls
       (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
-      (where {:state states/live})
       (limit max-results)
       (order :creation_date :desc)))
 
@@ -148,6 +151,14 @@
       (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
       (where {:suggestions.recipient_id user-id :suggestions.response_id nil})
       (select)))
+
+(defn get-swirls-awaiting-response-count [user-id]
+  (:cnt (first (-> multiple-live-swirls
+                   (aggregate (count :*) :cnt)
+                   (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
+                   (where {:suggestions.recipient_id user-id :suggestions.response_id nil})
+                   (select)))))
+
 
 (defn get-swirls-by-response [user-id max-results skip response]
   (-> (select-multiple-swirls max-results skip)
