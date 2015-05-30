@@ -145,18 +145,18 @@
           (order :creation_date :desc)))
 
 
-(defn get-swirls-awaiting-response [userId swirl-count skip]
+(defn get-swirls-awaiting-response [user-id swirl-count skip]
   (select db/swirls
           (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
           (join :inner db/users (= :swirls.author_id :users.id))
-          (where {:suggestions.recipient_id userId :suggestions.response_id nil})
+          (where {:suggestions.recipient_id user-id :suggestions.response_id nil :state states/live})
           (offset skip)
           (limit swirl-count)
           (order :creation_date :desc)))
 
 (defn get-response-count-for-user [user-id]
-  (db/query "SELECT summary, count(1) AS count FROM swirl_responses WHERE responder = ? GROUP BY summary ORDER BY summary" user-id))
+  (db/query "SELECT r.summary, count(1) AS count FROM swirl_responses r INNER JOIN swirls s ON s.id = r.swirl_id WHERE s.state = ? AND r.responder = ? GROUP BY r.summary ORDER BY r.summary" states/live user-id))
 
 (defn get-recent-responses-by-user-and-type [user-id swirl-type excluded]
   (map #(% :summary) (select db/swirl-responses
@@ -170,9 +170,9 @@
   (db/query "SELECT swirls.type, swirls.creation_date, swirls.review, swirls.title, swirls.id, users.username, users.email_md5, swirls.thumbnail_url
   FROM (swirls INNER JOIN swirl_responses ON swirls.id = swirl_responses.swirl_id)
   INNER JOIN users ON swirls.author_id = users.id
-  WHERE (swirl_responses.responder = ? AND LOWER(swirl_responses.summary) = ?)
+  WHERE swirl_responses.responder = ? AND LOWER(swirl_responses.summary) = ? AND swirls.state = ?
   ORDER BY swirls.creation_date DESC
-  LIMIT ? OFFSET ?" user-id (clojure.string/lower-case response) swirl-count skip))
+  LIMIT ? OFFSET ?" user-id (clojure.string/lower-case response) states/live swirl-count skip))
 
 (defn get-non-responders [swirl-id]
   (db/query "SELECT users.username, users.email_md5 FROM

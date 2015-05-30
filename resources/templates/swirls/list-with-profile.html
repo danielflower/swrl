@@ -12,6 +12,8 @@
 
             {% if response-counts|not-empty %}
             <div class="response-group">
+                <a href="/swirls/inbox" class="button">Inbox</a>
+
                 <h2>Your tagged items</h2>
                 {% for rc in response-counts %}
                 <a href="{{ rc.summary|inboxlink }}" class="button">{{rc.summary}} ({{rc.count}})</a>
