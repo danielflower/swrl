@@ -73,7 +73,9 @@
 
       (doseq [sug suggestions]
         (try (insert db/suggestions (values sug))
-             (catch PSQLException e (log/warn "Error while saving suggestion - okay to ignore if unique violation" e))))
+             (catch PSQLException e (if (.contains (.getMessage e) "duplicate key value violates unique constraint")
+                                      (log/info "Duplicate suggestion detected. Form was probably submitted twice. Okay to ignore.")
+                                      (log/warn "Error while saving suggestion" e)))))
       (networking/store-multiple author-id :knows recipient-ids)
       (doseq [recipient-id recipient-ids] (networking/store recipient-id :knows author-id)))))
 

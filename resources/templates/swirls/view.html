@@ -99,7 +99,7 @@
 
             <div class="comment-body">
                 <a class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
-                {{ comment.html_content|linebreaks|safe }}
+                {{ comment.html_content|safe }}
 
                 <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
             </div>
@@ -120,8 +120,13 @@
         {{ user.email_md5|gravatar-img:40 }}
         <div class="comment-body">
             <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
-            <textarea name="comment" required placeholder="Add your comment">{{current-comment}}</textarea>
-            <input type="submit" value="Add comment">
+
+            <div class="rte">
+                <textarea name="comment">{{current-comment}}</textarea>
+                <article class="editor" contenteditable="true"></article>
+            </div>
+
+            <input type="submit" value="Add comment" class="button-primary">
         </div>
 
     </form>
