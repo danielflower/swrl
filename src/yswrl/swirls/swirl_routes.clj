@@ -102,10 +102,11 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response author]
-  (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
-        swirl-response (repo/create-response swirl-id summary author)]
-    (send-response-notification-emails swirl-response author)
-    (redirect (yswrl.links/swirl swirl-id))))
+  (if (repo/get-swirl-if-allowed-to-view swirl-id (author :id))
+    (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
+          swirl-response (repo/create-response swirl-id summary author)]
+      (send-response-notification-emails swirl-response author)
+      (redirect (yswrl.links/swirl swirl-id)))))
 
 
 (defn handle-comment [swirl-id comment-content author]
