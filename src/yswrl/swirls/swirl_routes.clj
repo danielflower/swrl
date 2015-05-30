@@ -18,7 +18,7 @@
 (def not-seen-responses ["Later", "Not for me"])
 
 (defn edit-swirl-page [author swirl-id]
-  (if-let [swirl (repo/get-swirl swirl-id)]
+  (if-let [swirl (repo/get-swirl-if-allowed swirl-id (author :id))]
     (if (not= (swirl :author_id) (author :id))
       nil
       (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
@@ -62,7 +62,7 @@
   (some #(= elm %) seq))
 
 (defn view-swirl-page [id suggestion-code current-user]
-  (if-let [swirl (repo/get-swirl id)]
+  (if-let [swirl (repo/get-swirl-if-allowed id (get current-user :id nil))]
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
@@ -108,7 +108,7 @@
 
 
 (defn handle-comment [swirl-id comment-content author]
-  (let [swirl (repo/get-swirl swirl-id)
+  (let [swirl (repo/get-swirl-if-allowed swirl-id (author :id))
         comment (repo/create-comment swirl-id comment-content author)]
     (send-comment-notification-emails comment)
     (if (not= (swirl :author_id) (author :id))

@@ -3,7 +3,8 @@
             [yswrl.user.networking :as networking]
             [yswrl.auth.auth-repo :as auth]
             [clojure.tools.logging :as log]
-            [yswrl.swirls.swirl-links :as swirl-links])
+            [yswrl.swirls.swirl-links :as swirl-links]
+            [yswrl.swirls.swirl-states :as states])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.core)
 (use 'korma.db)
@@ -56,7 +57,7 @@
 
 (defn save-draft-swirl [type author-id title review image-thumbnail]
   (insert db/swirls
-          (values {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state "D"})))
+          (values {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state states/draft})))
 
 (defn add-link [swirl-id link-type-code link-value]
   (insert db/swirl-links
@@ -84,7 +85,7 @@
   swirl belonging to the author; otherwise false."
   [swirl-id author-id title review recipient-names-or-emails]
   (let [updated (update db/swirls
-                        (set-fields {:title title :review review :state "L"})
+                        (set-fields {:title title :review review :state states/live})
                         (where {:id swirl-id :author_id author-id}))]
     (add-suggestions swirl-id author-id recipient-names-or-emails)
     (= updated 1)))
@@ -94,6 +95,16 @@
                  (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
                  (join :inner db/users (= :users.id :swirls.author_id))
                  (where {:id id})
+                 (limit 1))))
+
+(defn get-swirl-if-allowed [id user-id]
+  (first (select db/swirls
+                 (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
+                 (join :inner db/users (= :users.id :swirls.author_id))
+                 (where (and {:id id}
+                             (or
+                               {:author_id user-id}
+                               {:state states/live})))
                  (limit 1))))
 
 (defn get-swirl-responses [swirld-id]
@@ -114,7 +125,7 @@
   (select db/swirls
           (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/users (= :swirls.author_id :users.id))
-          (where {:state "L"})
+          (where {:state states/live})
           (offset skip)
           (limit swirl-count)
           (order :creation_date :desc)))
@@ -123,7 +134,7 @@
   (select db/swirls
           (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
           (join :inner db/users (= :swirls.author_id :users.id))
-          (where {:author_id user-id :state "L"})
+          (where {:author_id user-id :state states/live})
           (order :creation_date :desc)))
 
 
