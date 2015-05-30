@@ -129,6 +129,10 @@
         (visit (@test-state :delete-swirl-uri))
         (submit "Confirm deletion")
 
+        ; You are taken to your profile page after deleting
+        (within [:h1]
+                (has (text? (str "Reviews by " (user1 :username)))))
+
         ; ...and it's now deleted
         (visit (@test-state :view-swirl-uri))
         (has (status? 404))

@@ -141,7 +141,7 @@
   (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (current-user :id))]
     (do
       (repo/delete-swirl (swirl :id) (current-user :id))
-      (redirect (links/inbox)))))
+      (redirect (links/user (current-user :username))))))
 
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id))))
