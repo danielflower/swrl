@@ -18,18 +18,19 @@
 (def not-seen-responses ["Later", "Not for me"])
 
 (defn edit-swirl-page [author swirl-id]
-  (if-let [swirl (repo/get-swirl-if-allowed swirl-id (author :id))]
-    (if (not= (swirl :author_id) (author :id))
-      nil
-      (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
-            contacts (network/get-relations (author :id) :knows)
-            not-added (filter #(not (contains? already-suggested %)) contacts)]
-        (layout/render "swirls/edit.html" {:id                swirl-id
-                                           :subject           (swirl :title)
-                                           :review            (swirl :review)
-                                           :type              (type-of swirl)
-                                           :contacts          not-added
-                                           :already-suggested already-suggested})))))
+  (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (author :id))]
+    (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
+          contacts (network/get-relations (author :id) :knows)
+          not-added (filter #(not (contains? already-suggested %)) contacts)]
+      (layout/render "swirls/edit.html" {:id                swirl-id
+                                         :subject           (swirl :title)
+                                         :review            (swirl :review)
+                                         :type              (type-of swirl)
+                                         :contacts          not-added
+                                         :already-suggested already-suggested}))))
+(defn delete-swirl-page [author swirl-id]
+  (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (author :id))]
+    (layout/render "swirls/delete.html" {:swirl swirl})))
 
 (defn view-inbox [count current-user]
   (let [swirls (repo/get-swirls-awaiting-response (:id current-user) 2000 count)
@@ -62,7 +63,7 @@
   (some #(= elm %) seq))
 
 (defn view-swirl-page [id suggestion-code current-user]
-  (if-let [swirl (repo/get-swirl-if-allowed id (get current-user :id nil))]
+  (if-let [swirl (repo/get-swirl-if-allowed-to-view id (get current-user :id nil))]
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
@@ -108,7 +109,7 @@
 
 
 (defn handle-comment [swirl-id comment-content author]
-  (let [swirl (repo/get-swirl-if-allowed swirl-id (author :id))
+  (let [swirl (repo/get-swirl-if-allowed-to-view swirl-id (author :id))
         comment (repo/create-comment swirl-id comment-content author)]
     (send-comment-notification-emails comment)
     (if (not= (swirl :author_id) (author :id))
@@ -136,9 +137,19 @@
         ]
     (distinct (concat checkboxes textbox))))
 
+(defn delete-swirl [current-user swirl-id]
+  (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (current-user :id))]
+    (do
+      (repo/delete-swirl (swirl :id) (current-user :id))
+      (redirect (links/inbox)))))
+
 (defroutes swirl-routes
-           (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Integer/parseInt id))))
-           (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Integer/parseInt id) (usernames-and-emails-from-request who emails) subject review)))
+           (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id))))
+           (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review)))
+
+           (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
+           (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
+
            (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
            (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Integer/parseInt id) responseButton response-summary (session-from req))))

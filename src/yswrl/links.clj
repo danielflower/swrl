@@ -13,6 +13,9 @@
 (defn edit-swirl [id]
   (str "/swirls/" id "/edit"))
 
+(defn delete-swirl [id]
+  (str "/swirls/" id "/delete"))
+
 (defn user [username]
   (str "/swirls/by/" (url-encode username)))
 
@@ -25,5 +28,7 @@
 (defn gravatar-url [hash size]
   (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid"))
 
-(defn inbox [response]
-  (str "/swirls/inbox/" (.toLowerCase (url-encode response))))
+(defn inbox
+  ([] "/swirls/inbox")
+  ([response]
+  (str "/swirls/inbox/" (.toLowerCase (url-encode response)))))

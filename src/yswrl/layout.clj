@@ -15,6 +15,7 @@
 (filters/add-filter! :absoluteurl links/absolute)
 (filters/add-filter! :swirlurl links/swirl)
 (filters/add-filter! :swirlediturl links/edit-swirl)
+(filters/add-filter! :swirldeleteurl links/delete-swirl)
 (filters/add-filter! :itunesalbum links/itunes-album)
 (filters/add-filter! :inboxlink links/inbox)
 (filters/add-filter! :user-url links/user)

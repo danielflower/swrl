@@ -97,14 +97,21 @@
                  (where {:id id})
                  (limit 1))))
 
-(defn get-swirl-if-allowed [id user-id]
+(defn get-swirl-if-allowed-to-view [id user-id]
   (first (select db/swirls
                  (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
                  (join :inner db/users (= :users.id :swirls.author_id))
-                 (where (and {:id id}
+                 (where (and {:id id :state [not= states/deleted]}
                              (or
                                {:author_id user-id}
                                {:state states/live})))
+                 (limit 1))))
+
+(defn get-swirl-if-allowed-to-edit [id user-id]
+  (first (select db/swirls
+                 (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
+                 (join :inner db/users (= :users.id :swirls.author_id))
+                 (where {:id id :author_id user-id :state [not= states/deleted]})
                  (limit 1))))
 
 (defn get-swirl-responses [swirld-id]
@@ -179,6 +186,17 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
           (join :inner db/users (= :suggestions.recipient_id :users.id))
           (where {:swirl_id swirl-id})
           (order :users.username :asc)))
+
+(defn delete-swirl
+  "Deletes the swirl with the given ID if the deleter-id is the author. Returns the swirl-id if it was deleted, otherwise nil"
+  [swirl-id deleter-id]
+  (if (= 1 (update db/swirls
+          (set-fields {:state states/deleted})
+          (where {:id swirl-id :author_id deleter-id})))
+      swirl-id
+      nil))
+
+
 
 
 

@@ -14,6 +14,7 @@
         outsider (s/create-test-user)
         swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         draft-swirl (repo/save-draft-swirl "generic" (author :id) "Animals (draft)" "What to write...." nil)
+        deleted-swirl-id (repo/delete-swirl (:id (s/create-swirl "generic" (author :id) "Gonna delete this" "I'm going to delete this" [])) (author :id))
         _ (repo/create-response (swirl :id) "HOT" responder)]
 
     (testing "Responses can be gotten and changed"
@@ -30,23 +31,47 @@
       (repo/create-response (swirl :id) "HOT" responder))
 
 
-    (testing "get-swirl-if-allowed"
+    (testing "get-swirl-if-allowed-to-view"
       (testing "allows the author to get the draft or live version"
-        (is (not (nil? (repo/get-swirl-if-allowed (draft-swirl :id) (author :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed (swirl :id) (author :id))))))
-      (testing "does no allow non-authors to get the draft version whether they have responded or not or have been suggested to respond or not"
-        (is (nil? (repo/get-swirl-if-allowed (draft-swirl :id) (responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed (draft-swirl :id) (non-responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed (draft-swirl :id) (outsider :id))))
-        (is (nil? (repo/get-swirl-if-allowed (draft-swirl :id) nil))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (author :id)))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (author :id))))))
+      (testing "does not allow non-authors to get the draft version whether they have responded or not or have been suggested to respond or not"
+        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (non-responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (outsider :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) nil))))
       (testing "allows non-authors to get the live swirls"
-        (is (not (nil? (repo/get-swirl-if-allowed (swirl :id) (responder :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed (swirl :id) (non-responder :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed (swirl :id) nil))))
-        (is (not (nil? (repo/get-swirl-if-allowed (swirl :id) (outsider :id))))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (responder :id)))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (non-responder :id)))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) nil))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (outsider :id))))))
+      (testing "does not allow anyone can see deleted swirls"
+        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (author :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (non-responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id nil)))
+        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (outsider :id))))))
 
-      )
-
+    (testing "get-swirl-if-allowed-to-edit"
+      (testing "allows the author to edit the draft or live version"
+        (is (not (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (author :id)))))
+        (is (not (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (author :id))))))
+      (testing "does not allow non-authors to edit"
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (non-responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (outsider :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) nil))))
+      (testing "does not allow non-authors to edit the live swirls"
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (non-responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) nil)))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (outsider :id)))))
+      (testing "does not allow anyone can see deleted swirls"
+        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (author :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (non-responder :id))))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id nil)))
+        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (outsider :id))))))
 
     (testing "the same user can not be suggested twice"
       (println "Adding" (swirl :id))

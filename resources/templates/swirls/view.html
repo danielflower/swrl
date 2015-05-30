@@ -23,9 +23,10 @@
 
     {% if can-edit %}
 
-    <p class="swirl-admin-panel">
-        <a href="{{ swirl.id|swirlediturl }}">[edit this page]</a>
-    </p>
+    <div class="swirl-admin-panel">
+        <a href="{{ swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
+        <a href="{{ swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+    </div>
 
     {% endif %}
 

@@ -88,14 +88,21 @@
 
         (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-        (follow "[edit this page]")
+        (follow "Edit Swirl")
         (fill-in "You should watch" "The onion video")
         (submit "Save changes")
+        (assert-swirl-title-in-header "watch" "The onion video")
 
+        ; the delete page can be browsed to, and cancelling works
+
+        (follow "Delete")
+        (within [:h1]
+                (has (text? "Delete a swirl")))
+        (save-url test-state :delete-swirl-uri)
+        (follow "Cancel")
         (assert-swirl-title-in-header "watch" "The onion video")
 
         (log-out)
-
         (follow "Login")
         (login-as user2)
 
@@ -108,6 +115,24 @@
         (visit (@test-state :edit-swirl-uri))
         (has (status? 404))
         (has (text? "Not Found"))
+
+        ; ...nor attempt to delete it
+        (visit (@test-state :delete-swirl-uri))
+        (has (status? 404))
+        (has (text? "Not Found"))
+
+        ; But the author can delete it
+        (visit "/")
+        (log-out)
+        (follow "Login")
+        (login-as user1)
+        (visit (@test-state :delete-swirl-uri))
+        (submit "Confirm deletion")
+
+        ; ...and it's now deleted
+        (visit (@test-state :view-swirl-uri))
+        (has (status? 404))
+
         ))))
 
 

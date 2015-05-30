@@ -334,3 +334,15 @@ input[type="search"] {
     display: block;
     width: 100%;
 }
+
+
+
+input[type="submit"].button-destructive, .button.button-destructive {
+    color: #ff3f43;
+    background-color: #FFFFFF;
+    border-color: #ff3f43; }
+input[type="submit"].button-destructive:hover, .button.button-destructive:hover,
+input[type="submit"].button-destructive:focus, .button.button-destructive:focus {
+    color: #FF0000;
+    background-color: #FFFFFF;
+    border-color: #FF0000; }

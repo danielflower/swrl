@@ -2,7 +2,7 @@
     {{ swirl.email_md5|gravatar-img:40 }}
 
     <div class="swirl-content">
-        <a href="/swirls/{{swirl.id}}">{{swirl.title}}</a>
+        <a href="{{swirl.id|swirlurl}}">{{swirl.title}}</a>
 
         {% if swirl.username }}
         by <a href="{{swirl.username|user-url}}">@{{swirl.username}}</a>
