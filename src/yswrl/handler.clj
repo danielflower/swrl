@@ -15,10 +15,11 @@
             [environ.core :refer [env]]
             [cronj.core :as cronj]))
 
-(defn wrap-content-security-policy [handler]
+(defn wrap-headers [handler]
   (fn [request]
     (if-let [response (handler request)]
-      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *"))))
+        (let [response-security (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *" )]
+           (assoc-in response-security [:headers "Cache-Control"] "no-transform")))))
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
@@ -52,12 +53,12 @@
 
 (def app
   (-> (routes
-        (wrap-content-security-policy home-routes)
-        (wrap-content-security-policy auth-routes)
-        (wrap-content-security-policy swirl-routes)
-        (wrap-content-security-policy creation-routes)
-        (wrap-content-security-policy password-reset-routes)
-        (wrap-content-security-policy facebook-routes)
+        (wrap-headers home-routes)
+        (wrap-headers auth-routes)
+        (wrap-headers swirl-routes)
+        (wrap-headers creation-routes)
+        (wrap-headers password-reset-routes)
+        (wrap-headers facebook-routes)
         base-routes)
       development-middleware
       production-middleware))

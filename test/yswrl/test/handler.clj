@@ -8,7 +8,7 @@
     (let [response (app (request :get "/"))]
       (is (= 200 (:status response)))
       (is (= "default-src 'self'; img-src *; frame-src *; child-src *" ((:headers response) "Content-Security-Policy")))
-      (is (= nil ((:headers response) "Cache-Control")))))
+      (is (= "no-transform" ((:headers response) "Cache-Control")))))
 
   (testing "immutable folder likes big caches and you know it can't lie"
     (let [response (app (request :get "/immutable/css/skeleton-2.0.4.css"))]
