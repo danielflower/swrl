@@ -104,7 +104,7 @@
 (defn handle-response [swirl-id response-button custom-response author]
   (if (repo/get-swirl-if-allowed-to-view swirl-id (author :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
-          swirl-response (repo/create-response swirl-id summary author)]
+          swirl-response (repo/respond-to-swirl swirl-id summary author)]
       (send-response-notification-emails swirl-response author)
       (redirect (yswrl.links/swirl swirl-id)))))
 

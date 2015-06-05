@@ -12,11 +12,12 @@
 
     (testing "A user can create a swirl and selected users will be included"
       (let [
-            created (create-swirl "generic" (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) "someoneelse@example.org"])
+            unregistered-user-email (str "jondoe" (System/currentTimeMillis) "@example.org")
+            created (create-swirl "generic" (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) unregistered-user-email])
             retrieved (repo/get-swirl (created :id))]
         (is (= (retrieved :title) "Some thing"))
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
-        (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_email = ? AND recipient_id IS NULL", (created :id) "someoneelse@example.org"))
+        (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_email = ? AND recipient_id IS NULL", (created :id) unregistered-user-email))
         (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_id = ? AND recipient_email IS NULL", (created :id) (friend :id)))
         (is (= (networking/get-relations (author :id) :knows) [(user-to-relation friend)]))
         (is (= (networking/get-relations (friend :id) :knows) [(user-to-relation author)]))

@@ -61,8 +61,6 @@
 
           ))))
 
-
-
 (deftest swirl-security
   (with-faked-responses
   (let [user1 (s/create-test-user)
@@ -317,12 +315,13 @@
 
 (deftest quick-register
   (let [user (s/create-test-user)
-        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [])]
+        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [])
+        consumption-verb "see"]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
         (visit (linky/swirl (swirl :id)))
-        (assert-swirl-title-in-header "see" (swirl :title))
+        (assert-swirl-title-in-header consumption-verb (swirl :title))
 
         ; ...and the user can register from the page and be redirected
         (fill-in "Username" (str "Ampter-Jamp" (s/now)))
@@ -330,7 +329,7 @@
         (fill-in "Password" "A#~$&#(@*~$&__f 1234")
         (submit "Register")
 
-        (assert-swirl-title-in-header "see" (swirl :title))
+        (assert-swirl-title-in-header consumption-verb (swirl :title))
 
         )))
 
@@ -339,7 +338,7 @@
         responder (s/create-test-user)
         non-responder (s/create-test-user)
         swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
-        _ (repo/create-response (swirl :id) "HOT" responder)]
+        _ (repo/respond-to-swirl (swirl :id) "HOT" responder)]
     (-> (session app)
 
         (visit (linky/swirl (swirl :id)))

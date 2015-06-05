@@ -35,7 +35,7 @@
 
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
 
-(defn create-response [swirl-id summary author]
+(defn respond-to-swirl [swirl-id summary author]
   (transaction
     (let [response
           (if (= 0 (update db/swirl-responses (set-fields {:summary summary}) (where {:swirl_id swirl-id :responder (author :id)})))

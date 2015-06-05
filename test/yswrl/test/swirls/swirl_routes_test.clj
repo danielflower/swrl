@@ -12,7 +12,4 @@
     (is (= ["dan1" "dan2@example.org" "dan54"] (usernames-and-emails-from-request nil "dan1 , dan2@example.org ; dan54")) "The textbox can have comma-separated or semi-colon separated values")
     (is (= ["dan1" "dan2" "dan3"] (usernames-and-emails-from-request "dan1" "dan2,dan3")) "Checkboxes and textbox can be combined")
     (is (= ["dan1" "dan2" "dan3"] (usernames-and-emails-from-request ["dan1" "dan2"] "dan2,dan3 ; dan1 ")) "Duplicates are removed")
-
     ))
-
-

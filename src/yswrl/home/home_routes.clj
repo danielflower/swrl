@@ -6,8 +6,11 @@
 (defn home-page []
   (layout/render "home/home.html"))
 
+(defn bookmarklet []
+  (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());")) ))
+
 (defn bookmarklet-page []
-  (layout/render "home/bookmarklet.html" { :bookmarklet (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());")) ) }))
+  (layout/render "home/bookmarklet.html" { :bookmarklet (bookmarklet) }))
 
 
 (defroutes home-routes

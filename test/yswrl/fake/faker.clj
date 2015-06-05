@@ -54,11 +54,10 @@
                            (fn [_] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/website.get-metadata.jakearchibald.html"))})
                            ;
 
-                           ; Get YouTube video info
-                           #"http:\/\/exact\.match\.com\/(.+)"
+                           ; Just load the page with the filename taken from the URL's path
+                           #"http:\/\/exact\.match\.com\/.+"
                            (fn [req]
                              (let [page (get (re-find #"\/(.+)$" (req :uri)) 1)]
-                               (println "Loading" page)
                                {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/exact/" page))}))
                            ;
 
