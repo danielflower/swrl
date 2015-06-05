@@ -11,4 +11,3 @@
       (handler)
       (let [return-url (str (request :uri) "?" (request :query-string))]
         (redirect (str "/login?return-url=" (links/url-encode return-url)))))))
-

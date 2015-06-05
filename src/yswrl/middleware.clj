@@ -56,5 +56,7 @@
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") unsecure-key-for-dev-mode)}))
-            (assoc-in [:session :cookie-name] "yswrl-session")))
+            (assoc-in [:session :cookie-name] "yswrl-session")
+            (assoc-in [:security :xss-protection :enable?] false)
+            ))
       (wrap-internal-error :log #(log/error (get-unhandled-error-text %)))))

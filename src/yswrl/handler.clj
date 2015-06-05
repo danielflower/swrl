@@ -18,8 +18,7 @@
 (defn wrap-headers [handler]
   (fn [request]
     (if-let [response (handler request)]
-        (let [response-security (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *" )]
-           (assoc-in response-security [:headers "Cache-Control"] "no-transform")))))
+        (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *" ))))
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
