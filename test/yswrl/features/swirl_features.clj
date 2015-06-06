@@ -352,12 +352,11 @@
 (deftest swirl-notifications
   (with-faked-responses
     (let [author (s/create-test-user)
-          recipient (s/create-test-user)
-          test-state (atom {})]
+          recipient (s/create-test-user)]
 
       (-> (session app)
           (visit "/")
-          ; Login as user 1
+          ; Login as the author
           (follow "Login")
           (login-as author)
 
@@ -365,8 +364,6 @@
           (follow "Create")
           (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
           (submit "Go")
-
-          (save-url test-state :edit-swirl-uri)
 
           (fill-in :.recipients (recipient :username))
           (submit "Save changes")
@@ -385,51 +382,8 @@
           (follow "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-          ;(follow "Edit Swirl")
-          ;(fill-in "You should watch" "The onion video")
-          ;(submit "Save changes")
-          ;
-          ;; the delete page can be browsed to, and cancelling works
-          ;
-          ;(follow "Delete")
-          ;
-          ;(save-url test-state :delete-swirl-uri)
-          ;(follow "Cancel")
-          ;(assert-swirl-title-in-header "watch" "The onion video")
-          ;
-          ;(log-out)
-          ;(follow "Login")
-          ;(login-as recipient)
-          ;
-          ;; Other users can view the swirl....
-          ;(visit (@test-state :view-swirl-uri))
-          ;(assert-swirl-title-in-header "watch" "The onion video")
-          ;(has (missing? [:.swirl-admin-panel]))
-          ;
-          ;; ...but they can't edit the page
-          ;(visit (@test-state :edit-swirl-uri))
-          ;(has (status? 404))
-          ;(has (text? "Not Found"))
-          ;
-          ;; ...nor attempt to delete it
-          ;(visit (@test-state :delete-swirl-uri))
-          ;(has (status? 404))
-          ;(has (text? "Not Found"))
-          ;
-          ;; But the author can delete it
-          ;(visit "/")
-          ;(log-out)
-          ;(follow "Login")
-          ;(login-as author)
-          ;(visit (@test-state :delete-swirl-uri))
-          ;(submit "Confirm deletion")
-          ;
-          ;; You are taken to your profile page after deleting
-          ;(within [:h1]
-          ;        (has (text? (str "Reviews by " (author :username)))))
-          ;
-          ;; ...and it's now deleted
-          ;(visit (@test-state :view-swirl-uri))
-          ;(has (status? 404))
-
-          ))))
+          ; returning back to the notification page, the notification, having been seen, should have disappeared
+          (visit (links/notifications))
+          (within [:.notifications :p]
+                  (has (text? "Nothing to see here")))
+        ))))

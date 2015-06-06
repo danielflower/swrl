@@ -12,7 +12,8 @@
             [clojure.tools.logging :as log]
             [yswrl.auth.guard :as guard]
             [yswrl.swirls.types :refer [type-of]]
-            [yswrl.swirls.lookups :as lookups])
+            [yswrl.swirls.lookups :as lookups]
+            [yswrl.user.notifications :as notifications])
   (:import (java.util UUID)))
 
 (def seen-responses ["Loved it", "Not bad", "Meh"])
@@ -83,6 +84,7 @@
                                   [])
 
           can-edit is-author]
+      (notifications/mark-as-seen id current-user)
       (layout/render "swirls/view.html" {
                                          :title                    title :swirl swirl :swirl-links swirl-links :type type :is-author is-author
                                          :responses                responses :comments comments :can-respond can-respond :can-edit can-edit
