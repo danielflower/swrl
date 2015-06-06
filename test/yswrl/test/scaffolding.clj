@@ -1,5 +1,6 @@
 (ns yswrl.test.scaffolding
   (:require [yswrl.auth.auth-routes :as auth]
+            [yswrl.auth.auth-repo :as auth-repo]
             [yswrl.swirls.swirls-repo :as swirls-repo])
   (:use clojure.test))
 
@@ -19,8 +20,9 @@
   (let [email (unique-email username)
         password test-user-password
         req {}
-        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req nil {:algorithm :sha256})]
-    (:user (:session response))))
+        response (auth/handle-registration {:username username :email email :password password :confirmPassword password} req nil {:algorithm :sha256})
+        user-id (get-in response [:session :user :id])]
+    (auth-repo/get-user-by-id user-id)))
 
 (defn user-to-relation [user]
   {:user-id (user :id) :username (user :username)})

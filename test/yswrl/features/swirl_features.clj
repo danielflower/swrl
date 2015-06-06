@@ -385,8 +385,8 @@
           ; returning back to the notification page, the notification, having been seen, should have disappeared
           (visit (links/notifications))
 
-          (println "USER IS" recipient)
-
+          (within [:h1]
+                  (has (text? "What's new")))
           (within [:.notifications :p]
-                  (has (text? " Nothing to see here")))
+                  (has (text? "Nothing to see here")))
         ))))

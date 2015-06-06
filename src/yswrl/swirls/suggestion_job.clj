@@ -36,9 +36,9 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
 (defn send-unsent-suggestions []
   (try
     (let [unsent (get-unsent)]
-      (log/info "Suggestion emailer processing" (count unsent) "suggestions")
+      (log/debug "Suggestion emailer processing" (count unsent) "suggestions")
       (doseq [row unsent]
-        (log/info "About to process" row)
+        (log/debug "About to process" row)
         (let [[response]
               (send-email [{:email (:recipient_email row) :name (:recipient_email row)}] (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))

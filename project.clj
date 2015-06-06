@@ -45,7 +45,7 @@
             [ragtime/ragtime.lein "0.3.8"]]
 
 
-
+  :test-refresh {:quiet true}
 
   :ring {:handler yswrl.handler/app
          :init    yswrl.handler/init

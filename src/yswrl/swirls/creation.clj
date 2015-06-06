@@ -26,7 +26,7 @@
 
 (defn handle-website-creation [url author title]
   (let [metadata (website/get-metadata url)
-        _ (log/info "Metadata for" url ":" metadata)
+        _ (log/debug "Metadata for" url ":" metadata)
         swirl-title (or title (metadata :title) "This website")
         image-tag (if (not (nil? (metadata :image-url))) (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>") "")
         review (str (or (metadata :embed-html) image-tag)

@@ -30,8 +30,7 @@
   (select db/notifications
           (fields :swirl_id :subject_id :target_user_id :notification_type [:swirls.title :swirl-title])
           (join :inner db/swirls (= :notifications.swirl_id :swirls.id))
-          (where {
-                  :target_user_id user-id
+          (where {:target_user_id user-id
                   :date_seen      nil
                   })))
 
@@ -82,7 +81,8 @@
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))
 
 (defn create-notification-email-body [recipient notes]
-  (postman/email-body "notifications/notification-email.html" {:recipient recipient :notifications notes}))
+  (postman/email-body "notifications/notification-email.html"
+                      {:recipient recipient :notifications notes :url-if-in-email links/base-url}))
 
 (defn send-pending-notifications
   "email pending notifications"

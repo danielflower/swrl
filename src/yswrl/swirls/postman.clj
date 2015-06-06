@@ -3,19 +3,24 @@
 (use 'clj-mandrill.core)
 (use 'selmer.parser)
 
+(def key
+  (let [env-var-name "MANDRILL_APIKEY"
+        key (System/getenv env-var-name)]
+    (if (clojure.string/blank? key)
+      (do
+        (log/warn "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
+        nil)
+      key)))
+
 (defn email-body [template-path model]
     (render-file template-path model))
 
 (defn wrap-mandrill-call [f & args]
-    (let [env-var-name "MANDRILL_APIKEY"
-          key (System/getenv env-var-name)]
-      (if (clojure.string/blank? key)
-        (do
-          (log/warn "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
-          [{:email "", :status "error", :reject_reason "Mandrill not configured"}])
+      (if (nil? key)
+        [{:email "", :status "error", :reject_reason "Mandrill not configured"}]
         (do
           (alter-var-root #'clj-mandrill.core/*mandrill-api-key* (constantly key))
-          (apply f args)))))
+          (apply f args))))
 
 (defn test-mandrill []
   (wrap-mandrill-call call-mandrill "users/ping" {}))
