@@ -8,7 +8,7 @@
             [environ.core :refer [env]]
             [yswrl.constraints :refer [constraints]]
             [yswrl.links :as links]
-            [yswrl.swirls.swirls-repo :as swirls-repo]))
+            [yswrl.swirls.lookups :as lookups]))
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
@@ -29,7 +29,7 @@
   Renderable
   (render [this request]
     (let [current-user (get (get request :session) :user)
-          unread-count (if current-user (swirls-repo/get-swirls-awaiting-response-count (get current-user :id nil)) nil)]
+          unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)]
 
       (content-type
         (->> (assoc params

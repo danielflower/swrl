@@ -10,6 +10,9 @@
 (defn swirl [id]
   (str "/swirls/" id))
 
+(defn notifications []
+  "/notifications")
+
 (defn edit-swirl [id]
   (str "/swirls/" id "/edit"))
 

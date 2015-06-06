@@ -7,6 +7,7 @@
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.auth.facebook-login :refer [facebook-routes]]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
+            [yswrl.user.notifications :refer [notification-routes]]
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
             [compojure.route :as route]
@@ -58,6 +59,7 @@
         (wrap-headers creation-routes)
         (wrap-headers password-reset-routes)
         (wrap-headers facebook-routes)
+        (wrap-headers notification-routes)
         base-routes)
       development-middleware
       production-middleware))

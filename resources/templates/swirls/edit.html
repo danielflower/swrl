@@ -22,7 +22,7 @@
         {% for friend in contacts %}
         <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
         {% endfor %}
-        <input type="text" name="emails" maxlength="1000" placeholder="username or emails" value="{{who}}">
+        <input type="text" name="emails" class="recipients" maxlength="1000" placeholder="username or emails" value="{{who}}">
     </div>
 
     <label for="swirl-title">You should {{type.words.watch}}</label>

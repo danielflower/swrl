@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="buffer">
+    <h1>What's new</h1>
+    {% for note in notifications %}
+    <a href="{{ note.swirl_id|swirlurl }}" >{{note.swirl-title}}</a>
+    {% endfor %}
+</div>
+{% endblock %}
+9

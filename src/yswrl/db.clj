@@ -29,6 +29,7 @@
 (defentity swirl-links (table :swirl_links) (database db))
 (defentity swirl-responses (table :swirl_responses) (database db))
 (defentity comments (database db))
+(defentity notifications (database db))
 (defentity password-reset-requests
            (table :password_reset_requests)
            (database db))

@@ -3,7 +3,7 @@
             [yswrl.swirls.postman :as postman]
             [cronj.core :refer [cronj]]
             [clojure.tools.logging :as log]
-            [yswrl.swirls.swirls-repo :as repo]))
+            [yswrl.swirls.lookups :as repo]))
 (use 'korma.core)
 
 (defn email-addresses-of-swirl-author-and-commentors-excluding-current-comment-author [comment]

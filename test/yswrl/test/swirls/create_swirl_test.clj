@@ -1,8 +1,8 @@
 (ns yswrl.test.swirls.create-swirl-test
   (:require [yswrl.test.scaffolding :refer :all]
-            [yswrl.swirls.swirls-repo :as repo]
             [yswrl.user.networking :as networking]
-            [yswrl.db :as db])
+            [yswrl.db :as db]
+            [yswrl.swirls.lookups :as lookups])
   (:use clojure.test))
 
 (deftest create-swirl-test
@@ -14,7 +14,7 @@
       (let [
             unregistered-user-email (str "jondoe" (System/currentTimeMillis) "@example.org")
             created (create-swirl "generic" (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) unregistered-user-email])
-            retrieved (repo/get-swirl (created :id))]
+            retrieved (lookups/get-swirl (created :id))]
         (is (= (retrieved :title) "Some thing"))
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
         (is (db/exists? "SELECT 1 FROM suggestions WHERE swirl_id = ? AND recipient_email = ? AND recipient_id IS NULL", (created :id) unregistered-user-email))

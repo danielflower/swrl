@@ -1,7 +1,8 @@
 (ns yswrl.test.swirls.swirls-repo-test
   (:require [yswrl.test.scaffolding :as s]
-            [yswrl.swirls.swirls-repo :as repo]
-            [yswrl.swirls.swirl-links :as swirl-links])
+            [yswrl.swirls.lookups :as lookups]
+            [yswrl.swirls.swirl-links :as swirl-links]
+            [yswrl.swirls.swirls-repo :as repo])
   (:use clojure.test)
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
@@ -34,45 +35,45 @@
 
     (testing "get-swirl-if-allowed-to-view"
       (testing "allows the author to get the draft or live version"
-        (is (not (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (author :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (author :id))))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-view (draft-swirl :id) (author :id)))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-view (swirl :id) (author :id))))))
       (testing "does not allow non-authors to get the draft version whether they have responded or not or have been suggested to respond or not"
-        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (non-responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) (outsider :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-view (draft-swirl :id) nil))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view (draft-swirl :id) (responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view (draft-swirl :id) (non-responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view (draft-swirl :id) (outsider :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view (draft-swirl :id) nil))))
       (testing "allows non-authors to get the live swirls"
-        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (responder :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (non-responder :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) nil))))
-        (is (not (nil? (repo/get-swirl-if-allowed-to-view (swirl :id) (outsider :id))))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-view (swirl :id) (responder :id)))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-view (swirl :id) (non-responder :id)))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-view (swirl :id) nil))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-view (swirl :id) (outsider :id))))))
       (testing "does not allow anyone can see deleted swirls"
-        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (author :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (non-responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id nil)))
-        (is (nil? (repo/get-swirl-if-allowed-to-view deleted-swirl-id (outsider :id))))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id (author :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id (responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id (non-responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id nil)))
+        (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id (outsider :id))))))
 
     (testing "get-swirl-if-allowed-to-edit"
       (testing "allows the author to edit the draft or live version"
-        (is (not (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (author :id)))))
-        (is (not (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (author :id))))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-edit (draft-swirl :id) (author :id)))))
+        (is (not (nil? (lookups/get-swirl-if-allowed-to-edit (swirl :id) (author :id))))))
       (testing "does not allow non-authors to edit"
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (non-responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) (outsider :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (draft-swirl :id) nil))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (draft-swirl :id) (responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (draft-swirl :id) (non-responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (draft-swirl :id) (outsider :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (draft-swirl :id) nil))))
       (testing "does not allow non-authors to edit the live swirls"
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (non-responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) nil)))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit (swirl :id) (outsider :id)))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (swirl :id) (responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (swirl :id) (non-responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (swirl :id) nil)))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit (swirl :id) (outsider :id)))))
       (testing "does not allow anyone can see deleted swirls"
-        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (author :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (non-responder :id))))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id nil)))
-        (is (nil? (repo/get-swirl-if-allowed-to-edit deleted-swirl-id (outsider :id))))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit deleted-swirl-id (author :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit deleted-swirl-id (responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit deleted-swirl-id (non-responder :id))))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit deleted-swirl-id nil)))
+        (is (nil? (lookups/get-swirl-if-allowed-to-edit deleted-swirl-id (outsider :id))))))
 
     (testing "the same user can not be suggested twice"
       (println "Adding" (swirl :id))
@@ -84,28 +85,28 @@
 
     (testing "get-swirls-awaiting-response"
       (testing "returns non-responded swirls when the user has pending swirls to respond to"
-        (is (= 1 (repo/get-swirls-awaiting-response-count (non-responder :id))))
-        (let [results (repo/get-swirls-awaiting-response (non-responder :id) 100 0)]
+        (is (= 1 (lookups/get-swirls-awaiting-response-count (non-responder :id))))
+        (let [results (lookups/get-swirls-awaiting-response (non-responder :id) 100 0)]
           (is (= 1 (count results)))
           (is (= ((first results) :id) (swirl :id)))))
 
       (testing "returns an empty list if all swirls are responded to"
-        (is (= 0 (repo/get-swirls-awaiting-response-count (responder :id))))
-        (let [results (repo/get-swirls-awaiting-response (responder :id) 100 0)]
+        (is (= 0 (lookups/get-swirls-awaiting-response-count (responder :id))))
+        (let [results (lookups/get-swirls-awaiting-response (responder :id) 100 0)]
           (is (= 0 (count results)))
           )))
 
     (testing "get-swirls-by-response"
       (testing "returns an empty list if there are no responses for that user"
-        (is (= 0 (count (repo/get-swirls-by-response (non-responder :id) 100 0 "Loved it"))))
-        (is (= 0 (count (repo/get-swirls-by-response (responder :id) 100 0 "LOVINGITYEAH")))))
+        (is (= 0 (count (lookups/get-swirls-by-response (non-responder :id) 100 0 "Loved it"))))
+        (is (= 0 (count (lookups/get-swirls-by-response (responder :id) 100 0 "LOVINGITYEAH")))))
       (testing "returns selected responses by case-insensitive lookup"
-        (let [results (repo/get-swirls-by-response (responder :id) 100 0 "Loved it")]
+        (let [results (lookups/get-swirls-by-response (responder :id) 100 0 "Loved it")]
           (is (= 1 (count results)))
           (is (= ((first results) :id) (swirl :id)))))
       (testing "lookups are case insensitive"
-        (is (= (repo/get-swirls-by-response (responder :id) 100 0 "Loved it")
-               (repo/get-swirls-by-response (responder :id) 100 0 "loVED it")))))
+        (is (= (lookups/get-swirls-by-response (responder :id) 100 0 "Loved it")
+               (lookups/get-swirls-by-response (responder :id) 100 0 "loVED it")))))
 
     (testing "links can be added and when retrieved the type information is appended"
       (let [_ (repo/add-link (swirl :id) "I" "123456781234567812345678")

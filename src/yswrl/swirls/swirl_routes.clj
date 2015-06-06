@@ -11,14 +11,15 @@
             [ring.util.response :refer [status redirect response not-found]]
             [clojure.tools.logging :as log]
             [yswrl.auth.guard :as guard]
-            [yswrl.swirls.types :refer [type-of]])
+            [yswrl.swirls.types :refer [type-of]]
+            [yswrl.swirls.lookups :as lookups])
   (:import (java.util UUID)))
 
 (def seen-responses ["Loved it", "Not bad", "Meh"])
 (def not-seen-responses ["Later", "Not for me"])
 
 (defn edit-swirl-page [author swirl-id]
-  (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (author :id))]
+  (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
           contacts (network/get-relations (author :id) :knows)
           not-added (filter #(not (contains? already-suggested %)) contacts)]
@@ -29,17 +30,17 @@
                                          :contacts          not-added
                                          :already-suggested already-suggested}))))
 (defn delete-swirl-page [author swirl-id]
-  (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (author :id))]
+  (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (layout/render "swirls/delete.html" {:swirl swirl})))
 
 (defn view-inbox [count current-user]
-  (let [swirls (repo/get-swirls-awaiting-response (:id current-user) 2000 count)
+  (let [swirls (lookups/get-swirls-awaiting-response (:id current-user) 2000 count)
         responses (repo/get-response-count-for-user (:id current-user))]
     (layout/render "swirls/list-with-profile.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
 (defn view-inbox-by-response [count current-user submitted-response]
   (println "Submitted response:" submitted-response)
-  (let [swirls (repo/get-swirls-by-response (:id current-user) 2000 count submitted-response)
+  (let [swirls (lookups/get-swirls-by-response (:id current-user) 2000 count submitted-response)
         responses (repo/get-response-count-for-user (:id current-user))]
     (layout/render "swirls/list-with-profile.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
@@ -63,7 +64,7 @@
   (some #(= elm %) seq))
 
 (defn view-swirl-page [id suggestion-code current-user]
-  (if-let [swirl (repo/get-swirl-if-allowed-to-view id (get current-user :id nil))]
+  (if-let [swirl (lookups/get-swirl-if-allowed-to-view id (get current-user :id nil))]
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
@@ -91,18 +92,18 @@
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
     (if (= authorName (author :username))
-      (let [swirls (repo/get-swirls-authored-by (:id author))]
+      (let [swirls (lookups/get-swirls-authored-by (:id author))]
         (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
       (redirect (links/user (author :username))))))
 
 (defn view-all-swirls [count]
-  (if-let [swirls (repo/get-recent-swirls 20 count)]
+  (if-let [swirls (lookups/get-recent-swirls 20 count)]
     (layout/render "swirls/list.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response author]
-  (if (repo/get-swirl-if-allowed-to-view swirl-id (author :id))
+  (if (lookups/get-swirl-if-allowed-to-view swirl-id (author :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary author)]
       (send-response-notification-emails swirl-response author)
@@ -110,7 +111,7 @@
 
 
 (defn handle-comment [swirl-id comment-content author]
-  (let [swirl (repo/get-swirl-if-allowed-to-view swirl-id (author :id))
+  (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (author :id))
         comment (repo/create-comment swirl-id comment-content author)]
     (send-comment-notification-emails comment)
     (if (not= (swirl :author_id) (author :id))
@@ -139,7 +140,7 @@
     (distinct (concat checkboxes textbox))))
 
 (defn delete-swirl [current-user swirl-id]
-  (if-let [swirl (repo/get-swirl-if-allowed-to-edit swirl-id (current-user :id))]
+  (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (current-user :id))]
     (do
       (repo/delete-swirl (swirl :id) (current-user :id))
       (redirect (links/user (current-user :username))))))

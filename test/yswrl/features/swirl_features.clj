@@ -5,7 +5,8 @@
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]
-            [yswrl.swirls.swirls-repo :as repo])
+            [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.links :as links])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
 (selmer.parser/cache-off!)
@@ -63,79 +64,79 @@
 
 (deftest swirl-security
   (with-faked-responses
-  (let [user1 (s/create-test-user)
-        user2 (s/create-test-user)
-        test-state (atom {})]
+    (let [user1 (s/create-test-user)
+          user2 (s/create-test-user)
+          test-state (atom {})]
 
-    (-> (session app)
-        (visit "/")
-        ; Login as user 1
-        (follow "Login")
-        (login-as user1)
+      (-> (session app)
+          (visit "/")
+          ; Login as user 1
+          (follow "Login")
+          (login-as user1)
 
-        ; Create a swirl
-        (follow "Create")
-        (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
-        (submit "Go")
+          ; Create a swirl
+          (follow "Create")
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (submit "Go")
 
-        (save-url test-state :edit-swirl-uri)
+          (save-url test-state :edit-swirl-uri)
 
-        (submit "Save changes")
+          (submit "Save changes")
 
-        (save-url test-state :view-swirl-uri)
+          (save-url test-state :view-swirl-uri)
 
-        (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-        (follow "Edit Swirl")
-        (fill-in "You should watch" "The onion video")
-        (submit "Save changes")
-        (assert-swirl-title-in-header "watch" "The onion video")
+          (follow "Edit Swirl")
+          (fill-in "You should watch" "The onion video")
+          (submit "Save changes")
+          (assert-swirl-title-in-header "watch" "The onion video")
 
-        ; the delete page can be browsed to, and cancelling works
+          ; the delete page can be browsed to, and cancelling works
 
-        (follow "Delete")
-        (within [:h1]
-                (has (text? "Delete a swirl")))
-        (save-url test-state :delete-swirl-uri)
-        (follow "Cancel")
-        (assert-swirl-title-in-header "watch" "The onion video")
+          (follow "Delete")
+          (within [:h1]
+                  (has (text? "Delete a swirl")))
+          (save-url test-state :delete-swirl-uri)
+          (follow "Cancel")
+          (assert-swirl-title-in-header "watch" "The onion video")
 
-        (log-out)
-        (follow "Login")
-        (login-as user2)
+          (log-out)
+          (follow "Login")
+          (login-as user2)
 
-        ; Other users can view the swirl....
-        (visit (@test-state :view-swirl-uri))
-        (assert-swirl-title-in-header "watch" "The onion video")
-        (has (missing? [:.swirl-admin-panel]))
+          ; Other users can view the swirl....
+          (visit (@test-state :view-swirl-uri))
+          (assert-swirl-title-in-header "watch" "The onion video")
+          (has (missing? [:.swirl-admin-panel]))
 
-        ; ...but they can't edit the page
-        (visit (@test-state :edit-swirl-uri))
-        (has (status? 404))
-        (has (text? "Not Found"))
+          ; ...but they can't edit the page
+          (visit (@test-state :edit-swirl-uri))
+          (has (status? 404))
+          (has (text? "Not Found"))
 
-        ; ...nor attempt to delete it
-        (visit (@test-state :delete-swirl-uri))
-        (has (status? 404))
-        (has (text? "Not Found"))
+          ; ...nor attempt to delete it
+          (visit (@test-state :delete-swirl-uri))
+          (has (status? 404))
+          (has (text? "Not Found"))
 
-        ; But the author can delete it
-        (visit "/")
-        (log-out)
-        (follow "Login")
-        (login-as user1)
-        (visit (@test-state :delete-swirl-uri))
-        (submit "Confirm deletion")
+          ; But the author can delete it
+          (visit "/")
+          (log-out)
+          (follow "Login")
+          (login-as user1)
+          (visit (@test-state :delete-swirl-uri))
+          (submit "Confirm deletion")
 
-        ; You are taken to your profile page after deleting
-        (within [:h1]
-                (has (text? (str "Reviews by " (user1 :username)))))
+          ; You are taken to your profile page after deleting
+          (within [:h1]
+                  (has (text? (str "Reviews by " (user1 :username)))))
 
-        ; ...and it's now deleted
-        (visit (@test-state :view-swirl-uri))
-        (has (status? 404))
+          ; ...and it's now deleted
+          (visit (@test-state :view-swirl-uri))
+          (has (status? 404))
 
-        ))))
+          ))))
 
 
 (deftest itunes-album-swirl-creation
@@ -346,3 +347,89 @@
         (within [:.non-responders] (has (some-text? (str "Yet to respond: " (non-responder :username)))))
 
         )))
+
+
+(deftest swirl-notifications
+  (with-faked-responses
+    (let [author (s/create-test-user)
+          recipient (s/create-test-user)
+          test-state (atom {})]
+
+      (-> (session app)
+          (visit "/")
+          ; Login as user 1
+          (follow "Login")
+          (login-as author)
+
+          ; Create a swirl
+          (follow "Create")
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (submit "Go")
+
+          (save-url test-state :edit-swirl-uri)
+
+          (fill-in :.recipients (recipient :username))
+          (submit "Save changes")
+
+          (within [:.non-responders :.username]
+                  (has (text? (recipient :username))))
+
+          (log-out)
+          (visit (links/notifications))
+          (follow-redirect)
+          (login-as recipient)
+
+          (within [:h1]
+                  (has (text? "What's new")))
+
+          (follow "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          ;(follow "Edit Swirl")
+          ;(fill-in "You should watch" "The onion video")
+          ;(submit "Save changes")
+          ;
+          ;; the delete page can be browsed to, and cancelling works
+          ;
+          ;(follow "Delete")
+          ;
+          ;(save-url test-state :delete-swirl-uri)
+          ;(follow "Cancel")
+          ;(assert-swirl-title-in-header "watch" "The onion video")
+          ;
+          ;(log-out)
+          ;(follow "Login")
+          ;(login-as recipient)
+          ;
+          ;; Other users can view the swirl....
+          ;(visit (@test-state :view-swirl-uri))
+          ;(assert-swirl-title-in-header "watch" "The onion video")
+          ;(has (missing? [:.swirl-admin-panel]))
+          ;
+          ;; ...but they can't edit the page
+          ;(visit (@test-state :edit-swirl-uri))
+          ;(has (status? 404))
+          ;(has (text? "Not Found"))
+          ;
+          ;; ...nor attempt to delete it
+          ;(visit (@test-state :delete-swirl-uri))
+          ;(has (status? 404))
+          ;(has (text? "Not Found"))
+          ;
+          ;; But the author can delete it
+          ;(visit "/")
+          ;(log-out)
+          ;(follow "Login")
+          ;(login-as author)
+          ;(visit (@test-state :delete-swirl-uri))
+          ;(submit "Confirm deletion")
+          ;
+          ;; You are taken to your profile page after deleting
+          ;(within [:h1]
+          ;        (has (text? (str "Reviews by " (author :username)))))
+          ;
+          ;; ...and it's now deleted
+          ;(visit (@test-state :view-swirl-uri))
+          ;(has (status? 404))
+
+          ))))

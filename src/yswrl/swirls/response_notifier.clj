@@ -3,7 +3,7 @@
             [yswrl.swirls.postman :as postman]
             [cronj.core :refer [cronj]]
             [clojure.tools.logging :as log]
-            [yswrl.swirls.swirls-repo :as repo]))
+            [yswrl.swirls.lookups :as lookups]))
 (use 'korma.core)
 
 (defn email-addresses-of-swirl-author-and-responders-excluding-current-responder [response]
@@ -25,7 +25,7 @@ AND id != ?" (:swirl_id response) (:swirl_id response) (:responder response)))
         (log/info "There is no one to email for" response)
         (do
           (log/info "Going to email" response "to" emails)
-          (let [swirl (repo/get-swirl (:swirl_id response))
+          (let [swirl (lookups/get-swirl (:swirl_id response))
                 subject (str "New response to " (:title swirl))
                 body (response-notification-email-html swirl response responder)
                 to (map (fn [row] {:email (:email row) :name (:email row)}) emails)]
