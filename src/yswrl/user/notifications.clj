@@ -32,6 +32,17 @@
                   :date_seen      nil
                   })))
 
+(defn users-with-pending-notifications
+  []
+  (select db/users
+          (modifier "DISTINCT")
+          (fields :username :email_md5)
+          (join :inner db/notifications (= :users.id :notifications.target_user_id))
+          (where {:notifications.date_seen    nil
+                  :notifications.date_emailed nil})
+          (where (or {:date_last_emailed    nil}
+                     {:date_last_emailed    [< (raw "(now() - interval '1 day')")]}))))
+
 (defn view-notifications-page [user]
   (layout/render "notifications/view-all.html" {
                                                 :title         "What's new"
@@ -39,16 +50,38 @@
                                                 :notifications (get-for-user (user :id))})
   )
 
-(defn mark-as-seen [swirl-id seer]
+
+(defn- mark-notified [swirl-id seer field timestamp]
   (if seer
     (update db/notifications
-            (set-fields {:date_seen (now)})
+            (set-fields {field timestamp})
             (where {:swirl_id       swirl-id
                     :target_user_id (seer :id)
-                    :date_seen nil}
-
+                    field           nil}
                    ))
     0))
+
+(defn mark-as-seen [swirl-id seer]
+  (mark-notified swirl-id seer :date_seen (now)))
+
+(defn mark-email-sent
+  ([swirl-id seer]
+   (mark-email-sent swirl-id seer (now)))
+  ([swirl-id seer timestamp]
+   (mark-notified swirl-id seer :date_emailed timestamp)
+   (update db/users
+           (set-fields {:date_last_emailed timestamp})
+           (where {:id (seer :id)}))
+    ))
+
+(defn send-pending-notifications
+  "email pending notifications"
+  []
+  (let [users (users-with-pending-notifications)]
+    (doall users (println))
+    )
+  )
+
 
 (defroutes notification-routes
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))
