@@ -38,7 +38,8 @@
     return-url))
 
 (defn login-success [user remember-me? return-url req]
-  (let [newSession (assoc (req :session) :user-id (user :id))
+  (let [user-cookie { :id (user :id) :username (user :username) :email_md5 (user :email_md5) :email (user :email) }
+        newSession (assoc (req :session) :user user-cookie)
         response (redirect (redirect-url return-url))]
     (if (true? remember-me?)
       (->

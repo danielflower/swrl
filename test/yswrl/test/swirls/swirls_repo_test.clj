@@ -76,7 +76,6 @@
         (is (nil? (lookups/get-swirl-if-allowed-to-edit deleted-swirl-id (outsider :id))))))
 
     (testing "the same user can not be suggested twice"
-      (println "Adding" (swirl :id))
       (repo/add-suggestions (swirl :id) (author :id) [(non-responder :username)])
       (is (= [{:username (responder :username) :user-id (responder :id)}
               {:username (non-responder :username) :user-id (non-responder :id)}]
@@ -85,7 +84,7 @@
 
     (testing "get-swirls-awaiting-response"
       (testing "returns non-responded swirls when the user has pending swirls to respond to"
-        (is (= 1 (lookups/get-swirls-awaiting-response-count (non-responder :id))))
+        (is (= 1 (lookups/get-swirls-awaiting-response-count (non-responder :id))) (str "Failed for" non-responder))
         (let [results (lookups/get-swirls-awaiting-response (non-responder :id) 100 0)]
           (is (= 1 (count results)))
           (is (= ((first results) :id) (swirl :id)))))
