@@ -13,6 +13,9 @@
                   (= (user-to-find :email_md5) (u :email_md5))))
         set-of-users))
 
+(defn notification-types-for [user]
+  (vec (map #(% :notification_type) (get-for-user (user :id)))))
+
 (deftest notifications
   (testing "are generated for the recipient whenever a swirl is recommended to them"
     (let [recipient (create-test-user)
@@ -50,14 +53,19 @@
   (testing "someone on the suggestion list of a swirl is notified of comments and responses"
     (let [responder (create-test-user)
           suggested-user (create-test-user)
+          suggested-user-that-has-seen-page (create-test-user)
           author (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Something to respond to" "Yeah" [(suggested-user :username) (responder :username)])
+          unrelated-bystander (create-test-user)
+          swirl (create-swirl "generic" (author :id) "Something to respond to" "Yeah" [(suggested-user :username) (responder :username) (suggested-user-that-has-seen-page :username)])
           _ (swirl-routes/handle-comment (swirl :id) "This is a comment" responder)
           _ (swirl-routes/handle-response (swirl :id) nil "Loved it" responder)
           _ (swirl-routes/handle-comment (swirl :id) "This is a response" author)
-          notes (get-for-user (suggested-user :id))]
-      (is (= [recommendation new-comment new-response new-comment]
-             (vec (map #(% :notification_type) notes))) notes)))
+          _ (mark-as-seen (swirl :id) suggested-user-that-has-seen-page)]
+      (is (= [recommendation new-comment new-response new-comment] (notification-types-for suggested-user)))
+      (is (= [new-comment new-response] (notification-types-for author)))
+      (is (= [] (notification-types-for unrelated-bystander)))
+      (is (= [] (notification-types-for suggested-user-that-has-seen-page)))
+      (is (= [recommendation new-comment] (notification-types-for responder)))))
 
   (testing "a read notification is no longer returned"
     (let [recipient (create-test-user)
