@@ -3,7 +3,7 @@
 (use 'clj-mandrill.core)
 (use 'selmer.parser)
 
-(def key
+(def mandrill-api-key-or-nil
   (let [env-var-name "MANDRILL_APIKEY"
         key (System/getenv env-var-name)]
     (if (clojure.string/blank? key)
@@ -16,10 +16,10 @@
     (render-file template-path model))
 
 (defn wrap-mandrill-call [f & args]
-      (if (nil? key)
+      (if (nil? mandrill-api-key-or-nil)
         [{:email "", :status "error", :reject_reason "Mandrill not configured"}]
         (do
-          (alter-var-root #'clj-mandrill.core/*mandrill-api-key* (constantly key))
+          (alter-var-root #'clj-mandrill.core/*mandrill-api-key* (constantly mandrill-api-key-or-nil))
           (apply f args))))
 
 (defn test-mandrill []

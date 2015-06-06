@@ -107,13 +107,13 @@
   (if (lookups/get-swirl-if-allowed-to-view swirl-id (responder :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
-      (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id))
+      (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary)
       (redirect (yswrl.links/swirl swirl-id)))))
 
 (defn handle-comment [swirl-id comment-content commentor]
   (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (commentor :id))
         comment (repo/create-comment swirl-id comment-content commentor)]
-    (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id))
+    (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id) nil)
     (if (not= (swirl :author_id) (commentor :id))
       (do (network/store (swirl :author_id) :knows (commentor :id))
           (network/store (commentor :id) :knows (swirl :author_id))))

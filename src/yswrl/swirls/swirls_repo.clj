@@ -82,7 +82,7 @@
       (networking/store-multiple author-id :knows recipient-ids)
       (doseq [recipient-id recipient-ids]
         (networking/store recipient-id :knows author-id)
-        (notifications/add notifications/recommendation recipient-id swirl-id swirl-id)
+        (notifications/add notifications/recommendation recipient-id swirl-id swirl-id author-id)
         ))))
 
 (defn publish-swirl
