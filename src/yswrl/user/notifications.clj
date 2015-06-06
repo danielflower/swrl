@@ -12,6 +12,8 @@
 
 
 (def ^:const recommendation "R")
+(def ^:const new-response "P")
+(def ^:const new-comment "C")
 
 (defn user-from-session [req] (:user (:session req)))
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))

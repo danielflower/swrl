@@ -3,8 +3,6 @@
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.user.networking :as network]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
-            [yswrl.swirls.comment-notifier :refer [send-comment-notification-emails]]
-            [yswrl.swirls.response-notifier :refer [send-response-notification-emails]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
             [yswrl.links :as links]
@@ -110,14 +108,14 @@
   (if (lookups/get-swirl-if-allowed-to-view swirl-id (author :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary author)]
-      (send-response-notification-emails swirl-response author)
+      (notifications/add notifications/new-response (author :id) swirl-id (swirl-response :id))
       (redirect (yswrl.links/swirl swirl-id)))))
 
 
 (defn handle-comment [swirl-id comment-content author]
   (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (author :id))
         comment (repo/create-comment swirl-id comment-content author)]
-    (send-comment-notification-emails comment)
+    (notifications/add notifications/new-comment (author :id) swirl-id (comment :id))
     (if (not= (swirl :author_id) (author :id))
       (do (network/store (swirl :author_id) :knows (author :id))
           (network/store (author :id) :knows (swirl :author_id))))
