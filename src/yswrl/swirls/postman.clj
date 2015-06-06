@@ -3,8 +3,6 @@
 (use 'clj-mandrill.core)
 (use 'selmer.parser)
 
-
-
 (defn email-body [template-path model]
     (render-file template-path model))
 

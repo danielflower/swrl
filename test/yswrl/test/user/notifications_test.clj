@@ -1,10 +1,16 @@
 (ns yswrl.test.user.notifications-test
   (:require [yswrl.test.scaffolding :refer :all]
-            [yswrl.user.notifications :as notifications])
+            [yswrl.user.notifications :as notifications]
+            [yswrl.links :as links])
   (:use clojure.test)
   (:import (java.sql Timestamp)))
 
-(defn contains-user "docstring" [actual user] (contains? actual {:username (user :username) :email_md5 (user :email_md5)}))
+(defn contains-user [set-of-users user-to-find]
+  (some (fn [u] (and
+                  (> (u :id) 0)
+                  (= (user-to-find :username) (u :username))
+                  (= (user-to-find :email_md5) (u :email_md5))))
+        set-of-users))
 
 (deftest notifications
   (testing "are generated for the recipient whenever a swirl is recommended to them"
@@ -54,7 +60,7 @@
                                                                           (been-emailed :username)
                                                                           (was-emailed-ages-ago :username)])
           _ (notifications/mark-as-seen (swirl :id) seen-it)
-          _ (notifications/mark-email-sent (swirl :id) been-emailed)
+          _ (notifications/mark-email-sent been-emailed)
           actual-list (notifications/users-with-pending-notifications)
           actual (set actual-list)
           ]
@@ -70,18 +76,32 @@
     (let [emailed-recently (create-test-user)
           not-emailed-recently (create-test-user)
           author (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(emailed-recently :username)
-                                                                          (not-emailed-recently :username)])
-          unrelated-swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(emailed-recently :username)
-                                                                          (not-emailed-recently :username)])
-          _ (notifications/mark-email-sent (unrelated-swirl :id) emailed-recently)
-          _ (notifications/mark-email-sent (swirl :id) not-emailed-recently (Timestamp. 1420070400))
+          _ (create-swirl "generic" (author :id) "Some older swirl" "Meh" [(emailed-recently :username)
+                                                                           (not-emailed-recently :username)])
+          _ (notifications/mark-email-sent not-emailed-recently (Timestamp. 1420070400))
+          _ (notifications/mark-email-sent emailed-recently)
+
+          _ (create-swirl "generic" (author :id) "Newer swirl" "Meh" [(emailed-recently :username)
+                                                                      (not-emailed-recently :username)])
+
           actual-list (notifications/users-with-pending-notifications)
           actual (set actual-list)]
-
+      (is (= (count actual-list) (count actual)))
       (is (contains-user actual not-emailed-recently))
       (is (not (contains-user actual emailed-recently)))
       )
     )
 
+  (testing "if a user was emailed recently about anything they will not get another notification unless it has been longer than a day"
+    (let [author (create-test-user)
+          recipient (create-test-user)
+          swirl1 (create-swirl "generic" (author :id) "All Day" "Meh" [(recipient :username)])
+          swirl2 (create-swirl "generic" (author :id) "Feed the animals" "Meh" [(recipient :username)])
+          html (notifications/create-notification-email-body recipient (notifications/get-for-user (recipient :id)))
+          ]
+      (is (.contains html (str "Dear " (recipient :username))) html)
+      (is (.contains html (swirl1 :title)) html)
+      (is (.contains html (links/absolute (links/swirl (swirl1 :id)))) html)
+      (is (.contains html (swirl2 :title)) html)
+      ))
   )

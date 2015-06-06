@@ -16,10 +16,10 @@
             [environ.core :refer [env]]
             [cronj.core :as cronj]))
 
-(defn wrap-headers [handler]
+(defn wrap-page-headers [handler]
   (fn [request]
     (if-let [response (handler request)]
-        (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *" ))))
+      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *"))))
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
@@ -41,7 +41,7 @@
   (if (env :dev) (parser/cache-off!))
   (cronj/start! send-unsent-suggestions-job)
   (log/info "-=[ yswrl started successfully"
-               (when (env :dev) "using the development profile") "]=-"))
+            (when (env :dev) "using the development profile") "]=-"))
 
 (defn destroy
   "destroy will be called when your application
@@ -53,13 +53,13 @@
 
 (def app
   (-> (routes
-        (wrap-headers home-routes)
-        (wrap-headers auth-routes)
-        (wrap-headers swirl-routes)
-        (wrap-headers creation-routes)
-        (wrap-headers password-reset-routes)
-        (wrap-headers facebook-routes)
-        (wrap-headers notification-routes)
+        (wrap-page-headers home-routes)
+        (wrap-page-headers auth-routes)
+        (wrap-page-headers swirl-routes)
+        (wrap-page-headers creation-routes)
+        (wrap-page-headers password-reset-routes)
+        (wrap-page-headers facebook-routes)
+        (wrap-page-headers notification-routes)
         base-routes)
       development-middleware
       production-middleware))

@@ -19,6 +19,7 @@
 (def seen-responses ["Loved it", "Not bad", "Meh"])
 (def not-seen-responses ["Later", "Not for me"])
 
+
 (defn edit-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
@@ -65,6 +66,7 @@
   (some #(= elm %) seq))
 
 (defn view-swirl-page [id suggestion-code current-user]
+
   (if-let [swirl (lookups/get-swirl-if-allowed-to-view id (get current-user :id nil))]
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))

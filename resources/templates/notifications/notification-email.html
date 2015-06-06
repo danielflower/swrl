@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Swirl Notifications</title>
+</head>
+<body>
+
+<p>Dear {{recipient.username}},</p>
+
+<p>Here are some recent updates...</p>
+
+<ul>
+{% for note in notes %}
+    <li><a href="{{ note.swirl_id|swirlurl|absoluteurl }}">{{note.swirl-title}}</a></li>
+
+{% endfor %}
+</ul>
+
+</body>
+</html>
