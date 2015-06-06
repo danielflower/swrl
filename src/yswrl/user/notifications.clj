@@ -26,13 +26,37 @@
                                     :subject_id        subject-id
                                     })))
 
+(defn user-ids-watching-swirl [swirl-id user-id-to-exclude]
+  (db/query "SELECT DISTINCT id FROM users WHERE id IN (
+  SELECT author_id FROM swirls WHERE swirls.id = ?
+  UNION
+  SELECT author_id FROM comments WHERE swirl_id = ?
+  UNION
+  SELECT recipient_id FROM suggestions WHERE swirl_id = ?
+)
+AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
+
+(defn add-to-watchers-of-swirl [notification-type swirl-id subject-id excluded-user-id]
+  (let [user-ids-to-notify (user-ids-watching-swirl swirl-id excluded-user-id)]
+    (doall (map
+             #(insert db/notifications
+                      (values {:target_user_id    (% :id)
+                               :notification_type notification-type
+                               :swirl_id          swirl-id
+                               :subject_id        subject-id
+                               }))
+             user-ids-to-notify)
+           )))
+
+
 (defn get-for-user [user-id]
   (select db/notifications
           (fields :swirl_id :subject_id :target_user_id :notification_type [:swirls.title :swirl-title])
           (join :inner db/swirls (= :notifications.swirl_id :swirls.id))
           (where {:target_user_id user-id
                   :date_seen      nil
-                  })))
+                  })
+          (order :id :asc)))
 
 (defn users-with-pending-notifications
   []

@@ -39,7 +39,6 @@
     (layout/render "swirls/list-with-profile.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
 
 (defn view-inbox-by-response [count current-user submitted-response]
-  (println "Submitted response:" submitted-response)
   (let [swirls (lookups/get-swirls-by-response (:id current-user) 2000 count submitted-response)
         responses (repo/get-response-count-for-user (:id current-user))]
     (layout/render "swirls/list-with-profile.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
@@ -104,21 +103,20 @@
 
 (defn session-from [req] (:user (:session req)))
 
-(defn handle-response [swirl-id response-button custom-response author]
-  (if (lookups/get-swirl-if-allowed-to-view swirl-id (author :id))
+(defn handle-response [swirl-id response-button custom-response responder]
+  (if (lookups/get-swirl-if-allowed-to-view swirl-id (responder :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
-          swirl-response (repo/respond-to-swirl swirl-id summary author)]
-      (notifications/add notifications/new-response (author :id) swirl-id (swirl-response :id))
+          swirl-response (repo/respond-to-swirl swirl-id summary responder)]
+      (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id))
       (redirect (yswrl.links/swirl swirl-id)))))
 
-
-(defn handle-comment [swirl-id comment-content author]
-  (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (author :id))
-        comment (repo/create-comment swirl-id comment-content author)]
-    (notifications/add notifications/new-comment (author :id) swirl-id (comment :id))
-    (if (not= (swirl :author_id) (author :id))
-      (do (network/store (swirl :author_id) :knows (author :id))
-          (network/store (author :id) :knows (swirl :author_id))))
+(defn handle-comment [swirl-id comment-content commentor]
+  (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (commentor :id))
+        comment (repo/create-comment swirl-id comment-content commentor)]
+    (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id))
+    (if (not= (swirl :author_id) (commentor :id))
+      (do (network/store (swirl :author_id) :knows (commentor :id))
+          (network/store (commentor :id) :knows (swirl :author_id))))
     (redirect (str "/swirls/" swirl-id))))
 
 
