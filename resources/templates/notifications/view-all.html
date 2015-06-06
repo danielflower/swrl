@@ -3,14 +3,9 @@
 
 <div class="buffer notifications">
     <h1>What's new</h1>
-    {% if notifications|not-empty %}
 
-        {% for note in notifications %}
-        <div class="notification"><a href="{{ note.swirl_id|swirlurl }}">{{note.swirl-title}}</a></div>
-        {% endfor %}
 
-    {% else %}
-        <p>Nothing to see here</p>
-    {% endif %}
+    {% include "notifications/notifications-list.html" with notifications=notifications %}
+
 </div>
 {% endblock %}

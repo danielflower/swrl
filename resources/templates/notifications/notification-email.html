@@ -10,12 +10,8 @@
 
 <p>Here are some recent updates...</p>
 
-<ul>
-{% for note in notes %}
-    <li><a href="{{ note.swirl_id|swirlurl|absoluteurl }}">{{note.swirl-title}}</a></li>
+{% include "notifications/notifications-list.html" with notifications=notifications %}
 
-{% endfor %}
-</ul>
 
 </body>
 </html>

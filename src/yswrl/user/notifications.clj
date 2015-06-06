@@ -82,7 +82,7 @@
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))
 
 (defn create-notification-email-body [recipient notes]
-  (postman/email-body "notifications/notification-email.html" {:recipient recipient :notes notes}))
+  (postman/email-body "notifications/notification-email.html" {:recipient recipient :notifications notes}))
 
 (defn send-pending-notifications
   "email pending notifications"
