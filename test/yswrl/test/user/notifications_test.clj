@@ -10,6 +10,7 @@
   (some (fn [u] (and
                   (> (u :id) 0)
                   (= (user-to-find :username) (u :username))
+                  (= (user-to-find :email) (u :email))
                   (= (user-to-find :email_md5) (u :email_md5))))
         set-of-users))
 

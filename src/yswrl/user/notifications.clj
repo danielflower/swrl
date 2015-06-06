@@ -68,7 +68,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   []
   (select db/users
           (modifier "DISTINCT")
-          (fields :id :username :email_md5)
+          (fields :id :username :email :email_md5)
           (join :inner db/notifications (= :users.id :notifications.target_user_id))
           (where {:notifications.date_seen    nil
                   :notifications.date_emailed nil})
