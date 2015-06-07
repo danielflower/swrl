@@ -5,6 +5,8 @@ var del = require('del');
 var sizereport = require('gulp-sizereport');
 var concat = require('gulp-concat');
 var tap = require('gulp-tap');
+var replace = require('gulp-replace');
+var path = require('path');
 
 var dist = 'resources/immutable/dist';
 
@@ -19,16 +21,19 @@ var prepareCSS = function (cssSource, fileRegex) {
         .pipe(rev())
         .pipe(gulp.dest(dist))
         .pipe(tap(function (file) {
-            return gulp.src('resources/templates/base.html')
-                .pipe(replace(fileRegex, file));
+            var templateHtml = 'resources/templates/base.html';
+            return gulp.src(templateHtml)
+                .pipe(replace(fileRegex, path.basename(file.path)))
+                .pipe(gulp.dest(path.dirname(templateHtml)));
         }));
 };
-gulp.task('generate-css', ['clean'], function () {
-    return prepareCSS(gulp.src('resources/css/app.css'), /app-[a-g0-9]+.css/g);
+gulp.task('generate-css', ['clean', 'generate-thirdparty-css'], function () {
+    return prepareCSS(gulp.src('resources/css/app.css'), /app-([a-g0-9]+)\.css/g);
 });
 gulp.task('generate-thirdparty-css', ['clean'], function () {
-    return prepareCSS(gulp.src(['resources/css/normalize-3.0.2.css', 'resources/css/skeleton-2.0.4.css', 'resources/css/font-awesome.min.css'])
-            .pipe(concat('thirdparty.css'), /thirdparty-[a-g0-9]+.css/g)
+    return prepareCSS(
+        gulp.src(['resources/css/normalize-3.0.2.css', 'resources/css/skeleton-2.0.4.css', 'resources/css/font-awesome.min.css'])
+            .pipe(concat('thirdparty.css')), /thirdparty-([a-g0-9]+)\.css/g
     );
 });
 
