@@ -3,7 +3,6 @@
             [yswrl.layout :as layout]
             [yswrl.swirls.swirls-repo :as repo]
             [compojure.core :refer [defroutes GET POST]]
-            [clj-http.client :as client]
             [ring.util.response :refer [redirect response not-found]]
             [yswrl.swirls.itunes :as itunes]
             [yswrl.swirls.amazon :as amazon]
@@ -14,7 +13,7 @@
             [yswrl.swirls.tmdb :as tmdb]
             [clojure.tools.logging :as log]
             [yswrl.swirls.swirl-links :as link-types])
-  (:import (java.net URL URI)))
+  (:import (java.net URI)))
 
 (defn start-page []
   (layout/render "swirls/start.html"))
@@ -134,13 +133,19 @@
   ((handler-for url) url author title))
 
 
+(defn create-from-url-handler [url title req]
+  (let [uri (URI. url)]
+    (if (= "chrome" (.getScheme (java.net.URI. url)))
+      (redirect "/")
+      (guard/requires-login #(handle-creation-from-url uri title (session-from req))))))
+
 (defroutes creation-routes
            (GET "/swirls/start" [] (start-page))
            (GET "/search/music" [search-term] (search-music-page search-term))
            (GET "/search/books" [search-term] (search-books-page search-term))
            (GET "/search/movies" [search-term] (search-movies-page search-term))
 
-           (GET "/create/from-url" [url title :as req] (guard/requires-login #(handle-creation-from-url (URL. url) title (session-from req))))
+           (GET "/create/from-url" [url title :as req] (create-from-url-handler url title req))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req))))
            (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req))))
            (GET "/create/movie" [tmdb-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req))))

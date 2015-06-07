@@ -389,4 +389,11 @@
                   (has (text? "What's new")))
           (within [:.notifications :p]
                   (has (text? "Nothing to see here")))
-        ))))
+          ))))
+
+(deftest extension-from-chrome-page-redirects-to-homepage
+  (-> (session app)
+      (visit "/create/from-url?url=chrome%3A%2F%2Fnewtab%2F&title=New%20Tab")
+      (follow-redirect)
+      (within [:h1]
+              (has (text? "Welcome to Swirl")))))
