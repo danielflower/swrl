@@ -1,9 +1,8 @@
 (ns yswrl.swirls.suggestion-job
   (:require [yswrl.db :as db]
-            [yswrl.links :as linky]
             [yswrl.swirls.postman :refer [send-email email-body]]
-            [cronj.core :refer [cronj]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log])
+  (:import (java.sql Timestamp)))
 (use 'korma.core)
 
 ; Checks the suggestions table and emails any outstanding suggestions
@@ -18,7 +17,7 @@ FROM ((suggestions INNER JOIN swirls ON swirls.id = suggestions.swirl_id)
 WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND suggestions.mandrill_rejection_reason IS NULL)"))
 
 
-(defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
+(defn now [] (Timestamp. (System/currentTimeMillis)))
 
 (defn mark-suggestion-sent [suggestion-id mandrill_id]
   (update db/suggestions
@@ -45,11 +44,3 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
             (mark-suggestion-sent (:suggestion_id row) (:_id response))
             (mark-suggestion-failed (:suggestion_id row) (str (:status response) " " (:reject_reason response)))))))
     (catch Exception e (log/error "Error sending suggestions" e))))
-
-(def send-unsent-suggestions-job
-  (cronj
-    :entries
-    [{:id       "send-unsent-suggestions"
-      :handler  (fn [_ _] (send-unsent-suggestions))
-      :schedule "* */60 * * * * *"                          ; should be 30 secs, but currently we force the send when creating a swirl anyway
-      :opts     {}}]))

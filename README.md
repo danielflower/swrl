@@ -52,6 +52,10 @@ To start a web server for the application, run:
 
     lein ring server
 
+To run the scheduled jobs:
+
+    lein run-jobs
+
 ## Testing
 
 While you can run `lein test` from the command line, it takes many seconds to

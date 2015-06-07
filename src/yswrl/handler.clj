@@ -6,15 +6,13 @@
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.auth.facebook-login :refer [facebook-routes]]
-            [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions-job]]
             [yswrl.user.notifications :refer [notification-routes]]
             [yswrl.middleware
              :refer [development-middleware production-middleware]]
             [compojure.route :as route]
             [clojure.tools.logging :as log]
             [selmer.parser :as parser]
-            [environ.core :refer [env]]
-            [cronj.core :as cronj]))
+            [environ.core :refer [env]]))
 
 (defn wrap-page-headers [handler]
   (fn [request]
@@ -39,7 +37,6 @@
   []
 
   (if (env :dev) (parser/cache-off!))
-  (cronj/start! send-unsent-suggestions-job)
   (log/info "-=[ yswrl started successfully"
             (when (env :dev) "using the development profile") "]=-"))
 
@@ -47,8 +44,6 @@
   "destroy will be called when your application
    shuts down, put any clean up code here"
   []
-  (log/info "yswrl is shutting down...")
-  (cronj/shutdown! send-unsent-suggestions-job)
   (log/info "shutdown complete!"))
 
 (def app

@@ -1,20 +1,11 @@
 (ns yswrl.home.home-routes
   (:require [yswrl.layout :as layout]
             [yswrl.links :as linky]
-            [compojure.core :refer [defroutes GET]]
-            [clojure.tools.logging :as log]
-            [yswrl.user.notifications :as notifications]))
+            [compojure.core :refer [defroutes GET]]))
 
-(defn send-notifications-because-we-do-not-have-a-scheduler
-  []
-  (try
-    (notifications/send-pending-notifications)
-    (catch Exception e
-      (log/error "Error while sending notifications" e))))
 
 
 (defn home-page []
-  (send-notifications-because-we-do-not-have-a-scheduler)
   (layout/render "home/home.html"))
 
 (defn bookmarklet []
