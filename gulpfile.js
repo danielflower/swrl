@@ -7,6 +7,7 @@ var concat = require('gulp-concat');
 var tap = require('gulp-tap');
 var replace = require('gulp-replace');
 var path = require('path');
+var exec = require('gulp-exec');
 
 var dist = 'resources/immutable/dist';
 
@@ -37,10 +38,10 @@ gulp.task('generate-thirdparty-css', ['clean'], function () {
     );
 });
 
-
-gulp.task('size-report', ['generate-css', 'generate-thirdparty-css'], function () {
+gulp.task('size-report-and-add', ['generate-css', 'generate-thirdparty-css'], function () {
     return gulp.src(dist + '/*')
-        .pipe(sizereport());
+        .pipe(sizereport())
+        .pipe(exec('git add --all resources/immutable/dist/'));
 });
 
-gulp.task('default', ['clean', 'generate-thirdparty-css', 'generate-css', 'size-report']);
+gulp.task('default', ['size-report-and-add']);
