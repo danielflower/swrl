@@ -8,12 +8,13 @@ var tap = require('gulp-tap');
 var replace = require('gulp-replace');
 var path = require('path');
 var exec = require('gulp-exec');
-var babel = require("gulp-babel");
-var sourcemaps = require('gulp-sourcemaps');
 var dist = 'resources/immutable/dist';
+var babelify = require('babelify');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
 
 gulp.task('clean', function (cb) {
-    del([dist + '/**/*'], cb);
+    return del([dist + '/**/*'], cb);
 });
 
 var templateHtml = 'resources/templates/base.html';
@@ -39,13 +40,19 @@ gulp.task('generate-thirdparty-css', ['clean'], function () {
     );
 });
 
-gulp.task('process-javascript', ['generate-css'], function () {
-    return gulp.src('resources/javascript/**/*.js')
-        .pipe(sourcemaps.init())
-        .pipe(babel({compact: true, comments: false}))
-        .pipe(concat('all.js'))
+gulp.task('browsify-javascript', ['generate-css'], function () {
+    return browserify({
+        entries: 'resources/javascript/app.js'
+    })
+        .transform(babelify)
+        .bundle()
+        .pipe(source('all.js'))
+        .pipe(gulp.dest(dist));
+});
+
+gulp.task('process-javascript', ['browsify-javascript'], function () {
+    return gulp.src(dist + '/all.js')
         .pipe(rev())
-        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(dist))
         .pipe(tap(function (file) {
             var fileRegex = /all-([a-g0-9]+)\.js/g;
@@ -53,18 +60,15 @@ gulp.task('process-javascript', ['generate-css'], function () {
                 .pipe(replace(fileRegex, path.basename(file.path, '.map')))
                 .pipe(gulp.dest(path.dirname(templateHtml)));
         }));
-
 });
 
-gulp.task('size-report-and-add', ['generate-css', 'generate-thirdparty-css', 'process-javascript'], function () {
-    return gulp.src(dist + '/*')
+gulp.task('default', ['process-javascript'], function () {
+    return gulp.src(dist + '/**/*')
         .pipe(sizereport())
         .pipe(exec('git add --all resources/immutable/dist/'));
 });
 
-gulp.task('default', ['size-report-and-add']);
-
-gulp.task("watch", function(){
+gulp.task("watch", function () {
     gulp.watch('resources/javascript/**/*.js', ['process-javascript']);
     gulp.watch('resources/css/**/*.css', ['generate-cass']);
 });
