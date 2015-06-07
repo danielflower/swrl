@@ -1,6 +1,6 @@
-# you-should-read-watch-listen
+# Swirl
 
-FIXME
+[Visit our issues tracking board](https://trello.com/b/ldcGeq9Q/swirl) 
 
 ## Prerequisites
 
@@ -29,7 +29,8 @@ You should be able to connect from intellij or another GUI using:
     username=dev
     password=password
     
-##Or Alternatively
+## Or Alternatively
+
 Installing stuff sucks. Wouldn't it be great if everything was scripted and just worked?
 
 Prerequisite: Install Vagrant and Virtual Box.
@@ -55,6 +56,19 @@ To start a web server for the application, run:
 To run the scheduled jobs:
 
     lein run-jobs
+
+## Client side development
+
+You will need:
+* nodejs & npm
+* gulp - `npm install -g gulp`
+* bower - `npm install -g bower`
+
+To update dependencies:
+`npm install`
+`bower install`
+
+To generate the CSS and JavaScript artifacts: `gulp`
 
 ## Testing
 

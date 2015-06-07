@@ -1,0 +1,31 @@
+.rte textarea {
+    display: none;
+}
+
+.rte .editor {
+    width: 90%;
+    overflow-y: visible;
+
+    background-color: #fff;
+    border: 1px solid #D1D1D1;
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+
+/* Hack to make sure floated images don't overflow past the review */
+.rte .editor:after, article:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.edit-swirl .rte .editor {
+    min-height: 300px;
+}
+
+.comment-body .rte .editor {
+    min-height: 80px;
+}

@@ -41,7 +41,6 @@
                       [com.jakemccrary/lein-test-refresh "0.9.0"]
                       [ragtime/ragtime.lein "0.3.8"]]
 
-
             :test-refresh {:quiet true}
 
             :ring {:handler      yswrl.handler/app
@@ -73,7 +72,7 @@
                                                        (pjstadig.humane-test-output/activate!)]
                                         :env          {:dev true}}
                        :scheduled-jobs {:omit-source true
-                                        :main yswrl.jobs
+                                        :main        yswrl.jobs
                                         :env         {:production true}
                                         :aot         :all}
                        }

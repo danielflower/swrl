@@ -18,7 +18,7 @@
       (is (= "max-age=31556926" ((:headers response) "Cache-Control")))))
 
   (testing "public folder does not cache stuff"
-    (let [response (app (request :get "/css/screen.v3.css"))]
+    (let [response (app (request :get "/favicon.ico"))]
       (is (= 200 (:status response)))
       (is (= nil ((:headers response) "Content-Security-Policy")))
       (is (= nil ((:headers response) "Cache-Control")))))

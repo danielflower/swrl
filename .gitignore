@@ -14,3 +14,7 @@ pom.xml
 *.iml
 *.ipr
 .nrepl-port
+
+node_modules/
+package.json
+bower_components/
