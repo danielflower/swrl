@@ -17,12 +17,15 @@
 (defn wrap-page-headers [handler]
   (fn [request]
     (if-let [response (handler request)]
-      (assoc-in response [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *"))))
+      (-> response
+          (assoc-in [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *")
+          (assoc-in [:headers "Cache-Control"] "private")))))
+
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
     (if-let [response (handler request)]
-      (assoc-in response [:headers "Cache-Control"] "max-age=31556926"))))
+      (assoc-in response [:headers "Cache-Control"] "public, max-age=31556926"))))
 
 (defroutes base-routes
            (route/resources "/")

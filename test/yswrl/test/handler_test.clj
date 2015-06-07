@@ -9,13 +9,14 @@
       (is (= 200 (:status response)))
       (is (= "default-src 'self'; img-src *; frame-src *; child-src *" ((:headers response) "Content-Security-Policy")))
       (is (= "0; mode=block" ((:headers response) "X-XSS-Protection")))
+      (is (= "private" ((:headers response) "Cache-Control")))
     ))
 
   (testing "immutable folder likes big caches and you know it can't lie"
-    (let [response (app (request :get "/immutable/css/skeleton-2.0.4.css"))]
+    (let [response (app (request :get "/immutable/images/swirl-logo-v2.svg"))]
       (is (= 200 (:status response)))
       (is (= nil ((:headers response) "Content-Security-Policy")))
-      (is (= "max-age=31556926" ((:headers response) "Cache-Control")))))
+      (is (= "public, max-age=31556926" ((:headers response) "Cache-Control")))))
 
   (testing "public folder does not cache stuff"
     (let [response (app (request :get "/favicon.ico"))]
