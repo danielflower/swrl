@@ -68,7 +68,9 @@ To update dependencies:
 `npm install`
 `bower install`
 
-To generate the CSS and JavaScript artifacts: `gulp`
+To generate the CSS and JavaScript artifacts run `gulp` but during development you can auto generate files by running:
+
+`gulp watch`
 
 ## Testing
 

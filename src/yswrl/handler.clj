@@ -28,8 +28,8 @@
       (assoc-in response [:headers "Cache-Control"] "public, max-age=31556926"))))
 
 (defroutes base-routes
-           (route/resources "/")
-           (wrap-infinite-cache-policy (route/resources "/immutable" {:root "immutable"}))
+           (route/resources "/" {:mime-types {"map" "application/json"}})
+           (wrap-infinite-cache-policy (route/resources "/immutable" {:root "immutable" :mime-types {"map" "application/json"}}))
            (route/not-found "Not Found"))
 
 (defn init
