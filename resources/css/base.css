@@ -55,10 +55,8 @@ nav ul li a {
 }
 
 .logo {
-    height: 1em;
-    width: 1em;
-    border-radius: 100%;
-    border: solid #737373 4px;
+    height: 1.5em;
+    width: 1.5em;
 }
 
 .site-title {

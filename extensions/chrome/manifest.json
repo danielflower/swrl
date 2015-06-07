@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
   "name": "Swirl it",
+  "short_name": "Swirl",
   "description": "Recommend the page you are on to one of your friends",
   "homepage_url": "http://www.swrl.co/",
-  "version": "1.1",
+  "version": "1.2",
   "browser_action": {
     "default_icon": "icon19.png"
   },

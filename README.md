@@ -106,4 +106,4 @@ In fake_data.clj there are methods to create 10 users and 30 swirls.  This assum
 
 1. Uninstall the Swirl extension if you have it already.
 2. Go to extensions, enable developer mode, and add the chrome folder as an extension.
-3. Once debugged, zip the folder and upload to the Chrome store.
+3. Once debugged, increment the version in `manifest.js`, zip the folder and upload to the Chrome store.
