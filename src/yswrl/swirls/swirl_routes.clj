@@ -145,6 +145,10 @@
       (repo/delete-swirl (swirl :id) (current-user :id))
       (redirect (links/user (current-user :username))))))
 
+
+(defn post-response-route [url-prefix]
+  (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
+
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review)))
@@ -154,7 +158,9 @@
 
            (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
-           (POST "/swirls/:id{[0-9]+}/respond" [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Integer/parseInt id) responseButton response-summary (session-from req))))
+
+           (post-response-route "/swirls")
+
            (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (guard/requires-login #(handle-comment (Integer/parseInt id) comment (session-from req))))
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))

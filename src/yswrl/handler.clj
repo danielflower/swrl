@@ -6,20 +6,27 @@
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.auth.facebook-login :refer [facebook-routes]]
+            [yswrl.rest.swirl-resource :refer [swirl-rest-routes]]
             [yswrl.user.notifications :refer [notification-routes]]
-            [yswrl.middleware
-             :refer [development-middleware production-middleware]]
+            [yswrl.middleware :refer [development-middleware production-middleware]]
             [compojure.route :as route]
             [clojure.tools.logging :as log]
             [selmer.parser :as parser]
             [environ.core :refer [env]]))
 
-(defn wrap-page-headers [handler]
-  (fn [request]
-    (if-let [response (handler request)]
-      (-> response
-          (assoc-in [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *")
-          (assoc-in [:headers "Cache-Control"] "private")))))
+(defn wrap-site-pages [handler]
+  (ring.middleware.anti-forgery/wrap-anti-forgery
+    (fn [request]
+      (if-let [response (handler request)]
+        (-> response
+            (assoc-in [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *")
+            (assoc-in [:headers "Cache-Control"] "private"))))))
+
+(defn wrap-api-routes [handler]
+    (fn [request]
+      (if-let [response (handler request)]
+        (-> response
+            (assoc-in [:headers "Cache-Control"] "private")))))
 
 
 (defn wrap-infinite-cache-policy [handler]
@@ -51,13 +58,14 @@
 
 (def app
   (-> (routes
-        (wrap-page-headers home-routes)
-        (wrap-page-headers auth-routes)
-        (wrap-page-headers swirl-routes)
-        (wrap-page-headers creation-routes)
-        (wrap-page-headers password-reset-routes)
-        (wrap-page-headers facebook-routes)
-        (wrap-page-headers notification-routes)
+        (wrap-api-routes swirl-rest-routes)
+        (wrap-site-pages home-routes)
+        (wrap-site-pages auth-routes)
+        (wrap-site-pages swirl-routes)
+        (wrap-site-pages creation-routes)
+        (wrap-site-pages password-reset-routes)
+        (wrap-site-pages facebook-routes)
+        (wrap-site-pages notification-routes)
         base-routes)
       development-middleware
       production-middleware))
