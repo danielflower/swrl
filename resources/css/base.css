@@ -105,6 +105,11 @@ main{
     text-align: center;
 }
 
+
+input[type="submit"].button-loading, .button.button-loading {
+    background-color: #cbcbcb;
+    border-color: #9d9d9d; }
+
 input[type="submit"].button-destructive, .button.button-destructive {
     color: #ff3f43;
     background-color: #FFFFFF;
@@ -114,3 +119,9 @@ input[type="submit"].button-destructive:focus, .button.button-destructive:focus 
     color: #FF0000;
     background-color: #FFFFFF;
     border-color: #FF0000; }
+
+
+input[type="submit"] {
+    transition: background-color 500ms;
+    background-color: #FFFFFF;
+}

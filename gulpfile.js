@@ -68,7 +68,7 @@ gulp.task('default', ['process-javascript'], function () {
         .pipe(exec('git add --all resources/immutable/dist/'));
 });
 
-gulp.task("watch", function () {
+gulp.task("watch", ['default'], function () {
     gulp.watch('resources/javascript/**/*.js', ['process-javascript']);
     gulp.watch('resources/css/**/*.css', ['generate-cass']);
 });

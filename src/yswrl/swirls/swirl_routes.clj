@@ -104,6 +104,7 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response responder]
+  (println swirl-id response-button custom-response responder)
   (if (lookups/get-swirl-if-allowed-to-view swirl-id (responder :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]

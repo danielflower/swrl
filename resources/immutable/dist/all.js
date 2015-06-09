@@ -768,13 +768,18 @@ var _editSwirl = require('./edit-swirl');
 
 var _editSwirl2 = _interopRequireDefault(_editSwirl);
 
+var _swirlView = require('./swirl-view');
+
+var _swirlView2 = _interopRequireDefault(_swirlView);
+
 $(document).ready(function () {
     (0, _editor2['default'])();
     (0, _editSwirl2['default'])();
     (0, _chromeExtension2['default'])();
+    _swirlView2['default'].init($);
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./edit-swirl":6,"./editor":7}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./edit-swirl":6,"./editor":7,"./swirl-view":9}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -846,4 +851,116 @@ var setup = function setup() {
 };
 module.exports = setup;
 
-},{}]},{},[4]);
+},{}],8:[function(require,module,exports){
+'use strict';
+
+var post = function post(url, json) {
+    return fetch('/api/v1' + url, {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(json)
+    });
+};
+module.exports = { post: post };
+
+},{}],9:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _httpJs = require('./http.js');
+
+var _httpJs2 = _interopRequireDefault(_httpJs);
+
+var RespondForm = (function () {
+    function RespondForm($, form) {
+        var _this = this;
+
+        _classCallCheck(this, RespondForm);
+
+        this.$form = $(form);
+        this.response = null;
+        $(form).find('input[type=submit]').click(this.buttonClick.bind(this));
+
+        var customInputBox = $(form).find('.custom-response');
+
+        $(form).submit(function () {
+            var swirlId = parseInt($(form).find('.swirl-id-field').val(), 10);
+            var response = _this.getResponse();
+            $(customInputBox).val('');
+            if (response) {
+                _this.setSelectedButton(response, 'button-loading');
+                _httpJs2['default'].post('/swirls/' + swirlId + '/respond', { responseButton: response }).then(function () {
+                    _this.setSelectedButton(response, 'button-primary');
+                });
+            }
+            return false;
+        });
+
+        customInputBox.keypress(function (e) {
+            if (e.keyCode === 13) {
+                $(form).find('.custom-response-button').click();
+                return false;
+            }
+        });
+    }
+
+    _createClass(RespondForm, [{
+        key: 'setSelectedButton',
+        value: function setSelectedButton(val, selectedClass) {
+            var buttonIsOnScreen = false;
+            var arbitraryButton = null;
+            this.$form.find('input[type=submit]').each(function (i, el) {
+                $(el).removeClass('button-primary');
+                $(el).removeClass('button-loading');
+                if (el.value.toLowerCase() === val.toLowerCase()) {
+                    buttonIsOnScreen = true;
+                    $(el).addClass(selectedClass);
+                } else {
+                    arbitraryButton = el;
+                }
+            });
+            if (!buttonIsOnScreen) {
+                var newOne = $(arbitraryButton).clone(true);
+                newOne.val(val).addClass(selectedClass);
+                this.$form.find('.response-divider').before(newOne);
+            }
+        }
+    }, {
+        key: 'buttonClick',
+        value: function buttonClick(e) {
+            if (e.target.getAttribute('data-button-type') === 'custom') {
+                this.response = $(e.target.form).find('.custom-response').val();
+            } else {
+                this.response = e.target.value;
+            }
+        }
+    }, {
+        key: 'getResponse',
+        value: function getResponse() {
+            return (this.response || '').trim();
+        }
+    }]);
+
+    return RespondForm;
+})();
+
+var init = function init($) {
+
+    $('.respond-form').each(function (i, f) {
+        return new RespondForm($, f);
+    });
+    //new RespondForm();
+};
+
+module.exports = { init: init };
+
+},{"./http.js":8}]},{},[4]);
