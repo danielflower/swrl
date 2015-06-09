@@ -61,6 +61,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
           (join :left db/users (= :notifications.instigator_id :users.id))
           (where {:target_user_id user-id
                   :date_seen      nil
+                  :date_emailed   nil
                   })
           (order :id :asc)))
 

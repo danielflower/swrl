@@ -81,6 +81,16 @@
       (is (= 0 (count notes)))
       ))
 
+  (testing "an emailed notification is no longer returned"
+    (let [recipient (create-test-user)
+          author (create-test-user)
+          _ (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)])
+          _ (mark-email-sent recipient)
+          notes (get-for-user (recipient :id))
+          ]
+      (is (= 0 (count notes)))
+      ))
+
   (testing "nothing happens if a swirl was already seen, or a random user that was never notified of the swirl or an anonymous user sees the swirl"
     (let [recipient (create-test-user)
           author (create-test-user)
