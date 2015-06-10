@@ -1,13 +1,15 @@
 import '../../bower_components/es6-promise/promise.min.js';
 import '../../bower_components/fetch/fetch.js';
 import setupChromeExtension from "./chrome-extension";
-import setupEditor from "./editor";
+import editor from "./editor";
 import setupSwirlEdit from "./edit-swirl";
-import swirlView from "./swirl-view";
+import respondForm from "./respond-form";
+import commentForm from "./comment-form";
 
 $(document).ready(function () {
-    setupEditor();
+    editor.init($);
     setupSwirlEdit();
     setupChromeExtension();
-    swirlView.init($);
+    respondForm.init($);
+    commentForm.init($);
 });

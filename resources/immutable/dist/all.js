@@ -768,18 +768,23 @@ var _editSwirl = require('./edit-swirl');
 
 var _editSwirl2 = _interopRequireDefault(_editSwirl);
 
-var _swirlView = require('./swirl-view');
+var _respondForm = require('./respond-form');
 
-var _swirlView2 = _interopRequireDefault(_swirlView);
+var _respondForm2 = _interopRequireDefault(_respondForm);
+
+var _commentForm = require('./comment-form');
+
+var _commentForm2 = _interopRequireDefault(_commentForm);
 
 $(document).ready(function () {
-    (0, _editor2['default'])();
+    _editor2['default'].init($);
     (0, _editSwirl2['default'])();
     (0, _chromeExtension2['default'])();
-    _swirlView2['default'].init($);
+    _respondForm2['default'].init($);
+    _commentForm2['default'].init($);
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./edit-swirl":6,"./editor":7,"./swirl-view":9}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./respond-form":10}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -810,6 +815,72 @@ module.exports = setupChromeExtension;
 },{}],6:[function(require,module,exports){
 'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _httpJs = require('./http.js');
+
+var _httpJs2 = _interopRequireDefault(_httpJs);
+
+var _editorJs = require('./editor.js');
+
+var _editorJs2 = _interopRequireDefault(_editorJs);
+
+var CommentForm = (function () {
+    function CommentForm($, form) {
+        var _this = this;
+
+        _classCallCheck(this, CommentForm);
+
+        this.editor = new _editorJs2['default'].RichTextEditor($(form).find('div.rte'));
+        this.$form = $(form);
+        this.$addButton = this.$form.find('input[type=submit]');
+
+        $(form).submit(function () {
+            _this.setLoading();
+            var swirlId = parseInt($(form).find('.swirl-id-field').val(), 10);
+            var commentHtml = _this.editor.getHtmlContent();
+            if (commentHtml) {
+                _httpJs2['default'].post('/swirls/' + swirlId + '/comment', { comment: commentHtml }).then(function () {
+                    _this.resetForm();
+                });
+            }
+            return false;
+        });
+    }
+
+    _createClass(CommentForm, [{
+        key: 'setLoading',
+        value: function setLoading() {
+            this.$addButton.addClass('button-loading');
+            this.$addButton.prop('disabled', true);
+        }
+    }, {
+        key: 'resetForm',
+        value: function resetForm() {
+            this.$addButton.prop('disabled', false);
+            this.$addButton.removeClass('button-loading');
+            this.editor.clear();
+        }
+    }]);
+
+    return CommentForm;
+})();
+
+var init = function init($) {
+    $('form.comment').each(function (i, f) {
+        return new CommentForm($, f);
+    });
+};
+
+module.exports = { init: init };
+
+},{"./editor.js":8,"./http.js":9}],7:[function(require,module,exports){
+'use strict';
+
 var setup = function setup() {
 
     var addUser = function addUser(textbox) {
@@ -832,26 +903,55 @@ var setup = function setup() {
 
 module.exports = setup;
 
-},{}],7:[function(require,module,exports){
-"use strict";
+},{}],8:[function(require,module,exports){
+'use strict';
 
-var setup = function setup() {
-    $(".rte").each(function (i, holder) {
-        var textarea = $(holder).find("textarea").first();
-        var editor = $(holder).find(".editor").first();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var RichTextEditor = (function () {
+    function RichTextEditor($rteDiv) {
+        _classCallCheck(this, RichTextEditor);
+
+        this.$textarea = $rteDiv.find('textarea');
+        this.$editorDiv = $rteDiv.find('.editor');
+    }
+
+    _createClass(RichTextEditor, [{
+        key: 'getHtmlContent',
+        value: function getHtmlContent() {
+            return this.$editorDiv.html().trim();
+        }
+    }, {
+        key: 'clear',
+        value: function clear() {
+            this.$textarea.val('');
+            this.$editorDiv.html('');
+        }
+    }]);
+
+    return RichTextEditor;
+})();
+
+var setup = function setup($) {
+    $('.rte').each(function (i, holder) {
+        var textarea = $(holder).find('textarea').first();
+        var editor = $(holder).find('.editor').first();
 
         var html = textarea.val();
         editor.html(html);
 
-        $(holder).closest("form").on("submit", function () {
+        $(holder).closest('form').on('submit', function () {
             textarea.val(editor.html());
             return true;
         });
     });
 };
-module.exports = setup;
 
-},{}],8:[function(require,module,exports){
+module.exports = { init: setup, RichTextEditor: RichTextEditor };
+
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var post = function post(url, json) {
@@ -867,7 +967,7 @@ var post = function post(url, json) {
 };
 module.exports = { post: post };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -963,4 +1063,4 @@ var init = function init($) {
 
 module.exports = { init: init };
 
-},{"./http.js":8}]},{},[4]);
+},{"./http.js":9}]},{},[4]);

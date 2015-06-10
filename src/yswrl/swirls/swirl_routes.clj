@@ -104,7 +104,6 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response responder]
-  (println swirl-id response-button custom-response responder)
   (if (lookups/get-swirl-if-allowed-to-view swirl-id (responder :id))
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
@@ -150,6 +149,9 @@
 (defn post-response-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
 
+(defn post-comment-route [url-prefix]
+  (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
+
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review)))
@@ -161,8 +163,8 @@
            (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
 
            (post-response-route "/swirls")
+           (post-comment-route "/swirls")
 
-           (POST "/swirls/:id{[0-9]+}/comment" [id comment :as req] (guard/requires-login #(handle-comment (Integer/parseInt id) comment (session-from req))))
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))

@@ -64,18 +64,21 @@
             <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
 
             {% for response in seen-response-options %}
-            <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response response-of-current-user.summary %}class="button-primary"{% endifequal %}>
+            <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
+                   response-of-current-user.summary %}class="button-primary" {% endifequal %}>
             {% endfor %}
 
             <span class="response-divider"> or </span>
             <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
                    value="{{response-summary}}" class="custom-response" required
                    placeholder="Enter a short response">
-            <input type="submit" name="responseButton" value="Submit" data-button-type="custom" class="custom-response-button">
+            <input type="submit" name="responseButton" value="Submit" data-button-type="custom"
+                   class="custom-response-button">
 
             <p>Haven't {{type.words.seen-it}} yet?
                 {% for response in not-seen-response-options %}
-                <input type="submit" formnovalidate name="responseButton" value="{{ response }}" {% ifequal response response-of-current-user.summary %}disabled class="button-primary"{% endifequal %}>
+                <input type="submit" formnovalidate name="responseButton" value="{{ response }}" {% ifequal response
+                       response-of-current-user.summary %}disabled class="button-primary" {% endifequal %}>
                 {% endfor %}
             </p>
 
@@ -83,8 +86,6 @@
         </form>
 
         {% endif %}
-
-
 
 
     </div>
@@ -100,8 +101,10 @@
 
             <div class="comment-body">
                 <a class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
-                {{ comment.html_content|safe }}
 
+                <div>
+                    {{ comment.html_content|safe }}
+                </div>
                 <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
             </div>
         </div>
@@ -116,7 +119,7 @@
     <form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
         {% csrf-field %}
 
-        <input type="hidden" name="swirl-id" value="{{swirl.id}}">
+        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
 
         {{ user.email_md5|gravatar-img:40 }}
         <div class="comment-body">
