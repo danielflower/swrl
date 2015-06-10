@@ -45,6 +45,14 @@
 
 (def not-nil? (complement nil?))
 
+(defn get-html-of-comments-since [user swirl-id comment-id-to-start-from]
+  (if (lookups/get-swirl-if-allowed-to-view swirl-id (user :id))
+    (let [comments (repo/get-swirl-comments swirl-id comment-id-to-start-from)]
+    (response {:maxId        (reduce max 0 (map #(:id %) comments))
+               :count (count comments)
+               :html (layout/render-string "components/comment-list.html"
+                                             {:comments comments})}))))
+
 (defn logister-info [is-logged-in suggestion-code]
   (try
     (if (and (not is-logged-in) (not-nil? suggestion-code))
@@ -76,6 +84,7 @@
           type (type-of swirl)
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           swirl-links (repo/get-links id)
+          max-comment-id (reduce max 0 (map #(:id %) comments))
           seen-response-options (if can-respond
                                   (distinct (concat seen-responses
                                                     (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) (concat seen-responses not-seen-responses)))
@@ -86,7 +95,7 @@
       (notifications/mark-as-seen id current-user)
       (layout/render "swirls/view.html" {
                                          :title                    title :swirl swirl :swirl-links swirl-links :type type :is-author is-author
-                                         :responses                responses :comments comments :can-respond can-respond :can-edit can-edit
+                                         :responses                responses :comments comments :max-comment-id max-comment-id :can-respond can-respond :can-edit can-edit
                                          :logister-info            logister-info :non-responders non-responders
                                          :response-of-current-user response-of-current-user :seen-response-options seen-response-options :not-seen-response-options not-seen-responses}))))
 
@@ -160,10 +169,11 @@
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
 
            (GET "/swirls" [] (view-all-swirls 0))
-           (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Integer/parseInt id) code (session-from req)))
+           (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
 
            (post-response-route "/swirls")
            (post-comment-route "/swirls")
+
 
            (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))

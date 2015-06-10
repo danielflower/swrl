@@ -6,14 +6,12 @@
     [yswrl.swirls.swirl-routes :as swirl-routes]))
 
 
-(defn do-it []
-  (println "Do it")
-  (response {:hello "Little"}))
 
 (defroutes swirl-rest-routes
            (context "/api/v1/swirls" []
              (defroutes swirl-rest-routes-erm
-                        (GET "/" [] (do-it))
+                        (GET "/:id{[0-9]+}/comments" [id comment-id-start :as req] (swirl-routes/get-html-of-comments-since
+                                                                                     (swirl-routes/session-from req) (Long/parseLong id) (Long/parseLong comment-id-start)))
                         (swirl-routes/post-response-route "")
                         (swirl-routes/post-comment-route "")
                         ))

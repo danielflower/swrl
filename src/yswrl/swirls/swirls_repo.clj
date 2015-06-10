@@ -115,12 +115,15 @@
           (where {:swirl_id swirld-id})
           ))
 
-(defn get-swirl-comments [swirld-id]
-  (select db/comments
-          (fields :html_content :users.username :users.email_md5 :date_responded)
-          (join :inner db/users (= :users.id :comments.author_id))
-          (where {:swirl_id swirld-id})
-          (order :date_responded :asc)))
+(defn get-swirl-comments
+  ([swirl-id]
+   (get-swirl-comments swirl-id 0))
+  ([swirld-id id-to-start-after]
+   (select db/comments
+           (fields :id :html_content :users.username :users.email_md5 :date_responded)
+           (join :inner db/users (= :users.id :comments.author_id))
+           (where {:swirl_id swirld-id :id [> id-to-start-after]})
+           (order :date_responded :asc))))
 
 
 

@@ -1,0 +1,14 @@
+{% for comment in comments %}
+<div class="comment">
+    {{ comment.email_md5|gravatar-img:40 }}
+
+    <div class="comment-body">
+        <a class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
+
+        <div>
+            {{ comment.html_content|safe }}
+        </div>
+        <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
+    </div>
+</div>
+{% endfor %}

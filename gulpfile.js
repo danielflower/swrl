@@ -69,6 +69,6 @@ gulp.task('default', ['process-javascript'], function () {
 });
 
 gulp.task("watch", ['default'], function () {
-    gulp.watch('resources/javascript/**/*.js', ['process-javascript']);
-    gulp.watch('resources/css/**/*.css', ['generate-css']);
+    gulp.watch('resources/javascript/**/*.js', ['default']);
+    gulp.watch('resources/css/**/*.css', ['default']);
 });

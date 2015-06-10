@@ -90,60 +90,48 @@
 
     </div>
 
+    <div class="comment-area">
+        <h2>Comments</h2>
 
-    <h2>Comments</h2>
+        <div class="comments">
 
-    <div class="comments">
-        {% for comment in comments %}
+            {% include "components/comment-list.html" with comments=comments %}
 
-        <div class="comment">
-            {{ comment.email_md5|gravatar-img:40 }}
-
-            <div class="comment-body">
-                <a class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
-
-                <div>
-                    {{ comment.html_content|safe }}
-                </div>
-                <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
-            </div>
         </div>
 
-        {% endfor %}
+        {% if user %}
+
+        <form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
+            {% csrf-field %}
+
+            <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
+            <input type="hidden" class="max-comment-id-field" name="max-comment-id" value="{{max-comment-id}}">
+
+            {{ user.email_md5|gravatar-img:40 }}
+            <div class="comment-body">
+                <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
+
+                <div class="rte">
+                    <textarea name="comment">{{current-comment}}</textarea>
+                    <article class="editor" contenteditable="true"></article>
+                </div>
+
+                <input type="submit" value="Add comment" class="button-primary">
+            </div>
+
+        </form>
+
+        {% else %}
+
+        <p>Sign in to have your say.</p>
+        {% include "auth/logister.html" %}
+
+        {% endif %}
+
+        {% include "swirls/affiliate-links.html" %}
+
     </div>
 
-
-    {% if user %}
-
-
-    <form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
-        {% csrf-field %}
-
-        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
-
-        {{ user.email_md5|gravatar-img:40 }}
-        <div class="comment-body">
-            <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
-
-            <div class="rte">
-                <textarea name="comment">{{current-comment}}</textarea>
-                <article class="editor" contenteditable="true"></article>
-            </div>
-
-            <input type="submit" value="Add comment" class="button-primary">
-        </div>
-
-    </form>
-
-
-    {% else %}
-
-    <p>Sign in to have your say.</p>
-    {% include "auth/logister.html" %}
-
-    {% endif %}
-
-    {% include "swirls/affiliate-links.html" %}
 
 </div>
 {% endblock %}

@@ -49,3 +49,5 @@
 (defn render [template & [params]]
   (RenderableTemplate. template params))
 
+(defn render-string [template-path model]
+  (parser/render-file template-path model))

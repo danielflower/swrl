@@ -838,21 +838,41 @@ var CommentForm = (function () {
         this.editor = new _editorJs2['default'].RichTextEditor($(form).find('div.rte'));
         this.$form = $(form);
         this.$addButton = this.$form.find('input[type=submit]');
+        this.$maxCommentIdField = this.$form.find('.max-comment-id-field');
+        this.swirlId = parseInt($(form).find('.swirl-id-field').val(), 10);
+        this.refreshToken = null;
 
         $(form).submit(function () {
             _this.setLoading();
-            var swirlId = parseInt($(form).find('.swirl-id-field').val(), 10);
+
             var commentHtml = _this.editor.getHtmlContent();
             if (commentHtml) {
-                _httpJs2['default'].post('/swirls/' + swirlId + '/comment', { comment: commentHtml }).then(function () {
+                _httpJs2['default'].post('/swirls/' + _this.swirlId + '/comment', { comment: commentHtml }).then(_this.addMissingComments.bind(_this)).then(function () {
                     _this.resetForm();
                 });
             }
             return false;
         });
+
+        this.addMissingComments();
     }
 
     _createClass(CommentForm, [{
+        key: 'addMissingComments',
+        value: function addMissingComments() {
+            if (this.refreshToken) {
+                clearTimeout(this.refreshToken);
+            }
+            var me = this;
+            return _httpJs2['default'].getJson('/swirls/' + me.swirlId + '/comments?comment-id-start=' + me.$maxCommentIdField.val()).then(function (comments) {
+                if (comments.count > 0) {
+                    $('.comments').append(comments.html);
+                    me.$maxCommentIdField.val(comments.maxId);
+                }
+                me.refreshToken = setTimeout(me.addMissingComments.bind(me), 30000);
+            });
+        }
+    }, {
         key: 'setLoading',
         value: function setLoading() {
             this.$addButton.addClass('button-loading');
@@ -954,6 +974,17 @@ module.exports = { init: setup, RichTextEditor: RichTextEditor };
 },{}],9:[function(require,module,exports){
 'use strict';
 
+var getJson = function getJson(url) {
+    return fetch('/api/v1' + url, {
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(function (r) {
+        return r.json();
+    });
+};
+
 var post = function post(url, json) {
     return fetch('/api/v1' + url, {
         method: 'post',
@@ -965,7 +996,8 @@ var post = function post(url, json) {
         body: JSON.stringify(json)
     });
 };
-module.exports = { post: post };
+
+module.exports = { getJson: getJson, post: post };
 
 },{}],10:[function(require,module,exports){
 'use strict';
