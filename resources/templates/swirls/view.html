@@ -30,11 +30,11 @@
 
     {% endif %}
 
-    {% include "swirls/affiliate-links.html" %}
-
     <article>
         {{swirl.review|safe}}
     </article>
+
+    {% include "swirls/affiliate-links.html" %}
 
     <div class="responses">
 
@@ -127,8 +127,6 @@
         {% include "auth/logister.html" %}
 
         {% endif %}
-
-        {% include "swirls/affiliate-links.html" %}
 
     </div>
 

@@ -1,9 +1,6 @@
 @import "base.css";
 @import "editor.css";
 
-.profile a{
-    font-size: 18px;
-}
 
 #swirl-title {
     width: 90%;
@@ -22,8 +19,9 @@
 .swirl .gravatar{
     float: left;
 }
-.swirl-content{
+.mini-swirl-header {
     margin-left:60px;
+    margin-bottom: 10px;
 }
 
 .comment {
@@ -62,27 +60,33 @@ article{
     padding-top: 20px;
 }
 article img {
-    float: right;
-    margin-right: 30px;
     border: solid black;
-    clear: both;
-    margin-left: 30px;
+    display: block;
+    max-width: 100%;
+    max-height: 50%;
+    margin: 0 auto;
 }
 article iframe {
     max-width: 100%;
-    max-height: 100vh;
+    max-height: 60vh;
 }
 
 .profile{
-    margin-top:50px;
+    margin-top: 50px;
 }
 .profile h1{
     display: inline;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 .profile img{
     float: left;
     margin-right: 30px;
+}
+.profile a.button {
+    white-space: normal;
+    word-break: break-all;
+    padding: 0 5px;
+    height: auto;
 }
 .headprofile{
     overflow: hidden;
@@ -158,11 +162,6 @@ article iframe {
     padding-right: 10px;
 }
 
-@media (min-width: 400px) {
-    .container {
-        width: 90%;
-    }
-}
 
 input[type="search"] {
     width: 100%;

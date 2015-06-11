@@ -1,43 +1,41 @@
+
 html,
 body {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background-color: #E4E4E4;
 }
 a{
     color:#72D33B;
 }
 h1{
+    font-size: 2.4rem;
     color: #737373;
     text-transform: uppercase;
-    font-size: 20px;
 }
 h2{
+    font-size: 2.0rem;
     padding-top: 20px;
     padding-bottom: 20px;
     color: #737373;
     text-transform: uppercase;
-    font-size: 17px;
 }
 nav {
     padding-bottom: 30px;
     padding-top: 60px;
     padding-right: 10px;
     border-bottom: 2px solid rgba(0, 0, 0, 0.0812398);
-    height: 30px;
     color: #737373;
     text-transform: uppercase;
 }
 nav ul{
-    padding-left: 40px;
-    margin: 0px;
-    text-align: left;
+    margin: 10px 0 0;
 }
 
 nav ul li {
     display: inline;
     list-style-type: none;
-
+    margin-bottom: 40px;
 }
 
 nav ul li a {
@@ -47,11 +45,25 @@ nav ul li a {
     font-size: 1em;
     color: #737373;
     text-decoration: none;
-
 }
 
 .site-header {
     white-space: nowrap;
+    text-align: center;
+}
+.user-menu {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0 0;
+    padding-bottom: 20px;
+}
+@media (min-width: 800px) {
+    .user-menu {
+        width: auto;
+        float: right;
+        margin: 10px 0 0;
+        padding-bottom: 20px;
+    }
 }
 
 .logo {
@@ -98,9 +110,15 @@ nav ul li a {
 }
 main{
     background-color: rgba(250, 250, 250, 1);
-    padding-left: 60px;
-    padding-right: 60px;
 }
+@media (min-width: 800px) {
+    main {
+        padding-left: 60px;
+        padding-right: 60px;
+    }
+}
+
+
 .center {
     text-align: center;
 }
