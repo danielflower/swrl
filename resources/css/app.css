@@ -16,13 +16,14 @@
 .gravatar {
     border-radius: 50%;
 }
-header .gravatar{
-    display: block;
-    margin: 0 auto;
-}
-header {
+
+.avatar-with-name {
     width: 100%;
     text-align: center;
+}
+.avatar-with-name .gravatar{
+    display: block;
+    margin: 0 auto;
 }
 
 
@@ -166,9 +167,7 @@ article iframe {
 
 
 input[type="search"] {
-    width: 100%;
-    font-size: 50px;
-    height: inherit;
+    width: 90%;
 }
 
 .user-select-box label {

@@ -12,8 +12,9 @@
     <header>
         <img src="{{ swirl.thumbnail_url }}" class="main-image">
         <h1 class="headline">{{swirl.title}}</h1>
-        {{ swirl.email_md5|gravatar-img:60 }}
-        <div class="byline">
+
+        <div class="avatar-with-name">
+            {{ swirl.email_md5|gravatar-img:60 }}
             <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
             </address>
             <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>

@@ -8,7 +8,8 @@
             [environ.core :refer [env]]
             [yswrl.constraints :refer [constraints]]
             [yswrl.links :as links]
-            [yswrl.swirls.lookups :as lookups]))
+            [yswrl.swirls.lookups :as lookups]
+            [yswrl.auth.auth-repo :as auth-repo]))
 
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
@@ -37,7 +38,7 @@
                :page template
                :dev (env :dev)
                :csrf-token *anti-forgery-token*
-               :user current-user
+               :user (if (nil? current-user) nil (auth-repo/get-user (current-user :username))) ; todo lookup by remember-me token
                :unread-count unread-count
                :constraints constraints
                :request request
