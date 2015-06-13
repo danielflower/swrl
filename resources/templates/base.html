@@ -5,8 +5,8 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/thirdparty-3cbc7fba67.css" rel="stylesheet" type="text/css"/>
-    <link href="/immutable/dist/app-f35bdef458.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/thirdparty-28139f7405.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-74f3eaabfe.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
     <link rel="apple-touch-icon" sizes="57x57" href="/immutable/icons/apple-touch-icon-57x57.png">
@@ -36,53 +36,52 @@
     {% endblock %}
 </head>
 <body>
-
-<div class="site-header menu-open">
-    <a href="/" class="menu-button"><i class="fa fa-bars"></i></a>
-    <a href="/"><img src="/immutable/images/swirl-logo-v2.svg" class="logo"/></a>
-    <nav>
-
-
-        {% if user %}
-        <div class="avatar-with-name">
-            {{ user.email_md5|gravatar-img:40 }}
-            <a href="{{ user.username|user-url }}">{{user.username}}</a>
-        </div>
-        {% endif %}
-
-        <!--<input type="search" placeholder="Search" title="Search users, swirls, comments, tags...">-->
-
-        <ul>
-            {% if user %}
-            <li><a href="/swirls/inbox"><i class="fa fa-fw fa-inbox"></i> Inbox <span class="nav-count">{{unread-count}}</span></a></li>
-            <li><a href="/swirls/inbox"><i class="fa fa-fw fa-bullhorn"></i> Notifications <span class="nav-count">{{unread-count}}</span></a></li>
-            {% else %}
-            <li><a href="/login"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
-            <li><a href="/register"><i class="fa fa-fw fa-user-plus"></i> Register</a></li>
-            {% endif %}
-            <li><a href="/swirls/start"><i class="fa fa-fw fa-plus"></i> Create</a></li>
-
-            <li><a href="/how-to-add"><i class="fa fa-fw fa-info"></i> How to add</a></li>
-
-            {% if user %}
-            <li><a href="/logout"><i class="fa fa-fw fa-sign-out"></i> Log out</a></li>
-            {% endif %}
-
-        </ul>
-
-    </nav>
-
-</div>
-
-
 <div class="container">
+
+    <div class="site-header">
+        <a href="/" class="menu-button"><i class="fa fa-bars"></i></a>
+        <a href="/"><img src="/immutable/images/swirl-logo-v2.svg" class="logo"/></a>
+        <nav>
+
+
+            {% if user %}
+            <div class="avatar-with-name">
+                {{ user.email_md5|gravatar-img:40 }}
+                <a href="{{ user.username|user-url }}">{{user.username}}</a>
+            </div>
+            {% endif %}
+
+            <!--<input type="search" placeholder="Search" title="Search users, swirls, comments, tags...">-->
+
+            <ul>
+                {% if user %}
+                <li><a href="/swirls/inbox"><i class="fa fa-fw fa-inbox"></i> Inbox <span
+                        class="nav-count">{{unread-count}}</span></a></li>
+                <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications <span class="nav-count">{{unread-count}}</span></a>
+                </li>
+                {% else %}
+                <li><a href="/login"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
+                <li><a href="/register"><i class="fa fa-fw fa-user-plus"></i> Register</a></li>
+                {% endif %}
+                <li><a href="/swirls/start"><i class="fa fa-fw fa-plus"></i> Create</a></li>
+
+                <li><a href="/how-to-add"><i class="fa fa-fw fa-info"></i> How to add</a></li>
+
+                {% if user %}
+                <li><a href="/logout"><i class="fa fa-fw fa-sign-out"></i> Log out</a></li>
+                {% endif %}
+
+            </ul>
+
+        </nav>
+
+    </div>
 
 
     <main>
         {% block content %}
         {% endblock %}
     </main>
-
 
 </div>
 

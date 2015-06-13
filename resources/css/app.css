@@ -67,7 +67,10 @@ article{
     padding-top: 20px;
 }
 article img {
-    display: none;
+    display: block;
+    margin: 0 auto;
+    max-width: 90%;
+    max-height: 80vh;
 }
 article iframe {
     max-width: 100%;
@@ -191,3 +194,6 @@ input[type="search"] {
     width: 100%;
 }
 
+.swirl-admin-panel {
+    text-align: center;
+}
