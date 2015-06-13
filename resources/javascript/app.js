@@ -5,6 +5,7 @@ import editor from "./editor";
 import setupSwirlEdit from "./edit-swirl";
 import respondForm from "./respond-form";
 import commentForm from "./comment-form";
+import menu from "./menu";
 
 $(document).ready(function () {
     editor.init($);
@@ -12,4 +13,5 @@ $(document).ready(function () {
     setupChromeExtension();
     respondForm.init($);
     commentForm.init($);
+    menu.init($);
 });

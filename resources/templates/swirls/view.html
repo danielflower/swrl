@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
 <meta property="og:site_name" content="Swirl">
-<meta property="og:title" content="You should consume {{swirl.title}}"/>
+<meta property="og:title" content="You should {{type.words.watch}} {{swirl.title}}"/>
 <meta property="og:image" content="{{swirl.thumbnail_url}}"/>
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="{{swirl.creation_date}}">
@@ -10,12 +10,12 @@
 <div class="buffer">
 
     <header>
-        <h1 class="headline">You should {{type.words.watch}} {{swirl.title}}</h1>
+        <img src="{{ swirl.thumbnail_url }}" class="main-image">
+        <h1 class="headline">{{swirl.title}}</h1>
         {{ swirl.email_md5|gravatar-img:60 }}
         <div class="byline">
-            <address class="author">By <a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
+            <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
             </address>
-            on
             <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>
         </div>
     </header>

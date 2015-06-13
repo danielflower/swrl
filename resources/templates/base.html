@@ -6,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/immutable/dist/thirdparty-3cbc7fba67.css" rel="stylesheet" type="text/css"/>
-    <link href="/immutable/dist/app-34fe918dc9.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-2a3b8ed5e3.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
     <link rel="apple-touch-icon" sizes="57x57" href="/immutable/icons/apple-touch-icon-57x57.png">
@@ -36,12 +36,11 @@
     {% endblock %}
 </head>
 <body>
-<div class="container">
 
+<div class="site-header">
+    <a href="/" class="menu-button"><i class="fa fa-bars"></i></a>
+    <a href="/"><img src="/immutable/images/swirl-logo-v2.svg" class="logo"/></a>
     <nav>
-
-        <div class="site-header"><a href="/"><img src="/immutable/images/swirl-logo-v2.svg" class="logo"/></a>
-            <span class="site-title">Swirl</span></div>
 
         {% if user %}
         <div class="user-menu">
@@ -64,6 +63,13 @@
 
     </nav>
 
+</div>
+
+<div class="container">
+
+
+
+
     <main>
         {% block content %}
         {% endblock %}
@@ -73,7 +79,7 @@
 </div>
 
 <script src="/immutable/js/jquery-2.1.3.min.js"></script>
-<script src="/immutable/dist/all-5bd90c7988.js"></script>
+<script src="/immutable/dist/all-f386746eb7.js"></script>
 </body>
 </html>
 

@@ -1,3 +1,6 @@
+:root {
+    --dark-bg-color: #282828;
+}
 
 html,
 body {
@@ -5,13 +8,11 @@ body {
     min-height: 100%;
     background-color: #E4E4E4;
 }
-a{
-    color:#72D33B;
-}
+
 h1{
-    font-size: 2.4rem;
-    color: #737373;
-    text-transform: uppercase;
+    font-size: 2.8rem;
+    color: #010626;
+    font-weight: bold;
 }
 h2{
     font-size: 2.0rem;
@@ -21,21 +22,24 @@ h2{
     text-transform: uppercase;
 }
 nav {
-    padding-bottom: 30px;
-    padding-top: 60px;
-    padding-right: 10px;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.0812398);
+    max-height: 0;
+    position: absolute;
+    background-color: var(--dark-bg-color);
+    width: 100%;
+    display: block;
     color: #737373;
-    text-transform: uppercase;
+    z-index: 100;
+    transition: max-height 500ms;
+    overflow: hidden;
 }
-nav ul{
-    margin: 10px 0 0;
+.menu-open nav {
+    max-height: 70%;
+    overflow: auto;
 }
 
 nav ul li {
-    display: inline;
     list-style-type: none;
-    margin-bottom: 40px;
+    margin: 25px 0;
 }
 
 nav ul li a {
@@ -48,79 +52,40 @@ nav ul li a {
 }
 
 .site-header {
-    white-space: nowrap;
-    text-align: center;
-}
-.user-menu {
     width: 100%;
     text-align: center;
-    margin: 10px 0 0;
-    padding-bottom: 20px;
+    background-color: var(--dark-bg-color);
 }
-@media (min-width: 800px) {
-    .user-menu {
-        width: auto;
-        float: right;
-        margin: 10px 0 0;
-        padding-bottom: 20px;
-    }
+.menu-button {
+    padding-left: 5px;
+    float: left;
+    font-size: 1.7em;
+    line-height: 1.7em;
+    transition: transform 500ms;
 }
-
+.menu-open .menu-button {
+    transform: rotate(90deg);
+}
+.site-header a, .site-header a:focus, .site-header a:hover, .site-header a:visited {
+    color: #989898;
+    text-decoration: none;
+}
 .logo {
-    height: 1.5em;
-    width: 1.5em;
+    height: 1.7em;
+    width: 1.7em;
+    margin: 5px 0 0 0;
 }
 
-.site-title {
-    color: #737373;
-    font-size: 1.3em;
-    font-weight: 300;
-    height: auto;
-    letter-spacing: -1px;
-    line-height: 1.2;
-    margin: 0 0 20px;
-    padding-left: 10px;
-    vertical-align: top;
-    text-transform: none;
-}
 
 .validation-error {
     font-weight: bold;
     color: Red;
 }
 
-.row {
-    padding-bottom: 30px;
-}
-
-.right {
-    text-align: right;
-}
 
 .container {
     max-width: 1190px;
-    background-color: white;
-}
-.buffer{
-    padding-top:50px;
-}
-.fa{
-    padding-top:30px;
-    padding-bottom:30px;
-}
-main{
-    background-color: rgba(250, 250, 250, 1);
-}
-@media (min-width: 800px) {
-    main {
-        padding-left: 60px;
-        padding-right: 60px;
-    }
-}
-
-
-.center {
-    text-align: center;
+    margin: 0 auto;
 }
 
 

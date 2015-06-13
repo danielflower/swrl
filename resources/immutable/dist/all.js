@@ -776,15 +776,20 @@ var _commentForm = require('./comment-form');
 
 var _commentForm2 = _interopRequireDefault(_commentForm);
 
+var _menu = require('./menu');
+
+var _menu2 = _interopRequireDefault(_menu);
+
 $(document).ready(function () {
     _editor2['default'].init($);
     (0, _editSwirl2['default'])();
     (0, _chromeExtension2['default'])();
     _respondForm2['default'].init($);
     _commentForm2['default'].init($);
+    _menu2['default'].init($);
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./respond-form":10}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./respond-form":11}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -1000,6 +1005,20 @@ var post = function post(url, json) {
 module.exports = { getJson: getJson, post: post };
 
 },{}],10:[function(require,module,exports){
+'use strict';
+
+var setup = function setup($) {
+    var header = $('.site-header');
+
+    $('.menu-button').click(function () {
+        header.toggleClass('menu-open');
+        return false;
+    });
+};
+
+module.exports = { init: setup };
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();

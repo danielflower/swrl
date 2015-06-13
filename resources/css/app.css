@@ -13,12 +13,19 @@
 .response-text {
     font-weight: bold;
 }
-.gravatar{
-    border: solid black;
+.gravatar {
+    border-radius: 50%;
 }
-.swirl .gravatar{
-    float: left;
+header .gravatar{
+    display: block;
+    margin: 0 auto;
 }
+header {
+    width: 100%;
+    text-align: center;
+}
+
+
 .mini-swirl-header {
     margin-left:60px;
     margin-bottom: 10px;
@@ -48,23 +55,18 @@
     color: #AAAAAA;
 }
 
-header img {
-    float: left;
-}
-header .byline {
-    margin-left: 80px;
-    height: 80px;
+.main-image {
+    max-width: 90%;
+    max-height: 50vh;
+    display: block;
+    margin: 10px auto;
 }
 
 article{
     padding-top: 20px;
 }
 article img {
-    border: solid black;
-    display: block;
-    max-width: 100%;
-    max-height: 50%;
-    margin: 0 auto;
+    display: none;
 }
 article iframe {
     max-width: 100%;
