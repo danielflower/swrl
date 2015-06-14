@@ -178,58 +178,6 @@
           (visit (links/inbox))
           (follow "Vimeo video")
 
-
-          ;(assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
-          ;
-          ;(follow "Edit Swirl")
-          ;(fill-in "You should watch" "The onion video")
-          ;(actions/save-swirl)
-          ;(assert-swirl-title-in-header "watch" "The onion video")
-          ;
-          ;; the delete page can be browsed to, and cancelling works
-          ;
-          ;(follow "Delete")
-          ;(within [:h1]
-          ;        (has (text? "Delete a swirl")))
-          ;(save-url test-state :delete-swirl-uri)
-          ;(follow "Cancel")
-          ;(assert-swirl-title-in-header "watch" "The onion video")
-          ;
-          ;(actions/log-out)
-          ;(actions/follow-login-link)
-          ;(login-as user2)
-          ;
-          ;; Other users can view the swirl....
-          ;(visit (@test-state :view-swirl-uri))
-          ;(assert-swirl-title-in-header "watch" "The onion video")
-          ;(has (missing? [:.swirl-admin-panel]))
-          ;
-          ;; ...but they can't edit the page
-          ;(visit (@test-state :edit-swirl-uri))
-          ;(has (status? 404))
-          ;(has (text? "Not Found"))
-          ;
-          ;; ...nor attempt to delete it
-          ;(visit (@test-state :delete-swirl-uri))
-          ;(has (status? 404))
-          ;(has (text? "Not Found"))
-          ;
-          ;; But the author can delete it
-          ;(visit "/")
-          ;(actions/log-out)
-          ;(actions/follow-login-link)
-          ;(login-as existing-user)
-          ;(visit (@test-state :delete-swirl-uri))
-          ;(actions/submit "Confirm deletion")
-          ;
-          ;; You are taken to your profile page after deleting
-          ;(within [:h1]
-          ;        (has (text? (str "Reviews by " (existing-user :username)))))
-          ;
-          ;; ...and it's now deleted
-          ;(visit (@test-state :view-swirl-uri))
-          ;(has (status? 404))
-
           ))))
 
 
