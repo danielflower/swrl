@@ -1,0 +1,20 @@
+
+<form method="POST" action="/swirls/{{swirl.id}}/respond" class="respond-form">
+    {% csrf-field %}
+    <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
+
+    {% for response in seen-response-options %}
+    <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
+           response-of-current-user.summary %}class="button-primary" {% endifequal %}>
+    {% endfor %}
+
+    <span class="response-divider"> or </span>
+    <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
+           value="{{response-summary}}" class="custom-response" required
+           placeholder="Enter a short response">
+    <input type="submit" name="responseButton" value="Add" data-button-type="custom"
+           class="custom-response-button">
+
+
+</form>
+
