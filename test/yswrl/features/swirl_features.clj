@@ -195,6 +195,34 @@
 
           ))))
 
+(deftest tv-swirl-creation
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "TV Show Title" "black mirror")
+          (press :#tv-search-go-button)
+
+          (follow "Black Mirror")
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          ;Don't need to fill in as should be this by default:
+          ;(fill-in "You should watch" "Garden State")
+          (actions/save-swirl)
+
+          (assert-swirl-title-in-header "watch" "Black Mirror")
+
+          (within [:title] (has (text? "You should watch Black Mirror")))
+
+          ))))
+
 (deftest website-swirl-creation-from-tmdb-link
   (with-faked-responses
     (let [user (s/create-test-user)]
@@ -221,7 +249,7 @@
 
           ))))
 
-(deftest website-swirl-creation-from-imdb-link
+(deftest website-swirl-creation-from-imdb-link-movie
   (with-faked-responses
     (let [user (s/create-test-user)]
 
@@ -247,6 +275,32 @@
 
           ))))
 
+
+(deftest website-swirl-creation-from-imdb-link-tv
+  (with-faked-responses
+    (let [user (s/create-test-user)]
+
+      (-> (session app)
+          (visit "/swirls/start")
+
+          (fill-in "Enter a website link" "http://www.imdb.com/title/tt2085059")
+          (press :#website-create-go-button)
+
+          ; Not logged in, so expect login page redirect
+          (follow-redirect)
+
+          (login-as user)
+          (follow-redirect)
+
+          ;Don't need to fill in as should be this by default:
+          ;(fill-in "You should watch" "Black Mirror")
+          (actions/save-swirl)
+
+          (assert-swirl-title-in-header "watch" "Black Mirror")
+
+          (within [:title] (has (text? "You should watch Black Mirror")))
+
+          ))))
 (deftest website-swirl-creation-with-title-extraction
   (with-faked-responses
     (let [user (s/create-test-user)]

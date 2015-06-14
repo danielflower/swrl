@@ -23,10 +23,25 @@
                         ]}
              (tmdb/search-movies "garden state")))))
 
-  (testing "Empty searchs retun empty arrays"
+  (testing "TV info can be extracted from tmdb search"
+    (with-faked-responses
+      (is (= {:results [
+                        {:title "Black Mirror"
+                         :tmdb-id 42009
+                         :thumbnail-url "http://image.tmdb.org/t/p/w92/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
+                         :large-image-url "http://image.tmdb.org/t/p/w342/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"}
+                        ]}
+             (tmdb/search-tv "black mirror")))))
+
+  (testing "Empty movie searches retun empty arrays"
     (is (= {:results []} (tmdb/search-movies nil)))
     (is (= {:results []} (tmdb/search-movies "")))
     (is (= {:results []} (tmdb/search-movies " "))))
+
+  (testing "Empty tv searches retun empty arrays"
+    (is (= {:results []} (tmdb/search-tv nil)))
+    (is (= {:results []} (tmdb/search-tv "")))
+    (is (= {:results []} (tmdb/search-tv " "))))
 
   (testing "Can get the movie details from a tmdb ID"
     (with-faked-responses
@@ -43,13 +58,34 @@
                     {:genre "Romance"}]}
              (tmdb/get-movie-from-tmdb-id 401)))))
 
+  (testing "Can get the tv details from a tmdb ID"
+    (with-faked-responses
+      (is (= {:title           "Black Mirror"
+              :tmdb-id         42009
+              :thumbnail-url   "http://image.tmdb.org/t/p/w92/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
+              :large-image-url "http://image.tmdb.org/t/p/w342/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
+              :url "http://www.channel4.com/programmes/black-mirror/"
+              ;;:imdb-id "tt2085059" ;; API doesn't provide this yet, sadface
+              }
+             (tmdb/get-tv-from-tmdb-id 42009)))
+    )
+  )
+
   (testing "Can get the tmdb id from an IMDB ID"
     (with-faked-responses
-      (is (= 401
-            (tmdb/get-tmdb-id-from-imdb-id "tt0333766")))))
+      (is (= {:tmdb-id 401
+              :type "movie"}
+            (tmdb/get-tmdb-id-from-imdb-id "tt0333766"))))
+
+    (with-faked-responses
+      (is (= {:tmdb-id 42009
+              :type "tv"}
+             (tmdb/get-tmdb-id-from-imdb-id "tt2085059")))))
 
   (testing "tmdb id is nil if bad IMDB ID is given"
     (with-faked-responses
       (is (= nil
              (tmdb/get-tmdb-id-from-imdb-id "nope")))))
+
+
   )

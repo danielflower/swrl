@@ -79,6 +79,21 @@
   ([tmdb-id user]
    (handle-movie-creation tmdb-id user nil)))
 
+(defn handle-tv-creation
+  ([tmdb-id user url]
+   (if tmdb-id
+     (let [tv-show (tmdb/get-tv-from-tmdb-id tmdb-id)
+           review (str "<img src=\"" (tv-show :large-image-url) "\"><p>"
+                       "<p data-ph=\"Say something about this TV Show here....\"></p>")
+           swirl (repo/save-draft-swirl "tv" (user :id) (tv-show :title) review (tv-show :large-image-url))]
+       (repo/add-link (swirl :id) (link-types/website-url :code) (tv-show :url))
+       (redirect (links/edit-swirl (swirl :id)))
+       )
+     (handle-website-creation url user nil))
+    )
+  ([tmdb-id user]
+   (handle-tv-creation tmdb-id user nil)))
+
 (defn itunes-id-from-url [url]
   (let [[_ result] (re-find #"/id([\d]+)" url)]
     result))
@@ -103,6 +118,11 @@
   (let [search-result (tmdb/search-movies search-term)]
     (layout/render "swirls/search_movies.html" {:search-term search-term :search-result search-result})))
 
+(defn search-tv-page [search-term]
+  (let [search-result (tmdb/search-tv search-term)]
+    (layout/render "swirls/search_tv.html" {:search-term search-term :search-result search-result})))
+
+
 (defn asin-from-url [url]
   (let [[_ result] (re-find #"/([0-9A-Z]{10})(?:[/?]|$)" url)]
     result))
@@ -117,7 +137,12 @@
   (handle-movie-creation (tmdb-id-from-url (str url)) user))
 
 (defn handle-imdb-creation [url user _]
-  (handle-movie-creation (tmdb/get-tmdb-id-from-imdb-id (imdb-id-from-url (str url))) user url))
+  (if-let [{tmdb-id :tmdb-id type :type} (tmdb/get-tmdb-id-from-imdb-id (imdb-id-from-url (str url)))]
+    (case type
+      "movie" (handle-movie-creation tmdb-id user url)
+      "tv" (handle-tv-creation tmdb-id user url)
+      (handle-website-creation url user nil))
+    (handle-website-creation url user nil)))
 
 (defn handler-for [url]
   (let [host (.getHost url)]
@@ -143,9 +168,11 @@
            (GET "/search/music" [search-term] (search-music-page search-term))
            (GET "/search/books" [search-term] (search-books-page search-term))
            (GET "/search/movies" [search-term] (search-movies-page search-term))
+           (GET "/search/tv" [search-term] (search-tv-page search-term))
 
            (GET "/create/from-url" [url title :as req] (create-from-url-handler url title req))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req))))
            (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req))))
            (GET "/create/movie" [tmdb-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req))))
+           (GET "/create/tv" [tmdb-id :as req] (guard/requires-login #(handle-tv-creation tmdb-id (session-from req))))
            )

@@ -40,6 +40,15 @@
                                }
                        }
 
+            "tv"   {
+                       :name  "tv"
+                       :words {
+                               :watch   "watch"
+                               :seen    "seen"
+                               :seen-it "seen it"
+                               }
+                       }
+
             "website" {
                        :name  "website"
                        :words {

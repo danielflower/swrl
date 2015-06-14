@@ -34,14 +34,24 @@
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-search." ((form-decode (req :query-string)) "query") ".json"))})
                            ;
 
+                           ; Run a tmdb tv search
+                           #"https:\/\/api\.themoviedb\.org\/3\/search\/tv\?api_key=(.+)&query=(.+)"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.tv-search." ((form-decode (req :query-string)) "query") ".json"))})
+                           ;
+
                            ;get a movie from tmdb id
                            #"https:\/\/api\.themoviedb\.org\/3\/movie\/(.+)\?api_key=(.+)"
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-movie-from-tmdb-id." (get (re-find #"\/3\/movie\/(.+)$" (req :uri)) 1) ".json"))})
                            ;
 
+                           ;get a tv show from tmdb id
+                           #"https:\/\/api\.themoviedb\.org\/3\/tv\/(.+)\?api_key=(.+)"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.get-tv-from-tmdb-id." (get (re-find #"\/3\/tv\/(.+)$" (req :uri)) 1) ".json"))})
+                           ;
+
                            ;get a movie from imdb id
                            #"https:\/\/api\.themoviedb\.org\/3\/find\/(.+)\?api_key=(.+)&external_source=imdb_id"
-                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.movie-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri)) 1) ".json"))})
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.tmdb-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri)) 1) ".json"))})
                            ;
 
                            ;get metadata from an imdb url
