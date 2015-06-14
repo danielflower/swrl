@@ -148,7 +148,6 @@ form {
 
 .container {
     width: 100%;
-    border-top: 5px solid var(--swirl-blue);
     min-height: 100vh;
 }
 

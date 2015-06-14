@@ -36,24 +36,6 @@
               (has (text? title)))
       ))
 
-(deftest firehose-can-load
-  (with-faked-responses
-    (let [user (s/create-test-user)]
-
-      (-> (session app)
-          (visit "/swirls")
-          (within [:h1]
-                  (has (text? "Firehose")))
-
-          (actions/follow-login-link)
-          (login-as user)
-
-          (visit "/swirls")
-          (within [:h1]
-                  (has (text? "Firehose")))
-
-          ))))
-
 (deftest swirl-security
   (with-faked-responses
     (let [user1 (s/create-test-user)

@@ -106,10 +106,6 @@
         (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
       (redirect (links/user (author :username))))))
 
-(defn view-all-swirls [count]
-  (if-let [swirls (lookups/get-recent-swirls 20 count)]
-    (layout/render "swirls/list.html" {:pageTitle "Firehose" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
-
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response responder]
@@ -168,14 +164,12 @@
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
 
-           (GET "/swirls" [] (view-all-swirls 0))
            (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
 
            (post-response-route "/swirls")
            (post-comment-route "/swirls")
 
 
-           (GET "/swirls/from/:count{[0-9]+}" [count] (view-all-swirls (Long/parseLong count)))
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
            (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))

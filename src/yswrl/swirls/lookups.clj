@@ -41,10 +41,6 @@
       (limit max-results)
       (order :creation_date :desc)))
 
-(defn get-recent-swirls [max-results skip]
-  (-> (select-multiple-swirls max-results skip)
-      (select)))
-
 (defn get-swirls-authored-by [author-id]
   (-> (select-multiple-swirls 1000 0)
       (where {:author_id author-id})
