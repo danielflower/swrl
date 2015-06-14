@@ -53,3 +53,8 @@
     desired-name
     (search-username desired-name 1)))
 
+(defn migrate-suggestions-from-email [user-id user-email]
+  (update db/suggestions
+          (set-fields {:recipient_id user-id :recipient_email nil})
+          (where {:recipient_email user-email})))
+

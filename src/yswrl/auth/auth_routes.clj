@@ -1,22 +1,22 @@
 (ns yswrl.auth.auth-routes
-    (:require [yswrl.layout :as layout]
-      [compojure.core :refer [defroutes GET POST]]
-      [bouncer.core :as b]
-      [bouncer.validators :as v]
-      [clojure.tools.logging :as log]
-      [buddy.hashers :as hashers]
-      [yswrl.auth.auth-repo :as users]
-      [clojure.string :refer [trim]]
-      [ring.util.response :refer [redirect response]]
-      [yswrl.constraints :refer [max-length]] [yswrl.auth.auth-repo :as user]))
+  (:require [yswrl.layout :as layout]
+            [compojure.core :refer [defroutes GET POST]]
+            [bouncer.core :as b]
+            [bouncer.validators :as v]
+            [clojure.tools.logging :as log]
+            [buddy.hashers :as hashers]
+            [yswrl.auth.auth-repo :as users]
+            [clojure.string :refer [trim]]
+            [ring.util.response :refer [redirect response]]
+            [yswrl.constraints :refer [max-length]]))
 
-(def password-hash-options {:algorithm :bcrypt+sha512 })
+(def password-hash-options {:algorithm :bcrypt+sha512})
 
 (defn registration-page [map]
   (layout/render "auth/register.html" map))
 
 (defn login-page [& {:keys [username error return-url fb-errors error-message]}]
-  (layout/render "auth/login.html" {:username username :error error :return-url return-url
+  (layout/render "auth/login.html" {:username  username :error error :return-url return-url
                                     :fb-errors fb-errors :error-message error-message}))
 
 (defn logged-out-page []
@@ -38,7 +38,7 @@
     return-url))
 
 (defn login-success [user remember-me? return-url req]
-  (let [user-cookie { :id (user :id) :username (user :username) :email_md5 (user :email_md5) :email (user :email) }
+  (let [user-cookie {:id (user :id) :username (user :username) :email_md5 (user :email_md5) :email (user :email)}
         newSession (assoc (req :session) :user user-cookie)
         response (redirect (redirect-url return-url))]
     (if (true? remember-me?)
@@ -75,7 +75,8 @@
         (registration-page (assoc user :errors errors)))
       (do
         (try
-          (users/create-user (user :username) (user :email) (hash-password (user :password) hash-options))
+          (let [created-user (users/create-user (user :username) (user :email) (hash-password (user :password) hash-options))]
+            (users/migrate-suggestions-from-email (created-user :id) (created-user :email)))
           (attempt-login (user :username) (user :password) false return-url req)
           (catch Exception e
             (let [message (cond
@@ -93,14 +94,14 @@
      (reduce str password))))
 
 (defn attempt-thirdparty-login [username email return-url req]
-      (if-let [user (users/get-user-by-email email)]
-          (login-success user true return-url req)
-          (do
-            (let [random-password (fixed-length-password 10)]
-              (handle-registration {:username username :email email :password random-password :confirmPassword random-password}
-                                   req return-url password-hash-options)
-              (login-success (users/get-user username) true return-url req)
-              ))))
+  (if-let [user (users/get-user-by-email email)]
+    (login-success user true return-url req)
+    (do
+      (let [random-password (fixed-length-password 10)]
+        (handle-registration {:username username :email email :password random-password :confirmPassword random-password}
+                             req return-url password-hash-options)
+        (login-success (users/get-user username) true return-url req)
+        ))))
 
 (defroutes auth-routes
            (GET "/login" [return-url] (login-page :return-url return-url))

@@ -21,11 +21,13 @@
             <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
                    name="password"></label>
 
-            <p><a href="/forgot-password">Forgot your password? Click here.</a></p>
             <label>
-                <input type="checkbox" name="remember"> Keep me logged in
+                <input type="checkbox" name="remember" checked> Keep me logged in
             </label>
             <input type="submit" value="Login" class="button-primary">
+
+            <p><a href="/forgot-password">Forgot your password? Click here.</a></p>
+
         </form>
     </div>
 
@@ -44,7 +46,7 @@
                    maxlength="{{constraints.users.email.max-length}}" value="{{logister-info.register-email}}"></label>
 
             <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-                   name="password" value="{{password}}"></label>
+                   name="password" value="{{password}}" class="registration-password-field"></label>
 
             <input type="submit" value="Register" class="button-primary">
 

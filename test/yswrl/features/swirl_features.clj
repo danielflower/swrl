@@ -7,9 +7,13 @@
             [kerodon.test :refer :all]
             [clojure.test :refer :all]
             [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.db :as db]
             [yswrl.links :as links])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
+(use 'korma.core)
+(use 'korma.db)
+
 (selmer.parser/cache-off!)
 
 (defn now [] (System/currentTimeMillis))
@@ -23,9 +27,14 @@
       (press "Login")
       (follow-redirect)))
 
+
+(defn save-state [session map key value]
+    (swap! map (fn [old-val] (assoc old-val key value)))
+  session)
+
 (defn save-url [session map key]
   (let [url (get-in session [:request :uri])]
-    (swap! map (fn [old-val] (assoc old-val key url))))
+    (save-state session map key url))
   session)
 
 
@@ -118,7 +127,9 @@
   (with-faked-responses
     (let [existing-user (s/create-test-user)
           new-user-username (s/unique-username)
-          new-user-email (str new-user-username "@example.org")]
+          new-user-email (str new-user-username "@example.org")
+          _ (println "Username: " new-user-username)
+          test-state (atom {})]
 
       (-> (session app)
           (visit "/")
@@ -126,13 +137,43 @@
           (actions/follow-login-link)
           (login-as existing-user)
 
-          ; Create a swirl
+          ; Create a couple of swirls and add the non-registered user's email to both of them
           (actions/follow-create-link)
           (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
           (actions/submit "Go")
+          (fill-in "You should watch" "The onion video")
+          (fill-in :.recipients new-user-email)
+          (actions/save-swirl)
+          (save-url test-state :view-swirl-uri)
+          (save-state test-state :suggestion-code (:code (first (select db/suggestions (fields :code) (where {:recipient_email new-user-email})))))
 
-          ;(fill-in "username of emails" "blah")
-          ;(actions/save-swirl)
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/vimeo.3718294.html")
+          (actions/submit "Go")
+          (fill-in "You should watch" "Vimeo video")
+          (fill-in :.recipients new-user-email)
+          (actions/save-swirl)
+
+          (actions/log-out)
+
+          ; now simulate the friend clicking on a link in their email to the first swirl
+          (visit (str (@test-state :view-swirl-uri) "?code=" (@test-state :suggestion-code)))
+
+          ; the username and email box should be pre-filled, so just enter the password
+          (fill-in :.registration-password-field "p@ssw0rd mania")
+          (actions/submit "Register")
+
+          ; TODO: check network
+          ; TODO: check notifications
+
+          ; Can immediately make a response and it will be in the response inbox
+          (actions/submit "Loved it")
+          (visit (links/inbox "Loved it"))
+          (follow "The onion video")
+
+          ; Meanwhile, in the inbox there should be the second swirl
+          (visit (links/inbox))
+          (follow "Vimeo video")
 
 
           ;(assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
