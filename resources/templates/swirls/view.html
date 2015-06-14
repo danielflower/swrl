@@ -32,7 +32,7 @@
         Yet to respond:
 
         {% for non-responder in non-responders %}
-        <span class="username">{{non-responder.username}}</span>
+        <a class="username" rel="author" href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
         {% endfor %}
     </div>
     {% endif %}
