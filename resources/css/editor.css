@@ -58,3 +58,10 @@
 .button-panel {
     margin-top: 20px;
 }
+
+
+[contentEditable=true] p:empty:not(:focus):before{
+    content:attr(data-ph);
+    color: #9d9d9d;
+}
+
