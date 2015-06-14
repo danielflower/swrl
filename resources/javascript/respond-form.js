@@ -46,7 +46,7 @@ class RespondForm {
         if (!buttonIsOnScreen) {
             var newOne = $(arbitraryButton).clone(true);
             newOne.val(val).addClass(selectedClass);
-            this.$form.find('.response-divider').before(newOne);
+            this.$form.find('.response-buttons').append(newOne);
         }
     }
 

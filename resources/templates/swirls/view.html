@@ -26,6 +26,16 @@
 <div class="swirl-admin-panel">
     <a href="{{ swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
     <a href="{{ swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+
+    {% if non-responders|not-empty %}
+    <div class="non-responders">
+        Yet to respond:
+
+        {% for non-responder in non-responders %}
+        <span class="username">{{non-responder.username}}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 
 {% endif %}
@@ -47,43 +57,13 @@
 
     </div>
     {% endfor %}
-    <div class="non-responders">
-        Yet to respond:
 
-        {% for non-responder in non-responders %}
-        <span class="username">{{non-responder.username}}</span>
-        {% endfor %}
-    </div>
 
     {% if can-respond %}
     <hr/>
-    <h2>{{type.words.seen-it}}? What did you think?</h2>
+    <h2>{{type.words.seen-it|capitalize}}? What did you think?</h2>
 
-    <form method="POST" action="/swirls/{{swirl.id}}/respond" class="respond-form">
-        {% csrf-field %}
-        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
-
-        {% for response in seen-response-options %}
-        <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
-               response-of-current-user.summary %}class="button-primary" {% endifequal %}>
-        {% endfor %}
-
-        <span class="response-divider"> or </span>
-        <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
-               value="{{response-summary}}" class="custom-response" required
-               placeholder="Enter a short response">
-        <input type="submit" name="responseButton" value="Submit" data-button-type="custom"
-               class="custom-response-button">
-
-        <p>Haven't {{type.words.seen-it}} yet?
-            {% for response in not-seen-response-options %}
-            <input type="submit" formnovalidate name="responseButton" value="{{ response }}" {% ifequal response
-                   response-of-current-user.summary %}disabled class="button-primary" {% endifequal %}>
-            {% endfor %}
-        </p>
-
-
-    </form>
+    {% include "components/response-form.html" %}
 
     {% endif %}
 

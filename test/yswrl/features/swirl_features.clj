@@ -113,6 +113,83 @@
           ))))
 
 
+
+(deftest a-user-that-registers-as-a-result-of-a-suggestion-email-has-a-network-and-notifications-set-up
+  (with-faked-responses
+    (let [existing-user (s/create-test-user)
+          new-user-username (s/unique-username)
+          new-user-email (str new-user-username "@example.org")]
+
+      (-> (session app)
+          (visit "/")
+          ; Login as user 1
+          (actions/follow-login-link)
+          (login-as existing-user)
+
+          ; Create a swirl
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (actions/submit "Go")
+
+          ;(fill-in "username of emails" "blah")
+          ;(actions/save-swirl)
+
+
+          ;(assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          ;
+          ;(follow "Edit Swirl")
+          ;(fill-in "You should watch" "The onion video")
+          ;(actions/save-swirl)
+          ;(assert-swirl-title-in-header "watch" "The onion video")
+          ;
+          ;; the delete page can be browsed to, and cancelling works
+          ;
+          ;(follow "Delete")
+          ;(within [:h1]
+          ;        (has (text? "Delete a swirl")))
+          ;(save-url test-state :delete-swirl-uri)
+          ;(follow "Cancel")
+          ;(assert-swirl-title-in-header "watch" "The onion video")
+          ;
+          ;(actions/log-out)
+          ;(actions/follow-login-link)
+          ;(login-as user2)
+          ;
+          ;; Other users can view the swirl....
+          ;(visit (@test-state :view-swirl-uri))
+          ;(assert-swirl-title-in-header "watch" "The onion video")
+          ;(has (missing? [:.swirl-admin-panel]))
+          ;
+          ;; ...but they can't edit the page
+          ;(visit (@test-state :edit-swirl-uri))
+          ;(has (status? 404))
+          ;(has (text? "Not Found"))
+          ;
+          ;; ...nor attempt to delete it
+          ;(visit (@test-state :delete-swirl-uri))
+          ;(has (status? 404))
+          ;(has (text? "Not Found"))
+          ;
+          ;; But the author can delete it
+          ;(visit "/")
+          ;(actions/log-out)
+          ;(actions/follow-login-link)
+          ;(login-as existing-user)
+          ;(visit (@test-state :delete-swirl-uri))
+          ;(actions/submit "Confirm deletion")
+          ;
+          ;; You are taken to your profile page after deleting
+          ;(within [:h1]
+          ;        (has (text? (str "Reviews by " (existing-user :username)))))
+          ;
+          ;; ...and it's now deleted
+          ;(visit (@test-state :view-swirl-uri))
+          ;(has (status? 404))
+
+          ))))
+
+
+
 (deftest itunes-album-swirl-creation
   (with-faked-responses
     (let [user (s/create-test-user)]
@@ -370,6 +447,9 @@
         swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         _ (repo/respond-to-swirl (swirl :id) "HOT" responder)]
     (-> (session app)
+        (visit "/")
+        (actions/follow-login-link)
+        (login-as author)
 
         (visit (linky/swirl (swirl :id)))
         (within [:.response] (has (some-text? (str (responder :username) " said HOT"))))

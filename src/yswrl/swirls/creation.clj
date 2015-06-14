@@ -29,7 +29,7 @@
         swirl-title (or title (metadata :title) "This website")
         image-tag (if (not (nil? (metadata :image-url))) (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>") "")
         review (str
-                 "<p data-ph=\"Say something about this link here....\"></p>"
+                 "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>"
                  (or (metadata :embed-html) image-tag)
                  "<p data-ph=\"....or write something here\"></p>")
         swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url))]

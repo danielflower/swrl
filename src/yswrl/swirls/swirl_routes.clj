@@ -14,9 +14,7 @@
             [yswrl.user.notifications :as notifications])
   (:import (java.util UUID)))
 
-(def seen-responses ["Loved it", "Not bad", "Meh"])
-(def not-seen-responses ["Later", "Not for me"])
-
+(def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
 
 (defn edit-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
@@ -78,7 +76,7 @@
           logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          non-responders (repo/get-non-responders (:id swirl))
+          non-responders (if is-author (repo/get-non-responders (:id swirl)))
           can-respond (and (not is-author) is-logged-in)
           response-of-current-user (if is-logged-in (first (filter #(= (:id current-user) (:responder %)) responses)) nil)
           type (type-of swirl)
@@ -87,8 +85,8 @@
           max-comment-id (reduce max 0 (map #(:id %) comments))
           seen-response-options (if can-respond
                                   (distinct (concat seen-responses
-                                                    (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) (concat seen-responses not-seen-responses)))
-                                                    (if (and (not (nil? response-of-current-user)) (not (in? not-seen-responses (response-of-current-user :summary)))) [(response-of-current-user :summary)] [])))
+                                                    (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) seen-responses))
+                                                    (if (not (nil? response-of-current-user)) [(response-of-current-user :summary)] [])))
                                   [])
 
           can-edit is-author]
@@ -97,7 +95,7 @@
                                          :title                    title :swirl swirl :swirl-links swirl-links :type type :is-author is-author
                                          :responses                responses :comments comments :max-comment-id max-comment-id :can-respond can-respond :can-edit can-edit
                                          :logister-info            logister-info :non-responders non-responders
-                                         :response-of-current-user response-of-current-user :seen-response-options seen-response-options :not-seen-response-options not-seen-responses}))))
+                                         :response-of-current-user response-of-current-user :seen-response-options seen-response-options}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]
