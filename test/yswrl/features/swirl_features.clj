@@ -128,7 +128,6 @@
     (let [existing-user (s/create-test-user)
           new-user-username (s/unique-username)
           new-user-email (str new-user-username "@example.org")
-          _ (println "Username: " new-user-username)
           test-state (atom {})]
 
       (-> (session app)
@@ -163,10 +162,14 @@
           (fill-in :.registration-password-field "p@ssw0rd mania")
           (actions/submit "Register")
 
-          ; TODO: check network
-          ; TODO: check notifications
+          ; the original user should now show up on the new user's create-swirl page
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/vimeo.3718294.html")
+          (actions/submit "Go")
+          (check (existing-user :username))
 
           ; Can immediately make a response and it will be in the response inbox
+          (visit (@test-state :view-swirl-uri))
           (actions/submit "Loved it")
           (visit (links/inbox "Loved it"))
           (follow "The onion video")

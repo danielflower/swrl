@@ -2,7 +2,8 @@
   (:require [yswrl.db :refer [users]]
             [yswrl.db :as db]
             [buddy.core.hash :as hash]
-            [buddy.core.codecs :refer :all])
+            [buddy.core.codecs :refer :all]
+            [yswrl.user.networking :as networking])
   )
 (use 'korma.core)
 
@@ -21,7 +22,7 @@
   (db/query-single "SELECT * FROM users WHERE LOWER(username) = ?" (clojure.string/lower-case username)))
 
 (defn get-user-by-email [email]
-      (db/query-single "SELECT * FROM users WHERE LOWER(email) = ?" (clojure.string/lower-case email)))
+  (db/query-single "SELECT * FROM users WHERE LOWER(email) = ?" (clojure.string/lower-case email)))
 
 (defn get-user-by-id [id]
   (db/query-single "SELECT * FROM users WHERE id = ?" id))
@@ -39,7 +40,7 @@
 
 
 (defn user-exists-by-email [email]
-      (db/exists? "SELECT 1 FROM users WHERE email = ?" email))
+  (db/exists? "SELECT 1 FROM users WHERE email = ?" email))
 
 
 (defn- search-username [desired-name suffix]
@@ -54,7 +55,13 @@
     (search-username desired-name 1)))
 
 (defn migrate-suggestions-from-email [user-id user-email]
-  (update db/suggestions
-          (set-fields {:recipient_id user-id :recipient_email nil})
-          (where {:recipient_email user-email})))
+  (let [where-map {:recipient_email user-email}
+        updates (select db/suggestions
+                        (fields :swirls.author_id)
+                        (join :inner db/swirls (= :swirls.id :suggestions.swirl_id))
+                        (where where-map))]
+    (networking/store-multiple user-id :knows (map #(% :author_id) updates))
+    (update db/suggestions
+            (set-fields {:recipient_id user-id :recipient_email nil})
+            (where where-map))))
 

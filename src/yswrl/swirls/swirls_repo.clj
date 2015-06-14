@@ -69,6 +69,10 @@
   (let [links (select db/swirl-links (where {:swirl_id swirl-id}))]
     (map #(assoc % :type (swirl-links/link-type-of (% :type_code))) links)))
 
+(defn setup-network-links-and-notifications [swirl-id author-id other-user-id]
+  (networking/store other-user-id :knows author-id)
+  (notifications/add notifications/recommendation other-user-id swirl-id swirl-id author-id))
+
 (defn add-suggestions [swirl-id author-id recipient-names-or-emails]
   (if (not-empty recipient-names-or-emails)
     (let [suggestions (create-suggestions recipient-names-or-emails swirl-id)
@@ -81,9 +85,7 @@
                                       (log/warn "Error while saving suggestion" e)))))
       (networking/store-multiple author-id :knows recipient-ids)
       (doseq [recipient-id recipient-ids]
-        (networking/store recipient-id :knows author-id)
-        (notifications/add notifications/recommendation recipient-id swirl-id swirl-id author-id)
-        ))))
+        (setup-network-links-and-notifications swirl-id author-id recipient-id)))))
 
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a

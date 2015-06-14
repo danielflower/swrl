@@ -100,8 +100,7 @@
       (let [random-password (fixed-length-password 10)]
         (handle-registration {:username username :email email :password random-password :confirmPassword random-password}
                              req return-url password-hash-options)
-        (login-success (users/get-user username) true return-url req)
-        ))))
+        (login-success (users/get-user username) true return-url req)))))
 
 (defroutes auth-routes
            (GET "/login" [return-url] (login-page :return-url return-url))
