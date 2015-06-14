@@ -101,8 +101,8 @@ Deploy:
     git push heroku master
     
 ## Data
-In fake_data.clj there are methods to create 10 users and 30 swirls.  This assumes you have a blank database currently (due to assuming the user IDs are from 0).  This can easily be improved and shall be in later iterations.
 
+Just run the tests a few times to generate fake data.
 
 ## Updating the Chrome extension
 
