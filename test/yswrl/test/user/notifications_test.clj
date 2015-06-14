@@ -1,8 +1,9 @@
 (ns yswrl.test.user.notifications-test
   (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.swirls.swirl-routes :as swirl-routes]
-            [yswrl.user.notifications :refer [recommendation new-response new-comment get-for-user mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body]]
-            [yswrl.links :as links])
+            [yswrl.user.notifications :refer [recommendation new-response new-comment mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body]]
+            [yswrl.links :as links]
+            [yswrl.user.notifications-repo :refer [get-for-user]])
   (:use clojure.test)
   (:import (java.sql Timestamp)))
 

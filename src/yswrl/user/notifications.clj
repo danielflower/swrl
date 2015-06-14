@@ -8,7 +8,8 @@
     [yswrl.auth.guard :as guard]
     [yswrl.db :as db]
     [yswrl.swirls.postman :as postman]
-    [yswrl.swirls.lookups :as lookups]))
+    [yswrl.swirls.lookups :as lookups]
+    [yswrl.user.notifications-repo :as notifications-repo]))
 (use 'korma.core)
 
 
@@ -51,19 +52,6 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
                                }))
              user-ids-to-notify)
            )))
-
-
-(defn get-for-user [user-id]
-  (select db/notifications
-          (fields :swirl_id :subject_id :target_user_id :notification_type [:swirls.title :swirl-title] :summary
-                  [:users.id :instigator-id] [:users.username :instigator-username])
-          (join :inner db/swirls (= :notifications.swirl_id :swirls.id))
-          (join :left db/users (= :notifications.instigator_id :users.id))
-          (where {:target_user_id user-id
-                  :date_seen      nil
-                  :date_emailed   nil
-                  })
-          (order :id :asc)))
 
 (defn users-with-pending-notifications
   []
@@ -117,7 +105,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   []
   (let [users (users-with-pending-notifications)]
     (doseq [user users]
-      (let [notifications (get-for-user (user :id))
+      (let [notifications (notifications-repo/get-for-user (user :id))
             html (create-notification-email-body user notifications)
             to [{:email (:email user) :name (:username user)}]]
         (mark-email-sent user)
@@ -126,7 +114,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 (defn view-notifications-page [user]
   (layout/render "notifications/view-all.html" {:title         "What's new"
                                                 :pageTitle     "What's new"
-                                                :notifications (group-by-swirl (get-for-user (user :id)))}))
+                                                :notifications (group-by-swirl (notifications-repo/get-for-user (user :id)))}))
 
 (defroutes notification-routes
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))

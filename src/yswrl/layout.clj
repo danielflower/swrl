@@ -9,7 +9,8 @@
             [yswrl.constraints :refer [constraints]]
             [yswrl.links :as links]
             [yswrl.swirls.lookups :as lookups]
-            [yswrl.auth.auth-repo :as auth-repo]))
+            [yswrl.auth.auth-repo :as auth-repo]
+            [yswrl.user.notifications-repo :as notifications-repo]))
 
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
@@ -32,7 +33,8 @@
   (render [this request]
     (let [current-user (get (get request :session) :user)
           unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)
-          response-counts (if current-user (lookups/get-response-count-for-user (get current-user :id -1)) nil)]
+          response-counts (if current-user (lookups/get-response-count-for-user (get current-user :id -1)) nil)
+          notifications-count (if current-user (count (notifications-repo/get-for-user (get current-user :id nil))) nil)]
 
       (content-type
         (->> (assoc params
@@ -42,6 +44,7 @@
                :user (if (nil? current-user) nil (auth-repo/get-user (current-user :username))) ; todo lookup by remember-me token
                :unread-count unread-count
                :response-counts response-counts
+               :notifications-count notifications-count
                :constraints constraints
                :request request
                )
