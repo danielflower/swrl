@@ -128,10 +128,6 @@
            (order :date_responded :asc))))
 
 
-
-(defn get-response-count-for-user [user-id]
-  (db/query "SELECT r.summary, count(1) AS count FROM swirl_responses r INNER JOIN swirls s ON s.id = r.swirl_id WHERE s.state = ? AND r.responder = ? GROUP BY r.summary ORDER BY r.summary" states/live user-id))
-
 (defn get-recent-responses-by-user-and-type [user-id swirl-type excluded]
   (map #(% :summary) (select db/swirl-responses
                              (fields :summary)

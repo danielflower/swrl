@@ -54,18 +54,16 @@
             <!--<input type="search" placeholder="Search" title="Search users, swirls, comments, tags...">-->
 
             <ul>
+                <li><a href="/swirls/start" class="create-link"><i class="fa fa-fw fa-plus"></i> Create</a></li>
                 {% if user %}
                 <li><a href="/swirls/inbox"><i class="fa fa-fw fa-inbox"></i> Inbox <span
                         class="nav-count">{{unread-count}}</span></a></li>
 
 
-
-                {% if response-counts|not-empty %}
-                                    {% for rc in response-counts %}
-                    <li><a href="{{ rc.summary|inboxlink }}"><i class="fa fa-fw fa-tag"></i> {{rc.summary}} <span
-                            class="nav-count">{{rc.count}}</span></a></li>
-                    {% endfor %}
-                {% endif %}
+                {% for rc in response-counts %}
+                <li><a href="{{ rc.summary|inboxlink }}"><i class="fa fa-fw fa-tag"></i> {{rc.summary}} <span
+                        class="nav-count">{{rc.count}}</span></a></li>
+                {% endfor %}
 
 
                 <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications</a>
@@ -74,7 +72,7 @@
                 <li><a href="/login" class="login-link"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
                 <li><a href="/register"><i class="fa fa-fw fa-user-plus"></i> Register</a></li>
                 {% endif %}
-                <li><a href="/swirls/start" class="create-link"><i class="fa fa-fw fa-plus"></i> Create</a></li>
+
 
                 <li><a href="/how-to-add"><i class="fa fa-fw fa-info"></i> How to add</a></li>
 

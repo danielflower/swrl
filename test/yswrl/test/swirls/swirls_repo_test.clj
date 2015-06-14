@@ -116,8 +116,8 @@
         (is (= swirl-links/itunes-id (itunes :type)))))
 
     (testing "all responses for a user can be gotten"
-      (is (= [{:summary "Loved it" :count 1}] (repo/get-response-count-for-user (responder :id))))
-      (is (= [] (repo/get-response-count-for-user (non-responder :id)))))
+      (is (= [{:summary "Loved it" :count 1}] (lookups/get-response-count-for-user (responder :id))))
+      (is (= [] (lookups/get-response-count-for-user (non-responder :id)))))
 
     (testing "most recent respones by type can be gotten"
       (is (= ["Loved it"] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["blah"])))

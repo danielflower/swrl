@@ -32,14 +32,12 @@
     (layout/render "swirls/delete.html" {:swirl swirl})))
 
 (defn view-inbox [count current-user]
-  (let [swirls (lookups/get-swirls-awaiting-response (:id current-user) 2000 count)
-        responses (repo/get-response-count-for-user (:id current-user))]
-    (layout/render "swirls/list.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
+  (let [swirls (lookups/get-swirls-awaiting-response (:id current-user) 2000 count)]
+    (layout/render "swirls/list.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (defn view-inbox-by-response [count current-user submitted-response]
-  (let [swirls (lookups/get-swirls-by-response (:id current-user) 2000 count submitted-response)
-        responses (repo/get-response-count-for-user (:id current-user))]
-    (layout/render "swirls/list.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20) :response-counts responses})))
+  (let [swirls (lookups/get-swirls-by-response (:id current-user) 2000 count submitted-response)]
+    (layout/render "swirls/list.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (def not-nil? (complement nil?))
 

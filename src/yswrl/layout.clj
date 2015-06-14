@@ -31,7 +31,8 @@
   Renderable
   (render [this request]
     (let [current-user (get (get request :session) :user)
-          unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)]
+          unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)
+          response-counts (if current-user (lookups/get-response-count-for-user (get current-user :id -1)) nil)]
 
       (content-type
         (->> (assoc params
@@ -40,10 +41,11 @@
                :csrf-token *anti-forgery-token*
                :user (if (nil? current-user) nil (auth-repo/get-user (current-user :username))) ; todo lookup by remember-me token
                :unread-count unread-count
+               :response-counts response-counts
                :constraints constraints
                :request request
                )
-             (parser/render-file (str template))
+             (parser/render-file template)
              response)
         "text/html; charset=utf-8"))))
 
