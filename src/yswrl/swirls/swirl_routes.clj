@@ -76,7 +76,7 @@
           logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          non-responders (repo/get-non-responders (:id swirl))
+          non-responders (if is-author (repo/get-non-responders (:id swirl)))
           can-respond (and (not is-author) is-logged-in)
           response-of-current-user (if is-logged-in (first (filter #(= (:id current-user) (:responder %)) responses)) nil)
           type (type-of swirl)

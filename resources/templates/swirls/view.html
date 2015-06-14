@@ -26,6 +26,16 @@
 <div class="swirl-admin-panel">
     <a href="{{ swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
     <a href="{{ swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+
+    {% if non-responders|not-empty %}
+    <div class="non-responders">
+        Yet to respond:
+
+        {% for non-responder in non-responders %}
+        <span class="username">{{non-responder.username}}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 
 {% endif %}
@@ -47,13 +57,7 @@
 
     </div>
     {% endfor %}
-    <div class="non-responders">
-        Yet to respond:
 
-        {% for non-responder in non-responders %}
-        <span class="username">{{non-responder.username}}</span>
-        {% endfor %}
-    </div>
 
     {% if can-respond %}
     <hr/>
