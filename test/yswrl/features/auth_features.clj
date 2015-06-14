@@ -1,5 +1,6 @@
 (ns yswrl.features.auth-features
   (:require [yswrl.handler :refer [app]]
+            [yswrl.features.actions :as actions]
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]))
@@ -27,13 +28,12 @@
                 (has (text? (str "Reviews by " username))))
 
         ; Logout
-        (follow "Log out")
-        (follow-redirect)
+        (actions/log-out)
         (within [:h1]
                 (has (text? "You are now logged out")))
 
         ; Login with wrong username
-        (follow "Login")
+        (actions/follow-login-link)
         (fill-in "Username" username)
         (fill-in "Password" "wrong password")
         (press "Login")

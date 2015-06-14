@@ -20,7 +20,7 @@
 
     <img src="{{ result.thumbnail-url }}" width="60" height="60">
     <h2><a href="/create/album?itunes-album-id={{ result.itunes-id }}">{{ result.title }}</a></h2>
-    {% if result.artist %} by <em>{{ result.artist }}</em> {% end if %}
+    {% if result.artist %} by <em>{{ result.artist }}</em> {% endif %}
 
 </div>
 {% endfor %}

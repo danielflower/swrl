@@ -2,6 +2,7 @@
   (:require [yswrl.handler :refer [app]]
             [yswrl.test.scaffolding :as s]
             [yswrl.links :as linky]
+            [yswrl.features.actions :as actions]
             [kerodon.core :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]
@@ -27,21 +28,12 @@
     (swap! map (fn [old-val] (assoc old-val key url))))
   session)
 
-(defn log-out [session]
-  (-> session
-      (follow "Log out")
-      (follow-redirect)))
-
-(defn submit [session name]
-  (-> session
-      (press name)
-      (follow-redirect)))
 
 
 (defn assert-swirl-title-in-header [session verb title]
   (-> session
       (within [:h1]
-              (has (text? (str "You should " verb " " title))))
+              (has (text? title)))
       ))
 
 (deftest firehose-can-load
@@ -53,7 +45,7 @@
           (within [:h1]
                   (has (text? "Firehose")))
 
-          (follow "Login")
+          (actions/follow-login-link)
           (login-as user)
 
           (visit "/swirls")
@@ -71,17 +63,17 @@
       (-> (session app)
           (visit "/")
           ; Login as user 1
-          (follow "Login")
+          (actions/follow-login-link)
           (login-as user1)
 
           ; Create a swirl
-          (follow "Create")
+          (actions/follow-create-link)
           (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
-          (submit "Go")
+          (actions/submit "Go")
 
           (save-url test-state :edit-swirl-uri)
 
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (save-url test-state :view-swirl-uri)
 
@@ -89,7 +81,7 @@
 
           (follow "Edit Swirl")
           (fill-in "You should watch" "The onion video")
-          (submit "Save changes")
+          (actions/save-swirl)
           (assert-swirl-title-in-header "watch" "The onion video")
 
           ; the delete page can be browsed to, and cancelling works
@@ -101,8 +93,8 @@
           (follow "Cancel")
           (assert-swirl-title-in-header "watch" "The onion video")
 
-          (log-out)
-          (follow "Login")
+          (actions/log-out)
+          (actions/follow-login-link)
           (login-as user2)
 
           ; Other users can view the swirl....
@@ -122,11 +114,11 @@
 
           ; But the author can delete it
           (visit "/")
-          (log-out)
-          (follow "Login")
+          (actions/log-out)
+          (actions/follow-login-link)
           (login-as user1)
           (visit (@test-state :delete-swirl-uri))
-          (submit "Confirm deletion")
+          (actions/submit "Confirm deletion")
 
           ; You are taken to your profile page after deleting
           (within [:h1]
@@ -144,7 +136,8 @@
     (let [user (s/create-test-user)]
 
       (-> (session app)
-          (visit "/swirls/start")
+          (visit "/")
+          (actions/follow-create-link)
 
           (fill-in "Album or Song Title" "Mellon Collie")
           (press :#album-search-go-button)
@@ -158,7 +151,7 @@
           (follow-redirect)
 
           (fill-in "You should listen to" "Mellon Collie and the Infinite Sadness")
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (assert-swirl-title-in-header "listen to" "Mellon Collie and the Infinite Sadness")
 
@@ -184,7 +177,7 @@
           (follow-redirect)
 
           (fill-in "You should see" "A website")
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (assert-swirl-title-in-header "see" "A website")
 
@@ -212,7 +205,7 @@
 
           ;Don't need to fill in as should be this by default:
           ;(fill-in "You should watch" "Garden State")
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (assert-swirl-title-in-header "watch" "Garden State")
 
@@ -238,7 +231,7 @@
 
           ;Don't need to fill in as should be this by default:
           ;(fill-in "You should watch" "Garden State")
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (assert-swirl-title-in-header "watch" "Garden State")
 
@@ -264,7 +257,7 @@
 
           ;Don't need to fill in as should be this by default:
           ;(fill-in "You should watch" "Garden State")
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (assert-swirl-title-in-header "watch" "Garden State")
 
@@ -290,7 +283,7 @@
 
           ;Don't need to fill in as should be this by default:
           ;(fill-in "You should watch" "Garden State")
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (assert-swirl-title-in-header "see" "Progressive enhancement is still important - JakeArchibald.com")
 
@@ -328,7 +321,7 @@
         (fill-in "Username" (str "Ampter-Jamp" (s/now)))
         (fill-in "Email" (str "ampter" (s/now) "@example.org"))
         (fill-in "Password" "A#~$&#(@*~$&__f 1234")
-        (submit "Register")
+        (actions/submit "Register")
 
         (assert-swirl-title-in-header consumption-verb (swirl :title))
 
@@ -357,21 +350,21 @@
       (-> (session app)
           (visit "/")
           ; Login as the author
-          (follow "Login")
+          (actions/follow-login-link)
           (login-as author)
 
           ; Create a swirl
-          (follow "Create")
+          (actions/follow-create-link)
           (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
-          (submit "Go")
+          (actions/submit "Go")
 
           (fill-in :.recipients (recipient :username))
-          (submit "Save changes")
+          (actions/save-swirl)
 
           (within [:.non-responders :.username]
                   (has (text? (recipient :username))))
 
-          (log-out)
+          (actions/log-out)
           (visit (links/notifications))
           (follow-redirect)
           (login-as recipient)

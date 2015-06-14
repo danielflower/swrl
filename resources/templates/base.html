@@ -71,15 +71,15 @@
                 <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications</a>
                 </li>
                 {% else %}
-                <li><a href="/login"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
+                <li><a href="/login" class="login-link"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
                 <li><a href="/register"><i class="fa fa-fw fa-user-plus"></i> Register</a></li>
                 {% endif %}
-                <li><a href="/swirls/start"><i class="fa fa-fw fa-plus"></i> Create</a></li>
+                <li><a href="/swirls/start" class="create-link"><i class="fa fa-fw fa-plus"></i> Create</a></li>
 
                 <li><a href="/how-to-add"><i class="fa fa-fw fa-info"></i> How to add</a></li>
 
                 {% if user %}
-                <li><a href="/logout"><i class="fa fa-fw fa-sign-out"></i> Log out</a></li>
+                <li><a href="/logout" class="logout-link"><i class="fa fa-fw fa-sign-out"></i> Log out</a></li>
                 {% endif %}
 
             </ul>
