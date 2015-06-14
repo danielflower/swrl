@@ -1014,6 +1014,9 @@ var setup = function setup($) {
         header.toggleClass('menu-open');
         return false;
     });
+
+    var path = location.pathname;
+    $('nav li a[href="' + path + '"]').addClass('nav-selected');
 };
 
 module.exports = { init: setup };

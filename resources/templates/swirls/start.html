@@ -1,44 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="buffer">
-    <h1>Start</h1>
+<h1>Start</h1>
 
-    <p>What would you like to recommend?</p>
+<p>What would you like to recommend?</p>
 
-    <div class="row center">
-        <div class="three columns">
-            <form method="GET" action="/create/from-url">
-                <i class="fa fa-link fa-5x"></i>
-                <label for="url-box">Enter a website link</label>
-                <div class="searchbox"><input id="url-box" type="url" name="url">
+<div class="start-boxes">
+    <div class="start-box">
+        <form method="GET" action="/create/from-url">
+            <i class="fa fa-link fa-5x"></i>
+            <label for="url-box">Enter a website link</label>
+
+            <div class="searchbox"><input id="url-box" type="url" name="url">
                 <input id="website-create-go-button" type="submit" value="Go" class="button-primary"></div>
-            </form>
-        </div>
-        <div class="three columns">
-            <form method="GET" action="/search/music">
-                <i class="fa fa-music fa-5x"></i>
-                <label for="album-search-box">Album or Song Title</label>
-                <div class="searchbox">  <input id="album-search-box" type="text" name="search-term">
-                <input id="album-search-go-button" type="submit" value="Go" class="button-primary"></div>
-            </form>
-        </div>
-        <div class="three columns">
-            <form method="GET" action="/search/books">
-                <i class="fa fa-book fa-5x"></i>
-                    <label for="book-search-box">Book or Author</label>
-                    <div class="searchbox"><input id="book-search-box" type="text" name="search-term">
-                    <input type="submit" value="Go" class="button-primary"></div>
-            </form>
-        </div>
-        <div class="three columns">
-            <form method="GET" action="/search/movies">
-                <i class="fa fa-film fa-5x"></i>
-                <label for="movie-search-box">Movie Title</label>
-                <div class="searchbox"><input id="movie-search-box" type="text" name="search-term">
-                    <input id="movie-search-go-button" type="submit" value="Go" class="button-primary"></div>
-            </form>
-        </div>
+        </form>
     </div>
+    <div class="start-box">
+        <form method="GET" action="/search/music">
+            <i class="fa fa-music fa-5x"></i>
+            <label for="album-search-box">Album or Song Title</label>
 
+            <div class="searchbox"><input id="album-search-box" type="text" name="search-term">
+                <input id="album-search-go-button" type="submit" value="Go" class="button-primary"></div>
+        </form>
+    </div>
+    <div class="start-box">
+        <form method="GET" action="/search/books">
+            <i class="fa fa-book fa-5x"></i>
+            <label for="book-search-box">Book or Author</label>
+
+            <div class="searchbox"><input id="book-search-box" type="text" name="search-term">
+                <input type="submit" value="Go" class="button-primary"></div>
+        </form>
+    </div>
+    <div class="start-box">
+        <form method="GET" action="/search/movies">
+            <i class="fa fa-film fa-5x"></i>
+            <label for="movie-search-box">Movie Title</label>
+
+            <div class="searchbox"><input id="movie-search-box" type="text" name="search-term">
+                <input id="movie-search-go-button" type="submit" value="Go" class="button-primary"></div>
+        </form>
+    </div>
 </div>
 {% endblock %}

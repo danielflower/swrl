@@ -29,12 +29,14 @@
 <label for="password">Password</label>
 <input id="password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
        name="password">
-<p><a href="/forgot-password?username={{ username|default:""|urlescape }}">Forgot your password? Click here.</a></p>
+
 
 <label>
-    <input type="checkbox" name="remember"> Keep me logged in
+    <input type="checkbox" name="remember" checked> Keep me logged in
 </label>
 
-<input type="submit" value="Login">
+<input type="submit" value="Login" class="button-primary">
+
+<p><a href="/forgot-password?username={{ username|default:""|urlescape }}">Forgot your password? Click here.</a></p>
 
 </form>

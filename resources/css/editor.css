@@ -29,3 +29,32 @@
 .comment-body .rte .editor {
     min-height: 80px;
 }
+
+
+
+
+.user-select-box {
+    margin-top: 25px;
+}
+
+.user-select-box label {
+    display: inline;
+    white-space: nowrap;
+    background-color: var(--swirl-blue);
+    border: 1px solid var(--swirl-blue-darker);
+    border-radius: 5px;
+    padding: 5px;
+    margin: 0 5px 5px 0;
+    color: #FFF;
+    font-weight: normal;
+}
+.user-select-box label:hover {
+    background-color: var(--swirl-blue-darker);
+}
+.user-select-box label input {
+    margin-right: 4px;
+}
+
+.button-panel {
+    margin-top: 20px;
+}

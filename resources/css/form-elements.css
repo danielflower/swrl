@@ -1,0 +1,156 @@
+@import "_variables.css";
+
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+    display: inline-block;
+    height: 38px;
+    padding: 0 30px;
+    color: #555;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 38px;
+    letter-spacing: .1rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 0;
+    border: 1px solid #bbb;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 500ms;
+    background-color: #FFFFFF;}
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+    color: #333;
+    border-color: #888;
+    outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+    color: #FFF;
+    background-color: var(--swirl-blue);
+    border-color: var(--swirl-blue-darker);
+}
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+    color: #FFF;
+    background-color: var(--swirl-blue-darker);
+    border-color: var(--swirl-blue-darker);
+}
+
+/* Forms
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+    height: 38px;
+    padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+    background-color: #fff;
+    border: 1px solid #D1D1D1;
+    border-radius: 0;
+    box-shadow: none;
+    box-sizing: border-box; }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none; }
+textarea {
+    min-height: 65px;
+    padding-top: 6px;
+    padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+    border: 1px solid var(--swirl-blue);
+    outline: 0; }
+label,
+legend {
+    display: block;
+    margin-bottom: .5rem;
+    font-weight: 600; }
+fieldset {
+    padding: 0;
+    border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+    display: inline; }
+label > .label-body {
+    display: inline-block;
+    margin-left: .5rem;
+    font-weight: normal; }
+
+
+/* Spacing
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+button,
+.button {
+    margin-bottom: 1rem; }
+input,
+textarea,
+select,
+fieldset {
+    margin-bottom: 1.5rem; }
+
+
+
+input[type="submit"].button-loading, .button.button-loading, input[type="submit"].button-loading:hover, .button.button-loading:hover,
+input[type="submit"].button-loading:focus, .button.button-loading:focus {
+    background-color: #cbcbcb;
+    border-color: #9d9d9d;
+}
+
+input[type="submit"].button-destructive, .button.button-destructive {
+    color: #ff3f43;
+    background-color: #FFFFFF;
+    border-color: #ff3f43;
+}
+
+input[type="submit"].button-destructive:hover, .button.button-destructive:hover,
+input[type="submit"].button-destructive:focus, .button.button-destructive:focus {
+    color: #FF0000;
+    background-color: #FFFFFF;
+    border-color: #FF0000;
+}
+

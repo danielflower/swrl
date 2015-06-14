@@ -1,16 +1,16 @@
-<div class="swirl">
-    {{ swirl.email_md5|gravatar-img:40 }}
+<div class="mini-swirl">
+    <header>
+        <!--<img src="{{ swirl.thumbnail_url }}" class="main-image">-->
+        <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
 
-    <div class="mini-swirl-header">
-        <a href="{{swirl.id|swirlurl}}">{{swirl.title}}</a>
-
-        {% if swirl.username }}
-        by <a href="{{swirl.username|user-url}}">@{{swirl.username}}</a>
-        {% endif %}
-    </div>
+        <div class="avatar-with-name">
+            {{ swirl.email_md5|gravatar-img:60 }}
+            <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
+            </address>
+            <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>
+        </div>
+    </header>
     <article>
         {{swirl.review|safe}}
     </article>
-
-    <hr>
 </div>

@@ -1,19 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="buffer">
 
-    <header>
-        <h1 class="headline">Delete a swirl</h1>
-    </header>
+<h1 class="headline">Delete a swirl</h1>
 
-    <p>Are you sure you want to delete <a href="{{swirl.id|swirlurl}}">{{swirl.title}}</a>?</p>
+<p>Are you sure you want to delete <a href="{{swirl.id|swirlurl}}">{{swirl.title}}</a>?</p>
 
-    <form method="POST">
-        {% csrf-field %}
-        <input type="submit" value="Confirm deletion" class="button-destructive">
+<form method="POST">
+    {% csrf-field %}
+    <input type="submit" value="Confirm deletion" class="button-destructive">
 
-        <a href="{{swirl.id|swirlurl}}" class="button">Cancel</a>
+    <a href="{{swirl.id|swirlurl}}" class="button">Cancel</a>
 
-    </form>
-</div>
+</form>
 {% endblock %}

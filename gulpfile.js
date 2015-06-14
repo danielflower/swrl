@@ -30,14 +30,8 @@ var prepareCSS = function (cssSource, fileRegex) {
                 .pipe(gulp.dest(path.dirname(templateHtml)));
         }));
 };
-gulp.task('generate-css', ['clean', 'generate-thirdparty-css'], function () {
+gulp.task('generate-css', ['clean'], function () {
     return prepareCSS(gulp.src('resources/css/app.css'), /app-([a-g0-9]+)\.css/g);
-});
-gulp.task('generate-thirdparty-css', ['clean'], function () {
-    return prepareCSS(
-        gulp.src(['resources/css/normalize-3.0.2.css', 'resources/css/skeleton-2.0.4.css', 'resources/css/font-awesome.min.css'])
-            .pipe(concat('thirdparty.css')), /thirdparty-([a-g0-9]+)\.css/g
-    );
 });
 
 gulp.task('browsify-javascript', ['generate-css'], function () {

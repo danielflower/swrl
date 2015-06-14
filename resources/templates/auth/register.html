@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="buffer">
 <h1>Register</h1>
 
 {% if errors %}
 <p class="validation-error">Sorry, there was a little problem with your details.</p>
+
 <p class="validation-error">{{errors.unknown}}</p>
 {% endif %}
 
@@ -13,12 +13,14 @@
 
     <label for="username">Username</label>
     <span class="validation-error">{{errors.username}}</span>
-    <input id="username" type="text" autocomplete="nickname" name="username" autofocus required maxlength="{{constraints.users.username.max-length}}"
+    <input id="username" type="text" autocomplete="nickname" name="username" autofocus required
+           maxlength="{{constraints.users.username.max-length}}"
            value="{{username}}">
 
     <label for="email">Email</label>
     <span class="validation-error">{{errors.email}}</span>
-    <input id="email" type="email" autocomplete="email" name="email" required maxlength="{{constraints.users.email.max-length}}" value="{{email}}">
+    <input id="email" type="email" autocomplete="email" name="email" required
+           maxlength="{{constraints.users.email.max-length}}" value="{{email}}">
 
     <label for="password">Password</label>
     <span class="validation-error">{{errors.password}}</span>
@@ -30,8 +32,9 @@
     <input id="confirmPassword" type="password" required name="confirmPassword" value="{{confirmPassword}}"
            title="Please enter the same Password as above">
 
-    <input type="submit" value="Register">
+    <div>
+        <input type="submit" value="Register" class="button-primary">
+    </div>
 
 </form>
-</div>
 {% endblock %}

@@ -7,130 +7,127 @@
 <meta property="article:published_time" content="{{swirl.creation_date}}">
 {% endblock %}
 {% block content %}
-<div class="buffer">
 
-    <header>
-        <!--<img src="{{ swirl.thumbnail_url }}" class="main-image">-->
-        <h1 class="headline">{{swirl.title}}</h1>
+<header>
+    <!--<img src="{{ swirl.thumbnail_url }}" class="main-image">-->
+    <h1 class="headline">{{swirl.title}}</h1>
 
-        <div class="avatar-with-name">
-            {{ swirl.email_md5|gravatar-img:60 }}
-            <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
-            </address>
-            <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>
-        </div>
-    </header>
-
-
-    {% if can-edit %}
-
-    <div class="swirl-admin-panel">
-        <a href="{{ swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
-        <a href="{{ swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+    <div class="avatar-with-name">
+        {{ swirl.email_md5|gravatar-img:60 }}
+        <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
+        </address>
+        <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>
     </div>
+</header>
+
+
+{% if can-edit %}
+
+<div class="swirl-admin-panel">
+    <a href="{{ swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
+    <a href="{{ swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+</div>
+
+{% endif %}
+
+<article>
+    {{swirl.review|safe}}
+</article>
+
+{% include "swirls/affiliate-links.html" %}
+
+<div class="responses">
+
+    {% for resp in responses %}
+    <div class="response">
+
+        {{ resp.email_md5|gravatar-img:40 }}
+        <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
+        <span class="response-text">{{resp.summary}}</span>
+
+    </div>
+    {% endfor %}
+    <div class="non-responders">
+        Yet to respond:
+
+        {% for non-responder in non-responders %}
+        <span class="username">{{non-responder.username}}</span>
+        {% endfor %}
+    </div>
+
+    {% if can-respond %}
+    <hr/>
+    <h2>{{type.words.seen-it}}? What did you think?</h2>
+
+    <form method="POST" action="/swirls/{{swirl.id}}/respond" class="respond-form">
+        {% csrf-field %}
+        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
+
+        {% for response in seen-response-options %}
+        <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
+               response-of-current-user.summary %}class="button-primary" {% endifequal %}>
+        {% endfor %}
+
+        <span class="response-divider"> or </span>
+        <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
+               value="{{response-summary}}" class="custom-response" required
+               placeholder="Enter a short response">
+        <input type="submit" name="responseButton" value="Submit" data-button-type="custom"
+               class="custom-response-button">
+
+        <p>Haven't {{type.words.seen-it}} yet?
+            {% for response in not-seen-response-options %}
+            <input type="submit" formnovalidate name="responseButton" value="{{ response }}" {% ifequal response
+                   response-of-current-user.summary %}disabled class="button-primary" {% endifequal %}>
+            {% endfor %}
+        </p>
+
+
+    </form>
 
     {% endif %}
 
-    <article>
-        {{swirl.review|safe}}
-    </article>
-
-    {% include "swirls/affiliate-links.html" %}
-
-    <div class="responses">
-
-        {% for resp in responses %}
-        <div class="response">
-
-            {{ resp.email_md5|gravatar-img:40 }}
-            <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
-            <span class="response-text">{{resp.summary}}</span>
-
-        </div>
-        {% endfor %}
-        <div class="non-responders">
-            Yet to respond:
-
-            {% for non-responder in non-responders %}
-            <span class="username">{{non-responder.username}}</span>
-            {% endfor %}
-        </div>
-
-        {% if can-respond %}
-        <hr/>
-        <h2>{{type.words.seen-it}}? What did you think?</h2>
-
-        <form method="POST" action="/swirls/{{swirl.id}}/respond" class="respond-form">
-            {% csrf-field %}
-            <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
-
-            {% for response in seen-response-options %}
-            <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
-                   response-of-current-user.summary %}class="button-primary" {% endifequal %}>
-            {% endfor %}
-
-            <span class="response-divider"> or </span>
-            <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
-                   value="{{response-summary}}" class="custom-response" required
-                   placeholder="Enter a short response">
-            <input type="submit" name="responseButton" value="Submit" data-button-type="custom"
-                   class="custom-response-button">
-
-            <p>Haven't {{type.words.seen-it}} yet?
-                {% for response in not-seen-response-options %}
-                <input type="submit" formnovalidate name="responseButton" value="{{ response }}" {% ifequal response
-                       response-of-current-user.summary %}disabled class="button-primary" {% endifequal %}>
-                {% endfor %}
-            </p>
-
-
-        </form>
-
-        {% endif %}
-
-
-    </div>
-
-    <div class="comment-area">
-        <h2>Comments</h2>
-
-        <div class="comments">
-
-            {% include "components/comment-list.html" with comments=comments %}
-
-        </div>
-
-        {% if user %}
-
-        <form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
-            {% csrf-field %}
-
-            <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
-            <input type="hidden" class="max-comment-id-field" name="max-comment-id" value="{{max-comment-id}}">
-
-            {{ user.email_md5|gravatar-img:40 }}
-            <div class="comment-body">
-                <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
-
-                <div class="rte">
-                    <textarea name="comment">{{current-comment}}</textarea>
-                    <article class="editor" contenteditable="true"></article>
-                </div>
-
-                <input type="submit" value="Add comment" class="button-primary">
-            </div>
-
-        </form>
-
-        {% else %}
-
-        <p>Sign in to have your say.</p>
-        {% include "auth/logister.html" %}
-
-        {% endif %}
-
-    </div>
-
 
 </div>
+
+<div class="comment-area">
+    <h2>Comments</h2>
+
+    <div class="comments">
+
+        {% include "components/comment-list.html" with comments=comments %}
+
+    </div>
+
+    {% if user %}
+
+    <form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
+        {% csrf-field %}
+
+        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
+        <input type="hidden" class="max-comment-id-field" name="max-comment-id" value="{{max-comment-id}}">
+
+        {{ user.email_md5|gravatar-img:40 }}
+        <div class="comment-body">
+            <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
+
+            <div class="rte">
+                <textarea name="comment">{{current-comment}}</textarea>
+                <article class="editor" contenteditable="true"></article>
+            </div>
+
+            <input type="submit" value="Add comment" class="button-primary">
+        </div>
+
+    </form>
+
+    {% else %}
+
+    <p>Sign in to have your say.</p>
+    {% include "auth/logister.html" %}
+
+    {% endif %}
+
+</div>
+
 {% endblock %}

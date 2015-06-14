@@ -5,8 +5,8 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/thirdparty-17e0aab8f9.css" rel="stylesheet" type="text/css"/>
-    <link href="/immutable/dist/app-9134964138.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-25015e699e.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
     <link rel="apple-touch-icon" sizes="57x57" href="/immutable/icons/apple-touch-icon-57x57.png">
@@ -57,7 +57,18 @@
                 {% if user %}
                 <li><a href="/swirls/inbox"><i class="fa fa-fw fa-inbox"></i> Inbox <span
                         class="nav-count">{{unread-count}}</span></a></li>
-                <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications <span class="nav-count">{{unread-count}}</span></a>
+
+
+
+                {% if response-counts|not-empty %}
+                                    {% for rc in response-counts %}
+                    <li><a href="{{ rc.summary|inboxlink }}"><i class="fa fa-fw"></i> {{rc.summary}} <span
+                            class="nav-count">{{rc.count}}</span></a></li>
+                    {% endfor %}
+                {% endif %}
+
+
+                <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications</a>
                 </li>
                 {% else %}
                 <li><a href="/login"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
@@ -86,7 +97,7 @@
 </div>
 
 <script src="/immutable/js/jquery-2.1.3.min.js"></script>
-<script src="/immutable/dist/all-f386746eb7.js"></script>
+<script src="/immutable/dist/all-00132d9578.js"></script>
 </body>
 </html>
 
