@@ -8,7 +8,8 @@
             [yswrl.auth.auth-repo :as users]
             [clojure.string :refer [trim]]
             [ring.util.response :refer [redirect response]]
-            [yswrl.constraints :refer [max-length]]))
+            [yswrl.constraints :refer [max-length]]
+            [yswrl.links :as links]))
 
 (def password-hash-options {:algorithm :bcrypt+sha512})
 
@@ -34,7 +35,7 @@
 
 (defn redirect-url [return-url]
   (if (or (clojure.string/blank? return-url) (not (.startsWith return-url "/")))
-    "/"
+    (links/inbox)
     return-url))
 
 (defn login-success [user remember-me? return-url req]

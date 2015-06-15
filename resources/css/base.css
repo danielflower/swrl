@@ -164,10 +164,16 @@ p {
 
 .menu-button {
     position: absolute;
-    top: 0;
-    left: 5px;
+    top: 2px;
+    left: 15px;
     font-size: 1.6em;
     transition: transform 500ms;
+}
+.inbox-button {
+    position: absolute;
+    top: 2px;
+    right: 15px;
+    font-size: 1.6em;
 }
 
 .menu-open .menu-button {
@@ -184,9 +190,9 @@ p {
 }
 
 .logo {
-    height: 1.7em;
-    width: 1.7em;
-    margin: 5px 0 0 0;
+    height: 1.8em;
+    width: 1.8em;
+    margin: 8px 0 0 0;
 }
 
 nav {
@@ -243,6 +249,10 @@ nav .nav-selected .nav-count, nav a.nav-selected .fa, nav a.nav-selected, nav a.
     .site-header {
         flex-shrink: 0;
         width: 200px;
+    }
+
+    .inbox-button {
+        display: none;
     }
 
     .menu-button {
