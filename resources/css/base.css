@@ -244,6 +244,10 @@ nav .nav-selected .nav-count, nav a.nav-selected .fa, nav a.nav-selected, nav a.
     color: #FFFFFF;
 }
 
+main {
+    margin: 4px;
+}
+
 @media (min-width: 650px) {
     .container {
         display: flex;
