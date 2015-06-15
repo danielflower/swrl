@@ -164,16 +164,18 @@ p {
 
 .menu-button {
     position: absolute;
-    top: 2px;
-    left: 15px;
-    font-size: 1.6em;
+    top: 0;
+    left: 0;
+    padding: 0 15px;
+    font-size: 2em;
     transition: transform 500ms;
 }
 .inbox-button {
     position: absolute;
-    top: 2px;
-    right: 15px;
-    font-size: 1.6em;
+    top: 0;
+    right: 0;
+    font-size: 2em;
+    padding: 0 15px;
 }
 
 .menu-open .menu-button {
@@ -190,12 +192,13 @@ p {
 }
 
 .logo {
-    height: 1.8em;
-    width: 1.8em;
+    height: 2.1em;
+    width: 2.1em;
     margin: 8px 0 0 0;
 }
 
 nav {
+    position: absolute;
     text-align: left;
     margin: 0;
     background-color: var(--dark-bg-color);
@@ -260,6 +263,7 @@ nav .nav-selected .nav-count, nav a.nav-selected .fa, nav a.nav-selected, nav a.
     }
 
     nav {
+        position: inherit;
         max-height: none;
         overflow-y: auto;
     }
