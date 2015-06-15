@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-2d7ba5c367.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-e867f00961.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -62,7 +62,7 @@
 
 
                 {% for rc in response-counts %}
-                <li><a href="{{ rc.summary|inboxlink }}"><i class="fa fa-fw fa-tag"></i> {{rc.summary}} <span
+                <li><a href="{{ rc.summary|inboxlink }}"><i class="fa fa-fw {{ rc.summary|response-icon }}"></i> {{rc.summary}} <span
                         class="nav-count">{{rc.count}}</span></a></li>
                 {% endfor %}
 

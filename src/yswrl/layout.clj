@@ -12,6 +12,11 @@
             [yswrl.auth.auth-repo :as auth-repo]
             [yswrl.user.notifications-repo :as notifications-repo]))
 
+(def response-icons {
+                     "loved it" "fa-heart"
+                     "meh" "fa-meh-o"
+
+                     })
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
@@ -23,6 +28,7 @@
 (filters/add-filter! :itunesalbum links/itunes-album)
 (filters/add-filter! :inboxlink links/inbox)
 (filters/add-filter! :user-url links/user)
+(filters/add-filter! :response-icon #(get response-icons (clojure.string/lower-case %) "fa-star"))
 (filters/add-filter! :img (fn [src] (if (nil? src) "" (str "<img src=\"" src "\">"))))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
