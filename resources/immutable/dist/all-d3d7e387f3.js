@@ -768,9 +768,9 @@ var _editSwirl = require('./edit-swirl');
 
 var _editSwirl2 = _interopRequireDefault(_editSwirl);
 
-var _respondForm = require('./respond-form');
+var _responseForm = require('./response-form');
 
-var _respondForm2 = _interopRequireDefault(_respondForm);
+var _responseForm2 = _interopRequireDefault(_responseForm);
 
 var _commentForm = require('./comment-form');
 
@@ -784,12 +784,12 @@ $(document).ready(function () {
     _editor2['default'].init($);
     (0, _editSwirl2['default'])();
     (0, _chromeExtension2['default'])();
-    _respondForm2['default'].init($);
+    _responseForm2['default'].init($);
     _commentForm2['default'].init($);
     _menu2['default'].init($);
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./respond-form":11}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./response-form":11}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -1042,7 +1042,7 @@ var RespondForm = (function () {
 
         this.$form = $(form);
         this.response = null;
-        $(form).find('input[type=submit]').click(this.buttonClick.bind(this));
+        $(form).find('button').click(this.buttonClick.bind(this));
 
         var customInputBox = $(form).find('.custom-response');
 
@@ -1070,21 +1070,25 @@ var RespondForm = (function () {
     _createClass(RespondForm, [{
         key: 'setSelectedButton',
         value: function setSelectedButton(val, selectedClass) {
+            console.log('setting', val);
             var buttonIsOnScreen = false;
             var arbitraryButton = null;
-            this.$form.find('input[type=submit]').each(function (i, el) {
+            this.$form.find('button').each(function (i, el) {
                 $(el).removeClass('button-primary');
                 $(el).removeClass('button-loading');
                 if (el.value.toLowerCase() === val.toLowerCase()) {
                     buttonIsOnScreen = true;
                     $(el).addClass(selectedClass);
                 } else {
-                    arbitraryButton = el;
+                    if (!arbitraryButton) {
+                        arbitraryButton = el;
+                    }
                 }
             });
             if (!buttonIsOnScreen) {
                 var newOne = $(arbitraryButton).clone(true);
                 newOne.val(val).addClass(selectedClass);
+                newOne.text(val);
                 this.$form.find('.response-buttons').append(newOne);
             }
         }

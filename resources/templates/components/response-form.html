@@ -4,16 +4,16 @@
 
     <div class="response-buttons">
         {% for response in seen-response-options %}
-        <input type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
-               response-of-current-user.summary %}class="button-primary" {% endifequal %}>
+        <button type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
+               response-of-current-user.summary %}class="button-primary" {% endifequal %}><i class="fa fa-fw {{ response|response-icon }}"></i> {{ response }}</button>
         {% endfor %}
     </div>
 
     <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
            value="{{response-summary}}" class="custom-response" required
            placeholder="Or enter a short response">
-    <input type="submit" name="responseButton" value="Add" data-button-type="custom"
-           class="custom-response-button">
+    <button type="submit" name="responseButton" value="Add" data-button-type="custom"
+           class="custom-response-button">Add</button>
 
 
 </form>

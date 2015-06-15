@@ -13,7 +13,7 @@
     ))
 
   (testing "immutable folder likes big caches and you know it can't lie"
-    (let [response (app (request :get "/immutable/images/swirl-logo-v2.svg"))]
+    (let [response (app (request :get "/immutable/images/swirl-logo-v3.svg"))]
       (is (= 200 (:status response)))
       (is (= nil ((:headers response) "Content-Security-Policy")))
       (is (= "public, max-age=31556926" ((:headers response) "Cache-Control")))))

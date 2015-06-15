@@ -4,7 +4,7 @@ class RespondForm {
     constructor($, form) {
         this.$form = $(form);
         this.response = null;
-        $(form).find('input[type=submit]').click(this.buttonClick.bind(this));
+        $(form).find('button').click(this.buttonClick.bind(this));
 
         var customInputBox = $(form).find('.custom-response');
 
@@ -31,21 +31,25 @@ class RespondForm {
     }
 
     setSelectedButton(val, selectedClass) {
+        console.log('setting', val);
         var buttonIsOnScreen = false;
         var arbitraryButton = null;
-        this.$form.find('input[type=submit]').each((i, el) => {
+        this.$form.find('button').each((i, el) => {
             $(el).removeClass('button-primary');
             $(el).removeClass('button-loading');
             if (el.value.toLowerCase() === val.toLowerCase()) {
                 buttonIsOnScreen = true;
                 $(el).addClass(selectedClass);
             } else {
-                arbitraryButton = el;
+                if (!arbitraryButton) {
+                    arbitraryButton = el;
+                }
             }
         });
         if (!buttonIsOnScreen) {
             var newOne = $(arbitraryButton).clone(true);
             newOne.val(val).addClass(selectedClass);
+            newOne.text(val);
             this.$form.find('.response-buttons').append(newOne);
         }
     }

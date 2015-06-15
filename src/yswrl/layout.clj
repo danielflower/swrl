@@ -15,7 +15,14 @@
 (def response-icons {
                      "loved it" "fa-heart"
                      "meh" "fa-meh-o"
-
+                     "not bad" "fa-thumbs-up"
+                     "ha" "fa-smile-o"
+                     "haha" "fa-smile-o"
+                     "later" "fa-clock-o"
+                     "not for me" "fa-times"
+                     "purchased" "fa-usd"
+                     "wtf" "fa-question"
+                     "um" "fa-question"
                      })
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
