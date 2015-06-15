@@ -1,6 +1,7 @@
 (ns yswrl.features.swirl-features
   (:require [yswrl.handler :refer [app]]
             [yswrl.test.scaffolding :as s]
+            [net.cgrand.enlive-html :as enlive]
             [yswrl.links :as linky]
             [yswrl.features.actions :as actions]
             [kerodon.core :refer :all]
@@ -170,7 +171,7 @@
 
           ; Can immediately make a response and it will be in the response inbox
           (visit (@test-state :view-swirl-uri))
-          (actions/submit "Loved it")
+          (actions/submit  [(enlive/attr= :value "Loved it")])
           (visit (links/inbox "Loved it"))
           (follow "The onion video")
 
