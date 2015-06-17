@@ -6,7 +6,6 @@ import setupSwirlEdit from './edit-swirl';
 import responseForm from './response-form';
 import commentForm from './comment-form';
 import menu from './menu';
-import timeAgo from './time-ago';
 
 $(document).ready(function () {
     editor.init($);
@@ -15,5 +14,4 @@ $(document).ready(function () {
     responseForm.init($);
     commentForm.init($);
     menu.init($);
-    timeAgo.init($);
 });

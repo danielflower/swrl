@@ -7,7 +7,7 @@
             {{ swirl.email_md5|gravatar-img:60 }}
             <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
             </address>
-            <time pubdate datetime="{{swirl.creation_date}}">{{swirl.creation_date|date:longDate}}</time>
+            {{swirl.creation_date|timetag}}
         </div>
     </header>
     <article>
