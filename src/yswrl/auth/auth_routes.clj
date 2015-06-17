@@ -50,16 +50,17 @@
         response
         (assoc :session newSession)))))
 
-(defn get-user-by-name-and-password [username password]
-  (let [user (users/get-user username)]
+(defn get-user-by-username-or-email-and-password [username-or-email password]
+  (let [user-attempt-1 (users/get-user username-or-email)
+        user (if (nil? user-attempt-1) (users/get-user-by-email username-or-email) user-attempt-1)]
     (if (and user (hashers/check password (:password user)))
       user
       nil)))
 
-(defn attempt-login [username password remember-me? return-url req]
-  (if-let [user (get-user-by-name-and-password username password)]
+(defn attempt-login [username-or-email password remember-me? return-url req]
+  (if-let [user (get-user-by-username-or-email-and-password username-or-email password)]
     (login-success user remember-me? return-url req)
-    (login-page :username username :error true :return-url return-url)))
+    (login-page :username username-or-email :error true :return-url return-url)))
 
 
 (defn hash-password [unhashed options]

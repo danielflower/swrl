@@ -23,7 +23,7 @@
 
 (defn login-as [visit user]
   (-> visit
-      (fill-in "Username" (user :username))
+      (fill-in "Username or email" (user :username))
       (fill-in "Password" s/test-user-password)
       (press "Login")
       (follow-redirect)))
@@ -424,7 +424,7 @@
         (assert-swirl-title-in-header consumption-verb (swirl :title))
 
         ; ...and the user can register from the page and be redirected
-        (fill-in "Username" (str "Ampter-Jamp" (s/now)))
+        (fill-in "Username or email" (str "Ampter-Jamp" (s/now)))
         (fill-in "Email" (str "ampter" (s/now) "@example.org"))
         (fill-in "Password" "A#~$&#(@*~$&__f 1234")
         (actions/submit "Register")
