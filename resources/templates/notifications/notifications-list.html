@@ -6,6 +6,10 @@
     <ul>
     {% for note in swirl-note.notifications %}
         <li>
+            {% if not any note.date_emailed note.date_seen %}
+            <span class="new"><i class="fa fa-star"></i> New: </span>
+            {% endif %}
+
             {% ifequal note.notification_type "R" %}
             {{note.instigator-username}} recommended this to you
             {% endifequal %}
@@ -15,6 +19,7 @@
             {% ifequal note.notification_type "P" %}
             {{note.instigator-username}} responded <strong>{{note.summary}}</strong>
             {% endifequal %}
+
         </li>
     {% endfor %}
     </ul>

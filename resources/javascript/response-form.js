@@ -31,7 +31,6 @@ class RespondForm {
     }
 
     setSelectedButton(val, selectedClass) {
-        console.log('setting', val);
         var buttonIsOnScreen = false;
         var arbitraryButton = null;
         this.$form.find('button').each((i, el) => {

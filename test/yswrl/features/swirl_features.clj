@@ -480,17 +480,19 @@
 
           (within [:h1]
                   (has (text? "What's new")))
+          (within [:span.new]
+                  (has (text? " New: ")))
 
           (follow "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-          ; returning back to the notification page, the notification, having been seen, should have disappeared
+          ; returning back to the notification page, the notification, having been seen, should not have the 'new' tag
           (visit (links/notifications))
 
           (within [:h1]
                   (has (text? "What's new")))
-          (within [:.notifications :p]
-                  (has (text? "Nothing to see here")))
+          (within [:span.new]
+                  (has (text? "")))
           ))))
 
 (deftest extension-from-chrome-page-redirects-to-homepage

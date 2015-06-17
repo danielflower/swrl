@@ -151,3 +151,10 @@ article iframe {
 .swirl-link {
     font-weight: bold;
 }
+
+.new {
+    font-weight: bold;
+}
+.new .fa {
+    color: #ffbf00;
+}

@@ -4,7 +4,6 @@
     [compojure.core :refer [defroutes GET POST]]
     [yswrl.links :as links]
     [ring.util.response :refer [status redirect response not-found]]
-    [clojure.tools.logging :as log]
     [yswrl.auth.guard :as guard]
     [yswrl.db :as db]
     [yswrl.swirls.postman :as postman]
@@ -105,7 +104,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   []
   (let [users (users-with-pending-notifications)]
     (doseq [user users]
-      (let [notifications (notifications-repo/get-for-user (user :id))
+      (let [notifications (notifications-repo/get-for-user-email (user :id))
             html (create-notification-email-body user notifications)
             to [{:email (:email user) :name (:username user)}]]
         (mark-email-sent user)
@@ -114,7 +113,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 (defn view-notifications-page [user]
   (layout/render "notifications/view-all.html" {:title         "What's new"
                                                 :pageTitle     "What's new"
-                                                :notifications (group-by-swirl (notifications-repo/get-for-user (user :id)))}))
+                                                :notifications (group-by-swirl (notifications-repo/get-for-user-page (user :id)))}))
 
 (defroutes notification-routes
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))

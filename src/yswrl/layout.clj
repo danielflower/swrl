@@ -47,7 +47,7 @@
     (let [current-user (get (get request :session) :user)
           unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)
           response-counts (if current-user (lookups/get-response-count-for-user (get current-user :id -1)) nil)
-          notifications-count (if current-user (count (notifications-repo/get-for-user (get current-user :id nil))) nil)]
+          notifications-count (if current-user (count (notifications-repo/get-for-user-email (get current-user :id nil))) nil)]
 
       (content-type
         (->> (assoc params

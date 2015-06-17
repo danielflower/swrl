@@ -3,7 +3,7 @@
             [yswrl.swirls.swirl-routes :as swirl-routes]
             [yswrl.user.notifications :refer [recommendation new-response new-comment mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body]]
             [yswrl.links :as links]
-            [yswrl.user.notifications-repo :refer [get-for-user]])
+            [yswrl.user.notifications-repo :refer [get-for-user-email get-for-user-page]])
   (:use clojure.test)
   (:import (java.sql Timestamp)))
 
@@ -16,14 +16,14 @@
         set-of-users))
 
 (defn notification-types-for [user]
-  (vec (map #(% :notification_type) (get-for-user (user :id)))))
+  (vec (map #(% :notification_type) (get-for-user-email (user :id)))))
 
 (deftest notifications
   (testing "are generated for the recipient whenever a swirl is recommended to them"
     (let [recipient (create-test-user)
           author (create-test-user)
           swirl (create-swirl "generic" (author :id) "Animals" "Yeah" [(recipient :username)])
-          notes (get-for-user (recipient :id))
+          notes (get-for-user-email (recipient :id))
           ]
       (is (= 1 (count notes)))
       (let [note (first notes)]
@@ -39,7 +39,7 @@
           swirl (create-swirl "generic" (author :id) "Something to respond to" "Yeah" [(responder :username)])
           _ (swirl-routes/handle-comment (swirl :id) "This is a comment" responder)
           _ (swirl-routes/handle-response (swirl :id) nil "Loved it" responder)
-          notes (get-for-user (author :id))]
+          notes (get-for-user-email (author :id))]
       (is (= 2 (count notes)) notes)
       (let [comment (first notes)]
         (is (= (swirl :id) (comment :swirl_id)))
@@ -77,19 +77,21 @@
           author (create-test-user)
           swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)])
           _ (mark-as-seen (swirl :id) recipient)
-          notes (get-for-user (recipient :id))
+          notes (get-for-user-email (recipient :id))
           ]
       (is (= 0 (count notes)))
       ))
 
-  (testing "an emailed notification is no longer returned"
+  (testing "an emailed notification is no longer returned for emails, but is for the webpage"
     (let [recipient (create-test-user)
           author (create-test-user)
           _ (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)])
           _ (mark-email-sent recipient)
-          notes (get-for-user (recipient :id))
+          for-email (get-for-user-email (recipient :id))
+          for-page (get-for-user-page (recipient :id))
           ]
-      (is (= 0 (count notes)))
+      (is (= 0 (count for-email)))
+      (is (= 1 (count for-page)))
       ))
 
   (testing "nothing happens if a swirl was already seen, or a random user that was never notified of the swirl or an anonymous user sees the swirl"
@@ -154,7 +156,7 @@
           _ (swirl-routes/handle-response (swirl1 :id) nil "Loved it" another-user)
           _ (swirl-routes/handle-comment (swirl1 :id) "This is a response" author)
           swirl2 (create-swirl "generic" (author :id) "Feed the animals" "Meh" [(recipient :username) (another-user :username)])
-          html (create-notification-email-body recipient (get-for-user (recipient :id)))
+          html (create-notification-email-body recipient (get-for-user-email (recipient :id)))
           ]
       (is (.contains html (str "Dear " (recipient :username))) html)
       (is (.contains html (str "<a href=\"" (links/absolute (links/swirl (swirl1 :id))) "\">All Day</a>")) html)
