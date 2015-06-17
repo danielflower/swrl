@@ -95,6 +95,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
                          })
                       swirl-id-to-notifications)))))
 
+
 (defn create-notification-email-body [recipient notes]
   (postman/email-body "notifications/notification-email.html"
                       {:recipient recipient :notifications (group-by-swirl notes) :url-if-in-email links/base-url}))

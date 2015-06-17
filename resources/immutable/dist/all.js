@@ -780,6 +780,10 @@ var _menu = require('./menu');
 
 var _menu2 = _interopRequireDefault(_menu);
 
+var _timeAgo = require('./time-ago');
+
+var _timeAgo2 = _interopRequireDefault(_timeAgo);
+
 $(document).ready(function () {
     _editor2['default'].init($);
     (0, _editSwirl2['default'])();
@@ -787,9 +791,10 @@ $(document).ready(function () {
     _responseForm2['default'].init($);
     _commentForm2['default'].init($);
     _menu2['default'].init($);
+    _timeAgo2['default'].init($);
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./response-form":11}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./response-form":11,"./time-ago":12}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -1120,4 +1125,40 @@ var init = function init($) {
 
 module.exports = { init: init };
 
-},{"./http.js":9}]},{},[4]);
+},{"./http.js":9}],12:[function(require,module,exports){
+"use strict";
+
+function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return date.toDateString();
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days ago";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours ago";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes ago";
+    }
+    return Math.floor(seconds) + " seconds ago";
+}
+
+function init($) {
+    $("time").each(function (i, el) {
+        var $el = $(el);
+        var date = new Date($el.attr("datetime"));
+        $el.html(timeSince(date));
+    });
+}
+
+module.exports = { init: init };
+
+},{}]},{},[4]);

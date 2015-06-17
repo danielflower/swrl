@@ -10,6 +10,8 @@
             <span class="new"><i class="fa fa-star"></i> New: </span>
             {% endif %}
 
+            <time datetime="{{ note.date_created|date:"yyyy-MM-dd'T'HH:mmZ" }}">{{ note.date_created|date:mediumDateTime }}</time>
+
             {% ifequal note.notification_type "R" %}
             {{note.instigator-username}} recommended this to you
             {% endifequal %}

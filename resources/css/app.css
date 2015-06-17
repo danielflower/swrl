@@ -152,6 +152,11 @@ article iframe {
     font-weight: bold;
 }
 
+
+
+.notifications time {
+    color: #9d9d9d;
+}
 .new {
     font-weight: bold;
 }
