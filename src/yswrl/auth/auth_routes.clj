@@ -83,8 +83,9 @@
             (let [message (cond
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_username_key\"") {:username '("A user with that username already exists. Please select a different username.")}
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_email_key\"") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
-                            :else {:unknown '("There was an unexpected error. Please try again later.")})]
-              (log/error "Error while registering user" user e)
+                            :else {:unknown '("There was an unexpected error. Please try again later.")})
+                  password-redacted-user (dissoc user :password :confirmPassword)]
+              (log/error "Error while registering user" password-redacted-user e)
               (registration-page (assoc user :errors message)))))))))
 
 (defn fixed-length-password
