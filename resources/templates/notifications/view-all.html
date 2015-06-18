@@ -11,7 +11,7 @@
 
             {% for sn in notifications %}
             <li>
-                {% if not any sn.note.date_emailed sn.note.date_seen %}
+                {% if not sn.note.date_seen %}
                 <span class="new"><i class="fa fa-star"></i> New: </span>
                 {% endif %}
 

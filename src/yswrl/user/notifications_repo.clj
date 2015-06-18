@@ -4,6 +4,12 @@
 
 (use 'korma.core)
 
+(defn unseen-notifications-count [user-id]
+  (:cnt (first (select db/notifications
+          (aggregate (count :*) :cnt)
+          (where {:target_user_id user-id})
+          (where {:date_seen      nil})))))
+
 (defn get-notifications-for-user [user-id]
   (-> (select* db/notifications)
       (fields :swirl_id :subject_id :target_user_id :notification_type [:swirls.title :swirl-title] :summary
