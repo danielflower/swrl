@@ -98,7 +98,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn create-notification-email-body [recipient notes]
   (postman/email-body "notifications/notification-email.html"
-                      {:recipient recipient :notifications (group-by-swirl notes) :url-if-in-email links/base-url}))
+                      {:recipient recipient :notifications (group-by-swirl notes) }))
 
 (defn send-pending-notifications
   "email pending notifications"
@@ -111,10 +111,15 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
         (mark-email-sent user)
         (postman/send-email to "Swirl updates" html)))))
 
+(defn get-notification-view-model [user]
+  (let [raw (notifications-repo/get-for-user-page (user :id))]
+    (vec (filter #(not (nil? (% :swirl))) (map (fn [n] {:note n
+                       :swirl (lookups/get-swirl-if-allowed-to-view (n :swirl_id) (:target_user_id (user :id)))}) raw)))))
+
 (defn view-notifications-page [user]
   (layout/render "notifications/view-all.html" {:title         "What's new"
                                                 :pageTitle     "What's new"
-                                                :notifications (group-by-swirl (notifications-repo/get-for-user-page (user :id)))}))
+                                                :notifications (get-notification-view-model user)}))
 
 (defroutes notification-routes
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))
