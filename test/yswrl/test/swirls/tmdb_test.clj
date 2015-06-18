@@ -12,11 +12,13 @@
       (is (= {:results [
                         {:title "Garden State"
                          :tmdb-id 401
+                         :create-url "/create/movie?tmdb-id=401"
                          :thumbnail-url "http://image.tmdb.org/t/p/w92/u7IASCZ02Q94SYklSIR2609inis.jpg"
                          :large-image-url "http://image.tmdb.org/t/p/w342/u7IASCZ02Q94SYklSIR2609inis.jpg"}
 
                         {:title "The Marshall Tucker Band - Live From The Garden State 1981"
                          :tmdb-id 324409
+                         :create-url "/create/movie?tmdb-id=324409"
                          :thumbnail-url "http://image.tmdb.org/t/p/w92/gQU9pdJ4rGN8GvxaL2auvJ5mmXw.jpg"
                          :large-image-url "http://image.tmdb.org/t/p/w342/gQU9pdJ4rGN8GvxaL2auvJ5mmXw.jpg"}
 
@@ -28,6 +30,7 @@
       (is (= {:results [
                         {:title "Black Mirror"
                          :tmdb-id 42009
+                         :create-url "/create/tv?tmdb-id=42009"
                          :thumbnail-url "http://image.tmdb.org/t/p/w92/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
                          :large-image-url "http://image.tmdb.org/t/p/w342/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"}
                         ]}

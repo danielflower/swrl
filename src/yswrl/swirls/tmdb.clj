@@ -8,29 +8,30 @@
 
 (defn search-movies [search-term]
   (if (clojure.string/blank? search-term)
-    { :results [] }
+    {:results []}
     (let [encoded (links/url-encode search-term)
           url (str "https://api.themoviedb.org/3/search/movie?api_key=" TMDB-API-KEY "&query=" encoded)
           result (client/get url {:accept :json :as :json})] {
-                                                              :results (map (fn [r] {:title         (r :title)
-                                                                                     :tmdb-id        (r :id)
-                                                                                     :large-image-url    (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
-                                                                                     :thumbnail-url (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
+                                                              :results (map (fn [r] {:title           (r :title)
+                                                                                     :tmdb-id         (r :id)
+                                                                                     :create-url      (str "/create/movie?tmdb-id=" (r :id))
+                                                                                     :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
+                                                                                     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
                                                               })))
 
 (defn get-movie-from-tmdb-id [tmdb-id]
   (let [url (str "https://api.themoviedb.org/3/movie/" tmdb-id "?api_key=" TMDB-API-KEY)
         result (client/get url {:accept :json :as :json})
         body (result :body)]
-    {:title         (body :title)
-     :overview   (body :overview)
-     :thumbnail-url (str THUMBNAIL-URL-PREFIX (body :poster_path))
+    {:title           (body :title)
+     :overview        (body :overview)
+     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
-     :tmdb-id (body :id)
-     :imdb-id (body :imdb_id)
-     :url (body :homepage)
-     :tagline (let [tagline (body :tagline)] (if (clojure.string/blank? tagline) "None" tagline) )
-     :genres        (map (fn [r] {:genre (r :name)}) (body :genres))}
+     :tmdb-id         (body :id)
+     :imdb-id         (body :imdb_id)
+     :url             (body :homepage)
+     :tagline         (let [tagline (body :tagline)] (if (clojure.string/blank? tagline) "None" tagline))
+     :genres          (map (fn [r] {:genre (r :name)}) (body :genres))}
     ))
 
 (defn get-tmdb-id-from-imdb-id [imdb-id]
@@ -41,23 +42,24 @@
         tv_id (:id (first (:tv_results body)))]
     (if (not (nil? movie_id))
       {:tmdb-id movie_id
-       :type "movie"}
+       :type    "movie"}
       (if (not (nil? tv_id))
         {:tmdb-id tv_id
-         :type "tv"}
+         :type    "tv"}
         nil))
     ))
 
 (defn search-tv [search-term]
   (if (clojure.string/blank? search-term)
-    { :results [] }
+    {:results []}
     (let [encoded (links/url-encode search-term)
           url (str "https://api.themoviedb.org/3/search/tv?api_key=" TMDB-API-KEY "&query=" encoded)
           result (client/get url {:accept :json :as :json})] {
-                                                              :results (map (fn [r] {:title         (r :name)
-                                                                                     :tmdb-id        (r :id)
-                                                                                     :large-image-url    (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
-                                                                                     :thumbnail-url (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
+                                                              :results (map (fn [r] {:title           (r :name)
+                                                                                     :tmdb-id         (r :id)
+                                                                                     :create-url      (str "/create/tv?tmdb-id=" (r :id))
+                                                                                     :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
+                                                                                     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
                                                               }))
   )
 
@@ -65,11 +67,11 @@
   (let [url (str "https://api.themoviedb.org/3/tv/" tmdb-id "?api_key=" TMDB-API-KEY)
         result (client/get url {:accept :json :as :json})
         body (result :body)]
-    {:title         (body :name)
-     :thumbnail-url (str THUMBNAIL-URL-PREFIX (body :poster_path))
+    {:title           (body :name)
+     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
-     :tmdb-id (body :id)
+     :tmdb-id         (body :id)
      ;;:imdb-id (body :imdb_id) ;; API doesn't provide this yet, sadface
-     :url (body :homepage)
+     :url             (body :homepage)
      }
     ))

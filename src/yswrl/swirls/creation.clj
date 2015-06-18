@@ -108,19 +108,19 @@
 
 (defn search-music-page [search-term]
   (let [search-result (itunes/search-albums search-term)]
-    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result})))
+    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result :search-box-placeholder "Album or Song" })))
 
 (defn search-books-page [search-term]
   (let [search-result (amazon/search-books search-term)]
-    (layout/render "swirls/search_books.html" {:search-term search-term :search-result search-result})))
+    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result :search-box-placeholder "Book title or author" })))
 
 (defn search-movies-page [search-term]
   (let [search-result (tmdb/search-movies search-term)]
-    (layout/render "swirls/search_movies.html" {:search-term search-term :search-result search-result})))
+    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result :search-box-placeholder "Movie name" })))
 
 (defn search-tv-page [search-term]
   (let [search-result (tmdb/search-tv search-term)]
-    (layout/render "swirls/search_tv.html" {:search-term search-term :search-result search-result})))
+    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result :search-box-placeholder "TV show title" })))
 
 
 (defn asin-from-url [url]
@@ -159,7 +159,7 @@
 
 (defn create-from-url-handler [url title req]
   (let [uri (URI. url)]
-    (if (= "chrome" (.getScheme (java.net.URI. url)))
+    (if (= "chrome" (.getScheme (URI. url)))
       (redirect "/")
       (guard/requires-login #(handle-creation-from-url uri title (session-from req))))))
 

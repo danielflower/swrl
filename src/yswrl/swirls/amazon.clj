@@ -41,7 +41,7 @@
 
 (defn search-url [bookname]
   (createEncryptedUrl (assoc (timestamp params) :Keywords bookname :Operation "ItemSearch" :SearchIndex "Books"
-                                    )))
+                                                )))
 
 (defn handle-amazon [bookname]
   (let [url (search-url bookname)
@@ -53,13 +53,14 @@
   (if (clojure.string/blank? search-term)
     {:results []}
     (let [result (handle-amazon search-term)] {
-                                                                            :results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
-                                                                                                   :title           (apply str (xml-> r :ItemAttributes :Title text))
-                                                                                                   :author          (apply str (xml-> r :ItemAttributes :Author text))
-                                                                                                   :book-id         (apply str (xml-> r :ASIN text))
-                                                                                                   :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
-                                                                                                   :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
-                                                                            })))
+                                               :results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
+                                                                      :title           (apply str (xml-> r :ItemAttributes :Title text))
+                                                                      :author          (apply str (xml-> r :ItemAttributes :Author text))
+                                                                      :create-url      (str "/create/book?book-id=" (apply str (xml-> r :ASIN text)))
+                                                                      :book-id         (apply str (xml-> r :ASIN text))
+                                                                      :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
+                                                                      :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
+                                               })))
 
 
 (defn item-url [item-id]

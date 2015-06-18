@@ -89,13 +89,13 @@ article{
 
 .search-result {
     clear: both;
-    margin: -1px;
     border: 1px solid #CCCCCC;
     overflow: auto;
-    padding: 15px;
+    padding: 5px;
+    margin-bottom: 10px;
 }
 
-.searchbox{
+.searchbox {
     padding-top: 20px;
 }
 
@@ -105,10 +105,14 @@ article{
     padding-right: 35px;
 }
 
-
 .search-result em {
     color: #737373;
     font-style: italic;
+}
+
+.search-result h2 {
+    margin: 0;
+    padding: 0;
 }
 
 

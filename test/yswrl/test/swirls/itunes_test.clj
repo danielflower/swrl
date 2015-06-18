@@ -13,9 +13,11 @@
     (with-faked-responses
       (is (= {:results [
                         {:type "Album" :title "Mellon Collie and the Infinite Sadness (Deluxe Edition)" :artist "Smashing Pumpkins"
+                         :create-url "/create/album?itunes-album-id=721291853"
                          :itunes-id 721291853 :thumbnail-url "http://is2.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.60x60-50.jpg"}
 
                         {:type "Album" :title "Mellon Collie and the Infinite Sadness (Remastered)" :artist "Smashing Pumpkins"
+                         :create-url "/create/album?itunes-album-id=721224313"
                          :itunes-id 721224313 :thumbnail-url "http://is3.mzstatic.com/image/pf/us/r30/Music/v4/1b/82/d7/1b82d7ab-f019-e3bc-2f9d-45ea878d1cef/05099997856559.60x60-50.jpg"}
                         ]
               } (itunes/search-albums "Mellon Collie")))))
