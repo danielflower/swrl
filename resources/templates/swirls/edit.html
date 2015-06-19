@@ -37,8 +37,13 @@
         {% for friend in contacts %}
         <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
         {% endfor %}
-        <input type="text" name="emails" class="recipients" maxlength="1000" placeholder="username or emails"
+        <input type="text" list="users" name="emails" class="recipients" maxlength="1000" placeholder="username or emails"
                value="{{who}}">
+        <datalist id="users">
+            {% for user in unrelated %}
+            <option value="{{ user.username }}">
+            {% endfor %}
+        </datalist>
     </div>
 
     <div class="button-panel">

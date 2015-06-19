@@ -21,3 +21,15 @@
           (fields [:another_user_id :user-id] :users.username)
           (join :inner db/users (= :users.id :network_connections.another_user_id))
           (where {:user_id user-id :relation_type (name relation-type)})))
+
+(defn get-unrelated-users [user-id max-results skip]
+  (db/query "with all_users as (select * from users u),
+known_users as
+(select u.id from users u
+join network_connections nc on nc.another_user_id = u.id
+where ( nc.user_id = ? and nc.relation_type = 'knows'))
+select * from all_users a
+where a.id not in (select k.id from known_users k)
+and a.id != ?
+limit ?
+offset ?" user-id user-id max-results skip))

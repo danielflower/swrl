@@ -20,13 +20,15 @@
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
           contacts (network/get-relations (author :id) :knows)
-          not-added (filter #(not (contains? already-suggested %)) contacts)]
+          not-added (filter #(not (contains? already-suggested %)) contacts)
+          unrelated (network/get-unrelated-users (author :id) 100 0)]
       (layout/render "swirls/edit.html" {:id                swirl-id
                                          :subject           (swirl :title)
                                          :review            (swirl :review)
                                          :type              (type-of swirl)
                                          :contacts          not-added
-                                         :already-suggested already-suggested}))))
+                                         :already-suggested already-suggested
+                                         :unrelated unrelated}))))
 (defn delete-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (layout/render "swirls/delete.html" {:swirl swirl})))

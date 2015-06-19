@@ -1,6 +1,7 @@
 (ns yswrl.test.user.networking-test
   (:require [yswrl.test.scaffolding :refer :all]
-            [yswrl.user.networking :as networking])
+            [yswrl.user.networking :as networking]
+            [yswrl.db :as db])
   (:use clojure.test))
 
 (deftest networking
@@ -25,4 +26,21 @@
       (is (empty? (networking/get-relations (user3 :id) :knows)))
       (is (equal-ignoring-order? [relation1 relation2] (networking/get-relations (user3 :id) :ignores))))
 
-    ))
+    )
+
+  (testing "Getting unrelated-users"
+    (let [sum_users (:count (db/query-single "select count(*) from users"))
+          skip (let [skip (- sum_users 50)] (if (neg? skip) 0 skip))
+          bob (create-test-user)
+          user-bob-knows (create-test-user)
+          user-bob-doesnt-know (create-test-user)
+          _ (networking/store (bob :id) :knows (user-bob-knows :id))
+          unrelated-users (networking/get-unrelated-users (bob :id) 100 skip)]
+
+      (is (some #{user-bob-doesnt-know}
+                unrelated-users))
+      (is (not (some #{user-bob-knows}
+                  unrelated-users)))
+      (is (not (some #{bob}
+                  unrelated-users)))
+      )))
