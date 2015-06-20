@@ -10,6 +10,8 @@
             [yswrl.links :as links]
             [yswrl.swirls.lookups :as lookups]
             [yswrl.auth.auth-repo :as auth-repo]
+            [clj-time.format :as f]
+            [clj-time.coerce :as c]
             [yswrl.user.notifications-repo :as notifications-repo]))
 
 (def response-icons {
@@ -25,6 +27,9 @@
                      "um" "fa-question"
                      })
 
+(def iso-date-formatter (f/formatter "yyyy-MM-dd'T'HH:mmZ"))
+(def human-friendly-date-formatter (f/formatter "dd MMM yyyy"))
+
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
@@ -37,6 +42,9 @@
 (filters/add-filter! :user-url links/user)
 (filters/add-filter! :response-icon #(get response-icons (clojure.string/lower-case %) "fa-star"))
 (filters/add-filter! :img (fn [src] (if (nil? src) "" (str "<img src=\"" src "\">"))))
+(filters/add-filter! :timetag (fn [javaDate]
+                             (let [date (c/from-date javaDate)]
+                               [:safe (str "<time datetime=\"" (f/unparse iso-date-formatter date) "\">" (f/unparse human-friendly-date-formatter date) "</time>")])))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
 (filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
@@ -47,7 +55,7 @@
     (let [current-user (get (get request :session) :user)
           unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)
           response-counts (if current-user (lookups/get-response-count-for-user (get current-user :id -1)) nil)
-          notifications-count (if current-user (count (notifications-repo/get-for-user (get current-user :id nil))) nil)]
+          notifications-count (if current-user (notifications-repo/unseen-notifications-count (get current-user :id)) nil)]
 
       (content-type
         (->> (assoc params

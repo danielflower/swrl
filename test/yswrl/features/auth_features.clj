@@ -34,7 +34,7 @@
 
         ; Login with wrong username
         (actions/follow-login-link)
-        (fill-in "Username" username)
+        (fill-in "Username or email" username)
         (fill-in "Password" "wrong password")
         (press "Login")
         (within [:.validation-error]

@@ -50,16 +50,17 @@
         response
         (assoc :session newSession)))))
 
-(defn get-user-by-name-and-password [username password]
-  (let [user (users/get-user username)]
+(defn get-user-by-username-or-email-and-password [username-or-email password]
+  (let [user-attempt-1 (users/get-user username-or-email)
+        user (if (nil? user-attempt-1) (users/get-user-by-email username-or-email) user-attempt-1)]
     (if (and user (hashers/check password (:password user)))
       user
       nil)))
 
-(defn attempt-login [username password remember-me? return-url req]
-  (if-let [user (get-user-by-name-and-password username password)]
+(defn attempt-login [username-or-email password remember-me? return-url req]
+  (if-let [user (get-user-by-username-or-email-and-password username-or-email password)]
     (login-success user remember-me? return-url req)
-    (login-page :username username :error true :return-url return-url)))
+    (login-page :username username-or-email :error true :return-url return-url)))
 
 
 (defn hash-password [unhashed options]
@@ -83,8 +84,9 @@
             (let [message (cond
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_username_key\"") {:username '("A user with that username already exists. Please select a different username.")}
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_email_key\"") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
-                            :else {:unknown '("There was an unexpected error. Please try again later.")})]
-              (log/error "Error while registering user" user e)
+                            :else {:unknown '("There was an unexpected error. Please try again later.")})
+                  password-redacted-user (dissoc user :password :confirmPassword)]
+              (log/error "Error while registering user" password-redacted-user e)
               (registration-page (assoc user :errors message)))))))))
 
 (defn fixed-length-password

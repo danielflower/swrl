@@ -133,8 +133,8 @@ fieldset {
 
 
 
-input[type="submit"].button-loading, .button.button-loading, input[type="submit"].button-loading:hover, .button.button-loading:hover,
-input[type="submit"].button-loading:focus, .button.button-loading:focus {
+input[type="submit"].button-loading, button.button-loading, input[type="submit"].button-loading:hover, button.button-loading:hover,
+input[type="submit"].button-loading:focus, button.button-loading:focus {
     background-color: #cbcbcb;
     border-color: #9d9d9d;
 }

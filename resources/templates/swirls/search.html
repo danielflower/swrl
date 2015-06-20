@@ -10,7 +10,7 @@
 {% endif %}
 
 <form method="GET">
-    <input type="search" name="search-term" class="searchbox" maxlength="1000" placeholder="Album or Song"
+    <input type="search" name="search-term" class="searchbox" maxlength="1000" placeholder="{{ search-box-placeholder }}"
            value="{{search-term}}">
     <input type="submit" value="Search" class="button-primary">
 </form>
@@ -18,9 +18,10 @@
 {% for result in search-result.results %}
 <div class="search-result">
 
-    <img src="{{ result.thumbnail-url }}" width="60" height="60">
-    <h2><a href="/create/album?itunes-album-id={{ result.itunes-id }}">{{ result.title }}</a></h2>
+    <img src="{{ result.thumbnail-url }}" width="80" height="80">
+    <h2><a href="{{ result.create-url }}">{{ result.title }}</a></h2>
     {% if result.artist %} by <em>{{ result.artist }}</em> {% endif %}
+    {% if result.author %} by <em>{{ result.author }}</em> {% endif %}
 
 </div>
 {% endfor %}

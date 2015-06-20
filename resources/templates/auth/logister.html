@@ -15,7 +15,7 @@
             {% csrf-field %}
             <input type="hidden" name="return-url" value="{{request.uri}}">
 
-            <label>Username<input type="text" autocomplete="nickname" name="username" required
+            <label>Username or email<input type="text" autocomplete="nickname" name="username" required
                    value="{{ logister-info.login-username }}" maxlength="{{constraints.users.username.max-length}}"></label>
 
             <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"

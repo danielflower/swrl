@@ -5,13 +5,14 @@
 
 (defn search-albums [search-term]
   (if (clojure.string/blank? search-term)
-    { :results [] }
+    {:results []}
     (let [encoded (links/url-encode search-term)
           url (str "https://itunes.apple.com/search?term=" encoded "&media=music&entity=album")
           result (client/get url {:accept :json :as :json})] {
                                                               :results (map (fn [r] {:type          (r :collectionType)
                                                                                      :title         (r :collectionName)
                                                                                      :artist        (r :artistName)
+                                                                                     :create-url    (str "/create/album?itunes-album-id=" (r :collectionId))
                                                                                      :itunes-id     (r :collectionId)
                                                                                      :thumbnail-url (r :artworkUrl60)}) ((result :body) :results))
                                                               })))

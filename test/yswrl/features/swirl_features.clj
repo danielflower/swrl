@@ -23,7 +23,7 @@
 
 (defn login-as [visit user]
   (-> visit
-      (fill-in "Username" (user :username))
+      (fill-in "Username or email" (user :username))
       (fill-in "Password" s/test-user-password)
       (press "Login")
       (follow-redirect)))
@@ -424,7 +424,7 @@
         (assert-swirl-title-in-header consumption-verb (swirl :title))
 
         ; ...and the user can register from the page and be redirected
-        (fill-in "Username" (str "Ampter-Jamp" (s/now)))
+        (fill-in "Username or email" (str "Ampter-Jamp" (s/now)))
         (fill-in "Email" (str "ampter" (s/now) "@example.org"))
         (fill-in "Password" "A#~$&#(@*~$&__f 1234")
         (actions/submit "Register")
@@ -480,17 +480,19 @@
 
           (within [:h1]
                   (has (text? "What's new")))
+          (within [:span.new]
+                  (has (text? " New: ")))
 
           (follow "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-          ; returning back to the notification page, the notification, having been seen, should have disappeared
+          ; returning back to the notification page, the notification, having been seen, should not have the 'new' tag
           (visit (links/notifications))
 
           (within [:h1]
                   (has (text? "What's new")))
-          (within [:.notifications :p]
-                  (has (text? "Nothing to see here")))
+          (within [:span.new]
+                  (has (text? "")))
           ))))
 
 (deftest extension-from-chrome-page-redirects-to-homepage

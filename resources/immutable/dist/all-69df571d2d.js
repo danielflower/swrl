@@ -1070,7 +1070,6 @@ var RespondForm = (function () {
     _createClass(RespondForm, [{
         key: 'setSelectedButton',
         value: function setSelectedButton(val, selectedClass) {
-            console.log('setting', val);
             var buttonIsOnScreen = false;
             var arbitraryButton = null;
             this.$form.find('button').each(function (i, el) {
