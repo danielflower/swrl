@@ -176,42 +176,31 @@ article{
 .new .fa {
     color: #ffbf00;
 }
-main{
-    position:relative;
+
+
+
+.home {
+    padding: 80px 0 0 50px;
+    margin: -4px -20px -20px -20px; /* I don't know why it needs -4 top margin - probably boz menu is ill-defined */
+    min-height: 100vh;
+    background: url('/immutable/images/friendsv2_small.jpg') no-repeat fixed right top;
+}
+.home p {
+    margin-top: 30px;
+    max-width: 300px;
+    line-height: 1.6em;
+    background-color: rgba(168, 233, 255, 0.5);
 }
 @media (min-width: 650px) {
 
-    .wrap {
-        position: absolute;
-        min-width: 100%;
-        min-height: 100%;
-        background-size: 100% 100%;
+    .home {
+        margin: -20px;
         background: url('/immutable/images/friendsv2.jpg') no-repeat fixed right bottom;
-        margin: -20px -20px -20px -20px;
+    }
+    .home p {
+        background-color: transparent;
     }
 }
-.featureimg{
-    position: relative;
-
-}
-.home{
-    max-width: 100%;
-}
-.biglogo{
-    position: absolute;
-    top: 50px;
-    height: 70px;
-    left: 50px;
-}
 .subhead{
-    position: absolute;
-    top: 120px;
-    left: 50px;
     font-size: 30px;
-}
-.desc{
-    position: absolute;
-    top: 200px;
-    max-width: 300px;
-    left: 50px;
 }
