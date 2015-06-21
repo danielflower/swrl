@@ -176,10 +176,16 @@ article{
 .new .fa {
     color: #ffbf00;
 }
-.wrap{
+main{
+    position:relative;
+}
+.wrap {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
     background-size: 100% 100%;
     background: url('/immutable/images/friends1.jpg') no-repeat fixed right bottom;
-    margin: -20px -20px -0px 0px;
+    margin: -20px -20px -20px -20px;
 }
 .featureimg{
     position: relative;
