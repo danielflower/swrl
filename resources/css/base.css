@@ -245,6 +245,7 @@ nav .nav-selected .nav-count, nav a.nav-selected .fa, nav a.nav-selected, nav a.
 
 main {
     padding: 4px;
+    margin-bottom: 100px;
 }
 
 @media (min-width: 650px) {

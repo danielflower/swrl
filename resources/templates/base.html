@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-08e00a604b.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-2347c76748.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -57,6 +57,10 @@
             <ul>
                 <li><a href="/swirls/start" class="create-link"><i class="fa fa-fw fa-plus"></i> Create</a></li>
                 {% if user %}
+                <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications <span
+                        class="nav-count">{{notifications-count}}</span></a>
+                </li>
+
                 <li><a href="/swirls/inbox"><i class="fa fa-fw fa-inbox"></i> Inbox <span
                         class="nav-count">{{unread-count}}</span></a></li>
 
@@ -67,9 +71,6 @@
                 {% endfor %}
 
 
-                <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications <span
-                        class="nav-count">{{notifications-count}}</span></a>
-                </li>
                 {% else %}
                 <li><a href="/login" class="login-link"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
                 <li><a href="/register"><i class="fa fa-fw fa-user-plus"></i> Register</a></li>
