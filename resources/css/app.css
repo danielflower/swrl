@@ -21,16 +21,25 @@
 .avatar-with-name {
     width: 100%;
     text-align: center;
+    padding-top: 20px;
+    padding-bottom: 40px;
 }
 .avatar-with-name .gravatar{
     display: block;
     margin: 0 auto;
 }
 
+nav ul{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 
 .mini-swirl h2 {
     margin-top: 0px;
     text-align: center;
+    padding-right: 60px;
+    padding-left: 60px;
 }
 
 
@@ -166,4 +175,34 @@ article{
 }
 .new .fa {
     color: #ffbf00;
+}
+main{
+    background-size: 100% 100%;
+    background: url('/immutable/images/friends1.jpg') no-repeat fixed right bottom;
+    margin: -20px -20px -0px 0px;
+}
+.featureimg{
+    position: relative;
+
+}
+.home{
+    max-width: 100%;
+}
+.biglogo{
+    position: absolute;
+    top: 50px;
+    height: 70px;
+    left: 50px;
+}
+.subhead{
+    position: absolute;
+    top: 120px;
+    left: 50px;
+    font-size: 30px;
+}
+.desc{
+    position: absolute;
+    top: 200px;
+    max-width: 300px;
+    left: 50px;
 }
