@@ -494,3 +494,18 @@
           (within [:span.new]
                   (has (text? "")))
           ))))
+
+(deftest firehose-can-load
+  (with-faked-responses
+    (let [user (s/create-test-user)
+          swirl (s/create-swirl "generic" (user :id) "The latest swirl" "This is a great swirl" [])]
+      (-> (session app)
+          (visit "/")
+          (follow [:.firehose-link])
+          (follow "Next 20 swirls >")
+          (follow "< Previous 20 swirls")
+          (follow (swirl :title))
+          (within [:h1]
+                  (has (text? (swirl :title))))
+
+          ))))

@@ -28,7 +28,7 @@
                                          :type              (type-of swirl)
                                          :contacts          not-added
                                          :already-suggested already-suggested
-                                         :unrelated unrelated}))))
+                                         :unrelated         unrelated}))))
 (defn delete-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (layout/render "swirls/delete.html" {:swirl swirl})))
@@ -36,6 +36,13 @@
 (defn view-inbox [count current-user]
   (let [swirls (lookups/get-swirls-awaiting-response (:id current-user) 2000 count)]
     (layout/render "swirls/list.html" {:title "Swirl Inbox" :pageTitle "Inbox" :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+
+(defn view-firehose [count]
+  (let [swirls (lookups/get-all-swirls 20 count)]
+    (layout/render "swirls/list.html" {:title "Firehose" :pageTitle "Firehose" :swirls swirls
+                                       :paging-url-prefix "/swirls?from="
+                                       :countFrom (str count) :countTo (+ count 20)})))
+
 
 (defn view-inbox-by-response [count current-user submitted-response]
   (let [swirls (lookups/get-swirls-by-response (:id current-user) 2000 count submitted-response)]
@@ -46,10 +53,10 @@
 (defn get-html-of-comments-since [user swirl-id comment-id-to-start-from]
   (if (lookups/get-swirl-if-allowed-to-view swirl-id (user :id))
     (let [comments (repo/get-swirl-comments swirl-id comment-id-to-start-from)]
-    (response {:maxId        (reduce max 0 (map #(:id %) comments))
-               :count (count comments)
-               :html (layout/render-string "components/comment-list.html"
-                                             {:comments comments})}))))
+      (response {:maxId (reduce max 0 (map #(:id %) comments))
+                 :count (count comments)
+                 :html  (layout/render-string "components/comment-list.html"
+                                              {:comments comments})}))))
 
 (defn logister-info [is-logged-in suggestion-code]
   (try
@@ -155,6 +162,7 @@
 (defn post-comment-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
 
+
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/edit" [id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review)))
@@ -167,6 +175,7 @@
            (post-response-route "/swirls")
            (post-comment-route "/swirls")
 
+           (GET "/swirls" [from] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from))))
 
            (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))

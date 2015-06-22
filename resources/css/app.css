@@ -201,3 +201,8 @@ article{
 .subhead{
     font-size: 1.6em;
 }
+
+.paging {
+    text-align: right;
+    margin: 20px 0;
+}
