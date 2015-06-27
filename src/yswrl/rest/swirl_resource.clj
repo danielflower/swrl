@@ -10,9 +10,12 @@
 (defroutes swirl-rest-routes
            (context "/api/v1/swirls" []
              (defroutes swirl-rest-routes-erm
-                        (GET "/:id{[0-9]+}/comments" [id comment-id-start :as req] (swirl-routes/get-html-of-comments-since
-                                                                                     (swirl-routes/session-from req) (Long/parseLong id) (Long/parseLong comment-id-start)))
-                        (swirl-routes/post-response-route "")
-                        (swirl-routes/post-comment-route "")
-                        ))
-           )
+                        (GET "/:id{[0-9]+}/comments" [id comment-id-start :as req]
+                          (swirl-routes/get-html-of-comments-since
+                            (swirl-routes/session-from req)
+                            (Long/parseLong id)
+                            (if (clojure.string/blank? comment-id-start) 0 (Long/parseLong comment-id-start))))
+                          (swirl-routes/post-response-route "")
+                          (swirl-routes/post-comment-route "")
+                          ))
+             )
