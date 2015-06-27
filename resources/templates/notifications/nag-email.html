@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Swirl Reminder Email</title>
+</head>
+<body>
+
+<p>Dear {{recipient.username}},</p>
+
+<p>You have been recommended to check out some things but have yet to respond. Just click the title
+to respond.</p>
+
+{% for swirl in swirls %}
+<div>
+    <h2><a href="{{ swirl.id|swirlurl|absoluteurl }}">{{swirl.title}}</a></h2>
+    <p>Recommended by {{ swirl.email_md5|gravatar-img:60 }}
+        <strong>{{ swirl.username }}</strong> on {{swirl.creation_date|timetag}}</p>
+</div>
+{% endfor %}
+
+
+</body>
+</html>

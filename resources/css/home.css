@@ -3,7 +3,7 @@
     padding: 80px 0 0 50px;
     min-height: 100vh;
     height: 100%;
-    background: url('/immutable/images/friendsv3_small.jpg') no-repeat fixed right top;
+    background: url('/immutable/images/friendsv3_small.jpg') no-repeat;
     background-size: cover;
 }
 .home p {
@@ -16,7 +16,7 @@
 
     .home {
         margin: -20px;
-        background: url('/immutable/images/friendsv2.jpg') no-repeat fixed right bottom;
+        background: url('/immutable/images/friendsv2.jpg') no-repeat;
     }
 }
 .subhead{
