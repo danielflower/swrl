@@ -44,10 +44,12 @@
 
 
 (defn- search-username [desired-name suffix]
+  (loop [desired-name desired-name
+         suffix suffix]
   (let [current (str desired-name suffix)]
     (if (user-exists current)
       (recur desired-name (inc suffix))
-      current)))
+      current))))
 
 (defn suggest-username [desired-name]
   (if (not (user-exists desired-name))

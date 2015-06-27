@@ -1,0 +1,24 @@
+.home {
+    margin: -4px;
+    padding: 80px 0 0 50px;
+    min-height: 100vh;
+    height: 100%;
+    background: url('/immutable/images/friendsv3_small.jpg') no-repeat fixed right top;
+    background-size: cover;
+}
+.home p {
+    margin-top: 30px;
+    max-width: 300px;
+    line-height: 1.6em;
+    background-color: rgba(168, 233, 255, 0.1);
+}
+@media (min-width: 650px) {
+
+    .home {
+        margin: -20px;
+        background: url('/immutable/images/friendsv2.jpg') no-repeat fixed right bottom;
+    }
+}
+.subhead{
+    font-size: 1.6em;
+}
