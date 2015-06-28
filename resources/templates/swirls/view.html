@@ -9,7 +9,7 @@
             <h1 class="headline type-color">{{model.swirl.title}}</h1>
 
             <div class="avatar-with-name">
-                {{ model.swirl.email_md5|gravatar-img:40 }}
+                {{ model.swirl.email_md5|gravatar-img:30 }}
                 <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
                 {{model.swirl.creation_date|timetag}}
             </div>

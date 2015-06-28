@@ -200,7 +200,7 @@ nav ul {
      display: inline;
  }
 
-nav .avatar img {
+nav .avatar img, img.gravatar {
     border: 3px solid #6DA8D4;
 }
 

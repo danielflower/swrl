@@ -17,7 +17,7 @@ gulp.task('clean', function (cb) {
     return del([dist + '/**/*'], cb);
 });
 
-var templateHtml = 'resources/templates/base.html';
+var templateHtml = 'resources/templates/base-no-footer.html';
 
 var prepareCSS = function (cssSource, fileRegex) {
     return cssSource

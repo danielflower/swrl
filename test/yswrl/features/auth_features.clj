@@ -23,7 +23,7 @@
         (fill-in "Confirm Password" password)
         (press "Register")
         (follow-redirect)
-        (follow username)
+        (follow [:.logged-in-user])
         (within [:h1]
                 (has (text? (str "Reviews by " username))))
 
