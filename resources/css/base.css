@@ -289,3 +289,44 @@ hr {
     border-width: 0;
     border-top: 1px solid var(--dark-bg-color);
 }
+
+
+
+.border-bottom {
+    border-bottom: 7px solid var(--generic-color);
+}
+.tv .border-bottom {
+    border-bottom-color: var(--tv-color);
+}
+.album .border-bottom {
+    border-bottom-color: var(--album-color);
+}
+.movie .border-bottom {
+    border-bottom-color: var(--movie-color);
+}
+.book .border-bottom {
+    border-bottom-color: var(--book-color);
+}
+.video .border-bottom {
+    border-bottom-color: var(--video-color);
+}
+
+.type-color {
+    color: var(--generic-color);
+}
+.tv .type-color {
+    color: var(--tv-color);
+}
+.album .type-color {
+    color: var(--album-color);
+}
+.movie .type-color {
+    color: var(--movie-color);
+}
+.book .type-color {
+    color: var(--book-color);
+}
+.video .type-color {
+    color: var(--video-color);
+}
+

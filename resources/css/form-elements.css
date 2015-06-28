@@ -152,3 +152,22 @@ input[type="submit"].button-destructive:focus, .button.button-destructive:focus 
     border-color: #FF0000;
 }
 
+
+input[type="submit"].swirl-button, button.swirl-button {
+    color: #FFFFFF;
+}
+.tv .swirl-button {
+    background-color: var(--tv-color);
+}
+.album .swirl-button {
+    background-color: var(--album-color);
+}
+.movie .swirl-button {
+    background-color: var(--movie-color);
+}
+.book .swirl-button {
+    background-color: var(--book-color);
+}
+.video .swirl-button {
+    background-color: var(--video-color);
+}

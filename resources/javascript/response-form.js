@@ -15,7 +15,7 @@ class RespondForm {
             if (response) {
                 this.setSelectedButton(response, 'button-loading');
                 http.post('/swirls/' + swirlId + '/respond', {responseButton: response}).then(() => {
-                    this.setSelectedButton(response, 'button-primary');
+                    this.setSelectedButton(response, 'swirl-button');
                 });
             }
             return false;
@@ -34,7 +34,7 @@ class RespondForm {
         var buttonIsOnScreen = false;
         var arbitraryButton = null;
         this.$form.find('button').each((i, el) => {
-            $(el).removeClass('button-primary');
+            $(el).removeClass('swirl-button');
             $(el).removeClass('button-loading');
             if (el.value.toLowerCase() === val.toLowerCase()) {
                 buttonIsOnScreen = true;

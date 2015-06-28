@@ -5,7 +5,7 @@
     <div class="response-buttons">
         {% for response in model.seen-response-options %}
         <button type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
-               model.response-of-current-user.summary %}class="button-primary" {% endifequal %}><i class="fa fa-fw {{ response|response-icon }}"></i> {{ response }}</button>
+               model.response-of-current-user.summary %}class="swirl-button" {% endifequal %}><i class="fa fa-fw {{ response|response-icon }}"></i> {{ response }}</button>
         {% endfor %}
     </div>
 

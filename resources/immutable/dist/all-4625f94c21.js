@@ -1058,7 +1058,7 @@ var RespondForm = (function () {
             if (response) {
                 _this.setSelectedButton(response, 'button-loading');
                 _httpJs2['default'].post('/swirls/' + swirlId + '/respond', { responseButton: response }).then(function () {
-                    _this.setSelectedButton(response, 'button-primary');
+                    _this.setSelectedButton(response, 'swirl-button');
                 });
             }
             return false;
@@ -1078,7 +1078,7 @@ var RespondForm = (function () {
             var buttonIsOnScreen = false;
             var arbitraryButton = null;
             this.$form.find('button').each(function (i, el) {
-                $(el).removeClass('button-primary');
+                $(el).removeClass('swirl-button');
                 $(el).removeClass('button-loading');
                 if (el.value.toLowerCase() === val.toLowerCase()) {
                     buttonIsOnScreen = true;

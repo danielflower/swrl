@@ -2,6 +2,7 @@
 @import "editor.css";
 @import "home.css";
 @import "swirl-list.css";
+@import "swirl-detail.css";
 
 #swirl-title {
     width: 90%;
