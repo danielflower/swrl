@@ -16,7 +16,7 @@
 (defn get-users-to-nag []
   (db/query "SELECT id FROM users WHERE
   id IN (SELECT recipient_id FROM suggestions WHERE recipient_id IS NOT NULL AND response_id IS NULL)
-  AND (date_last_emailed IS NULL OR date_last_emailed < (now() - interval '1 week'))
+  AND (date_last_nagged IS NULL OR date_last_nagged < (now() - interval '1 week'))
   "))
 
 (defn email-user [user-id]
@@ -28,7 +28,7 @@
                         (postman/email-body "notifications/nag-email.html"
                                             {:swirls swirls :recipient recipient}))
     (update db/users
-            (set-fields {:date_last_emailed (now)})
+            (set-fields {:date_last_nagged (now)})
             (where {:id user-id}))))
 
 (defn run-email-job []
