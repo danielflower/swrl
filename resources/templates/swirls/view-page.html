@@ -12,4 +12,10 @@
  {% include "swirls/view.html" %}
 </div>
 
+{% if user %}
+{% else %}
+<p>Sign in to have your say.</p>
+{% include "auth/logister.html" %}
+{% endif %}
+
 {% endblock %}
