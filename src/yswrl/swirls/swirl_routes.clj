@@ -39,9 +39,9 @@
 
 (defn view-firehose [count]
   (let [swirls (lookups/get-all-swirls 20 count)]
-    (layout/render "swirls/list.html" {:title "Firehose" :pageTitle "Firehose" :swirls swirls
+    (layout/render "swirls/list.html" {:title             "Firehose" :pageTitle "Firehose" :swirls swirls
                                        :paging-url-prefix "/swirls?from="
-                                       :countFrom (str count) :countTo (+ count 20)})))
+                                       :countFrom         (str count) :countTo (+ count 20)})))
 
 
 (defn view-inbox-by-response [count current-user submitted-response]
@@ -98,11 +98,23 @@
 
           can-edit is-author]
       (notifications/mark-as-seen id current-user)
-      (layout/render "swirls/view.html" {
-                                         :title                    title :swirl swirl :swirl-links swirl-links :type type :is-author is-author
-                                         :responses                responses :comments comments :max-comment-id max-comment-id :can-respond can-respond :can-edit can-edit
-                                         :logister-info            logister-info :non-responders non-responders
-                                         :response-of-current-user response-of-current-user :seen-response-options seen-response-options}))))
+      (layout/render "swirls/view-page.html"
+                     {:title         title
+                      :logister-info logister-info
+                      :model         {
+                                      :title                    title
+                                      :swirl                    swirl
+                                      :swirl-links              swirl-links
+                                      :type                     type
+                                      :is-author                is-author
+                                      :responses                responses
+                                      :comments                 comments
+                                      :max-comment-id           max-comment-id
+                                      :can-respond              can-respond
+                                      :can-edit                 can-edit
+                                      :non-responders           non-responders
+                                      :response-of-current-user response-of-current-user
+                                      :seen-response-options    seen-response-options}}))))
 
 (defn view-swirls-by [authorName]
   (if-let [author (user-repo/get-user authorName)]

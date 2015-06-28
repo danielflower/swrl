@@ -1,16 +1,16 @@
-<form method="POST" action="/swirls/{{swirl.id}}/respond" class="respond-form">
+<form method="POST" action="/swirls/{{model.swirl.id}}/respond" class="respond-form">
     {% csrf-field %}
-    <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
+    <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
 
     <div class="response-buttons">
-        {% for response in seen-response-options %}
+        {% for response in model.seen-response-options %}
         <button type="submit" name="responseButton" value="{{ response }}" formnovalidate {% ifequal response
-               response-of-current-user.summary %}class="button-primary" {% endifequal %}><i class="fa fa-fw {{ response|response-icon }}"></i> {{ response }}</button>
+               model.response-of-current-user.summary %}class="button-primary" {% endifequal %}><i class="fa fa-fw {{ response|response-icon }}"></i> {{ response }}</button>
         {% endfor %}
     </div>
 
     <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
-           value="{{response-summary}}" class="custom-response" required
+           value="{{model.response-summary}}" class="custom-response" required
            placeholder="Or enter a short response">
     <button type="submit" name="responseButton" value="Add" data-button-type="custom"
            class="custom-response-button">Add</button>

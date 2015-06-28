@@ -1,37 +1,27 @@
-{% extends "base.html" %}
-{% block head %}
-<meta property="og:site_name" content="Swirl">
-<meta property="og:title" content="You should {{type.words.watch}} {{swirl.title}}"/>
-<meta property="og:image" content="{{swirl.thumbnail_url}}"/>
-<meta property="og:type" content="article">
-<meta property="article:published_time" content="{{swirl.creation_date}}">
-{% endblock %}
-{% block content %}
-
 <header>
-    <!--<img src="{{ swirl.thumbnail_url }}" class="main-image">-->
-    <h1 class="headline">{{swirl.title}}</h1>
+    <!--<img src="{{ model.swirl.thumbnail_url }}" class="main-image">-->
+    <h1 class="headline">{{model.swirl.title}}</h1>
 
     <div class="avatar-with-name">
-        {{ swirl.email_md5|gravatar-img:60 }}
-        <address class="author"><a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
+        {{ model.swirl.email_md5|gravatar-img:60 }}
+        <address class="author"><a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
         </address>
-        {{swirl.creation_date|timetag}}
+        {{model.swirl.creation_date|timetag}}
     </div>
 </header>
 
 
-{% if can-edit %}
+{% if model.can-edit %}
 
 <div class="swirl-admin-panel">
-    <a href="{{ swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
-    <a href="{{ swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+    <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
+    <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
 
-    {% if non-responders|not-empty %}
+    {% if model.non-responders|not-empty %}
     <div class="non-responders">
         Yet to respond:
 
-        {% for non-responder in non-responders %}
+        {% for non-responder in model.non-responders %}
         <a class="username" rel="author" href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
         {% endfor %}
     </div>
@@ -41,14 +31,14 @@
 {% endif %}
 
 <article>
-    {{swirl.review|safe}}
+    {{model.swirl.review|safe}}
 </article>
 
 {% include "swirls/affiliate-links.html" %}
 
 <div class="responses">
 
-    {% for resp in responses %}
+    {% for resp in model.responses %}
     <div class="response">
 
         {{ resp.email_md5|gravatar-img:40 }}
@@ -59,9 +49,9 @@
     {% endfor %}
 
 
-    {% if can-respond %}
+    {% if model.can-respond %}
     <hr/>
-    <h2>{{type.words.seen-it|capitalize}}? What did you think?</h2>
+    <h2>{{model.type.words.seen-it|capitalize}}? What did you think?</h2>
 
     {% include "components/response-form.html" %}
 
@@ -75,24 +65,24 @@
 
     <div class="comments">
 
-        {% include "components/comment-list.html" with comments=comments %}
+        {% include "components/comment-list.html" %}
 
     </div>
 
     {% if user %}
 
-    <form method="POST" action="/swirls/{{swirl.id}}/comment" class="comment">
+    <form method="POST" action="/swirls/{{model.swirl.id}}/comment" class="comment">
         {% csrf-field %}
 
-        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{swirl.id}}">
-        <input type="hidden" class="max-comment-id-field" name="max-comment-id" value="{{max-comment-id}}">
+        <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
+        <input type="hidden" class="max-comment-id-field" name="max-comment-id" value="{{model.max-comment-id}}">
 
         {{ user.email_md5|gravatar-img:40 }}
         <div class="comment-body">
             <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
 
             <div class="rte">
-                <textarea name="comment">{{current-comment}}</textarea>
+                <textarea name="comment">{{model.current-comment}}</textarea>
                 <article class="editor" contenteditable="true"></article>
             </div>
 
@@ -109,5 +99,3 @@
     {% endif %}
 
 </div>
-
-{% endblock %}

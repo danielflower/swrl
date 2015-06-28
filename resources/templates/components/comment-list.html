@@ -1,4 +1,4 @@
-{% for comment in comments %}
+{% for comment in model.comments %}
 <div class="comment">
     {{ comment.email_md5|gravatar-img:40 }}
 

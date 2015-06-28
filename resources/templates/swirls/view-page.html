@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block head %}
+<meta property="og:site_name" content="Swirl">
+<meta property="og:title" content="You should {{type.words.watch}} {{swirl.title}}"/>
+<meta property="og:image" content="{{swirl.thumbnail_url}}"/>
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="{{swirl.creation_date}}">
+{% endblock %}
+{% block content %}
+
+<div class="swirl-full-view">
+ {% include "swirls/view.html" %}
+</div>
+
+{% endblock %}
