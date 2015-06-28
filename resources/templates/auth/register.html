@@ -1,40 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Register</h1>
+<div class="standard-page padded">
+    <h1>Register</h1>
 
-{% if errors %}
-<p class="validation-error">Sorry, there was a little problem with your details.</p>
+    {% if errors %}
+    <p class="validation-error">Sorry, there was a little problem with your details.</p>
 
-<p class="validation-error">{{errors.unknown}}</p>
-{% endif %}
+    <p class="validation-error">{{errors.unknown}}</p>
+    {% endif %}
 
-<form method="POST" action="/register">
-    {% csrf-field %}
+    <form method="POST" action="/register">
+        {% csrf-field %}
 
-    <label for="username">Username</label>
-    <span class="validation-error">{{errors.username}}</span>
-    <input id="username" type="text" autocomplete="nickname" name="username" autofocus required
-           maxlength="{{constraints.users.username.max-length}}"
-           value="{{username}}">
+        <label for="username">Username</label>
+        <span class="validation-error">{{errors.username}}</span>
+        <input id="username" type="text" autocomplete="nickname" name="username" autofocus required
+               maxlength="{{constraints.users.username.max-length}}"
+               value="{{username}}">
 
-    <label for="email">Email</label>
-    <span class="validation-error">{{errors.email}}</span>
-    <input id="email" type="email" autocomplete="email" name="email" required
-           maxlength="{{constraints.users.email.max-length}}" value="{{email}}">
+        <label for="email">Email</label>
+        <span class="validation-error">{{errors.email}}</span>
+        <input id="email" type="email" autocomplete="email" name="email" required
+               maxlength="{{constraints.users.email.max-length}}" value="{{email}}">
 
-    <label for="password">Password</label>
-    <span class="validation-error">{{errors.password}}</span>
-    <input id="password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-           name="password" value="{{password}}">
+        <label for="password">Password</label>
+        <span class="validation-error">{{errors.password}}</span>
+        <input id="password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+               name="password" value="{{password}}">
 
-    <label for="confirmPassword">Confirm Password</label>
-    <span class="validation-error">{{errors.confirmPassword}}</span>
-    <input id="confirmPassword" type="password" required name="confirmPassword" value="{{confirmPassword}}"
-           title="Please enter the same Password as above">
+        <label for="confirmPassword">Confirm Password</label>
+        <span class="validation-error">{{errors.confirmPassword}}</span>
+        <input id="confirmPassword" type="password" required name="confirmPassword" value="{{confirmPassword}}"
+               title="Please enter the same Password as above">
 
-    <div>
-        <input type="submit" value="Register" class="button-primary">
-    </div>
+        <div>
+            <input type="submit" value="Register" class="button-primary">
+        </div>
 
-</form>
+    </form>
+</div>
 {% endblock %}

@@ -1,54 +1,56 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="standard-page padded">
+
+    <h1>Create a swirl</h1>
+
+    {% if error %}
+
+    <p class="validation-error">Sorry, there was an error. Please try again.</p>
+
+    {% endif %}
+
+    <form method="POST" action="{{ id|swirlediturl }}" class="edit-swirl">
+        {% csrf-field %}
 
 
-<h1>Create a swirl</h1>
-
-{% if error %}
-
-<p class="validation-error">Sorry, there was an error. Please try again.</p>
-
-{% endif %}
-
-<form method="POST" action="{{ id|swirlediturl }}" class="edit-swirl">
-    {% csrf-field %}
+        <label for="swirl-title">You should {{type.words.watch}}</label>
+        <input id="swirl-title" type="text" name="subject" required
+               maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
+               placeholder="Title of a movie, book, song, album, etc">
 
 
-    <label for="swirl-title">You should {{type.words.watch}}</label>
-    <input id="swirl-title" type="text" name="subject" required
-           maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
-           placeholder="Title of a movie, book, song, album, etc">
+        <div class="rte">
+            <textarea name="review">{{review}}</textarea>
+            <article class="editor" contenteditable="true"></article>
+        </div>
 
 
-    <div class="rte">
-        <textarea name="review">{{review}}</textarea>
-        <article class="editor" contenteditable="true"></article>
-    </div>
+        <div class="user-select-box">
+            <h2>Sharing</h2>
 
-
-    <div class="user-select-box">
-        <h2>Sharing</h2>
-
-        <p>Enter usernames or email addresses of the people you would like to share this with.</p>
-        {% for friend in already-suggested %}
-        <label title="This cannot be unselected as an email has already been sent to them"
-                ><input type="checkbox" value="{{ friend.username }}" checked disabled>{{ friend.username }}</label>
-        {% endfor %}
-        {% for friend in contacts %}
-        <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
-        {% endfor %}
-        <input type="text" list="users" name="emails" class="recipients" maxlength="1000" placeholder="username or emails"
-               value="{{who}}">
-        <datalist id="users">
-            {% for user in unrelated %}
-            <option value="{{ user.username }}">
+            <p>Enter usernames or email addresses of the people you would like to share this with.</p>
+            {% for friend in already-suggested %}
+            <label title="This cannot be unselected as an email has already been sent to them"
+                    ><input type="checkbox" value="{{ friend.username }}" checked disabled>{{ friend.username }}</label>
             {% endfor %}
-        </datalist>
-    </div>
+            {% for friend in contacts %}
+            <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
+            {% endfor %}
+            <input type="text" list="users" name="emails" class="recipients" maxlength="1000"
+                   placeholder="username or emails"
+                   value="{{who}}">
+            <datalist id="users">
+                {% for user in unrelated %}
+                <option value="{{ user.username }}">
+                    {% endfor %}
+            </datalist>
+        </div>
 
-    <div class="button-panel">
-        <input type="submit" value="Publish Swirl" class="button-primary">
-    </div>
+        <div class="button-panel">
+            <input type="submit" value="Publish Swirl" class="button-primary">
+        </div>
 
-</form>
+    </form>
+</div>
 {% endblock %}

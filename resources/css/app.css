@@ -17,18 +17,14 @@
 }
 
 .gravatar {
+    vertical-align: middle;
     border-radius: 50%;
 }
 
 .avatar-with-name {
-    width: 100%;
-    text-align: center;
     padding-top: 20px;
     padding-bottom: 40px;
-}
-.avatar-with-name .gravatar{
-    display: block;
-    margin: 0 auto;
+    padding-left: 10px;
 }
 
 nav ul{
@@ -37,7 +33,9 @@ nav ul{
 }
 
 
-
+h1.headline {
+    margin-top: 40px;
+}
 
 .comment {
     clear: both;
@@ -140,9 +138,6 @@ article{
     width: 100%;
 }
 
-.swirl-admin-panel {
-    text-align: center;
-}
 
 
 .start-boxes {

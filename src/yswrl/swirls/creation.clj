@@ -27,11 +27,7 @@
   (let [metadata (website/get-metadata url)
         _ (log/debug "Metadata for" url ":" metadata)
         swirl-title (or title (metadata :title) "This website")
-        image-tag (if (not (nil? (metadata :image-url))) (str "<img width=\"200\" src=\"" (metadata :image-url) "\"><p>") "")
-        review (str
-                 "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>"
-                 (or (metadata :embed-html) image-tag)
-                 "<p data-ph=\"....or write something here\"></p>")
+        review (str "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>")
         swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url))]
     (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id)))))
@@ -45,8 +41,7 @@
         title (album :title)
         thumbnail-url (album :thumbnail-url)
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
-        review (str "<img src=\"" thumbnail-url "\">"
-                    "<p data-ph=\"Say something about this album here\"></p>"
+        review (str "<p data-ph=\"Say something about this album here\"></p>"
                     "<p>Track listing:</p><ol>" track-html "</ol>")]
     (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url)]
       (repo/add-link (swirl :id) (link-types/itunes-id :code) itunes-collection-id)
@@ -58,7 +53,7 @@
         title (str (book :title) publish-line)
         big-img-url (book :big-img-url)
         url (book :url)
-        review (str "<img src=\"" big-img-url "\">" "<p data-ph=\"Say something about this item here....\"></p>")
+        review (str "<p data-ph=\"Say something about this book here....\"></p>")
         swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url)]
     (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
@@ -68,8 +63,7 @@
   ([tmdb-id user url]
    (if tmdb-id
      (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
-           review (str "<img src=\"" (movie :large-image-url) "\"><p>"
-                       "<p data-ph=\"Say something about this movie here....\"></p>")
+           review "<p data-ph=\"Say something about this movie here....\"></p>"
            swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url))]
        (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
        (redirect (links/edit-swirl (swirl :id)))
@@ -83,8 +77,7 @@
   ([tmdb-id user url]
    (if tmdb-id
      (let [tv-show (tmdb/get-tv-from-tmdb-id tmdb-id)
-           review (str "<img src=\"" (tv-show :large-image-url) "\"><p>"
-                       "<p data-ph=\"Say something about this TV Show here....\"></p>")
+           review "<p data-ph=\"Say something about this TV Show here....\"></p>"
            swirl (repo/save-draft-swirl "tv" (user :id) (tv-show :title) review (tv-show :large-image-url))]
        (repo/add-link (swirl :id) (link-types/website-url :code) (tv-show :url))
        (redirect (links/edit-swirl (swirl :id)))

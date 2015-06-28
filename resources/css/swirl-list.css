@@ -20,11 +20,11 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     align-items: stretch;
 }
 .mini-swirl {
-    width: 350px;
+    width: 320px;
     max-width: 90vw;
     flex-grow: 0;
     flex-shrink: 0;
@@ -86,19 +86,19 @@
     padding: 4px 10px;
 }
 
-.mini-swirl.tv .swirl-type {
+.tv .swirl-type, .tv-background-color {
     background-color: var(--tv-color);
 }
-.mini-swirl.album .swirl-type {
+.album .swirl-type, .album-background-color {
     background-color: var(--album-color);
 }
-.mini-swirl.movie .swirl-type {
+.movie .swirl-type, .movie-background-color {
     background-color: var(--movie-color);
 }
-.mini-swirl.book .swirl-type {
+.book .swirl-type, .book-background-color {
     background-color: var(--book-color);
 }
-.mini-swirl.video .swirl-type {
+.video .swirl-type, .video-background-color {
     background-color: var(--video-color);
 }
 

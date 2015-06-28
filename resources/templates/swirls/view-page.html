@@ -7,13 +7,14 @@
 <meta property="article:published_time" content="{{swirl.creation_date}}">
 {% endblock %}
 {% block content %}
+<div class="standard-page">
+    {% include "swirls/view.html" %}
 
- {% include "swirls/view.html" %}
+    {% if user %}
+    {% else %}
+    <p>Sign in to have your say.</p>
+    {% include "auth/logister.html" %}
+    {% endif %}
 
-{% if user %}
-{% else %}
-<p>Sign in to have your say.</p>
-{% include "auth/logister.html" %}
-{% endif %}
-
+</div>
 {% endblock %}

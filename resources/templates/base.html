@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-512d211c04.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-accd812093.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -36,67 +36,61 @@
     {% endblock %}
 </head>
 <body>
-<div class="container">
 
-    <div class="site-header">
-        <a href="/" class="menu-button" title="Open menu"><i class="fa fa-bars"></i></a>
-        <a href="/"><img src="/immutable/images/swirl-logo-v3.svg" class="logo"/></a>
-        <a href="/swirls/inbox" class="inbox-button" title="Go to your Inbox"><i class="fa fa-inbox"></i></a>
+<div class="site-header">
+    <div class="site-header--content">
+        <a href="/"><img src="/immutable/images/swrlogo.png" width="38" height="23"/></a>
         <nav>
 
-
-            {% if user %}
-            <div class="avatar-with-name">
-                {{ user.email_md5|gravatar-img:40 }}
-                <a href="{{ user.username|user-url }}">{{user.username}}</a>
-            </div>
-            {% endif %}
-
-            <!--<input type="search" placeholder="Search" title="Search users, swirls, comments, tags...">-->
-
             <ul>
-                <li><a href="/swirls/start" class="create-link"><i class="fa fa-fw fa-plus"></i> Create</a></li>
+                <li><a href="/swirls/start" class="create-link">Create</a></li>
                 {% if user %}
-                <li><a href="/notifications"><i class="fa fa-fw fa-bullhorn"></i> Notifications <span
+                <li><a href="/notifications">Notifications <span
                         class="nav-count">{{notifications-count}}</span></a>
                 </li>
 
-                <li><a href="/swirls/inbox"><i class="fa fa-fw fa-inbox"></i> Inbox <span
+                <li><a href="/swirls/inbox">Inbox <span
                         class="nav-count">{{unread-count}}</span></a></li>
 
 
-                {% for rc in response-counts %}
-                <li><a href="{{ rc.summary|inboxlink }}"><i class="fa fa-fw {{ rc.summary|response-icon }}"></i> {{rc.summary}} <span
-                        class="nav-count">{{rc.count}}</span></a></li>
-                {% endfor %}
-
-
                 {% else %}
-                <li><a href="/login" class="login-link"><i class="fa fa-fw fa-sign-in"></i> Login</a></li>
-                <li><a href="/register"><i class="fa fa-fw fa-user-plus"></i> Register</a></li>
+                <li><a href="/login" class="login-link">Login</a></li>
+                <li><a href="/register">Register</a></li>
                 {% endif %}
 
 
-                <li><a href="/how-to-add"><i class="fa fa-fw fa-info"></i> How to add</a></li>
-                <li><a href="/swirls" class="firehose-link"><i class="fa fa-fw fa-database"></i> Firehose</a></li>
 
                 {% if user %}
-                <li><a href="/logout" class="logout-link"><i class="fa fa-fw fa-sign-out"></i> Log out</a></li>
+                <li><a href="/logout" class="logout-link">Log out</a></li>
                 {% endif %}
 
             </ul>
 
-        </nav>
+            {% if user %}
+            <a href="{{ user.username|user-url }}" class="avatar">{{ user.email_md5|gravatar-img:20 }}</a>
+            {% endif %}
 
+
+        </nav>
     </div>
 
-
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-
 </div>
+<div class="rainbow"><span class="album-background-color"></span><span class="book-background-color"></span><span
+        class="movie-background-color"></span><span class="tv-background-color"></span><span
+        class="video-background-color"></span></div>
+
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+<ul>
+    <li><a href="/how-to-add">How to add</a></li>
+    <li><a href="/swirls" class="firehose-link">Firehose</a></li>
+</ul>
+</footer>
 
 <script src="/immutable/js/jquery-2.1.3.min.js"></script>
 <script src="/immutable/dist/all-4625f94c21.js"></script>

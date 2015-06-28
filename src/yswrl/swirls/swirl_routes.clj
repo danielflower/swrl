@@ -56,7 +56,7 @@
       (response {:maxId (reduce max 0 (map #(:id %) comments))
                  :count (count comments)
                  :html  (layout/render-string "components/comment-list.html"
-                                              {:comments comments})}))))
+                                              {:model {:comments comments}})}))))
 
 (defn logister-info [is-logged-in suggestion-code]
   (try

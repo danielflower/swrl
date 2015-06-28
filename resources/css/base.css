@@ -8,7 +8,6 @@ html {
 
 body {
     font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
-    line-height: 1.6;
     font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: var(--main-font-color);
 }
@@ -34,7 +33,6 @@ h1 {
     font-size: 2.8rem;
     margin-bottom: 2rem;
     font-weight: bold;
-    text-align: center;
 }
 
 h2 {
@@ -150,144 +148,86 @@ p {
     margin: 1.0rem 0;
 }
 
-.container {
-    width: 100%;
-    min-height: 100vh;
-}
 
 .site-header {
     width: 100%;
-    text-align: center;
-    background-color: var(--dark-bg-color);
+    font-size: 0.8em;
+    font-weight: bold;
+    background-color: #F9F9F9;
+    color: var(--nav-color);
+}
+.site-header--content {
+    padding: 10px;
+    margin: 0 auto;
+    max-width: 1000px;
+}
+.standard-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+}
+.list-page {
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
-.menu-button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 0 15px;
-    font-size: 2em;
-    transition: transform 500ms;
-}
-.inbox-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 2em;
-    padding: 0 15px;
-}
-
-.menu-open .menu-button {
-    transform: rotate(90deg);
-}
 
 .site-header a, .site-header a:focus, .site-header a:hover, .site-header a:visited {
     color: var(--nav-color);
     text-decoration: none;
+    padding-right: 20px;
 }
+.site-header a:hover {
+    color: var(--generic-color);
+}
+
 
 .site-header a i.fa {
     color: var(--nav-icon-color);
 }
 
-.logo {
-    height: 2.1em;
-    width: 2.1em;
-    margin: 8px 0 0 0;
-}
 
 nav {
-    position: absolute;
-    text-align: left;
-    margin: 0;
-    background-color: var(--dark-bg-color);
-    width: 100%;
-    display: block;
-    color: #737373;
-
-    /* animation and hiding settings */
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 500ms;
+    float: right;
+    text-transform: uppercase;
+    display: inline;
+}
+nav img {
+    vertical-align: middle;
 }
 
-.menu-open nav {
-    max-height: 80vh;
-    overflow-y: auto;
+nav ul {
+     display: inline;
+ }
+
+nav .avatar img {
+    border: 3px solid #6DA8D4;
 }
 
 nav ul li {
     list-style-type: none;
+    display: inline;
     margin: 0;
     padding: 0;
 }
 
-nav ul li a {
-    display: block;
-    width: 100%;
-    padding: 10px;
-}
-
-nav ul li a.nav-selected {
-    background-color: var(--swirl-blue);
-    color: #FFF;
-}
-
 nav .nav-count {
-    padding-left: 15px;
-    font-weight: bold;
-    color: var(--swirl-blue);
-}
-
-nav .nav-selected .nav-count, nav a.nav-selected .fa, nav a.nav-selected, nav a.nav-selected:visited {
+    vertical-align: super;
+    display: inline-block;
+    text-align: center;
+    background-color: var(--swirl-hot-pink);
+    padding: 3px;
     color: #FFFFFF;
+    border-radius: 50%;
+    font-size: 6px;
+    width: 8px;
+    height: 8px;
 }
 
-main {
-    padding: 4px 4px 120px;
-}
-
-@media (min-width: 650px) {
-    .container {
-        display: flex;
-    }
-
-    .site-header {
-        flex-shrink: 0;
-        width: 200px;
-    }
-
-    .inbox-button {
-        display: none;
-    }
-
-    .menu-button {
-        display: none;
-    }
-
-    nav {
-        position: inherit;
-        max-height: none;
-        overflow-y: auto;
-    }
-
-    main {
-        padding: 20px;
-        max-width: 1100px;
-        width: 100%;
-    }
-}
 
 .validation-error {
     font-weight: bold;
     color: Red;
-}
-
-hr {
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    border-width: 0;
-    border-top: 1px solid var(--dark-bg-color);
 }
 
 
@@ -311,6 +251,24 @@ hr {
     border-bottom-color: var(--video-color);
 }
 
+.rainbow {
+    font-size: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 4px;
+}
+.rainbow span {
+    height: 100%;
+    width: 20%;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+.padded {
+    padding: 20px;
+}
+
 .type-color {
     color: var(--generic-color);
 }
@@ -330,3 +288,9 @@ hr {
     color: var(--video-color);
 }
 
+footer {
+    margin: 100px 0 0;
+}
+footer ul, footer li {
+    display: inline;
+}
