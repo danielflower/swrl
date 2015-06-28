@@ -1,7 +1,7 @@
 @import "base.css";
 @import "editor.css";
 @import "home.css";
-
+@import "swirl-list.css";
 
 #swirl-title {
     width: 90%;
@@ -36,12 +36,6 @@ nav ul{
 }
 
 
-.mini-swirl h2 {
-    margin-top: 0px;
-    text-align: center;
-    padding-right: 60px;
-    padding-left: 60px;
-}
 
 
 .comment {

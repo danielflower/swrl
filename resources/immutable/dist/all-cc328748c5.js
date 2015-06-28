@@ -780,6 +780,10 @@ var _menu = require('./menu');
 
 var _menu2 = _interopRequireDefault(_menu);
 
+var _swirlList = require('./swirl-list');
+
+var _swirlList2 = _interopRequireDefault(_swirlList);
+
 $(document).ready(function () {
     _editor2['default'].init($);
     (0, _editSwirl2['default'])();
@@ -787,9 +791,10 @@ $(document).ready(function () {
     _responseForm2['default'].init($);
     _commentForm2['default'].init($);
     _menu2['default'].init($);
+    _swirlList2['default'].init($);
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./response-form":11}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./response-form":11,"./swirl-list":12}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -1120,4 +1125,27 @@ var init = function init($) {
 
 module.exports = { init: init };
 
-},{"./http.js":9}]},{},[4]);
+},{"./http.js":9}],12:[function(require,module,exports){
+'use strict';
+
+var hidden = {};
+
+function init($) {
+    $('.type-filter button').click(function (b) {
+        var swirlType = b.target.getAttribute('data-swirl-type');
+        var wasHidden = !!hidden[swirlType];
+        hidden[swirlType] = !wasHidden;
+        $(b.target).toggleClass('hidden', !wasHidden);
+        if (wasHidden) {
+            $('.mini-swirl.' + swirlType).show();
+        } else {
+            $('.mini-swirl.' + swirlType).hide();
+        }
+    });
+}
+
+module.exports = {
+    init: init
+};
+
+},{}]},{},[4]);

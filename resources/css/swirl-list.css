@@ -1,0 +1,112 @@
+
+.type-filter {
+    text-align: right;
+    text-transform: uppercase;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+.type-filter button {
+    cursor: hand;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: solid 7px var(--generic-color);
+}
+
+.swirl-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+}
+.mini-swirl {
+    width: 350px;
+    max-width: 90vw;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 0 10px 10px 0;
+    background-color: #FFFFFF;
+}
+
+.mini-swirl h2 {
+    margin: 10px 0 0;
+    padding: 0;
+    font-size: 1.8rem;
+    line-height: normal;
+}
+
+.mini-swirl h2 a {
+    color: var(--main-font-color);
+    text-decoration: none;
+}
+
+
+.mini-swirl time {
+    color: #737373;
+}
+.mini-swirl .author-bit {
+    margin-top: 15px;
+    font-size: 1.4rem;
+}
+.mini-swirl .author-bit img {
+    vertical-align: middle;
+}
+
+.mini-swirl img.main-image {
+    display: block;
+    width: 100%;
+    height: 200px;
+    border-bottom: 7px solid var(--generic-color);
+}
+
+.mini-swirl.tv img.main-image, button.tv {
+    border-bottom-color: var(--tv-color);
+}
+.mini-swirl.album img.main-image, button.album {
+    border-bottom-color: var(--album-color);
+}
+.mini-swirl.movie img.main-image, button.movie {
+    border-bottom-color: var(--movie-color);
+}
+.mini-swirl.book img.main-image, button.book {
+    border-bottom-color: var(--book-color);
+}
+.mini-swirl.video img.main-image, button.video {
+    border-bottom-color: var(--video-color);
+}
+
+.swirl-type {
+    background-color: var(--generic-color);
+    color: #FFFFFF;
+    position: absolute;
+    padding: 4px 10px;
+}
+
+.mini-swirl.tv .swirl-type {
+    background-color: var(--tv-color);
+}
+.mini-swirl.album .swirl-type {
+    background-color: var(--album-color);
+}
+.mini-swirl.movie .swirl-type {
+    background-color: var(--movie-color);
+}
+.mini-swirl.book .swirl-type {
+    background-color: var(--book-color);
+}
+.mini-swirl.video .swirl-type {
+    background-color: var(--video-color);
+}
+
+.type-filter button.hidden {
+    border-bottom-color: #F1F1F1;
+    color: #989898;
+}
+
+.mini-swirl__content {
+    padding: 20px;
+}

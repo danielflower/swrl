@@ -6,6 +6,7 @@ import setupSwirlEdit from './edit-swirl';
 import responseForm from './response-form';
 import commentForm from './comment-form';
 import menu from './menu';
+import swirlList from './swirl-list';
 
 $(document).ready(function () {
     editor.init($);
@@ -14,4 +15,5 @@ $(document).ready(function () {
     responseForm.init($);
     commentForm.init($);
     menu.init($);
+    swirlList.init($);
 });
