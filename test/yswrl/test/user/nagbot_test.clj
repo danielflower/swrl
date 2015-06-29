@@ -2,11 +2,9 @@
   (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.user.nagbot :as nagbot]
             [yswrl.user.notifications :refer [recommendation new-response new-comment mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body]]
-            [yswrl.links :as links]
             [yswrl.user.notifications-repo :refer [get-for-user-email get-for-user-page]]
             [yswrl.swirls.swirl-routes :as swirl-routes])
-  (:use clojure.test)
-  (:import (java.sql Timestamp)))
+  (:use clojure.test))
 
 
 (deftest nagging

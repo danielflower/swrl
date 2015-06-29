@@ -34,4 +34,4 @@
 (defn run-email-job []
   (let [users (get-users-to-nag)
         ids (map :id users)]
-       (map #(email-user %) ids)))
+    (doseq [id ids] (email-user id))))
