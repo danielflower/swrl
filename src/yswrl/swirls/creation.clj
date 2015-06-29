@@ -27,7 +27,9 @@
   (let [metadata (website/get-metadata url)
         _ (log/debug "Metadata for" url ":" metadata)
         swirl-title (or title (metadata :title) "This website")
-        review (str "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>")
+        embed-html (if (clojure.string/blank? (metadata :embed-html)) ""
+                                              (str (metadata :embed-html) "<p data-ph=\"....or write something here\"></p>"))
+        review (str "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>" embed-html)
         swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url))]
     (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id)))))
