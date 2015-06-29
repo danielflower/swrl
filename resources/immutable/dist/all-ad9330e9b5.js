@@ -1128,19 +1128,42 @@ module.exports = { init: init };
 },{"./http.js":9}],12:[function(require,module,exports){
 'use strict';
 
-var hidden = {};
+var currentFilter = null;
+
+var showSwirls = function showSwirls(button) {
+    var swirlType = button.getAttribute('data-swirl-type');
+    $(button).toggleClass('hidden', false);
+    $('.mini-swirl.' + swirlType).show();
+};
+
+var hideSwirls = function hideSwirls(button) {
+    var swirlType = button.getAttribute('data-swirl-type');
+    $(button).toggleClass('hidden', true);
+    $('.mini-swirl.' + swirlType).hide();
+};
 
 function init($) {
     $('.type-filter button').click(function (b) {
-        var swirlType = b.target.getAttribute('data-swirl-type');
-        var wasHidden = !!hidden[swirlType];
-        hidden[swirlType] = !wasHidden;
-        $(b.target).toggleClass('hidden', !wasHidden);
-        if (wasHidden) {
-            $('.mini-swirl.' + swirlType).show();
+        if (currentFilter == null) {
+            $('.type-filter button').each(function (i, typeButton) {
+                if (b.target !== typeButton) {
+                    hideSwirls(typeButton);
+                }
+            });
+            currentFilter = b.target;
+        } else if (currentFilter === b.target) {
+            $('.type-filter button').each(function (i, typeButton) {
+                if (b.target !== typeButton) {
+                    showSwirls(typeButton);
+                }
+            });
+            currentFilter = null;
         } else {
-            $('.mini-swirl.' + swirlType).hide();
+            hideSwirls(currentFilter);
+            showSwirls(b.target);
+            currentFilter = b.target;
         }
+        console.log('Current filter is', currentFilter);
     });
 }
 
