@@ -33,7 +33,6 @@ function init($) {
             showSwirls(b.target);
             currentFilter = b.target;
         }
-        console.log('Current filter is', currentFilter);
     });
 }
 
