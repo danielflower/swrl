@@ -47,7 +47,7 @@
     return function () {
       setTimeout(lib$es6$promise$asap$$flush, 1);
     };
-  }var lib$es6$promise$asap$$queue = new Array(1000);function lib$es6$promise$asap$$flush() {
+  }var lib$es6$promise$asap$$queue = new Array(1e3);function lib$es6$promise$asap$$flush() {
     for (var i = 0; i < lib$es6$promise$asap$$len; i += 2) {
       var callback = lib$es6$promise$asap$$queue[i];var arg = lib$es6$promise$asap$$queue[i + 1];callback(arg);lib$es6$promise$asap$$queue[i] = undefined;lib$es6$promise$asap$$queue[i + 1] = undefined;
     }lib$es6$promise$asap$$len = 0;
@@ -1163,7 +1163,6 @@ function init($) {
             showSwirls(b.target);
             currentFilter = b.target;
         }
-        console.log('Current filter is', currentFilter);
     });
 }
 
