@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-a919880d89.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-b79c6fbe2d.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -43,29 +43,27 @@
         <nav>
 
             <ul>
-                <li><a href="/swirls/start" class="create-link">Create</a></li>
+                <li>
+                    <a href="/swirls/start" class="create-link">Create</a>
+                </li>
                 {% if user %}
                 <li>
-                    <a href="/notifications">New <span
-                        class="nav-count">{{notifications-count}}</span></a>
+                    <a href="/notifications">New <span class="nav-count">{{notifications-count}}</span></a>
                 </li>
-
-                <li><a href="/swirls/inbox">Inbox <span
-                        class="nav-count">{{unread-count}}</span></a></li>
-
-
+                <li>
+                    <a href="/swirls/inbox">Inbox <span class="nav-count">{{unread-count}}</span></a>
+                </li>
+                <li>
+                    <a href="{{ user.username|user-url }}" class="avatar logged-in-user" alt="User logo" title="Show your swirls">
+                        {{ user.email_md5|gravatar-img:36 }}
+                    </a>
+                </li>
                 {% else %}
                 <li><a href="/login" class="login-link">Login</a></li>
                 <li><a href="/register">Register</a></li>
                 {% endif %}
-
-
             </ul>
 
-            {% if user %}
-            <a href="{{ user.username|user-url }}" class="avatar logged-in-user" alt="User logo"
-               title="Show your swirls">{{ user.email_md5|gravatar-img:20 }}</a>
-            {% endif %}
 
 
         </nav>
