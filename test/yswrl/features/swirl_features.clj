@@ -39,11 +39,23 @@
     (save-state session map key url))
   session)
 
+(defn save-swirl-id [session map key]
+  (let [url (get-in session [:request :uri])
+        [_ swirl-id] (re-find #".*/swirls/([\d]+)" url)
+        swirl-id (Integer. swirl-id)]
+    (save-state session map key swirl-id))
+  session)
+
 (defn assert-user-checkbox-is-checked [session user]
   (is (= "checked"
          (get-attr session [(enlive/attr= :value
                                           (user :username) )] :checked))
       "User checkbox should be checked")
+  session)
+
+(defn assert-number-of-comments [session swirl-id number-to-check]
+  (is (= number-to-check
+         (count (repo/get-swirl-comments swirl-id))))
   session)
 
 
@@ -150,8 +162,11 @@
           (actions/save-swirl)
 
           (save-url test-state :view-swirl-uri)
+          (save-swirl-id  test-state :swirl-id)
 
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          (assert-number-of-comments (@test-state :swirl-id) 0)
 
           ; Now login as another user
 
@@ -178,9 +193,13 @@
          (assert-user-checkbox-is-checked user1)
 
 
+          (actions/save-swirl)
 
-          ; now respond with music search
-          (visit (@test-state :view-swirl-uri))
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 1)
+
+           ;now respond with music search
           (press :#respond-with-swirl)
 
 
@@ -189,16 +208,22 @@
           (within [:h1] (has (text? "Select an item to recommend")))
 
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
-          ;(println)
           (follow-redirect)
           (within [:h1] (has (text? "Create a swirl")))
+
 
           ; user1 should be pre-selected as a recipient
 
           (assert-user-checkbox-is-checked user1)
 
+          (actions/save-swirl)
+
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 2)
+
+
           ; now respond with movie search
-          (visit (@test-state :view-swirl-uri))
           (press :#respond-with-swirl)
 
           (fill-in "Movie Title" "garden state")
@@ -210,8 +235,13 @@
 
           (assert-user-checkbox-is-checked user1)
 
-          ; now respond with tv search
-          (visit (@test-state :view-swirl-uri))
+          (actions/save-swirl)
+
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 3)
+
+          ;; now respond with tv search
           (press :#respond-with-swirl)
 
           (fill-in "TV Show Title" "black mirror")
@@ -224,17 +254,21 @@
 
           (assert-user-checkbox-is-checked user1)
 
-          ; now respond with website which is amazon.com
-          ;(visit (@test-state :view-swirl-uri))
-          ;(press :#respond-with-swirl)
+          (actions/save-swirl)
 
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 4)
 
-          ; user1 should be pre-selected as a recipient
-
-          ;(assert-user-checkbox-is-checked user1)
-
-          ; now respond with website which is itunes
-          (visit (@test-state :view-swirl-uri))
+          ;; now respond with website which is amazon.com
+          ;;(press :#respond-with-swirl)
+          ;
+          ;
+          ;; user1 should be pre-selected as a recipient
+          ;
+          ;;(assert-user-checkbox-is-checked user1)
+          ;
+          ;; now respond with website which is itunes
           (press :#respond-with-swirl)
 
           (fill-in "Enter a website link" "https://itunes.apple.com/us/album/am/id721224313")
@@ -245,9 +279,15 @@
           ; user1 should be pre-selected as a recipient
 
           (assert-user-checkbox-is-checked user1)
+          (actions/save-swirl)
 
-          ; now respond with website which is tmdb
-          (visit (@test-state :view-swirl-uri))
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 5)
+
+
+
+          ;; now respond with website which is tmdb
           (press :#respond-with-swirl)
 
           (fill-in "Enter a website link" "https://www.themoviedb.org/movie/401-garden-state")
@@ -258,8 +298,13 @@
 
           (assert-user-checkbox-is-checked user1)
 
-          ; now respond with website which is imdb movie
-          (visit (@test-state :view-swirl-uri))
+          (actions/save-swirl)
+
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 6)
+
+          ;; now respond with website which is imdb movie
           (press :#respond-with-swirl)
 
           (fill-in "Enter a website link" "http://www.imdb.com/title/tt0333766")
@@ -270,9 +315,14 @@
           ; user1 should be pre-selected as a recipient
 
           (assert-user-checkbox-is-checked user1)
+          (actions/save-swirl)
 
-          ; now respond with website which is imdb tv
-          (visit (@test-state :view-swirl-uri))
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 7)
+
+          ;
+          ;; now respond with website which is imdb tv
           (press :#respond-with-swirl)
 
           (fill-in "Enter a website link" "http://www.imdb.com/title/tt2085059")
@@ -284,7 +334,13 @@
 
           (assert-user-checkbox-is-checked user1)
 
-          ; finally, go to create page directly to ensure normal titles haven't changed
+          (actions/save-swirl)
+
+          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+          (assert-number-of-comments (@test-state :swirl-id) 8)
+
+          ;; finally, go to create page directly to ensure normal titles haven't changed
           (actions/follow-create-link)
           (within [:h1] (has (text? "Start")))
           (within [:p] (has (text? "What would you like to recommend?")))

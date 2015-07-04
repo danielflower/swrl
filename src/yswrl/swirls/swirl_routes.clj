@@ -25,14 +25,14 @@
           not-added (filter #(and (not (contains? already-suggested %))
                                   (not (= (:author_id origin-swirl) (:user-id %)))) contacts)
           unrelated (network/get-unrelated-users (author :id) 100 0)]
-      (layout/render "swirls/edit.html" {:id                swirl-id
-                                         :subject           (swirl :title)
-                                         :review            (swirl :review)
-                                         :type              (type-of swirl)
-                                         :contacts          not-added
-                                         :already-suggested already-suggested
-                                         :unrelated unrelated
-                                         :origin-swirl-id origin-swirl-id
+      (layout/render "swirls/edit.html" {:id                  swirl-id
+                                         :subject             (swirl :title)
+                                         :review              (swirl :review)
+                                         :type                (type-of swirl)
+                                         :contacts            not-added
+                                         :already-suggested   already-suggested
+                                         :unrelated           unrelated
+                                         :origin-swirl-id     origin-swirl-id
                                          :origin-swirl-author origin-swirl-author}))))
 (defn delete-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
@@ -147,12 +147,21 @@
     (redirect (str "/swirls/" swirl-id))))
 
 
-(defn publish-swirl [author id usernames-and-emails-to-notify subject review origin-swirl-id]
-  (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify  origin-swirl-id)
-    (do
-      (send-unsent-suggestions)
-      (redirect (yswrl.links/swirl id)))
-    nil))
+(defn publish-swirl
+  ([author id usernames-and-emails-to-notify subject review origin-swirl-id]
+   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
+     (do
+       (send-unsent-suggestions)
+       (if (not-nil? origin-swirl-id)
+         (handle-comment origin-swirl-id (str "You should also " (get-in (yswrl.swirls.types/type-of (lookups/get-swirl origin-swirl-id))
+                                                                                                     [:words :watch])
+                                              ": <a href=\"" (yswrl.links/swirl id) "\">"
+                                              subject "</a>")
+                         author)
+         (redirect (yswrl.links/swirl id))))
+     nil))
+  ([author id usernames-and-emails-to-notify subject review]
+   (publish-swirl author id usernames-and-emails-to-notify subject review nil)))
 
 (defn usernames-and-emails-from-request [checkboxes-raw textbox-raw]
   (let [textbox (if (clojure.string/blank? textbox-raw)
@@ -184,9 +193,9 @@
            (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) (if (clojure.string/blank? origin-swirl-id)
                                                                                                                                                          nil
                                                                                                                                                          (Long/parseLong origin-swirl-id)))))
-           (POST "/swirls/:id{[0-9]+}/edit" [id  origin-swirl-id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review (if (clojure.string/blank? origin-swirl-id)
-                                                                                                                                                                                                                                                 nil
-                                                                                                                                                                                                                                                 (Long/parseLong origin-swirl-id)))))
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review (if (clojure.string/blank? origin-swirl-id)
+                                                                                                                                                                                                                                                nil
+                                                                                                                                                                                                                                                (Long/parseLong origin-swirl-id)))))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))

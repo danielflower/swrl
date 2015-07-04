@@ -90,7 +90,7 @@
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
   swirl belonging to the author; otherwise false."
-  [swirl-id author-id title review recipient-names-or-emails origin-swirl-id]
+  [swirl-id author-id title review recipient-names-or-emails]
   (let [updated (update db/swirls
                         (set-fields {:title title :review review :state states/live})
                         (where {:id swirl-id :author_id author-id}))]
