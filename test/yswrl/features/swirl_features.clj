@@ -123,6 +123,27 @@
           ))))
 
 
+(deftest empty-inbox-test
+  (let [new-user (s/create-test-user)]
+  (-> (session app)
+      (visit (links/inbox))
+      (follow-redirect)
+      ; Login as user 1
+      (login-as new-user)
+
+      ; Their inbox is empty
+      (visit (links/inbox))
+      (within [:p] (has (some-text? "This is where Swirls will appear when someone recommends you something.")))
+
+      ; Make sure the links work
+      (follow "creating a recommendation for one of your friends")
+      (within [:h1] (has (text? "Start")))
+
+      (visit (links/inbox))
+      (follow "visit the firehose")
+      (within [:h1] (has (text? "Firehose")))
+
+      )))
 
 (deftest a-user-that-registers-as-a-result-of-a-suggestion-email-has-a-network-and-notifications-set-up
   (with-faked-responses
@@ -169,10 +190,15 @@
           (actions/submit "Go")
           (check (existing-user :username))
 
+          ; With no responses, there is a related message
+          (visit (links/inbox))
+          (within [:p] (has (some-text? "Items remain in your inbox until")))
+
           ; Can immediately make a response and it will be in the response inbox
           (visit (@test-state :view-swirl-uri))
           (actions/submit  [(enlive/attr= :value "Loved it")])
-          (visit (links/inbox "Loved it"))
+          (visit (links/inbox))
+          (follow "Loved it")
           (follow "The onion video")
 
           ; Meanwhile, in the inbox there should be the second swirl

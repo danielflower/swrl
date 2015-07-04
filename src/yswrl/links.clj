@@ -31,6 +31,9 @@
 (defn gravatar-url [hash size]
   (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid"))
 
+(defn create-swirl []
+  "/swirls/start")
+
 (defn inbox
   ([] "/swirls/inbox")
   ([response]
