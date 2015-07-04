@@ -10,6 +10,7 @@ import swirlList from './swirl-list';
 
 $(document).ready(function () {
     editor.init($);
+    editor.initWidgets($);
     setupSwirlEdit();
     setupChromeExtension();
     responseForm.init($);
