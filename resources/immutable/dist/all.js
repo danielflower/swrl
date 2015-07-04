@@ -47,7 +47,7 @@
     return function () {
       setTimeout(lib$es6$promise$asap$$flush, 1);
     };
-  }var lib$es6$promise$asap$$queue = new Array(1e3);function lib$es6$promise$asap$$flush() {
+  }var lib$es6$promise$asap$$queue = new Array(1000);function lib$es6$promise$asap$$flush() {
     for (var i = 0; i < lib$es6$promise$asap$$len; i += 2) {
       var callback = lib$es6$promise$asap$$queue[i];var arg = lib$es6$promise$asap$$queue[i + 1];callback(arg);lib$es6$promise$asap$$queue[i] = undefined;lib$es6$promise$asap$$queue[i + 1] = undefined;
     }lib$es6$promise$asap$$len = 0;
@@ -786,6 +786,7 @@ var _swirlList2 = _interopRequireDefault(_swirlList);
 
 $(document).ready(function () {
     _editor2['default'].init($);
+    _editor2['default'].initWidgets($);
     (0, _editSwirl2['default'])();
     (0, _chromeExtension2['default'])();
     _responseForm2['default'].init($);
@@ -942,13 +943,39 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var RichTextEditor = (function () {
     function RichTextEditor($rteDiv) {
+        var _this = this;
+
         _classCallCheck(this, RichTextEditor);
 
-        this.$textarea = $rteDiv.find('textarea');
-        this.$editorDiv = $rteDiv.find('.editor');
+        this.$textarea = $rteDiv.find('textarea').first();
+        this.$editorDiv = $rteDiv.find('.editor').first();
+
+        $rteDiv.find('.spoiler-alert-button').click(function () {
+            _this.addHtmlAtCursor('<div class="spoiler-alert">' + '<div class="spoiler-alert--bar" title="Click to expand" contenteditable="false">' + '<button class="spoiler-alert--close-button" title="Delete spoiler alert">x</button>' + '<a href="#">Spoiler alert</a>' + '</div>' + '<div class="spoiler-alert--content" data-ph="Write your spoilers here - they will not be shown unless clicked on"></div>' + '</div>' + '<p data-ph="..."></p>');
+            // HACK: this is repeated below and is just adding more and more click handlers each time
+            $('.spoiler-alert--close-button').click(function (b) {
+                $(b.target).closest('.spoiler-alert').remove();
+                return false;
+            });
+
+            return false;
+        });
+
+        var html = this.$textarea.val();
+        this.$editorDiv.html(html);
+
+        $rteDiv.closest('form').on('submit', function () {
+            _this.$textarea.val(_this.getHtmlContent());
+            return true;
+        });
     }
 
     _createClass(RichTextEditor, [{
+        key: 'addHtmlAtCursor',
+        value: function addHtmlAtCursor(html) {
+            this.$editorDiv.append(html);
+        }
+    }, {
         key: 'getHtmlContent',
         value: function getHtmlContent() {
             return this.$editorDiv.html().trim();
@@ -966,20 +993,23 @@ var RichTextEditor = (function () {
 
 var setup = function setup($) {
     $('.rte').each(function (i, holder) {
-        var textarea = $(holder).find('textarea').first();
-        var editor = $(holder).find('.editor').first();
-
-        var html = textarea.val();
-        editor.html(html);
-
-        $(holder).closest('form').on('submit', function () {
-            textarea.val(editor.html());
-            return true;
-        });
+        new RichTextEditor($(holder));
     });
 };
 
-module.exports = { init: setup, RichTextEditor: RichTextEditor };
+var initWidgets = function initWidgets($) {
+    $('.spoiler-alert--bar a').click(function (b) {
+        $(b.target).closest('.spoiler-alert').find('.spoiler-alert--content').toggle();
+        return false;
+    });
+
+    $('.spoiler-alert--close-button').click(function (b) {
+        $(b.target).closest('.spoiler-alert').remove();
+        return false;
+    });
+};
+
+module.exports = { init: setup, RichTextEditor: RichTextEditor, initWidgets: initWidgets };
 
 },{}],9:[function(require,module,exports){
 'use strict';

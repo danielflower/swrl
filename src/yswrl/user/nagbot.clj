@@ -1,8 +1,7 @@
 (ns yswrl.user.nagbot
   (:require [yswrl.swirls.lookups :as lookups]
             [yswrl.db :as db]
-            [yswrl.swirls.postman :as postman]
-            [clojure.tools.logging :as log])
+            [yswrl.swirls.postman :as postman])
   (:import (java.sql Timestamp)))
 (use 'korma.core)
 (use 'korma.db)
@@ -20,7 +19,6 @@
   "))
 
 (defn email-user [user-id]
-  (log/info "Going to email reminder email to" user-id)
   (let [swirls (get-unresponded-for-user user-id)
         recipient (yswrl.auth.auth-repo/get-user-by-id user-id)]
     (postman/send-email [{:email (:email recipient) :name (:username recipient)}]

@@ -34,12 +34,12 @@
 
 (def unsecure-key-for-dev-mode "93762d738951e53a")          ; in heroku, a value similar to this is stored in an env var. It just needs to be any non-changing value
 
-(def allowed-hosts #{"www.swrl.co"})
+(def allowed-hosts #{"www.swrl.co" "localhost"})
 
 (defn wrap-url-canonicalizer-policy [handler]
   (fn [req]
     (let [host (get (req :headers) "host")]
-      (if (or (contains? allowed-hosts host) (.startsWith host "localhost"))
+      (if (or (contains? allowed-hosts host) (not= 80 (req :server-port)))
         (handler req)
         (permanent-redirect (str (linky/absolute (req :uri))))))))
 

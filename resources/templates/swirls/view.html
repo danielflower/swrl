@@ -1,12 +1,11 @@
 <div class="full {{model.swirl.type}}">
 
 <div class="swirl-header border-bottom">
-    <div class="swirl-header__image" style="background-image: url({{ model.swirl.thumbnail_url }})"></div>
+    <div class="swirl-header__bgimage" style="background-image: url({{ model.swirl.thumbnail_url }})"></div>
+    <img class="swirl-header__image {{ model.swirl.type }}" src="{{ model.swirl.thumbnail_url }}"/>
     <div class="swirl-type">{{ model.swirl.type }}</div>
 </div>
-
     <div class="padded">
-
         <header>
             <h1 class="headline type-color">{{model.swirl.title}}</h1>
 
@@ -16,10 +15,7 @@
                 {{model.swirl.creation_date|timetag}}
             </div>
         </header>
-
-
         {% if model.can-edit %}
-
         <div class="swirl-admin-panel">
             <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
             <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>

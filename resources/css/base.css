@@ -172,7 +172,7 @@ p {
     z-index:50;
 }
 .site-header__content {
-    padding: 0 15px 0 30px;
+    padding: 0 10px 0 20px;
     margin: 0 auto;
     max-width: 1000px;
     line-height:70px;
@@ -210,7 +210,9 @@ p {
 .site-header a, .site-header a:focus, .site-header a:hover, .site-header a:visited {
     color: var(--nav-color);
     text-decoration: none;
-    padding-right: 20px;
+    position:relative;
+    padding:0 10px;
+    /*padding-right: 20px;*/
 }
 .site-header a:hover {
     color: var(--swirl-hot-pink);
@@ -225,25 +227,28 @@ p {
 nav {
     float: right;
     text-transform: uppercase;
-    display: inline;
 }
 nav img {
     vertical-align: middle;
 }
 
 nav ul {
-     display: inline;
+    display: inline-block;
+    margin:0;
+    padding:0;
+    list-style:none;
+ }
+ nav ul li{
+    float:left;
+    margin-bottom:0;
  }
 
 nav .avatar img, img.gravatar {
     border: 3px solid #6DA8D4;
 }
-
-nav ul li {
-    list-style-type: none;
-    display: inline;
-    margin: 0;
-    padding: 0;
+img.gravatar{
+    position: relative;
+    top:-3px;
 }
 
 nav .nav-count {
@@ -259,7 +264,7 @@ nav .nav-count {
     height: 18px;
     position:relative;
     top:-7px;
-    left:-6px;
+    margin-left:-6px;
     padding:0 5px;
     box-shadow:0 0 0 2px #fafafa;
 }
