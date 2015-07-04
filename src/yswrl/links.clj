@@ -13,8 +13,13 @@
 (defn notifications []
   "/notifications")
 
-(defn edit-swirl [id]
-  (str "/swirls/" id "/edit"))
+(defn edit-swirl
+  ([id origin-swirl-id]
+   (if (nil? origin-swirl-id)
+     (str "/swirls/" id "/edit")
+     (str "/swirls/" id "/edit?origin-swirl-id=" origin-swirl-id)))
+  ([id]
+   (edit-swirl id nil)))
 
 (defn delete-swirl [id]
   (str "/swirls/" id "/delete"))
@@ -34,4 +39,4 @@
 (defn inbox
   ([] "/swirls/inbox")
   ([response]
-  (str "/swirls/inbox/" (.toLowerCase (url-encode response)))))
+   (str "/swirls/inbox/" (.toLowerCase (url-encode response)))))

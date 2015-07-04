@@ -27,4 +27,13 @@
            (links/gravatar-url "0bc83cb571cd1c50ba6f3e8a78ef1346" 40)))
     )
 
+  (testing "edit swirl link has origin swirl id param"
+    (is (= "/swirls/123/edit?origin-swirl-id=12"
+           (links/edit-swirl 123 12))))
+
+  (testing "edit swirl link has no params if origin swirl id is nil"
+    (is (= "/swirls/123/edit"
+           (links/edit-swirl 123 nil)))
+    (is (= "/swirls/123/edit"
+           (links/edit-swirl 123))))
   )

@@ -6,7 +6,8 @@
 (def THUMBNAIL-URL-PREFIX "http://image.tmdb.org/t/p/w92")
 (def LARGE-IMAGE-URL-PREFIX "http://image.tmdb.org/t/p/w342")
 
-(defn search-movies [search-term]
+(defn search-movies
+  ([search-term origin-swirl-id]
   (if (clojure.string/blank? search-term)
     {:results []}
     (let [encoded (links/url-encode search-term)
@@ -14,10 +15,15 @@
           result (client/get url {:accept :json :as :json})] {
                                                               :results (map (fn [r] {:title           (r :title)
                                                                                      :tmdb-id         (r :id)
-                                                                                     :create-url      (str "/create/movie?tmdb-id=" (r :id))
+                                                                                     :create-url      (str "/create/movie?tmdb-id=" (r :id)
+                                                                                                           (if (clojure.string/blank? origin-swirl-id)
+                                                                                                             nil
+                                                                                                             (str "&origin-swirl-id=" origin-swirl-id)))
                                                                                      :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
                                                                                      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
                                                               })))
+  ([search-term]
+   (search-movies search-term "")))
 
 (defn get-movie-from-tmdb-id [tmdb-id]
   (let [url (str "https://api.themoviedb.org/3/movie/" tmdb-id "?api_key=" TMDB-API-KEY)
@@ -49,7 +55,8 @@
         nil))
     ))
 
-(defn search-tv [search-term]
+(defn search-tv
+  ([search-term origin-swirl-id]
   (if (clojure.string/blank? search-term)
     {:results []}
     (let [encoded (links/url-encode search-term)
@@ -57,10 +64,15 @@
           result (client/get url {:accept :json :as :json})] {
                                                               :results (map (fn [r] {:title           (r :name)
                                                                                      :tmdb-id         (r :id)
-                                                                                     :create-url      (str "/create/tv?tmdb-id=" (r :id))
+                                                                                     :create-url      (str "/create/tv?tmdb-id=" (r :id)
+                                                                                                           (if (clojure.string/blank? origin-swirl-id)
+                                                                                                             nil
+                                                                                                             (str "&origin-swirl-id=" origin-swirl-id)))
                                                                                      :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
                                                                                      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
-                                                              }))
+                                                              })))
+  ([search-term]
+   (search-tv search-term ""))
   )
 
 (defn get-tv-from-tmdb-id [tmdb-id]

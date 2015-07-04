@@ -58,10 +58,16 @@
 
 
             {% if model.can-respond %}
-            <hr/>
+
             <h2>{{model.type.words.seen-it|capitalize}}? What did you think?</h2>
+    
 
             {% include "components/response-form.html" %}
+
+            <hr/>
+            <h2>Want to swirl back something similar?</h2>
+            {% include "components/respond-with-swirl-form.html" %}
+            <hr/>
 
             {% endif %}
 

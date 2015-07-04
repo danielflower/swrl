@@ -5,6 +5,7 @@
             [yswrl.links :as linky]
             [yswrl.features.actions :as actions]
             [kerodon.core :refer :all]
+            [kerodon.impl :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]
             [yswrl.swirls.swirls-repo :as repo]
@@ -30,12 +31,19 @@
 
 
 (defn save-state [session map key value]
-    (swap! map (fn [old-val] (assoc old-val key value)))
+  (swap! map (fn [old-val] (assoc old-val key value)))
   session)
 
 (defn save-url [session map key]
   (let [url (get-in session [:request :uri])]
     (save-state session map key url))
+  session)
+
+(defn assert-user-checkbox-is-checked [session user]
+  (is (= "checked"
+         (get-attr session [(enlive/attr= :value
+                                          (user :username) )] :checked))
+      "User checkbox should be checked")
   session)
 
 
@@ -122,7 +130,166 @@
 
           ))))
 
+(deftest respond-to-swirl-with-swirl
+  (with-faked-responses
+    (let [user1 (s/create-test-user)
+          user2 (s/create-test-user)
+          test-state (atom {})]
 
+      (-> (session app)
+          (visit "/")
+          ; Login as user 1
+          (actions/follow-login-link)
+          (login-as user1)
+
+          ; Create a swirl
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (actions/submit "Go")
+
+          (actions/save-swirl)
+
+          (save-url test-state :view-swirl-uri)
+
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          ; Now login as another user
+
+          (actions/log-out)
+          (actions/follow-login-link)
+          (login-as user2)
+
+          ; Other users can view the swirl and press the respond to swirl with swirl button!
+          (visit (@test-state :view-swirl-uri))
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          (press :#respond-with-swirl)
+
+          ; should take the user to the create swirl page - modified for responses
+
+          (within [:h1] (has (text? "Respond with Swirl")))
+          (within [:p] (has (text? "What would you like to respond with?")))
+
+          ; respond with website link
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (actions/submit "Go")
+
+          ; user1 should be pre-selected as a recipient
+         (assert-user-checkbox-is-checked user1)
+
+
+
+          ; now respond with music search
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+
+          (fill-in "Album or Song Title" "Mellon Collie")
+          (press :#album-search-go-button)
+          (within [:h1] (has (text? "Select an item to recommend")))
+
+          (follow "Mellon Collie and the Infinite Sadness (Remastered)")
+          ;(println)
+          (follow-redirect)
+          (within [:h1] (has (text? "Create a swirl")))
+
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; now respond with movie search
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+          (fill-in "Movie Title" "garden state")
+          (press :#movie-search-go-button)
+
+          (follow "Garden State")
+          (follow-redirect)
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; now respond with tv search
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+          (fill-in "TV Show Title" "black mirror")
+          (press :#tv-search-go-button)
+
+          (follow "Black Mirror")
+          (follow-redirect)
+
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; now respond with website which is amazon.com
+          ;(visit (@test-state :view-swirl-uri))
+          ;(press :#respond-with-swirl)
+
+
+          ; user1 should be pre-selected as a recipient
+
+          ;(assert-user-checkbox-is-checked user1)
+
+          ; now respond with website which is itunes
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+          (fill-in "Enter a website link" "https://itunes.apple.com/us/album/am/id721224313")
+          (press :#website-create-go-button)
+
+          (follow-redirect)
+
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; now respond with website which is tmdb
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+          (fill-in "Enter a website link" "https://www.themoviedb.org/movie/401-garden-state")
+          (press :#website-create-go-button)
+          (follow-redirect)
+
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; now respond with website which is imdb movie
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+          (fill-in "Enter a website link" "http://www.imdb.com/title/tt0333766")
+          (press :#website-create-go-button)
+          (follow-redirect)
+
+
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; now respond with website which is imdb tv
+          (visit (@test-state :view-swirl-uri))
+          (press :#respond-with-swirl)
+
+          (fill-in "Enter a website link" "http://www.imdb.com/title/tt2085059")
+          (press :#website-create-go-button)
+          (follow-redirect)
+
+
+          ; user1 should be pre-selected as a recipient
+
+          (assert-user-checkbox-is-checked user1)
+
+          ; finally, go to create page directly to ensure normal titles haven't changed
+          (actions/follow-create-link)
+          (within [:h1] (has (text? "Start")))
+          (within [:p] (has (text? "What would you like to recommend?")))
+
+          ))))
 
 (deftest a-user-that-registers-as-a-result-of-a-suggestion-email-has-a-network-and-notifications-set-up
   (with-faked-responses
@@ -168,10 +335,12 @@
           (fill-in "Enter a website link" "http://exact.match.com/vimeo.3718294.html")
           (actions/submit "Go")
           (check (existing-user :username))
+          (assert-user-checkbox-is-checked existing-user)
 
           ; Can immediately make a response and it will be in the response inbox
-          (visit (@test-state :view-swirl-uri))
-          (actions/submit  [(enlive/attr= :value "Loved it")])
+
+             (visit (@test-state :view-swirl-uri))
+          (actions/submit [(enlive/attr= :value "Loved it")])
           (visit (links/inbox "Loved it"))
           (follow "The onion video")
 

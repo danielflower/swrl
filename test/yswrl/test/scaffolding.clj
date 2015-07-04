@@ -30,7 +30,9 @@
 (defn equal-ignoring-order? [& colls]
   (apply = (map frequencies colls)))
 
-(defn create-swirl [type authorId title review recipientNames]
+(defn create-swirl ([type authorId title review recipientNames origin-swirl-id]
   (let [swirl (swirls-repo/save-draft-swirl type authorId title review nil)]
-    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames)
+    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames origin-swirl-id)
     swirl))
+  ([type authorId title review recipientNames]
+   (create-swirl type authorId title review recipientNames nil)))
