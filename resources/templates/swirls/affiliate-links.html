@@ -23,11 +23,8 @@
         {% endifequal %}
 
         {% ifequal link.type_code "P" %}
-        <img class="swirl-icon-link" src="/immutable/images/swirl-logo-v3.svg" width="12" height="12" alt="Swirl"><a href="/swirls/{{ link.code }}" target="_blank">Progenitor: {{ link.code|swirl-title }}</a>
-        {% endifequal %}
-
-        {% ifequal link.type_code "S" %}
-        <img class="swirl-icon-link" src="/immutable/images/swirl-logo-v3.svg" width="12" height="12" alt="Swirl"><a href="/swirls/{{ link.code }}" target="_blank">Response: {{ link.code|swirl-title }}</a>
+        This Swirl was a response to
+        <a href="/swirls/{{ link.code }}">{{ link.code|swirl-title }}</a>
         {% endifequal %}
 
 
