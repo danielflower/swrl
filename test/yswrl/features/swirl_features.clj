@@ -208,7 +208,7 @@
           ; should take the user to the create swirl page - modified for responses
 
           (within [:h1] (has (text? "Respond with Swirl")))
-          (within [:p] (has (text? "What would you like to respond with?")))
+          (within [:p] (has (text? "What would you like to respond with?We'd love to hear your feedback - email us at feedback@swrl.co")))
 
           ; respond with website link
           (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
@@ -368,7 +368,7 @@
           ;; finally, go to create page directly to ensure normal titles haven't changed
           (actions/follow-create-link)
           (within [:h1] (has (text? "Start")))
-          (within [:p] (has (text? "What would you like to recommend?")))
+          (within [:p] (has (text? "What would you like to recommend?We'd love to hear your feedback - email us at feedback@swrl.co")))
 
           ))))
 
