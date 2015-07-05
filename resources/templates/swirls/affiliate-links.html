@@ -22,6 +22,12 @@
         <a href="http://www.imdb.com/title/{{ link.code }}/" target="_blank"><img src="/immutable/images/imdb_icon.png" width="120" height="61" alt="View at IMDb.com"></a>
         {% endifequal %}
 
+        {% ifequal link.type_code "P" %}
+        This Swirl was a response to
+        <a href="/swirls/{{ link.code }}">{{ link.code|swirl-title }}</a>
+        {% endifequal %}
+
+
     </div>
     {% endfor %}
 

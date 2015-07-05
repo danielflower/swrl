@@ -7,6 +7,7 @@ import responseForm from './response-form';
 import commentForm from './comment-form';
 import menu from './menu';
 import swirlList from './swirl-list';
+import ga from './ga';
 
 $(document).ready(function () {
     editor.init($);
@@ -17,4 +18,5 @@ $(document).ready(function () {
     commentForm.init($);
     menu.init($);
     swirlList.init($);
+    ga.addAnalyticsIfProd();
 });

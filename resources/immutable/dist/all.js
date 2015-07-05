@@ -784,6 +784,10 @@ var _swirlList = require('./swirl-list');
 
 var _swirlList2 = _interopRequireDefault(_swirlList);
 
+var _ga = require('./ga');
+
+var _ga2 = _interopRequireDefault(_ga);
+
 $(document).ready(function () {
     _editor2['default'].init($);
     _editor2['default'].initWidgets($);
@@ -793,9 +797,10 @@ $(document).ready(function () {
     _commentForm2['default'].init($);
     _menu2['default'].init($);
     _swirlList2['default'].init($);
+    _ga2['default'].addAnalyticsIfProd();
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./menu":10,"./response-form":11,"./swirl-list":12}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./swirl-list":13}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -909,7 +914,7 @@ var init = function init($) {
 
 module.exports = { init: init };
 
-},{"./editor.js":8,"./http.js":9}],7:[function(require,module,exports){
+},{"./editor.js":8,"./http.js":10}],7:[function(require,module,exports){
 'use strict';
 
 var setup = function setup() {
@@ -1014,6 +1019,32 @@ module.exports = { init: setup, RichTextEditor: RichTextEditor, initWidgets: ini
 },{}],9:[function(require,module,exports){
 'use strict';
 
+var init = function init() {
+    if (document.location.hostname === 'www.swrl.co') {
+
+        // the contents of this if block is copied directly from google analytics
+
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments);
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m);
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-63844233-1', 'auto');
+        ga('send', 'pageview');
+    }
+};
+
+module.exports = { addAnalyticsIfProd: init };
+
+},{}],10:[function(require,module,exports){
+'use strict';
+
 var getJson = function getJson(url) {
     return fetch('/api/v1' + url, {
         credentials: 'same-origin',
@@ -1039,7 +1070,7 @@ var post = function post(url, json) {
 
 module.exports = { getJson: getJson, post: post };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var setup = function setup($) {
@@ -1056,7 +1087,7 @@ var setup = function setup($) {
 
 module.exports = { init: setup };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1155,7 +1186,7 @@ var init = function init($) {
 
 module.exports = { init: init };
 
-},{"./http.js":9}],12:[function(require,module,exports){
+},{"./http.js":10}],13:[function(require,module,exports){
 'use strict';
 
 var currentFilter = null;

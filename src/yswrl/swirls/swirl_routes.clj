@@ -11,7 +11,8 @@
             [yswrl.auth.guard :as guard]
             [yswrl.swirls.types :refer [type-of]]
             [yswrl.swirls.lookups :as lookups]
-            [yswrl.user.notifications :as notifications])
+            [yswrl.user.notifications :as notifications]
+            [yswrl.swirls.swirl-links :as link-types])
   (:import (java.util UUID)))
 
 (def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
@@ -150,7 +151,7 @@
     (if (not= (swirl :author_id) (commentor :id))
       (do (network/store (swirl :author_id) :knows (commentor :id))
           (network/store (commentor :id) :knows (swirl :author_id))))
-    (redirect (str "/swirls/" swirl-id))))
+    (redirect (yswrl.links/swirl swirl-id (comment :id)))))
 
 
 (defn publish-swirl
@@ -159,11 +160,14 @@
      (do
        (send-unsent-suggestions)
        (if (not-nil? origin-swirl-id)
-         (handle-comment origin-swirl-id (str "You should also " (get-in (yswrl.swirls.types/type-of (lookups/get-swirl origin-swirl-id))
-                                                                                                     [:words :watch])
-                                              ": <a href=\"" (yswrl.links/swirl id) "\">"
-                                              subject "</a>")
-                         author)
+         (do
+           (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
+           (repo/add-link origin-swirl-id (link-types/swirl-response :code) id)
+           (handle-comment origin-swirl-id (str "You should also " (get-in (yswrl.swirls.types/type-of (lookups/get-swirl origin-swirl-id))
+                                                                          [:words :watch])
+                                               ": <a href=\"" (yswrl.links/swirl id) "\">"
+                                               subject "</a>")
+                          author))
          (redirect (yswrl.links/swirl id))))
      nil))
   ([author id usernames-and-emails-to-notify subject review]

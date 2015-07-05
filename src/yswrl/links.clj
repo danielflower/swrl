@@ -7,8 +7,13 @@
 (defn absolute [relative]
   (str base-url relative))
 
-(defn swirl [id]
-  (str "/swirls/" id))
+(defn swirl
+  ([id comment-id]
+   (if (nil? comment-id)
+     (str "/swirls/" id)
+     (str "/swirls/" id "#" comment-id)))
+  ([id]
+    (swirl id nil)))
 
 (defn notifications []
   "/notifications")

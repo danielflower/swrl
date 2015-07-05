@@ -329,3 +329,9 @@ footer {
 footer ul, footer li {
     display: inline;
 }
+
+.feedback {
+    margin: 40px 0;
+    text-align: center;
+    font-style: italic;
+}

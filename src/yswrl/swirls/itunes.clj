@@ -31,7 +31,7 @@
         album (first (body :results))]
     {:title         (album :collectionName)
      :artist-name   (album :artistName)
-     :thumbnail-url (album :artworkUrl100)
+     :thumbnail-url (clojure.string/replace-first (album :artworkUrl100) ".100x100-" ".600x600-")
      :tracks        (map (fn [r] {:track-name (r :trackName)
                                   :title      (r :collectionName)}) (rest (body :results)))}
     ))

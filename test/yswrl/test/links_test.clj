@@ -6,6 +6,10 @@
   (testing "swirl URL creation"
     (is (= "/swirls/10" (links/swirl 10))))
 
+  (testing "swirl URL creation with comments"
+    (is (= "/swirls/10#1456"
+           (links/swirl 10 1456))))
+
   (testing "password reset link"
     (is (= "/reset-password?token=ADSF%25%26" (links/password-reset "ADSF%&"))))
 

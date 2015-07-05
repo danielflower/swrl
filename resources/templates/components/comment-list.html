@@ -3,7 +3,7 @@
     {{ comment.email_md5|gravatar-img:40 }}
 
     <div class="comment-body">
-        <a class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
+        <a id="{{comment.id}}" class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
 
         <div>
             {{ comment.html_content|safe }}
