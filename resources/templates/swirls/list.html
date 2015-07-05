@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="list-page">
-    <h1>{{pageTitle}}</h1>
+<div class="list-page padded-lr">
+    <h2>{{pageTitle}}</h2>
 
     {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 

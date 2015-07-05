@@ -1,16 +1,15 @@
 <div class="mini-swirl {{swirl.type}}">
-
-    <div class="swirl-type">{{ swirl.type }}</div>
-    <a href="{{ swirl.id|swirlurl }}"><img src="{{ swirl.thumbnail_url }}" class="main-image"></a>
-
-    <div class="mini-swirl__content">
-
-        <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
-
-        <div class="author-bit">
-            {{ swirl.email_md5|gravatar-img:25 }}
-            <a rel="author" href="{{swirl.username|user-url}}">{{swirl.username}}</a>
-            {{swirl.creation_date|timetag}}
+    <a href="{{ swirl.id|swirlurl }}" class="mini-swirl__link">
+        <div class="mini-swirl__bgimage {{swirl.type}}" style="background-image: url({{ swirl.thumbnail_url }})">
+                <div class="swirl-type">{{ swirl.type }}</div>
         </div>
+        <div class="mini-swirl__content">
+            <h2>{{swirl.title}}</h2>
+        </div>
+    </a>
+    <div class="author-bit">
+
+        <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.email_md5|gravatar-img:25 }} {{swirl.username}}</a>
+        {{swirl.creation_date|timetag}}
     </div>
 </div>

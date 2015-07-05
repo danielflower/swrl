@@ -104,8 +104,8 @@ article{
 
 .search-result img {
     float: left;
-    padding-left: 10px;
-    padding-right: 35px;
+    margin-left:10px;
+    margin-right:25px;
 }
 
 .search-result em {

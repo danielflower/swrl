@@ -2,8 +2,8 @@
 {% block content %}
 
 <div class="list-page">
-    <h1>Inbox</h1>
-
+    <div class="padded-lr">
+    <h2>Inbox</h2>
 
     {% if nothing-to-show? %}
 
@@ -32,7 +32,8 @@
     {% endif %}
 
     <h2>Swirls awaiting responses</h2>
-
+    <p>&nbsp;</p>
+</div>
     {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 
     {% endif %}

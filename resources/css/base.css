@@ -296,9 +296,12 @@ nav .nav-count {
     border-bottom-color: var(--video-color);
 }
 
-
 .padded {
     padding: 20px;
+}
+.padded-lr{
+    padding-left:20px;
+    padding-right: 20px;
 }
 
 .type-color {
