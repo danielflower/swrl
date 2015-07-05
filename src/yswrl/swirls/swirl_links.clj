@@ -22,6 +22,17 @@
               :name "IMDB ID"
               })
 
+(def swirl-response {
+                     :code "S"
+                     :name "Swirl Response"
+                     })
+
+(def swirl-progenitor {
+                     :code "P"
+                     :name "Swirl Progenitor"
+                     })
+
+
 (def link-types {
 
                  (itunes-id :code) itunes-id,
@@ -29,6 +40,8 @@
                  (amazon-url :code) amazon-url,
                  (website-url :code) website-url,
                  (imdb-id :code) imdb-id
+                 (swirl-response :code) swirl-response
+                 (swirl-progenitor :code) swirl-progenitor
 
                  })
 

@@ -30,6 +30,9 @@
 (def iso-date-formatter (f/formatter "yyyy-MM-dd'T'HH:mmZ"))
 (def human-friendly-date-formatter (f/formatter "dd MMM yyyy"))
 
+(defn swirl-title [id]
+  (:title (lookups/get-swirl (Integer. id))))
+
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
@@ -48,6 +51,8 @@
 (filters/add-filter! :passwordreseturl links/password-reset)
 
 (filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
+
+(filters/add-filter! :swirl-title swirl-title)
 
 (deftype RenderableTemplate [template params]
   Renderable

@@ -58,6 +58,10 @@
          (count (repo/get-swirl-comments swirl-id))))
   session)
 
+(defn assert-number-of-links [session swirl-id number-to-check]
+  (is (= number-to-check
+         (count (repo/get-links swirl-id))))
+  session)
 
 
 (defn assert-swirl-title-in-header [session verb title]
@@ -192,6 +196,7 @@
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
           (assert-number-of-comments (@test-state :swirl-id) 0)
+          (assert-number-of-links (@test-state :swirl-id) 1)
 
           ; Now login as another user
 
@@ -220,9 +225,14 @@
 
           (actions/save-swirl)
 
-          ; Upon save, the user should be taken back to the original swirl where the should be a new comment
+          ; Upon save, the user should be taken back to the original swirl where there should be a new comment
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 1)
+
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 2)
+
 
            ;now respond with music search
           (press :#respond-with-swirl)
@@ -247,6 +257,9 @@
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 2)
 
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 3)
 
           ; now respond with movie search
           (press :#respond-with-swirl)
@@ -266,6 +279,9 @@
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 3)
 
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 4)
           ;; now respond with tv search
           (press :#respond-with-swirl)
 
@@ -284,6 +300,10 @@
           ; Upon save, the user should be taken back to the original swirl where the should be a new comment
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 4)
+
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 5)
 
           ;; now respond with website which is amazon.com
           ;;(press :#respond-with-swirl)
@@ -310,7 +330,9 @@
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 5)
 
+          ;there should also be an extra link on this page
 
+          (assert-number-of-links (@test-state :swirl-id) 6)
 
           ;; now respond with website which is tmdb
           (press :#respond-with-swirl)
@@ -329,6 +351,9 @@
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 6)
 
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 7)
           ;; now respond with website which is imdb movie
           (press :#respond-with-swirl)
 
@@ -345,6 +370,10 @@
           ; Upon save, the user should be taken back to the original swirl where the should be a new comment
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 7)
+
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 8)
 
           ;
           ;; now respond with website which is imdb tv
@@ -364,6 +393,10 @@
           ; Upon save, the user should be taken back to the original swirl where the should be a new comment
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-number-of-comments (@test-state :swirl-id) 8)
+
+          ;there should also be an extra link on this page
+
+          (assert-number-of-links (@test-state :swirl-id) 9)
 
           ;; finally, go to create page directly to ensure normal titles haven't changed
           (actions/follow-create-link)
