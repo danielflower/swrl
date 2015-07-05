@@ -11,15 +11,10 @@
         </div>
 
 
-        <div class="home--content">
-            <img class="biglogo" src="/immutable/images/swrlogo.png" width="115" height="70" alt="Swirl"/>
+        <h2>Your inbox</h2>
 
-            <div class="subhead">Reviews for your friends</div>
-            <p>
-                Create reviews and recommendations based on what you love. Check them out or save them for later
-                when you have more time. Respond and discuss what you thought, all in one place.
-            </p>
-        </div>
+        {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
+
 
         <a href="/swirls/start" class="create-link">Create</a>
         <a href="/how-to-add">How to add</a>
