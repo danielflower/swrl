@@ -150,7 +150,7 @@
     (if (not= (swirl :author_id) (commentor :id))
       (do (network/store (swirl :author_id) :knows (commentor :id))
           (network/store (commentor :id) :knows (swirl :author_id))))
-    (redirect (str "/swirls/" swirl-id))))
+    (redirect (yswrl.links/swirl swirl-id (comment :id)))))
 
 
 (defn publish-swirl
