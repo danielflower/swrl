@@ -1,3 +1,10 @@
+.list-page h1 {
+    font-size: 2.0rem;
+    padding: 20px 0;
+    color: #737373;
+    font-weight: 300;
+}
+
 
 .type-filter {
     text-align: center;
@@ -9,7 +16,6 @@
     cursor: hand;
     background: transparent;
     border: 0;
-    padding: 0;
     margin: 0;
     font-weight: bold;
     text-transform: uppercase;
@@ -25,8 +31,8 @@
     align-items: stretch;
     padding:0 10px;
 }
+
 .mini-swirl {
-    background:#ffffff;
     margin:0 10px 20px 10px;
     width: 300px;
     flex-grow: 1;
@@ -84,6 +90,12 @@
     line-height: normal;
     color: var(--main-font-color);
 }
+.mini-swirl h2 a {
+    padding: 20px;
+    display: block;
+    text-decoration: none;
+    color: var(--main-font-color);
+}
 
 .mini-swirl time {
     color: #737373;
@@ -134,8 +146,4 @@
 .type-filter button.hidden {
     border-bottom-color: #F1F1F1;
     color: #989898;
-}
-
-.mini-swirl__content {
-    padding: 20px;
 }
