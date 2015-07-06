@@ -36,7 +36,7 @@
   (str "/reset-password?token=" (url-encode token)))
 
 (defn itunes-album [album-id]
-  (str "https://itunes.apple.com/us/album/id" album-id "?at="))
+  (str "https://itunes.apple.com/us/album/id" album-id "?at=1001l55M"))
 
 (defn gravatar-url [hash size]
   (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid"))
