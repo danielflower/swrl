@@ -1,54 +1,54 @@
 <div class="logister">
 
     <div class="logister--panel login">
-        <h4>Login</h4>
-
-        <h5>Thirdparty Logins</h5>
-        <form method="POST" action="/facebook_login">
-            {% csrf-field %}
-            <input type="hidden" name="return-url" value="{{request.uri}}">
-            <input type="image" src="/immutable/images/facebook-login-button-20150524.png" alt="Login with Facebook">
-        </form>
-
-        <h5>Direct Login</h5>
-        <form method="POST" action="/login">
-            {% csrf-field %}
-            <input type="hidden" name="return-url" value="{{request.uri}}">
-
-            <label>Username or email<input type="text" autocomplete="nickname" name="username" required
-                   value="{{ logister-info.login-username }}" maxlength="{{constraints.users.username.max-length}}"></label>
-
-            <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-                   name="password"></label>
-
-            <label>
-                <input type="checkbox" name="remember" checked> Keep me logged in
-            </label>
-            <input type="submit" value="Login" class="button-primary">
-
-            <p><a href="/forgot-password">Forgot your password? Click here.</a></p>
-
-        </form>
-    </div>
-
-    <div class="logister--panel register">
-        <h4>Register</h4>
+        <h2>New to Swirl? Sign Up</h2>
 
         <form method="POST" action="/register" class="register-form">
             {% csrf-field %}
             <input type="hidden" name="return-url" value="{{request.uri}}">
 
-            <label>Username<input
-                    type="text" autocomplete="nickname" name="username" required
-                   maxlength="{{constraints.users.username.max-length}}" value="{{logister-info.register-username}}"></label>
+            <label><span>Username</span><input placeholder="Username"
+                          type="text" autocomplete="nickname" name="username" required
+                          maxlength="{{constraints.users.username.max-length}}" value="{{logister-info.register-username}}"></label>
 
-            <label>Email<input id="email" type="email" autocomplete="email" name="email" required
-                   maxlength="{{constraints.users.email.max-length}}" value="{{logister-info.register-email}}"></label>
+            <label><span>Email</span><input placeholder="Email" id="email" type="email" autocomplete="email" name="email" required
+                          maxlength="{{constraints.users.email.max-length}}" value="{{logister-info.register-email}}"></label>
 
-            <label>Password<input type="password" required pattern=".{8,}" title="Enter at least 8 characters"
-                   name="password" value="{{password}}" class="registration-password-field"></label>
+            <label><span>Password</span><input placeholder="Password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+                          name="password" value="{{password}}" class="registration-password-field"></label>
 
             <input type="submit" value="Register" class="button-primary">
+
+        </form>
+
+
+        <em>Or</em>
+        <form class="fb--login" method="POST" action="/facebook_login">
+            {% csrf-field %}
+            <input type="hidden" name="return-url" value="{{request.uri}}">
+            <input type="image" src="/immutable/images/facebook-login-button-20150524.png" alt="Login with Facebook">
+        </form>
+
+
+    </div>
+
+    <div class="logister--panel register">
+        <h2>Sign in</h2>
+        <form method="POST" action="/login">
+            {% csrf-field %}
+            <input type="hidden" name="return-url" value="{{request.uri}}">
+
+            <label><span>Username or email</span><input placeholder="Username or email" type="text" autocomplete="nickname" name="username" required
+                                           value="{{ logister-info.login-username }}" maxlength="{{constraints.users.username.max-length}}"></label>
+
+            <label><span>Password</span><input placeholder="Password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+                                  name="password"></label>
+
+            <label><input type="checkbox" name="remember" checked> Keep me logged in
+            </label>
+            <input type="submit" value="Login" class="button-primary">
+
+            <p><a href="/forgot-password">Forgot your password? Click here.</a></p>
 
         </form>
     </div>

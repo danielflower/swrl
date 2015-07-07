@@ -76,11 +76,27 @@ article{
     max-height: 90vh;
 }
 
+.fb--login{
+    padding-top: 50px;
+}
+.home--content{
+    padding: 40px;
+}
+.home--content p{
+    line-height: 2;
+    font-size: 25px;
+}
+.home--content br{
+    padding-top: 5px;
+}
 
 .logister {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+}
+.logister label span{
+    display: none;
 }
 
 .logister--panel {
@@ -88,7 +104,22 @@ article{
     padding: 10px;
     flex-grow: 1;
     margin: 10px;
+    text-align: center;
 }
+
+.logister--panel label {
+    display: block;
+    margin: 0px;
+}
+.logister--panel label>span {
+    float: left;
+    width: 45%;
+    text-align: right;
+    padding-right: 10px;
+    margin-top: 10px;
+    color: #888;
+}
+
 
 .search-result {
     clear: both;
