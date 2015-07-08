@@ -145,6 +145,7 @@
       (redirect (yswrl.links/swirl swirl-id)))))
 
 (defn handle-comment [swirl-id comment-content commentor]
+  (log/info "Handling comment: " swirl-id " : " comment-content " : " commentor)
   (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (commentor :id))
         comment (repo/create-comment swirl-id comment-content commentor)]
     (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id) nil)
