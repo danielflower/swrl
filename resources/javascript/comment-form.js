@@ -14,6 +14,7 @@ class CommentForm {
             this.setLoading();
 
             var commentHtml = this.editor.getHtmlContent();
+            console.log('Going to post comment', commentHtml);
             if (commentHtml) {
                 http.post('/swirls/' + this.swirlId + '/comment', {comment: commentHtml})
                     .then(this.addMissingComments.bind(this))
