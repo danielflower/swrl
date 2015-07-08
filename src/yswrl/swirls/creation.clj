@@ -25,10 +25,10 @@
 
 (defn handle-website-creation [url author title origin-swirl-id]
   (let [metadata (website/get-metadata url)
-        _ (log/debug "Metadata for" url ":" metadata)
         swirl-title (or title (metadata :title) "This website")
-        embed-html (if (clojure.string/blank? (metadata :embed-html)) ""
-                                              (str (metadata :embed-html) "<p data-ph=\"....or write something here\"></p>"))
+        embed-html (if (clojure.string/blank? (metadata :embed-html))
+                     ""
+                     (str (metadata :embed-html) "<p data-h=\"....or write something here\"></p>"))
         review (str "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>" embed-html)
         swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url))]
     (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
@@ -45,7 +45,7 @@
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
         review (str "<p data-ph=\"Say something about this album here\"></p>"
                     "<p>Track listing:</p><ol>" track-html "</ol>")]
-    (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url )]
+    (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url)]
       (repo/add-link (swirl :id) (link-types/itunes-id :code) itunes-collection-id)
       (redirect (links/edit-swirl (swirl :id) origin-swirl-id)))))
 
@@ -55,7 +55,7 @@
         title (str (book :title) publish-line)
         big-img-url (book :big-img-url)
         url (book :url)
-        review (str "<img src=\"" big-img-url "\">" "<p data-ph=\"Say something about this item here....\"></p>")
+        review "<p data-ph=\"Say something about this item here....\"></p>"
         swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url)]
     (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
@@ -103,22 +103,22 @@
 
 (defn search-music-page [search-term origin-swirl-id]
   (let [search-result (itunes/search-albums search-term origin-swirl-id)]
-    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
                                          :search-box-placeholder "Album or Song" :origin-swirl-id origin-swirl-id})))
 
 (defn search-books-page [search-term origin-swirl-id]
   (let [search-result (amazon/search-books search-term origin-swirl-id)]
-    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result
-                                         :search-box-placeholder "Book title or author" :origin-swirl-id origin-swirl-id })))
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
+                                         :search-box-placeholder "Book title or author" :origin-swirl-id origin-swirl-id})))
 
 (defn search-movies-page [search-term origin-swirl-id]
   (let [search-result (tmdb/search-movies search-term origin-swirl-id)]
-    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result
-                                         :search-box-placeholder "Movie name"  :origin-swirl-id origin-swirl-id})))
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
+                                         :search-box-placeholder "Movie name" :origin-swirl-id origin-swirl-id})))
 
 (defn search-tv-page [search-term origin-swirl-id]
   (let [search-result (tmdb/search-tv search-term origin-swirl-id)]
-    (layout/render "swirls/search.html" {:search-term search-term :search-result search-result
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
                                          :search-box-placeholder "TV show title" :origin-swirl-id origin-swirl-id})))
 
 
@@ -153,14 +153,19 @@
     ))
 
 (defn handle-creation-from-url [url title author origin-swirl-id]
-  ((handler-for url) url author title origin-swirl-id))
+  (try
+    ((handler-for url) url author title origin-swirl-id)
+    (catch Exception e
+      (log/warn (str "Error while handling " url author title origin-swirl-id " so will fall back to generic handler. Error was") e)
+      (handle-website-creation url author title origin-swirl-id)
+      )))
 
 
-(defn create-from-url-handler [url title origin-swirl-id req ]
+(defn create-from-url-handler [url title origin-swirl-id req]
   (let [uri (URI. url)]
     (if (= "chrome" (.getScheme (URI. url)))
       (redirect "/")
-      (guard/requires-login #(handle-creation-from-url uri title  (session-from req) origin-swirl-id)))))
+      (guard/requires-login #(handle-creation-from-url uri title (session-from req) origin-swirl-id)))))
 
 (defroutes creation-routes
            (GET "/swirls/start" [origin-swirl-id] (start-page origin-swirl-id))

@@ -78,7 +78,6 @@
         result-data (xml-data/parse-str raw-data)
         zip-data (zip/xml-zip result-data)
         book (xml1-> zip-data :Items :Item)]
-    (println url)
     {:url         (apply str (xml-> book :DetailPageURL text))
      :title       (apply str (xml-> book :ItemAttributes :Title text))
      :author      (apply str (xml-> book :ItemAttributes :Author text))
