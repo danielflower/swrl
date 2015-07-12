@@ -806,6 +806,10 @@ $(document).ready(function () {
             js = d.createElement(s);js.id = id;js.src = p + '://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);
         }
     })(document, 'script', 'twitter-wjs');
+    !(function (d, s, id) {
+        var js,
+            fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) return;js = d.createElement(s);js.id = id;js.src = '//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576';fjs.parentNode.insertBefore(js, fjs);
+    })(document, 'script', 'facebook-jssdk');
 });
 
 },{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./swirl-list":13}],5:[function(require,module,exports){
