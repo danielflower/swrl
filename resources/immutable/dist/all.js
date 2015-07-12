@@ -945,7 +945,13 @@ module.exports = setup;
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _httpJs = require('./http.js');
+
+var _httpJs2 = _interopRequireDefault(_httpJs);
 
 var RichTextEditor = (function () {
     function RichTextEditor($rteDiv) {
@@ -955,6 +961,7 @@ var RichTextEditor = (function () {
 
         this.$textarea = $rteDiv.find('textarea').first();
         this.$editorDiv = $rteDiv.find('.editor').first();
+        this.editorDiv = this.$editorDiv[0];
 
         $rteDiv.find('.spoiler-alert-button').click(function () {
             _this.addHtmlAtCursor('<div class="spoiler-alert">' + '<div class="spoiler-alert--bar" title="Click to expand" contenteditable="false">' + '<button class="spoiler-alert--close-button" title="Delete spoiler alert">x</button>' + '<a href="#">Spoiler alert</a>' + '</div>' + '<div class="spoiler-alert--content" data-ph="Write your spoilers here - they will not be shown unless clicked on"></div>' + '</div>' + '<p data-ph="..."></p>');
@@ -967,6 +974,11 @@ var RichTextEditor = (function () {
             return false;
         });
 
+        var me = this;
+        this.$editorDiv.bind('paste', function () {
+            setTimeout(me.convertPlainTextLinksToAnchorTags.bind(me), 1);
+        });
+
         var html = this.$textarea.val();
         this.$editorDiv.html(html);
 
@@ -977,6 +989,71 @@ var RichTextEditor = (function () {
     }
 
     _createClass(RichTextEditor, [{
+        key: 'visitDescendents',
+        value: function visitDescendents(startNode, visitor) {
+            var children = startNode.childNodes;
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
+                var continueDown = visitor(child);
+                if (continueDown) {
+                    this.visitDescendents(child, visitor);
+                }
+            }
+        }
+    }, {
+        key: 'enrichLinks',
+        value: function enrichLinks() {
+            this.$editorDiv.find('a').each(function (i, e) {
+                if (e.href === e.innerText && e.className !== 'transforming-link') {
+                    e.className = 'transforming-link';
+                    $(e).append('<i class="fa fa-spin fa-spinner"></i>');
+                    _httpJs2['default'].getJson('/website-service/get-metadata?url=' + encodeURI(e.href)).then(function (metadata) {
+                        e.innerText = metadata.title;
+                        e.className = '';
+                        var html = metadata['embed-html'];
+                        if (html) {
+                            $(e).after('<div class="user-entered-embed-box">' + html + '</div>');
+                        }
+                    });
+                }
+            });
+        }
+    }, {
+        key: 'convertPlainTextLinksToAnchorTags',
+        value: function convertPlainTextLinksToAnchorTags() {
+            var node = this.editorDiv;
+            var links = this.getHtmlContent().match(/(http(s|):\/\/[^<>\s]+(\.[^<>\s]+)*(|:[0-9]+)[^<>\s]*)/g);
+            if (!links) {
+                return;
+            }
+
+            this.visitDescendents(node, function (e) {
+                if (e.nodeType === 3) {
+                    // text nodes
+                    for (var i = 0; i < links.length; i++) {
+                        var link = links[i];
+                        var index = e.data.indexOf(link);
+                        if (index > -1) {
+                            // split the text node into 3 bits - the 'nextBit' is the part containing the URL
+                            var nextBit = e.splitText(index);
+                            nextBit.splitText(link.length);
+                            var target = link.indexOf('http://www.swrl.co') === 0 ? '' : ' target="_blank"';
+                            $(nextBit).before('<a href="' + link + '"' + target + '>' + link + '</a>');
+                            nextBit.data = ' ';
+                            return false; // stop processing this bit - we've changed it so processing will be weird
+                        }
+                    }
+                    if (!window.todo) window.todo = e;
+                } else if (e.nodeType === 1 && e.tagName === 'A') {
+                    // This is an anchor element already - don't convert the HTML twice dawg
+                    return false;
+                }
+                return true;
+            });
+
+            this.enrichLinks();
+        }
+    }, {
         key: 'addHtmlAtCursor',
         value: function addHtmlAtCursor(html) {
             this.$editorDiv.append(html);
@@ -1017,7 +1094,7 @@ var initWidgets = function initWidgets($) {
 
 module.exports = { init: setup, RichTextEditor: RichTextEditor, initWidgets: initWidgets };
 
-},{}],9:[function(require,module,exports){
+},{"./http.js":10}],9:[function(require,module,exports){
 'use strict';
 
 var init = function init() {

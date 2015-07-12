@@ -7,6 +7,7 @@
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.auth.facebook-login :refer [facebook-routes]]
             [yswrl.rest.swirl-resource :refer [swirl-rest-routes]]
+            [yswrl.rest.website-service :refer [website-rest-routes]]
             [yswrl.user.notifications :refer [notification-routes]]
             [yswrl.middleware :refer [development-middleware production-middleware]]
             [compojure.route :as route]
@@ -59,6 +60,7 @@
 (def app
   (-> (routes
         (wrap-api-routes swirl-rest-routes)
+        (wrap-api-routes website-rest-routes)
         (wrap-site-pages home-routes)
         (wrap-site-pages auth-routes)
         (wrap-site-pages swirl-routes)

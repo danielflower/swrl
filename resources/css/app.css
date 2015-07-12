@@ -76,6 +76,12 @@ article{
     max-height: 90vh;
 }
 
+.user-entered-embed-box iframe {
+    max-height: 40vh;
+    max-width: 400px;
+    width: 100%;
+}
+
 .fb--login{
     padding-top: 50px;
 }
