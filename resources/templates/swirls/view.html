@@ -5,7 +5,7 @@
     <img class="swirl-header__image {{ model.swirl.type }}" src="{{ model.swirl.thumbnail_url }}"/>
     <div class="swirl-type">{{ model.swirl.type }}</div>
 </div>
-    <div class="padded">
+    <br class="padded">
         <header>
             <h1 class="headline type-color">{{model.swirl.title}}</h1>
 
@@ -75,6 +75,8 @@
         <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl" data-dnt="true">Tweet</a>
 
         <div class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}" data-layout="button_count"></div>
+
+        <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img src="/immutable/images/swrl-logo.svg" height="15px"></a>
 
         <div class="comment-area">
             <h2>Comments</h2>

@@ -164,7 +164,7 @@
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
            (repo/add-link origin-swirl-id (link-types/swirl-response :code) id)
-           (handle-comment origin-swirl-id (str "You should also " (get-in (yswrl.swirls.types/type-of (lookups/get-swirl origin-swirl-id))
+           (handle-comment origin-swirl-id (str "You should also " (get-in (yswrl.swirls.types/type-of (lookups/get-swirl id))
                                                                           [:words :watch])
                                                ": <a href=\"" (yswrl.links/swirl id) "\">"
                                                subject "</a>")

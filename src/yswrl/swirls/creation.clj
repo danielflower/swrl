@@ -12,7 +12,8 @@
             [yswrl.swirls.website :as website]
             [yswrl.swirls.tmdb :as tmdb]
             [clojure.tools.logging :as log]
-            [yswrl.swirls.swirl-links :as link-types])
+            [yswrl.swirls.swirl-links :as link-types]
+            [yswrl.swirls.lookups :as lookups])
   (:import (java.net URI)))
 
 (defn start-page [origin-swirl-id]
@@ -88,6 +89,14 @@
     )
   ([tmdb-id user origin-swirl-id]
    (handle-tv-creation tmdb-id user nil origin-swirl-id)))
+
+(defn handle-reswirl-creation [swirl-id author]
+  (let [swirl (lookups/get-swirl swirl-id)
+        link (first(repo/get-links swirl-id))
+        review  "<p data-ph=\"Say something about this here....\"></p>"
+        new-swirl (repo/save-draft-swirl (:type swirl) (author :id) (:title swirl) review (:thumbnail_url swirl))]
+    (repo/add-link (new-swirl :id) (link :type_code) (link :code))
+    (redirect (links/edit-swirl (new-swirl :id) nil))))
 
 (defn itunes-id-from-url [url]
   (let [[_ result] (re-find #"/id([\d]+)" url)]
@@ -167,6 +176,7 @@
       (redirect "/")
       (guard/requires-login #(handle-creation-from-url uri title (session-from req) origin-swirl-id)))))
 
+
 (defroutes creation-routes
            (GET "/swirls/start" [origin-swirl-id] (start-page origin-swirl-id))
            (GET "/search/music" [search-term origin-swirl-id] (search-music-page search-term origin-swirl-id))
@@ -179,4 +189,5 @@
            (GET "/create/book" [book-id origin-swirl-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req) origin-swirl-id)))
            (GET "/create/movie" [tmdb-id origin-swirl-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req) origin-swirl-id)))
            (GET "/create/tv" [tmdb-id origin-swirl-id :as req] (guard/requires-login #(handle-tv-creation tmdb-id (session-from req) origin-swirl-id)))
+           (GET "/create/reswirl" [id :as req] (guard/requires-login #(handle-reswirl-creation (Long/parseLong id) (session-from req))))
            )

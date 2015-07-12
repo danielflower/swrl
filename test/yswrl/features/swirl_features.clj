@@ -405,6 +405,49 @@
 
           ))))
 
+(deftest can-reswirl-an-existing-swirl
+  (with-faked-responses
+    (let [user1 (s/create-test-user)
+          user2 (s/create-test-user)
+          test-state (atom {})]
+
+      (-> (session app)
+          (visit "/")
+          ; Login as user 1
+          (actions/follow-login-link)
+          (login-as user1)
+
+          ; Create a swirl
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (actions/submit "Go")
+
+          (actions/save-swirl)
+
+          (save-url test-state :view-swirl-uri)
+          (save-swirl-id  test-state :swirl-id)
+
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          ; Now login as another user
+
+          (actions/log-out)
+          (actions/follow-login-link)
+          (login-as user2)
+
+          ; Other users can view the swirl and press the respond to swirl with swirl button!
+          (visit (@test-state :view-swirl-uri))
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          (follow [:a.re-swirl])
+          (follow-redirect)
+          (actions/save-swirl)
+
+          ;the new swirl has the same title
+          (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
+
+          ))))
+
 (deftest a-user-that-registers-as-a-result-of-a-suggestion-email-has-a-network-and-notifications-set-up
   (with-faked-responses
     (let [existing-user (s/create-test-user)
