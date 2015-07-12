@@ -798,6 +798,14 @@ $(document).ready(function () {
     _menu2['default'].init($);
     _swirlList2['default'].init($);
     _ga2['default'].addAnalyticsIfProd();
+
+    !(function (d, s, id) {
+        var js,
+            fjs = d.getElementsByTagName(s)[0],
+            p = /^http:/.test(d.location) ? 'http' : 'https';if (!d.getElementById(id)) {
+            js = d.createElement(s);js.id = id;js.src = p + '://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);
+        }
+    })(document, 'script', 'twitter-wjs');
 });
 
 },{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./swirl-list":13}],5:[function(require,module,exports){

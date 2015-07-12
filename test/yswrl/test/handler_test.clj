@@ -7,7 +7,7 @@
   (testing "main route"
     (let [response (app (request :get "/"))]
       (is (= 200 (:status response)))
-      (is (= "default-src 'self'; img-src *; frame-src *; child-src *; style-src 'self' 'unsafe-inline'; script-src 'self' www.google-analytics.com" ((:headers response) "Content-Security-Policy")))
+      (is (= "default-src 'self'; img-src *; frame-src *; child-src *; style-src 'self' 'unsafe-inline'; script-src 'self' www.google-analytics.com http://platform.twitter.com/widgets.js" ((:headers response) "Content-Security-Policy")))
       (is (= "0; mode=block" ((:headers response) "X-XSS-Protection")))
       (is (= "private" ((:headers response) "Cache-Control")))
     ))

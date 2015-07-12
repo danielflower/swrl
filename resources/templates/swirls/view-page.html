@@ -5,6 +5,8 @@
 <meta property="og:image" content="{{model.swirl.thumbnail_url}}"/>
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="{{model.swirl.creation_date}}">
+<meta name="twitter:widgets:csp" content="on">
+<link rel="canonical" href="{{model.swirl.id|swirlurl|absoluteurl}}" />
 {% endblock %}
 {% block content %}
 <div class="standard-page">
