@@ -1031,14 +1031,14 @@ var RichTextEditor = (function () {
                 if (e.nodeType === 3) {
                     // text nodes
                     for (var i = 0; i < links.length; i++) {
-                        var link = links[i];
-                        var index = e.data.indexOf(link);
+                        var htmlEncodedLink = $('<div/>').html(links[i]).text();
+                        var index = e.data.indexOf(htmlEncodedLink);
                         if (index > -1) {
                             // split the text node into 3 bits - the 'nextBit' is the part containing the URL
                             var nextBit = e.splitText(index);
-                            nextBit.splitText(link.length);
-                            var target = link.indexOf('http://www.swrl.co') === 0 ? '' : ' target="_blank"';
-                            $(nextBit).before('<a href="' + link + '"' + target + '>' + link + '</a>');
+                            nextBit.splitText(htmlEncodedLink.length);
+                            var target = htmlEncodedLink.indexOf('http://www.swrl.co') === 0 ? '' : ' target="_blank"';
+                            $(nextBit).before('<a href="' + htmlEncodedLink + '"' + target + '>' + htmlEncodedLink + '</a>');
                             nextBit.data = ' ';
                             return false; // stop processing this bit - we've changed it so processing will be weird
                         }
