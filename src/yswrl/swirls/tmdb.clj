@@ -3,8 +3,8 @@
             [yswrl.links :as links]))
 
 (def TMDB-API-KEY "c3356e66739e40233c7870d42b30bc34")
-(def THUMBNAIL-URL-PREFIX "http://image.tmdb.org/t/p/w92")
-(def LARGE-IMAGE-URL-PREFIX "http://image.tmdb.org/t/p/w342")
+(def THUMBNAIL-URL-PREFIX "http://image.tmdb.org/t/p/original")
+(def LARGE-IMAGE-URL-PREFIX "http://image.tmdb.org/t/p/original")
 
 (defn search-movies
   ([search-term origin-swirl-id]
@@ -13,15 +13,15 @@
     (let [encoded (links/url-encode search-term)
           url (str "https://api.themoviedb.org/3/search/movie?api_key=" TMDB-API-KEY "&query=" encoded)
           result (client/get url {:accept :json :as :json})] {
-                                                              :results (map (fn [r] {:title           (r :title)
-                                                                                     :tmdb-id         (r :id)
-                                                                                     :create-url      (str "/create/movie?tmdb-id=" (r :id)
-                                                                                                           (if (clojure.string/blank? origin-swirl-id)
-                                                                                                             nil
-                                                                                                             (str "&origin-swirl-id=" origin-swirl-id)))
-                                                                                     :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
-                                                                                     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
-                                                              })))
+                                                                       :results (map (fn [r] {:title           (r :title)
+                                                                                              :tmdb-id         (r :id)
+                                                                                              :create-url      (str "/create/movie?tmdb-id=" (r :id)
+                                                                                                                    (if (clojure.string/blank? origin-swirl-id)
+                                                                                                                      nil
+                                                                                                                      (str "&origin-swirl-id=" origin-swirl-id)))
+                                                                                              :large-image-url (str LARGE-IMAGE-URL-PREFIX (or (r :backdrop_path) (r :poster_path)))
+                                                                                              :thumbnail-url   (str THUMBNAIL-URL-PREFIX (or (r :backdrop_path) (r :poster_path)))}) ((result :body) :results))
+                                                                       })))
   ([search-term]
    (search-movies search-term "")))
 
@@ -31,8 +31,8 @@
         body (result :body)]
     {:title           (body :title)
      :overview        (body :overview)
-     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
-     :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
+     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (or (body :backdrop_path) (body :poster_path)))
+     :large-image-url (str LARGE-IMAGE-URL-PREFIX (or (body :backdrop_path) (body :poster_path)))
      :tmdb-id         (body :id)
      :imdb-id         (body :imdb_id)
      :url             (body :homepage)
@@ -68,8 +68,8 @@
                                                                                                            (if (clojure.string/blank? origin-swirl-id)
                                                                                                              nil
                                                                                                              (str "&origin-swirl-id=" origin-swirl-id)))
-                                                                                     :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
-                                                                                     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
+                                                                                     :large-image-url (str LARGE-IMAGE-URL-PREFIX (or (r :backdrop_path) (r :poster_path)))
+                                                                                     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (or (r :backdrop_path) (r :poster_path)))}) ((result :body) :results))
                                                               })))
   ([search-term]
    (search-tv search-term ""))
@@ -80,8 +80,8 @@
         result (client/get url {:accept :json :as :json})
         body (result :body)]
     {:title           (body :name)
-     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
-     :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
+     :thumbnail-url   (str THUMBNAIL-URL-PREFIX (or (body :backdrop_path) (body :poster_path)))
+     :large-image-url (str LARGE-IMAGE-URL-PREFIX (or (body :backdrop_path) (body :poster_path)))
      :tmdb-id         (body :id)
      ;;:imdb-id (body :imdb_id) ;; API doesn't provide this yet, sadface
      :url             (body :homepage)
