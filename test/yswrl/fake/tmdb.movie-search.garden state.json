@@ -1,1 +1,33 @@
-{"page":1,"results":[{"adult":false,"backdrop_path":"/dyuQeCN6K4DaUnm6RjenCBPI5nb.jpg","id":401,"original_title":"Garden State","release_date":"2004-01-16","poster_path":"/u7IASCZ02Q94SYklSIR2609inis.jpg","popularity":1.059326,"title":"Garden State","video":false,"vote_average":7.0,"vote_count":170},{"adult":false,"backdrop_path":"/vkhURTBBs9QvUuHCQCT8dIfG6Ht.jpg","id":324409,"original_title":"The Marshall Tucker Band - Live From The Garden State 1981","release_date":"2004-11-01","poster_path":"/gQU9pdJ4rGN8GvxaL2auvJ5mmXw.jpg","popularity":0.00143,"title":"The Marshall Tucker Band - Live From The Garden State 1981","video":false,"vote_average":0.0,"vote_count":0}],"total_pages":1,"total_results":2}
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/dyuQeCN6K4DaUnm6RjenCBPI5nb.jpg",
+      "id": 401,
+      "original_title": "Garden State",
+      "release_date": "2004-01-16",
+      "poster_path": "/u7IASCZ02Q94SYklSIR2609inis.jpg",
+      "popularity": 1.059326,
+      "title": "Garden State",
+      "video": false,
+      "vote_average": 7.0,
+      "vote_count": 170
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 324409,
+      "original_title": "The Marshall Tucker Band - Live From The Garden State 1981",
+      "release_date": "2004-11-01",
+      "poster_path": "/gQU9pdJ4rGN8GvxaL2auvJ5mmXw.jpg",
+      "popularity": 0.00143,
+      "title": "The Marshall Tucker Band - Live From The Garden State 1981",
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    }
+  ],
+  "total_pages": 1,
+  "total_results": 2
+}
