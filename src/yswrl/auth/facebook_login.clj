@@ -74,5 +74,5 @@
 
 (defroutes facebook-routes
            (GET "/facebook_auth" [:as req] (handle-facebook-auth-response req))
-            (POST "/facebook_login" [return-url :as req] (handle-facebook-login return-url req))
+            (GET "/facebook_login" [return-url :as req] (handle-facebook-login return-url req))
            )

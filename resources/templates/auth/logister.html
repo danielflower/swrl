@@ -23,7 +23,7 @@
 
 
         <em>Or</em>
-        <form class="fb--login" method="POST" action="/facebook_login">
+        <form class="fb--login" method="GET" action="/facebook_login">
             {% csrf-field %}
             <input type="hidden" name="return-url" value="{{request.uri}}">
             <input type="image" src="/immutable/images/facebook-login-button-20150524.png" alt="Login with Facebook">
