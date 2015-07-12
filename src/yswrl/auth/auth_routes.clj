@@ -79,6 +79,7 @@
         (try
           (let [created-user (users/create-user (user :username) (user :email) (hash-password (user :password) hash-options))]
             (users/migrate-suggestions-from-email (created-user :id) (created-user :email)))
+          (log/info "New user registration klaxon:" (user :username) "-" (user :email))
           (attempt-login (user :username) (user :password) false return-url req)
           (catch Exception e
             (let [message (cond
