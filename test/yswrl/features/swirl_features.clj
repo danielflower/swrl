@@ -162,7 +162,7 @@
       (within [:p] (has (some-text? "This is where Swirls will appear when someone recommends you something.")))
 
       ; Make sure the links work
-      (follow "creating a recommendation for one of your friends")
+      (follow "create a recommendation for one of your friends")
       (within [:h1] (has (text? "Start")))
 
       (visit (links/inbox))

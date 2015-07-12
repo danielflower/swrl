@@ -1020,7 +1020,8 @@ var RichTextEditor = (function () {
                     e.className = 'transforming-link';
                     $(e).append('<i class="fa fa-spin fa-spinner"></i>');
                     _httpJs2['default'].getJson('/website-service/get-metadata?url=' + encodeURI(e.href)).then(function (metadata) {
-                        e.innerText = metadata.title;
+                        console.log('Got metadata', metadata);
+                        e.innerText = metadata.title || e.href;
                         e.className = '';
                         var html = metadata['embed-html'];
                         if (html) {
