@@ -92,10 +92,10 @@
 
 (defn handle-reswirl-creation [swirl-id author]
   (let [swirl (lookups/get-swirl swirl-id)
-        link (first(repo/get-links swirl-id))
         review  "<p data-ph=\"Say something about this here....\"></p>"
         new-swirl (repo/save-draft-swirl (:type swirl) (author :id) (:title swirl) review (:thumbnail_url swirl))]
-    (repo/add-link (new-swirl :id) (link :type_code) (link :code))
+    (if-let [link (first(repo/get-links swirl-id))]
+      (repo/add-link (new-swirl :id) (:type_code link) (:code link)))
     (redirect (links/edit-swirl (new-swirl :id) nil))))
 
 (defn itunes-id-from-url [url]
