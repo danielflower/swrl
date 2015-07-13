@@ -6,6 +6,7 @@
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
             [yswrl.auth.facebook-login :refer [facebook-routes]]
+            [yswrl.user.preference-routes :refer [preference-routes]]
             [yswrl.rest.swirl-resource :refer [swirl-rest-routes]]
             [yswrl.rest.website-service :refer [website-rest-routes]]
             [yswrl.user.notifications :refer [notification-routes]]
@@ -64,6 +65,7 @@
         (wrap-site-pages home-routes)
         (wrap-site-pages auth-routes)
         (wrap-site-pages swirl-routes)
+        (wrap-site-pages preference-routes)
         (wrap-site-pages creation-routes)
         (wrap-site-pages password-reset-routes)
         (wrap-site-pages facebook-routes)

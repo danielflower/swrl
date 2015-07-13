@@ -1,6 +1,6 @@
 (ns yswrl.links)
 
-(defn url-encode [val] (.replaceAll (java.net.URLEncoder/encode val "UTF-8") "\\+" "%20"))
+(defn url-encode [val] (.replaceAll (java.net.URLEncoder/encode (or val "") "UTF-8") "\\+" "%20"))
 
 (def base-url "http://www.swrl.co")
 
@@ -43,6 +43,9 @@
 
 (defn create-swirl []
   "/swirls/start")
+
+(defn notification-options [email]
+  (str "/notification-options?email=" (url-encode email)))
 
 (defn inbox
   ([] "/swirls/inbox")

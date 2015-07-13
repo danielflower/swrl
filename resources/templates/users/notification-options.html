@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="standard-page padded">
+    <h1>Notification options</h1>
+
+
+    {% if user %}
+
+    <h2>Email preferences</h2>
+
+    <form method="POST" action="/update-notification-preferences">
+        {% csrf-field %}
+
+        <h4>How often do you want to receive notification emails?</h4>
+        <p>This includes information about who has responded and commented on Swirls you are watching.</p>
+        <label><input type="radio" name="notification-interval" value="1day"> daily</label>
+        <label><input type="radio" name="notification-interval" value="1week" checked> once a week</label>
+        <label><input type="radio" name="notification-interval" value="1month"> once a month</label>
+        <label><input type="radio" name="notification-interval" value="1year"> once a year</label>
+
+        <h4>How often do you want to receive inbox reminder emails?</h4>
+        <p>This email shows you Swirls that people have suggested you look at, but you haven't responded to yet.</p>
+        <label><input type="radio" name="inbox-interval" value="1day"> daily</label>
+        <label><input type="radio" name="inbox-interval" value="1week"> once a week</label>
+        <label><input type="radio" name="inbox-interval" value="1month" checked> once a month</label>
+        <label><input type="radio" name="inbox-interval" value="1year"> once a year</label>
+
+        <input type="submit" value="Update notification options" class="button-primary">
+    </form>
+
+    <h3>...or....</h3>
+
+    {% endif %}
+
+    <p>To add your email to our blacklist so that you never get emailed again, enter your email address here.</p>
+
+    <form method="POST" action="/blacklist-email">
+        {% csrf-field %}
+        <label>Add to email blacklist:
+            <input type="email" name="email-for-blacklist" value="{{blacklist-email}}" required></label>
+        <input type="submit" value="Unsubscribe" class="button-primary">
+    </form>
+
+</div>
+{% endblock %}
