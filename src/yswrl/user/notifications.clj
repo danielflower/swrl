@@ -61,7 +61,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
           (where {:notifications.date_seen    nil
                   :notifications.date_emailed nil})
           (where (or {:date_last_emailed nil}
-                     {:date_last_emailed [< (raw "(now() - interval '1 day')")]}))))
+                     {(raw "COALESCE(date_last_emailed, date_registered)") [< (raw "(now() - interval '1 day')")]}))))
 
 
 (defn mark-as-seen [swirl-id seer]
@@ -106,10 +106,9 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   (let [users (users-with-pending-notifications)]
     (doseq [user users]
       (let [notifications (notifications-repo/get-for-user-email (user :id))
-            html (create-notification-email-body user notifications)
-            to [{:email (:email user) :name (:username user)}]]
+            html (create-notification-email-body user notifications)]
         (mark-email-sent user)
-        (postman/send-email to "Swirl updates" html)))))
+        (postman/send-email (:email user) (:username user) "Swirl updates" html)))))
 
 (defn get-notification-view-model [user]
   (let [raw (notifications-repo/get-for-user-page (user :id))]

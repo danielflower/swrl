@@ -15,13 +15,12 @@
 (defn get-users-to-nag []
   (db/query "SELECT id FROM users WHERE
   id IN (SELECT recipient_id FROM suggestions WHERE recipient_id IS NOT NULL AND response_id IS NULL)
-  AND (date_last_nagged IS NULL OR date_last_nagged < (now() - interval '1 week'))
-  "))
+  AND COALESCE(date_last_nagged, date_registered) < (now() - inbox_email_interval)"))
 
 (defn email-user [user-id]
   (let [swirls (get-unresponded-for-user user-id)
         recipient (yswrl.auth.auth-repo/get-user-by-id user-id)]
-    (postman/send-email [{:email (:email recipient) :name (:username recipient)}]
+    (postman/send-email (:email recipient) (:username recipient)
                         "Swirls awaiting your response"
                         (postman/email-body "notifications/nag-email.html"
                                             {:swirls swirls :recipient recipient}))

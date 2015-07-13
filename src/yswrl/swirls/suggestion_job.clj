@@ -39,7 +39,7 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
       (doseq [row unsent]
         (log/debug "About to process" row)
         (let [[response]
-              (send-email [{:email (:recipient_email row) :name (:recipient_email row)}] (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
+              (send-email (:recipient_email row) (:recipient_email row) (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))
             (mark-suggestion-sent (:suggestion_id row) (:_id response))
             (mark-suggestion-failed (:suggestion_id row) (str (:status response) " " (:reject_reason response)))))))

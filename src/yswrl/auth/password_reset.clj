@@ -42,7 +42,7 @@
     (if user
       (let [token (create-reset-token)]
         (create-password-reset-request (:id user) (:hashed token))
-        (postman/send-email [{:email (:email user) :name (:username user)}] "Password reset request" (create-forgotten-email-body (user :username) (:unhashed token)))
+        (postman/send-email (:email user) (:username user) "Password reset request" (create-forgotten-email-body (user :username) (:unhashed token)))
         (redirect "/forgot-password-sent"))
       (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 
