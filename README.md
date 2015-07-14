@@ -109,3 +109,4 @@ Just run the tests a few times to generate fake data.
 1. Uninstall the Swirl extension if you have it already.
 2. Go to extensions, enable developer mode, and add the chrome folder as an extension.
 3. Once debugged, increment the version in `manifest.js`, zip the folder and upload to the Chrome store.
+
