@@ -13,6 +13,15 @@
                                }
                        }
 
+            "game"    {
+                       :name  "game"
+                       :words {
+                               :watch   "play"
+                               :seen    "played"
+                               :seen-it "played it"
+                               }
+                       }
+
             "album"   {
                        :name  "album"
                        :words {

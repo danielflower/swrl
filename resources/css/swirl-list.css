@@ -82,6 +82,9 @@
 .mini-swirl__bgimage.video,.type-filter .video {
     border-bottom-color: var(--video-color);
 }
+.mini-swirl__bgimage.game,.type-filter .game {
+    border-bottom-color: var(--game-color);
+}
 
 
 .mini-swirl h2 {
@@ -141,6 +144,9 @@
 }
 .video .swirl-type, .video-background-color {
     background-color: var(--video-color);
+}
+.game .swirl-type, .game-background-color {
+    background-color: var(--game-color);
 }
 
 .type-filter button.hidden {

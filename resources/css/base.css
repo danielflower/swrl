@@ -293,7 +293,10 @@ nav .nav-count {
     border-bottom-color: var(--book-color);
 }
 .video .border-bottom {
-    border-bottom-color: var(--video-color);
+     border-bottom-color: var(--video-color);
+ }
+.game .border-bottom {
+     border-bottom-color: var(--game-color);
 }
 
 .padded {
@@ -322,6 +325,9 @@ nav .nav-count {
 .video .type-color {
     color: var(--video-color);
 }
+.game .type-color {
+ color: var(--game-color);
+ }
 
 footer {
     margin: 100px 0 0;

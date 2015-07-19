@@ -62,6 +62,18 @@
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
     (redirect (links/edit-swirl (swirl :id) origin-swirl-id))))
 
+(defn handle-game-creation [asin user origin-swirl-id]
+  (let [game (amazon/get-game asin)
+        platform-line (if (clojure.string/blank? (game :platform)) "" (str " on " (game :platform)))
+        title (str (game :title) platform-line)
+        big-img-url (game :big-img-url)
+        url (game :url)
+        review "<p data-ph=\"Say something about this game here....\"></p>"
+        swirl (repo/save-draft-swirl "game" (user :id) title review big-img-url)]
+    (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
+    (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
+    (redirect (links/edit-swirl (swirl :id) origin-swirl-id))))
+
 (defn handle-movie-creation
   ([tmdb-id user url origin-swirl-id]
    (if tmdb-id
@@ -119,6 +131,11 @@
   (let [search-result (amazon/search-books search-term origin-swirl-id)]
     (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
                                          :search-box-placeholder "Book title or author" :origin-swirl-id origin-swirl-id})))
+
+(defn search-games-page [search-term origin-swirl-id]
+  (let [search-result (amazon/search-games search-term origin-swirl-id)]
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
+                                         :search-box-placeholder "Game title" :origin-swirl-id origin-swirl-id})))
 
 (defn search-movies-page [search-term origin-swirl-id]
   (let [search-result (tmdb/search-movies search-term origin-swirl-id)]
@@ -182,11 +199,13 @@
            (GET "/search/music" [search-term origin-swirl-id] (search-music-page search-term origin-swirl-id))
            (GET "/search/books" [search-term origin-swirl-id] (search-books-page search-term origin-swirl-id))
            (GET "/search/movies" [search-term origin-swirl-id] (search-movies-page search-term origin-swirl-id))
+           (GET "/search/games" [search-term origin-swirl-id] (search-games-page search-term origin-swirl-id))
            (GET "/search/tv" [search-term origin-swirl-id] (search-tv-page search-term origin-swirl-id))
 
            (GET "/create/from-url" [url title origin-swirl-id :as req] (create-from-url-handler url title origin-swirl-id req))
            (GET "/create/album" [itunes-album-id origin-swirl-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req) origin-swirl-id)))
            (GET "/create/book" [book-id origin-swirl-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req) origin-swirl-id)))
+           (GET "/create/game" [game-id origin-swirl-id :as req] (guard/requires-login #(handle-game-creation game-id (session-from req) origin-swirl-id)))
            (GET "/create/movie" [tmdb-id origin-swirl-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req) origin-swirl-id)))
            (GET "/create/tv" [tmdb-id origin-swirl-id :as req] (guard/requires-login #(handle-tv-creation tmdb-id (session-from req) origin-swirl-id)))
            (GET "/create/reswirl" [id :as req] (guard/requires-login #(handle-reswirl-creation (Long/parseLong id) (session-from req))))
