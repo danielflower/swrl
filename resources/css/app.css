@@ -210,3 +210,9 @@ article{
     text-align: right;
     margin: 20px 0;
 }
+
+#share-buttons {
+    height: 50px; /* fixed height to prevent reflows of page while the buttons reload themselves */
+    overflow-y: hidden;
+    width: 100%;
+}

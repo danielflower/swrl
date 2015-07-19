@@ -67,3 +67,7 @@
             (set-fields {:recipient_id user-id :recipient_email nil})
             (where where-map))))
 
+(defn users-for-dropdown []
+  (select db/users
+          (fields :username :email_md5)
+          (order :username :asc)))

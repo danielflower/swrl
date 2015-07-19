@@ -1,117 +1,123 @@
 <div class="full {{model.swirl.type}}">
 
-<div class="swirl-header border-bottom">
-    <div class="swirl-header__bgimage" style="background-image: url({{ model.swirl.thumbnail_url }})"></div>
-    <img class="swirl-header__image {{ model.swirl.type }}" src="{{ model.swirl.thumbnail_url }}"/>
-    <div class="swirl-type">{{ model.swirl.type }}</div>
-</div>
+    <div class="swirl-header border-bottom">
+        <div class="swirl-header__bgimage" style="background-image: url({{ model.swirl.thumbnail_url }})"></div>
+        <img class="swirl-header__image {{ model.swirl.type }}" src="{{ model.swirl.thumbnail_url }}"/>
+
+        <div class="swirl-type">{{ model.swirl.type }}</div>
+    </div>
     <br class="padded">
-        <header>
-            <h1 class="headline type-color">{{model.swirl.title}}</h1>
+    <header>
+        <h1 class="headline type-color">{{model.swirl.title}}</h1>
 
-            <div class="avatar-with-name">
-                {{ model.swirl.email_md5|gravatar-img:30 }}
-                <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
-                {{model.swirl.creation_date|timetag}}
-            </div>
-        </header>
-        {% if model.can-edit %}
-        <div class="swirl-admin-panel">
-            <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
-            <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+        <div class="avatar-with-name">
+            {{ model.swirl.email_md5|gravatar-img:30 }}
+            <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
+            {{model.swirl.creation_date|timetag}}
+        </div>
+    </header>
+    {% if model.can-edit %}
+    <div class="swirl-admin-panel">
+        <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
+        <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
 
-            {% if model.non-responders|not-empty %}
-            <div class="non-responders">
-                Yet to respond:
+        {% if model.non-responders|not-empty %}
+        <div class="non-responders">
+            Yet to respond:
 
-                {% for non-responder in model.non-responders %}
-                <a class="username" rel="author"
-                   href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {% for non-responder in model.non-responders %}
+            <a class="username" rel="author"
+               href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
 
+    </div>
+
+    {% endif %}
+
+    <article>
+        {{model.swirl.review|safe}}
+    </article>
+
+    {% include "swirls/affiliate-links.html" %}
+
+    <div class="responses">
+
+        {% for resp in model.responses %}
+        <div class="response">
+
+            {{ resp.email_md5|gravatar-img:40 }}
+            <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
+            <span class="response-text">{{resp.summary}}</span>
 
         </div>
+        {% endfor %}
+
+
+        {% if model.can-respond %}
+
+        <h2>{{model.type.words.seen-it|capitalize}}? What did you think?</h2>
+
+
+        {% include "components/response-form.html" %}
+
+        <hr/>
+        <h2>Want to swirl back something similar?</h2>
+        {% include "components/respond-with-swirl-form.html" %}
+        <hr/>
 
         {% endif %}
 
-        <article>
-            {{model.swirl.review|safe}}
-        </article>
 
-        {% include "swirls/affiliate-links.html" %}
+    </div>
 
-        <div class="responses">
-
-            {% for resp in model.responses %}
-            <div class="response">
-
-                {{ resp.email_md5|gravatar-img:40 }}
-                <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
-                <span class="response-text">{{resp.summary}}</span>
-
-            </div>
-            {% endfor %}
-
-
-            {% if model.can-respond %}
-
-            <h2>{{model.type.words.seen-it|capitalize}}? What did you think?</h2>
-    
-
-            {% include "components/response-form.html" %}
-
-            <hr/>
-            <h2>Want to swirl back something similar?</h2>
-            {% include "components/respond-with-swirl-form.html" %}
-            <hr/>
-
-            {% endif %}
-
-
-        </div>
+    <div id="share-buttons">
 
         <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl" data-dnt="true">Tweet</a>
+        <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
+             data-layout="button_count"></span>
 
-        <div class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}" data-layout="button_count"></div>
+        <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img
+                src="/immutable/images/swrl-logo.svg" height="15px"></a>
+    </div>
 
-        <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img src="/immutable/images/swrl-logo.svg" height="15px"></a>
+    <div class="comment-area">
+        <h2>Comments</h2>
 
-        <div class="comment-area">
-            <h2>Comments</h2>
+        <div class="comments">
 
-            <div class="comments">
-
-                {% include "components/comment-list.html" %}
-
-            </div>
-
-            {% if user %}
-
-            <form method="POST" action="/swirls/{{model.swirl.id}}/comment" class="comment">
-                {% csrf-field %}
-
-                <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
-                <input type="hidden" class="max-comment-id-field" name="max-comment-id"
-                       value="{{model.max-comment-id}}">
-
-                {{ user.email_md5|gravatar-img:40 }}
-                <div class="comment-body">
-                    <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
-
-                    <div class="rte">
-                        <textarea name="comment">{{model.current-comment}}</textarea>
-                        <article class="editor" contenteditable="true"></article>
-                    </div>
-
-                    <input type="submit" value="Add comment" class="swirl-button">
-                </div>
-
-            </form>
-
-            {% endif %}
+            {% with thecomments=model.comments %}
+            {% include "components/comment-list.html" %}
+            {% endwith %}
 
         </div>
+
+        {% if user %}
+
+        <form method="POST" action="/swirls/{{model.swirl.id}}/comment" class="comment">
+            {% csrf-field %}
+
+            <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
+            <input type="hidden" class="max-comment-id-field" name="max-comment-id"
+                   value="{{model.max-comment-id}}">
+
+            {{ user.email_md5|gravatar-img:40 }}
+            <div class="comment-body">
+                <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
+
+                <div class="rte">
+                    <textarea name="comment">{{model.current-comment}}</textarea>
+                    <article class="editor" contenteditable="true"></article>
+                </div>
+
+                <input type="submit" value="Add comment" class="swirl-button">
+            </div>
+
+        </form>
+
+        {% endif %}
+
     </div>
+</div>
 </div>

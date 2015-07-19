@@ -9,7 +9,7 @@
                            [org.clojure/tools.logging "0.3.1"]
                            [org.clojure/clojure "1.6.0"]
                            [ring-server "0.4.0"]
-                           [selmer "0.8.2"]
+                           [selmer "0.8.5"]
                            [clj-time "0.9.0"]
                            [clj-mandrill "0.1.0"]
                            [clj-http "1.1.2"]

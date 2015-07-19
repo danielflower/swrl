@@ -102,6 +102,7 @@
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           swirl-links (repo/get-links id)
           max-comment-id (reduce max 0 (map #(:id %) comments))
+          user-list (if is-logged-in (user-repo/users-for-dropdown) [])
           seen-response-options (if can-respond
                                   (distinct (concat seen-responses
                                                     (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) seen-responses))

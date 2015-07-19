@@ -55,6 +55,7 @@
 
 (filters/add-filter! :swirl-title swirl-title)
 
+
 (deftype RenderableTemplate [template params]
   Renderable
   (render [this request]
