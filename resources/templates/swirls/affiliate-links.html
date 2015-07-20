@@ -12,6 +12,17 @@
         {% ifequal link.type_code "Z" %}
         <a href="{{ link.code }}" target="_blank"><img
                 src="/immutable/images/amazon-buy-button_198x88.jpg" width="198" height="88" alt="Buy at Amazon"></a>
+
+        {% endifequal %}
+
+        {% ifequal link.type_code "A" %}
+        {% ifequal model.swirl.type "book" %}
+
+        <a href="http://www.amazon.co.uk/gp/product/{{link.code}}/ref=as_li_tl?ie=UTF8&amp;camp=1634&amp;creative=6738&amp;creativeASIN={{link.code}}&amp;linkCode=as2&amp;tag=swirl-21">
+            <img src="https://images-na.ssl-images-amazon.com/images/G/02/associates/mariti/banner/uk_associates_14-07-2015_amazon-logo__1_120x60.jpg" alt="Buy on Amazon.co.uk" title="Buy on Amazon.co.uk"
+                    width="120" height="60"></a>
+
+        {% endifequal %}
         {% endifequal %}
 
         {% ifequal link.type_code "W" %}
