@@ -10,6 +10,7 @@
             [yswrl.rest.swirl-resource :refer [swirl-rest-routes]]
             [yswrl.rest.website-service :refer [website-rest-routes]]
             [yswrl.user.notifications :refer [notification-routes]]
+            [yswrl.rest.user-resource :as user-resource]
             [yswrl.middleware :refer [development-middleware production-middleware]]
             [compojure.route :as route]
             [clojure.tools.logging :as log]
@@ -62,6 +63,7 @@
   (-> (routes
         (wrap-api-routes swirl-rest-routes)
         (wrap-api-routes website-rest-routes)
+        (wrap-api-routes user-resource/user-resource-rest-routes)
         (wrap-site-pages home-routes)
         (wrap-site-pages auth-routes)
         (wrap-site-pages swirl-routes)
