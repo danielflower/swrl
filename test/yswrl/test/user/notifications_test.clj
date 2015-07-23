@@ -1,9 +1,10 @@
 (ns yswrl.test.user.notifications-test
   (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.swirls.swirl-routes :as swirl-routes]
-            [yswrl.user.notifications :refer [recommendation new-response new-comment mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body]]
+            [yswrl.user.notifications :refer [recommendation new-response new-comment mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body, clear-notifications-for-user-by-notification-type]]
             [yswrl.links :as links]
-            [yswrl.user.notifications-repo :refer [get-for-user-email get-for-user-page]])
+            [yswrl.user.notifications-repo :refer [get-for-user-email get-for-user-page unseen-notifications-count]]
+            [yswrl.user.notifications :as notifications])
   (:use clojure.test)
   (:import (java.sql Timestamp)))
 
@@ -79,8 +80,19 @@
           _ (mark-as-seen (swirl :id) recipient)
           notes (get-for-user-email (recipient :id))
           ]
-      (is (= 0 (count notes)))
-      ))
+      (is (= 0 (count notes)))))
+
+
+  (testing "a seen response is no longer returned"
+    (let [recipient (create-test-user)
+          responder (create-test-user)
+          author (create-test-user)
+          swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username) (responder :username)])
+          _ (swirl-routes/handle-response (swirl :id) nil "Loved it" responder)
+          before (get-for-user-page (recipient :id))]
+      (is (= 2 (unseen-notifications-count (recipient :id)) (count (filter #(nil? (% :date_seen)) before))))
+      (clear-notifications-for-user-by-notification-type (recipient :id) notifications/new-response)
+      (is (= 1 (unseen-notifications-count (recipient :id)) (count (filter #(nil? (% :date_seen)) (get-for-user-page (recipient :id))))))))
 
   (testing "an emailed notification is no longer returned for emails, but is for the webpage"
     (let [recipient (create-test-user)
@@ -91,8 +103,7 @@
           for-page (get-for-user-page (recipient :id))
           ]
       (is (= 0 (count for-email)))
-      (is (= 1 (count for-page)))
-      ))
+      (is (= 1 (count for-page)))))
 
   (testing "nothing happens if a swirl was already seen, or a random user that was never notified of the swirl or an anonymous user sees the swirl"
     (let [recipient (create-test-user)
@@ -143,9 +154,7 @@
           actual (set actual-list)]
       (is (= (count actual-list) (count actual)))
       (is (contains-user actual not-emailed-recently))
-      (is (not (contains-user actual emailed-recently)))
-      )
-    )
+      (is (not (contains-user actual emailed-recently)))))
 
   (testing "notification HTML groups by swirls and lists activity"
     (let [author (create-test-user)

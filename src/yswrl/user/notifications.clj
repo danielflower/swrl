@@ -2,7 +2,6 @@
   (:require
     [yswrl.layout :as layout]
     [compojure.core :refer [defroutes GET POST]]
-    [yswrl.links :as links]
     [ring.util.response :refer [status redirect response not-found]]
     [yswrl.auth.guard :as guard]
     [yswrl.db :as db]
@@ -74,6 +73,13 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
                    ))
     0))
 
+(defn clear-notifications-for-user-by-notification-type [user-id notification-type]
+  (update db/notifications
+          (set-fields {:date_seen (now)})
+          (where {:target_user_id    user-id
+                  :notification_type notification-type
+                  :date_seen         nil})))
+
 (defn mark-email-sent
   ([seer]
    (mark-email-sent seer (now)))
@@ -98,7 +104,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn create-notification-email-body [recipient notes]
   (postman/email-body "notifications/notification-email.html"
-                      {:recipient recipient :notifications (group-by-swirl notes) }))
+                      {:recipient recipient :notifications (group-by-swirl notes)}))
 
 (defn send-pending-notifications
   "email pending notifications"
@@ -112,13 +118,15 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn get-notification-view-model [user]
   (let [raw (notifications-repo/get-for-user-page (user :id))]
-    (vec (filter #(not (nil? (% :swirl))) (map (fn [n] {:note n
-                       :swirl (lookups/get-swirl-if-allowed-to-view (n :swirl_id) (:target_user_id (user :id)))}) raw)))))
+    (vec (filter #(not (nil? (% :swirl))) (map (fn [n] {:note  n
+                                                        :swirl (lookups/get-swirl-if-allowed-to-view (n :swirl_id) (:target_user_id (user :id)))}) raw)))))
 
 (defn view-notifications-page [user]
-  (layout/render "notifications/view-all.html" {:title         "What's new"
-                                                :pageTitle     "What's new"
-                                                :notifications (get-notification-view-model user)}))
+  (let [notes (get-notification-view-model user)]
+    (clear-notifications-for-user-by-notification-type (user :id) new-response)
+    (layout/render "notifications/view-all.html" {:title         "What's new"
+                                                  :pageTitle     "What's new"
+                                                  :notifications notes})))
 
 (defroutes notification-routes
            (GET "/notifications" [:as req] (guard/requires-login #(view-notifications-page (user-from-session req)))))
