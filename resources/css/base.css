@@ -1,6 +1,5 @@
 @import "normalize-3.0.2.css";
 @import "form-elements.css";
-@import "_variables.css";
 
 *, *:before, *:after {
   box-sizing: inherit;
@@ -166,7 +165,6 @@ p {
     background-color: #fafafa;
     color: var(--nav-color);
     position:fixed;
-    width:100%;
     top:0;
     height:75px;
     z-index:50;
@@ -207,25 +205,22 @@ p {
 }
 
 
-.site-header a, .site-header a:focus, .site-header a:hover, .site-header a:visited {
+nav a, nav a:focus, nav a:hover, nav a:visited {
     color: var(--nav-color);
     text-decoration: none;
     position:relative;
     padding:0 10px;
-    /*padding-right: 20px;*/
 }
-.site-header a:hover {
+nav a:hover {
     color: var(--swirl-hot-pink);
 }
 
 
-.site-header a i.fa {
-    color: var(--nav-icon-color);
+.site-header nav {
+    float: right;
 }
 
-
 nav {
-    float: right;
     text-transform: uppercase;
 }
 nav img {
@@ -340,4 +335,27 @@ footer ul, footer li {
     margin: 40px 0;
     text-align: center;
     font-style: italic;
+}
+
+
+a.menu-button i {
+    color: var(--swirl-hot-pink);
+    font-size: 2.5em;
+    transition: transform 500ms;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.menu-open i {
+    transform: rotate(90deg);
+}
+
+.big-menu {
+    text-align: center;
+    display:none;
+}
+.big-menu nav {
+    font-weight: bold;
+    display: block;
+    padding: 20px 5px;
 }

@@ -12,72 +12,7 @@
     <p>What would you like to recommend?</p>
     {% endif %}
 
-    <div class="start-boxes">
-        <div class="start-box">
-            <form method="GET" action="/create/from-url">
-                <i class="fa fa-link fa-5x"></i>
-                <label for="url-box">Enter a website link</label>
+    {% include "components/create-forms.html" %}
 
-                <div class="searchbox"><input id="url-box" type="url" name="url">
-                    <input id="website-create-go-button" type="submit" value="Go" class="button-primary">
-                    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-                </div>
-            </form>
-        </div>
-        <div class="start-box">
-            <form method="GET" action="/search/music">
-                <i class="fa fa-music fa-5x"></i>
-                <label for="album-search-box">Album or Song Title</label>
-
-                <div class="searchbox"><input id="album-search-box" type="text" name="search-term">
-                    <input id="album-search-go-button" type="submit" value="Go" class="button-primary">
-                    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-                </div>
-            </form>
-        </div>
-        <div class="start-box">
-            <form method="GET" action="/search/books">
-                <i class="fa fa-book fa-5x"></i>
-                <label for="book-search-box">Book or Author</label>
-
-                <div class="searchbox"><input id="book-search-box" type="text" name="search-term">
-                    <input type="submit" value="Go" class="button-primary">
-                    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-                </div>
-            </form>
-        </div>
-        <div class="start-box">
-            <form method="GET" action="/search/movies">
-                <i class="fa fa-film fa-5x"></i>
-                <label for="movie-search-box">Movie Title</label>
-
-                <div class="searchbox"><input id="movie-search-box" type="text" name="search-term">
-                    <input id="movie-search-go-button" type="submit" value="Go" class="button-primary">
-                    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-                </div>
-            </form>
-        </div>
-        <div class="start-box">
-            <form method="GET" action="/search/tv">
-                <i class="fa fa-desktop fa-5x"></i>
-                <label for="tv-search-box">TV Show Title</label>
-
-                <div class="searchbox"><input id="tv-search-box" type="text" name="search-term">
-                    <input id="tv-search-go-button" type="submit" value="Go" class="button-primary">
-                    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-                </div>
-            </form>
-        </div>
-        <div class="start-box">
-            <form method="GET" action="/search/games">
-                <i class="fa fa-gamepad fa-5x"></i>
-                <label for="games-search-box">Game Title</label>
-
-                <div class="searchbox"><input id="games-search-box" type="text" name="search-term">
-                    <input id="games-search-go-button" type="submit" value="Go" class="button-primary">
-                    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-                </div>
-            </form>
-        </div>
-    </div>
-    {% endblock %}
+</div>
+{% endblock %}

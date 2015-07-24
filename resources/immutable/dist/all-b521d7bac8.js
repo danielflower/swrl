@@ -1177,14 +1177,13 @@ module.exports = { getJson: getJson, post: post };
 
 var setup = function setup($) {
     var header = $('.site-header');
+    var bigMenu = $('.big-menu');
 
     $('.menu-button').click(function () {
         header.toggleClass('menu-open');
+        bigMenu.slideToggle();
         return false;
     });
-
-    var path = location.pathname;
-    $('nav li a[href="' + path + '"]').addClass('nav-selected');
 };
 
 module.exports = { init: setup };
