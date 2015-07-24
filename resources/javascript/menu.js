@@ -1,9 +1,9 @@
 var setup = function ($) {
-    var header = $('body');
+    var body = $('body');
 
     $('.menu-button').click(() => {
-        header.toggleClass('menu-open');
-        //bigMenu.slideToggle();
+        body.toggleClass('menu-open');
+        window.scrollTo(0, 0);
         return false;
     });
 

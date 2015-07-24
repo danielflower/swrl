@@ -1176,11 +1176,11 @@ module.exports = { getJson: getJson, post: post };
 'use strict';
 
 var setup = function setup($) {
-    var header = $('body');
+    var body = $('body');
 
     $('.menu-button').click(function () {
-        header.toggleClass('menu-open');
-        //bigMenu.slideToggle();
+        body.toggleClass('menu-open');
+        window.scrollTo(0, 0);
         return false;
     });
 };
