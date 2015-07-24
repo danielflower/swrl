@@ -1,11 +1,9 @@
 var setup = function ($) {
-    var header = $('.site-header');
-    var bigMenu = $('.big-menu');
-    bigMenu.removeClass('initial-state').hide();
+    var header = $('body');
 
     $('.menu-button').click(() => {
         header.toggleClass('menu-open');
-        bigMenu.slideToggle();
+        //bigMenu.slideToggle();
         return false;
     });
 

@@ -346,16 +346,19 @@ a.menu-button i {
     margin-right: 5px;
 }
 
-.menu-open i {
+.menu-open .site-header i {
     transform: rotate(90deg);
 }
 
-.big-menu.initial-state {
-    display:none;
-}
+
 .big-menu {
     text-align: center;
+    display: none;
 }
+.menu-open .big-menu {
+    display: block;
+}
+
 .big-menu nav {
     font-weight: bold;
     display: block;

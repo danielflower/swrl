@@ -1176,13 +1176,11 @@ module.exports = { getJson: getJson, post: post };
 'use strict';
 
 var setup = function setup($) {
-    var header = $('.site-header');
-    var bigMenu = $('.big-menu');
-    bigMenu.removeClass('initial-state').hide();
+    var header = $('body');
 
     $('.menu-button').click(function () {
         header.toggleClass('menu-open');
-        bigMenu.slideToggle();
+        //bigMenu.slideToggle();
         return false;
     });
 };
