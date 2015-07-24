@@ -350,9 +350,11 @@ a.menu-button i {
     transform: rotate(90deg);
 }
 
+.big-menu.initial-state {
+    display:none;
+}
 .big-menu {
     text-align: center;
-    display:none;
 }
 .big-menu nav {
     font-weight: bold;

@@ -1178,6 +1178,7 @@ module.exports = { getJson: getJson, post: post };
 var setup = function setup($) {
     var header = $('.site-header');
     var bigMenu = $('.big-menu');
+    bigMenu.removeClass('initial-state').hide();
 
     $('.menu-button').click(function () {
         header.toggleClass('menu-open');
