@@ -7,11 +7,13 @@
   )
 (use 'korma.core)
 
+(defn gravatar-code [email]
+  (-> (hash/md5 (clojure.string/lower-case email))
+      (bytes->hex)))
+
 (defn create-user [username email password]
-  (let [email-md5 (-> (hash/md5 (clojure.string/lower-case email))
-                      (bytes->hex))]
     (insert users
-            (values {:username username :email email :password password :admin false :is_active true :email_md5 email-md5}))))
+            (values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email)})))
 
 (defn change-password [user-id hashed-password]
   (update users
@@ -71,3 +73,8 @@
   (select db/users
           (fields :username :email_md5)
           (order :username :asc)))
+
+(defn update-user [user-id new-username new-email]
+  (update db/users
+          (set-fields {:username new-username :email new-email :email_md5 (gravatar-code new-email)})
+          (where {:id user-id})))

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="standard-page padded">
+    <h1>Edit your profile</h1>
+
+    {% if errors %}
+    <p class="validation-error">Sorry, there was a little problem with your details.</p>
+
+    <p class="validation-error">{{errors.unknown}}</p>
+    {% endif %}
+
+
+    <form method="POST" action="/edit-profile">
+        {% csrf-field %}
+
+        <label for="username">Username</label>
+        <div class="validation-error">{{errors.username}}</div>
+        <input id="username" type="text" autocomplete="nickname" name="username" autofocus required
+               maxlength="{{constraints.users.username.max-length}}" value="{{user.username}}">
+
+        <label for="email">Email</label>
+        <div class="validation-error">{{errors.email}}</div>
+        <input id="email" type="email" autocomplete="email" name="email" required
+               maxlength="{{constraints.users.email.max-length}}" value="{{user.email}}">
+
+        <div class="padding">
+            <input type="submit" value="Update your settings" class="button-primary">
+        </div>
+    </form>
+
+</div>
+{% endblock %}

@@ -23,11 +23,7 @@
 
 
 (defn login-as [visit user]
-  (-> visit
-      (fill-in "Username or email" (user :username))
-      (fill-in "Password" s/test-user-password)
-      (press "Login")
-      (follow-redirect)))
+  (actions/login-as visit user))
 
 
 (defn save-state [session map key value]

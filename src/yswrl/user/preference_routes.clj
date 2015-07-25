@@ -38,6 +38,8 @@
           (where {:id (user :id)}))
   (layout/render "users/updated.html" {:message "Your notification preferences have been updated."}))
 
+
+
 (defroutes preference-routes
            (GET "/notification-options" [email] (notification-options-page email))
            (POST "/blacklist-email" [email-for-blacklist] (blacklist-email email-for-blacklist))
