@@ -39,7 +39,7 @@
   (str "https://itunes.apple.com/us/album/id" album-id "?at=1001l55M"))
 
 (defn gravatar-url [hash size]
-  (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid"))
+  (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid&r=pg"))
 
 (defn create-swirl []
   "/swirls/start")

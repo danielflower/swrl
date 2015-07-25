@@ -27,7 +27,7 @@
     (is (= "https://itunes.apple.com/us/album/id721224313?at=1001l55M" (links/itunes-album 721224313))))
 
   (testing "gravatar URLs include the hash"
-    (is (= "http://www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346?s=40&d=monsterid"
+    (is (= "http://www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346?s=40&d=monsterid&r=pg"
            (links/gravatar-url "0bc83cb571cd1c50ba6f3e8a78ef1346" 40)))
     )
 
