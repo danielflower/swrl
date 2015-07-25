@@ -52,6 +52,7 @@
 (filters/add-filter! :passwordreseturl links/password-reset)
 
 (filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
+(filters/add-filter! :gravatar-img-url (fn [email-hash size] (links/gravatar-url email-hash size)))
 
 (filters/add-filter! :swirl-title swirl-title)
 

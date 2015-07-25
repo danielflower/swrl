@@ -25,7 +25,9 @@
         (follow-redirect)
         (follow [:.logged-in-user])
         (within [:h1]
-                (has (text? (str "Reviews by " username))))
+                (has (text? (str "Edit your profile"))))
+        (within [:main :h2]
+                (has (text? (str "Swirls you've made"))))
 
         ; Logout
         (actions/log-out)

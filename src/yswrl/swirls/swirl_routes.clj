@@ -129,11 +129,12 @@
                                       :response-of-current-user response-of-current-user
                                       :seen-response-options    seen-response-options}}))))
 
-(defn view-swirls-by [authorName]
-  (if-let [author (user-repo/get-user authorName)]
-    (if (= authorName (author :username))
-      (let [swirls (lookups/get-swirls-authored-by (:id author))]
-        (layout/render "swirls/list.html" {:pageTitle (str "Reviews by " (author :username)) :author author :swirls swirls}))
+(defn view-swirls-by [author-username, current-user]
+  (if-let [author (user-repo/get-user author-username)]
+    (if (= author-username (author :username))
+      (let [swirls (lookups/get-swirls-authored-by (:id author))
+            is-current-user (and (not-nil? current-user) (= (current-user :username) (author :username)))]
+        (layout/render "users/public-profile.html" {:title (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user}))
       (redirect (links/user (author :username))))))
 
 (defn session-from [req] (:user (:session req)))
@@ -219,6 +220,6 @@
 
            (GET "/swirls" [from] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from))))
 
-           (GET "/swirls/by/:authorName" [authorName] (view-swirls-by authorName))
+           (GET "/swirls/by/:authorName" [authorName :as req] (view-swirls-by authorName (session-from req)))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
            (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))

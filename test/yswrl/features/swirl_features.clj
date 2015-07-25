@@ -138,7 +138,7 @@
 
           ; You are taken to your profile page after deleting
           (within [:h1]
-                  (has (text? (str "Reviews by " (user1 :username)))))
+                  (has (text? (str "Edit your profile"))))
 
           ; ...and it's now deleted
           (visit (@test-state :view-swirl-uri))
