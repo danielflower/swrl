@@ -7,7 +7,9 @@
     [yswrl.auth.guard :as guard]
     [yswrl.links :as links]
     [yswrl.user.networking :as network]
-    [yswrl.groups.groups-repo :as repo]))
+    [yswrl.groups.groups-repo :as repo]
+    [yswrl.db :as db]
+    [yswrl.auth.auth-repo :as auth]))
 (use 'korma.core)
 (use 'korma.db)
 
@@ -15,7 +17,9 @@
 
 (defn view-group-page [group-id user]
   (if-let [group (repo/get-group-if-allowed group-id (user :id))]
-    (layout/render "groups/view-group.html" {:pageTitle (group :name) :group group})))
+    (layout/render "groups/view-group.html" {:pageTitle (group :name)
+                                             :group group
+                                             :members (repo/get-group-members group-id)})))
 
 
 (defn edit-group-page [user errors group-title group_description]
@@ -26,7 +30,10 @@
 
 (defn create-group [creator group-name group-description member-usernames-and-emails]
   (transaction
-    (let [group (repo/create-group (creator :id) group-name group-description)]
+    (let [group (repo/create-group (creator :id) group-name group-description)
+          found-users (auth/get-users-by-username_or_email (distinct member-usernames-and-emails))]
+      (doseq [member found-users]
+        (repo/add-group-member (group :id) (member :id)))
       (repo/add-group-member (group :id) (creator :id))
       (redirect (links/group (group :id))))))
 

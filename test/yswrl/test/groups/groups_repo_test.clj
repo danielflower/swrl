@@ -19,7 +19,8 @@
           sometwos-groups (repo/get-groups-for (sometwo :id))]
 
       (is (= someones-groups [group2 group]))
-      (is (= sometwos-groups [group]))))
+      (is (= sometwos-groups [group]))
+      (is (= [(:username someone) (:username sometwo)] (map :username (repo/get-group-members (group :id)))))))
 
   (testing "Getting a group returns nil if the user is not part of the group"
     (let [member (create-test-user)

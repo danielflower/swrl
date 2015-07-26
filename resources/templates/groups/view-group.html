@@ -5,5 +5,13 @@
 
     <p>{{group.description}}</p>
 
+    <h2>Group members</h2>
+
+    <ul class="group-members">
+        {% for member in members %}
+        <li><a href="{{ member.username|user-url }}">{{member.email_md5|gravatar-img:40}} {{member.username}}</a></li>
+        {% endfor %}
+    </ul>
+
 </div>
 {% endblock %}

@@ -24,3 +24,10 @@
                  (fields :id :name :date_created :created_by_id :description)
                  (join :inner db/group-members (= :groups.id :group_members.group_id))
                  (where {:id group-id :group_members.user_id user-id}))))
+
+(defn get-group-members [group-id]
+  (select db/users
+          (fields :id :username :email_md5)
+          (join :inner db/group-members (= :users.id :group_members.user_id))
+          (where {:group_members.group_id group-id})
+          (order :id :asc)))
