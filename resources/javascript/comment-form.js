@@ -15,12 +15,15 @@ class CommentForm {
 
             var commentHtml = this.editor.getHtmlContent();
             console.log('Going to post comment', commentHtml);
-            if (commentHtml) {
+            if (commentHtml && commentHtml.trim().length > 0) {
                 http.post('/swirls/' + this.swirlId + '/comment', {comment: commentHtml})
                     .then(this.addMissingComments.bind(this))
                     .then(() => {
                         this.resetForm();
                     });
+            } else {
+                console.warn('No HTML found in editor', this.editor);
+                window.alert('Oops, your comment could not be posted. Please try again.');
             }
             return false;
         });

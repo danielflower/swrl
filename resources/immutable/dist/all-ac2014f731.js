@@ -886,10 +886,13 @@ var CommentForm = (function () {
 
             var commentHtml = _this.editor.getHtmlContent();
             console.log('Going to post comment', commentHtml);
-            if (commentHtml) {
+            if (commentHtml && commentHtml.trim().length > 0) {
                 _httpJs2['default'].post('/swirls/' + _this.swirlId + '/comment', { comment: commentHtml }).then(_this.addMissingComments.bind(_this)).then(function () {
                     _this.resetForm();
                 });
+            } else {
+                console.warn('No HTML found in editor', _this.editor);
+                window.alert('Oops, your comment could not be posted. Please try again.');
             }
             return false;
         });
