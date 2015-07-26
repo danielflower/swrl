@@ -192,6 +192,7 @@ p {
     vertical-align: middle;
     position:relative;
     top:-3px;
+    padding-left:10px;
 }
 
 .standard-page {
@@ -344,7 +345,6 @@ a.menu-button i {
     transition: transform 500ms;
     vertical-align: middle;
     margin-right: 5px;
-    padding-right:10px;
 }
 
 .menu-open .site-header i {
