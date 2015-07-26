@@ -1,6 +1,6 @@
 <h1>Thirdparty Logins</h1>
 
-<form method="GET" action="/facebook_login?return-url={{ return-url|default:"/"|urlescape }}">
+<form method="POST" action="/facebook_login?return-url={{ return-url|default:"/"|urlescape }}">
 {% csrf-field %}
 
 <input type="image" src="/immutable/images/facebook-login-button-20150524.png" alt="Login with Facebook">

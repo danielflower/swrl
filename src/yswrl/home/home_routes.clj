@@ -8,8 +8,8 @@
 
 (defn home-page [user]
   (if (nil? user)
-    (layout/render "home/home-not-logged-in.html")
-    (layout/render "home/home-logged-in.html" {:swirls (lookups/get-swirls-awaiting-response (:id user) 100 0)})))
+    (layout/render "home/home-not-logged-in.html" {:swirls (lookups/get-all-swirls 20 0)})
+    (layout/render "home/home-logged-in.html" {:swirls (lookups/get-all-swirls 20 0)})))
 
 (defn bookmarklet []
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))

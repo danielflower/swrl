@@ -11,21 +11,21 @@
 (def APP_ID (or (System/getenv "FACEBOOK_APP_ID")
                 "894319820613855"))
 (def APP_SECRET (or (System/getenv "FACEBOOK_APP_SECRET")
-                                   "b3ef0cc194e2abcfacd1ba32b085da2f"))
+                    "b3ef0cc194e2abcfacd1ba32b085da2f"))
 
 (defn facebook_redirect_uri [req]
   (str (clojure.string/replace (req :scheme) #":" "") "://" (req :server-name) ":" (req :server-port) "/facebook_auth"))
 
 (defn facebook-oauth2 [req]
-  {:authorization-uri "https://graph.facebook.com/oauth/authorize"
-   :access-token-uri  "https://graph.facebook.com/oauth/access_token"
-   :redirect-uri      (facebook_redirect_uri req)
-   :client-id APP_ID
-   :client-secret APP_SECRET
+  {:authorization-uri  "https://graph.facebook.com/oauth/authorize"
+   :access-token-uri   "https://graph.facebook.com/oauth/access_token"
+   :redirect-uri       (facebook_redirect_uri req)
+   :client-id          APP_ID
+   :client-secret      APP_SECRET
    :access-query-param :access_token
-   :scope ["email"]
-   :response_type "code"
-   :grant-type "authorization_code"}
+   :scope              ["email"]
+   :response_type      "code"
+   :grant-type         "authorization_code"}
   )
 
 (defn facebook-error [req error-message]
@@ -66,7 +66,7 @@
 
 (defn handle-facebook-login [return-url req]
   (let [return-url (routes/redirect-url return-url)
-        newSession (assoc (req :session) :return-url return-url)
+        newSession  (assoc (req :session) :return-url return-url)
         response (redirect
                    (:uri (oauth2/make-auth-request (facebook-oauth2 req))))]
     (-> response (assoc :session newSession)))
@@ -74,5 +74,5 @@
 
 (defroutes facebook-routes
            (GET "/facebook_auth" [:as req] (handle-facebook-auth-response req))
-            (GET "/facebook_login" [return-url :as req] (handle-facebook-login return-url req))
-           )
+           (GET "/facebook_login" [return-url :as req] (handle-facebook-login return-url req))
+           (POST "/facebook_login" [return-url :as req] (handle-facebook-login return-url req)))
