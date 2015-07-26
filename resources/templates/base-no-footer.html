@@ -39,7 +39,8 @@
 
 <div class="site-header">
     <div class="site-header__content">
-        <a href="/" class="menu-button"><i class="fa fa-bars"></i> <img src="/immutable/images/swrl-logo.svg" class="site-header__logo" height="30"/></a>
+        <a href="/" class="menu-button"><i class="fa fa-bars"></i></a>
+        <a href="/"><img src="/immutable/images/swrl-logo.svg" class="site-header__logo" height="30"/></a>
         <nav>
 
             <ul>
@@ -66,7 +67,6 @@
 
 <div class="big-menu">
 
-    <h2>Links</h2>
     <nav>
 
         <ul>
@@ -78,6 +78,10 @@
             <li><a href="/swirls">Firehose</a></li>
             {% if user %}
             <li><a href="/swirls/inbox">Inbox <span class="nav-count">{{unread-count}}</span></a></li>
+            {% endif %}
+            <li><a href="/how-to-add">How to add</a></li>
+            {% if user %}
+            <li><a href="/logout" class="logout-link">Log out</a></li>
             {% endif %}
 
         </ul>

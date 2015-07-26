@@ -13,7 +13,7 @@
 
 (defn follow-create-link [session]
   (-> session
-      (follow [:a.create-link])))
+      (visit "/swirls/start")))
 
 (defn submit [session name]
   (-> session
