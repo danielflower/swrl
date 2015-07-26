@@ -6,10 +6,14 @@
 
 
 
-(defn home-page [user]
+(defn home-page [count user]
   (if (nil? user)
-    (layout/render "home/home-not-logged-in.html" {:swirls (lookups/get-all-swirls 20 0)})
-    (layout/render "home/home-logged-in.html" {:swirls (lookups/get-all-swirls 20 0)})))
+    (layout/render "home/home-not-logged-in.html" {:swirls            (lookups/get-all-swirls 20 0)
+                                                   :paging-url-prefix "/?from="
+                                                   :countFrom         (str count) :countTo (+ count 20)})
+    (layout/render "home/home-logged-in.html" {:swirls            (lookups/get-all-swirls 20 0)
+                                               :paging-url-prefix "/?from="
+                                               :countFrom         (str count) :countTo (+ count 20)})))
 
 (defn bookmarklet []
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))
@@ -21,5 +25,5 @@
 (defn session-from [req] (:user (:session req)))
 
 (defroutes home-routes
-           (GET "/" [:as req] (home-page (session-from req)))
+           (GET "/" [from :as req] (home-page (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
            (GET "/how-to-add" [] (bookmarklet-page)))

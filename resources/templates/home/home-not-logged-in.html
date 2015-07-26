@@ -22,11 +22,11 @@
         </div>
 
         {% include "auth/logister.html" %}
+        <div class="center-wrapper">
+            <h2 class="padded-lr">Swirling</h2>
 
-        <h2 class="padded-lr">Swirling</h2>
-
-        {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
-
+            {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
+        </div>
     </div>
 
 </main>

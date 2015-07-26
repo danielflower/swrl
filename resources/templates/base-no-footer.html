@@ -75,7 +75,6 @@
             {% if user %}
             <li><a href="{{ user.username|user-url }}">Your profile</a></li>
             {% endif %}
-            <li><a href="/swirls">Firehose</a></li>
             {% if user %}
             <li><a href="/swirls/inbox">Inbox <span class="nav-count">{{unread-count}}</span></a></li>
             {% endif %}

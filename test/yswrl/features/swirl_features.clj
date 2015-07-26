@@ -45,7 +45,7 @@
 (defn assert-user-checkbox-is-checked [session user]
   (is (= "checked"
          (get-attr session [(enlive/attr= :value
-                                          (user :username) )] :checked))
+                                          (user :username))] :checked))
       "User checkbox should be checked")
   session)
 
@@ -146,33 +146,33 @@
 
 (deftest empty-inbox-test
   (let [new-user (s/create-test-user)]
-  (-> (session app)
-      (visit (links/inbox))
-      (follow-redirect)
-      ; Login as user 1
-      (login-as new-user)
+    (-> (session app)
+        (visit (links/inbox))
+        (follow-redirect)
+        ; Login as user 1
+        (login-as new-user)
 
 
-      ; Their inbox is empty
-      (visit (links/inbox))
-      (within [:p] (has (some-text? "This is where Swirls will appear when someone recommends you something.")))
+        ; Their inbox is empty
+        (visit (links/inbox))
+        (within [:p] (has (some-text? "This is where Swirls will appear when someone recommends you something.")))
 
-      ; Make sure the links work
-      (follow "create a recommendation for one of your friends")
-      (within [:h1] (has (text? "Start")))
+        ; Make sure the links work
+        (follow "create a recommendation for one of your friends")
+        (within [:h1] (has (text? "Start")))
 
-      (visit (links/inbox))
-      (follow "visit the firehose")
-      (within [:h1] (has (text? "Firehose")))
+        (visit (links/inbox))
+        (follow "visit the firehose")
+        (within [:h1] (has (text? "Firehose")))
 
-      )))
+        )))
 
 (deftest respond-to-swirl-with-swirl
   (with-faked-responses
     (let [user1 (s/create-test-user)
           user2 (s/create-test-user)
           test-state (atom {})]
-      
+
       (-> (session app)
           (visit "/")
           ; Login as user 1
@@ -187,7 +187,7 @@
           (actions/save-swirl)
 
           (save-url test-state :view-swirl-uri)
-          (save-swirl-id  test-state :swirl-id)
+          (save-swirl-id test-state :swirl-id)
 
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
@@ -216,7 +216,7 @@
           (actions/submit "Go")
 
           ; user1 should be pre-selected as a recipient
-         (assert-user-checkbox-is-checked user1)
+          (assert-user-checkbox-is-checked user1)
 
 
           (actions/save-swirl)
@@ -230,7 +230,7 @@
           (assert-number-of-links (@test-state :swirl-id) 2)
 
 
-           ;now respond with music search
+          ;now respond with music search
           (press :#respond-with-swirl)
 
 
@@ -421,7 +421,7 @@
           (actions/save-swirl)
 
           (save-url test-state :view-swirl-uri)
-          (save-swirl-id  test-state :swirl-id)
+          (save-swirl-id test-state :swirl-id)
 
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
@@ -496,7 +496,7 @@
 
           ; Can immediately make a response and it will be in the response inbox
           (visit (@test-state :view-swirl-uri))
-          (actions/submit  [(enlive/attr= :value "Loved it")])
+          (actions/submit [(enlive/attr= :value "Loved it")])
           (visit (links/inbox))
           (follow "Loved it")
           (follow "The onion video")
@@ -826,7 +826,7 @@
     (let [user (s/create-test-user)
           swirl (s/create-swirl "generic" (user :id) "The latest swirl" "This is a great swirl" [])]
       (-> (session app)
-          (visit  "/swirls")
+          (visit "/swirls")
           (follow "Next 20 swirls >")
           (follow "< Previous 20 swirls")
           (follow (swirl :title))
@@ -834,3 +834,15 @@
                   (has (text? (swirl :title))))
 
           ))))
+
+(deftest home-page-can-paginate
+  (let [user (s/create-test-user)]
+    (-> (session app)
+        (visit "/")
+        (follow "Next 20 swirls >")
+        (follow "< Previous 20 swirls")
+        (actions/follow-login-link)
+        (login-as user)
+        (follow "Next 20 swirls >")
+        (follow "< Previous 20 swirls")
+        )))
