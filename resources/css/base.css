@@ -364,6 +364,10 @@ a.menu-button i {
     display: block;
     padding: 20px 5px;
 }
+.big-menu nav li a {
+    line-height: 250%;
+    white-space: nowrap;
+}
 
 .rainbow {
     content:'';
