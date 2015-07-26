@@ -344,6 +344,7 @@ a.menu-button i {
     transition: transform 500ms;
     vertical-align: middle;
     margin-right: 5px;
+    padding-right:10px;
 }
 
 .menu-open .site-header i {
