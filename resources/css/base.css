@@ -192,7 +192,7 @@ p {
     vertical-align: middle;
     position:relative;
     top:-3px;
-    padding-left:10px;
+    margin-left:10px;
 }
 
 .standard-page {
