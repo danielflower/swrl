@@ -1,6 +1,6 @@
-(ns yswrl.test.swirls.swirl-routes-test
+(ns yswrl.test.user.user-selector-test
   (:use clojure.test)
-  (:require [yswrl.swirls.swirl-routes :refer [usernames-and-emails-from-request]]))
+  (:require [yswrl.user.user-selector :refer [usernames-and-emails-from-request]]))
 
 (deftest swirl-routes-test
   (testing "posted usernames and passwords are parsed into a list"

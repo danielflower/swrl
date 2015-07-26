@@ -51,3 +51,6 @@
   ([] "/swirls/inbox")
   ([response]
    (str "/swirls/inbox/" (.toLowerCase (url-encode response)))))
+
+(defn group [group-id]
+  (str "/groups/" group-id))

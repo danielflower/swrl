@@ -2,6 +2,7 @@
   (:require [yswrl.layout :as layout]
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.user.networking :as network]
+            [yswrl.user.user-selector :as user-selector]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
@@ -175,17 +176,6 @@
   ([author id usernames-and-emails-to-notify subject review]
    (publish-swirl author id usernames-and-emails-to-notify subject review nil)))
 
-(defn usernames-and-emails-from-request [checkboxes-raw textbox-raw]
-  (let [textbox (if (clojure.string/blank? textbox-raw)
-                  []
-                  (map #(.trim %) (clojure.string/split textbox-raw #"[,;]")))
-        checkboxes (if (vector? checkboxes-raw)
-                     checkboxes-raw
-                     (if (clojure.string/blank? checkboxes-raw)
-                       []
-                       [(.trim checkboxes-raw)]))
-        ]
-    (distinct (concat checkboxes textbox))))
 
 (defn delete-swirl [current-user swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (current-user :id))]
@@ -205,7 +195,7 @@
            (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) (if (clojure.string/blank? origin-swirl-id)
                                                                                                                                                          nil
                                                                                                                                                          (Long/parseLong origin-swirl-id)))))
-           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (usernames-and-emails-from-request who emails) subject review (if (clojure.string/blank? origin-swirl-id)
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (user-selector/usernames-and-emails-from-request who emails) subject review (if (clojure.string/blank? origin-swirl-id)
                                                                                                                                                                                                                                                 nil
                                                                                                                                                                                                                                                 (Long/parseLong origin-swirl-id)))))
 

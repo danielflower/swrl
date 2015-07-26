@@ -39,7 +39,7 @@
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
       (limit max-results)
-      (order :creation_date :desc)))
+      (order :id :desc))) ; faster to order by ID rather than creation date as ID is indexed
 
 (defn get-all-swirls [max-results skip]
   (-> (select-multiple-swirls max-results skip)

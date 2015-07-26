@@ -29,6 +29,12 @@
 (defentity swirl-links (table :swirl_links) (database db))
 (defentity swirl-responses (table :swirl_responses) (database db))
 (defentity comments (database db))
+
+(defentity groups (database db))
+(defentity group-members (database db) (table :group_members))
+(defentity group-swirl_links (database db) (table :group_swirl_links))
+(defentity group-invitees (database db) (table :group_invitees))
+
 (defentity email-blacklist (table :email_blacklist) (database db))
 (defentity notifications (database db))
 (defentity password-reset-requests
