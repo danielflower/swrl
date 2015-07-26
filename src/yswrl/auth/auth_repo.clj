@@ -72,7 +72,8 @@
 (defn users-for-dropdown []
   (select db/users
           (fields :username :email_md5)
-          (order :username :asc)))
+          (order :username :asc)
+          (limit 100)))
 
 (defn update-user [user-id new-username new-email]
   (update db/users
