@@ -14,21 +14,38 @@
         {% csrf-field %}
 
 
-    <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
+        <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
         <label for="swirl-title">You should {{type.words.watch}}</label>
         <input id="swirl-title" type="text" name="subject" required
                maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
                placeholder="Title of a movie, book, song, album, etc">
-        
+
         <div class="rte">
             <textarea name="review">{{review}}</textarea>
+
             <div class="rte--toolbar">
-                <button class="spoiler-alert-button" title="Spoilers will not be shown by default until clicked on">Add spoiler alert</button>
+                <button class="spoiler-alert-button" title="Spoilers will not be shown by default until clicked on">Add
+                    spoiler alert
+                </button>
             </div>
             <article class="editor" contenteditable="true"></article>
         </div>
 
         <h2>Sharing</h2>
+
+        {% if groups|not-empty %}
+
+        <p>Share this with a group.</p>
+
+        <div class="user-select-box">
+            {% for gm in groups-model %}
+            <label><input type="checkbox" name="groups" value="{{ gm.group.id }}" {% if gm.selected %}checked{% endif %}>{{ gm.group.name }}</label>
+            {% endfor %}
+        </div>
+
+
+        {% endif %}
+
         <p>Enter usernames or email addresses of the people you would like to share this with.</p>
         {% with already-selected=already-suggested suggested-contacts=contacts other-contacts=unrelated %}
         {% include "components/user-selector.html" %}

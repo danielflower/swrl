@@ -31,4 +31,27 @@
       (is (= group (repo/get-group-if-allowed (group :id) (member :id))))
       (is (nil? (repo/get-group-if-allowed (group :id) (non-member :id))))))
 
+  (testing "can associate a swirl with a group"
+    (let [author (create-test-user)
+          member (create-test-user)
+          group (repo/create-group (author :id) "Exclusive" "This is a group is what it is")
+          _ (repo/add-group-member (group :id) (member :id))
+          swirl (create-swirl "generic" (author :id) "This is my swirl" "And I like it" [])]
+
+      (repo/set-swirl-links (swirl :id) (author :id) [(group :id)])
+      (is (= [group] (repo/get-groups-linked-to-swirl (swirl :id))))
+
+      ; adding again does nothing
+      (repo/set-swirl-links (swirl :id) (author :id) [(group :id)])
+      (is (= [group] (repo/get-groups-linked-to-swirl (swirl :id))))
+
+      ; the swirls can be looked up
+      (is (= [(swirl :id)] (map :id (repo/get-swirls-for-group (group :id) (member :id)))))
+
+      ; swirls not supplied will be removed
+      (repo/set-swirl-links (swirl :id) (author :id) [])
+      (is (= [] (repo/get-groups-linked-to-swirl (swirl :id))))
+
+      ))
+
   )

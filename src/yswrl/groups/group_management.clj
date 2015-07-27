@@ -19,6 +19,7 @@
   (if-let [group (repo/get-group-if-allowed group-id (user :id))]
     (layout/render "groups/view-group.html" {:pageTitle (group :name)
                                              :group group
+                                             :swirls (repo/get-swirls-for-group group-id (user :id))
                                              :members (repo/get-group-members group-id)})))
 
 
@@ -40,7 +41,7 @@
 
 (defroutes group-routes
 
-           (GET "/groups/:id{[0-9]+}" [id :as req] (view-group-page (Long/parseLong id) (user-from-session req)))
+           (GET "/groups/:id{[0-9]+}" [id :as req] (guard/requires-login #(view-group-page (Long/parseLong id) (user-from-session req))))
 
            (GET "/create-group" [:as req] (guard/requires-login #(edit-group-page (user-from-session req) nil nil nil)))
            (POST "/create-group" [group-name group-description who emails :as req] (guard/requires-login #(create-group (user-from-session req) group-name group-description (user-selector/usernames-and-emails-from-request who emails))))

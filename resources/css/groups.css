@@ -1,3 +1,8 @@
-.group-members li {
+.group-members li, .groups-list li {
     list-style-type: none;
+}
+
+
+.groups-list {
+    margin: 20px;
 }

@@ -9,6 +9,7 @@
             [yswrl.constraints :refer [constraints]]
             [yswrl.links :as links]
             [yswrl.swirls.lookups :as lookups]
+            [yswrl.groups.groups-repo :as group-repo]
             [yswrl.auth.auth-repo :as auth-repo]
             [clj-time.format :as f]
             [clj-time.coerce :as c]
@@ -38,6 +39,7 @@
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :absoluteurl links/absolute)
 (filters/add-filter! :swirlurl links/swirl)
+(filters/add-filter! :groupurl links/group)
 (filters/add-filter! :swirlediturl links/edit-swirl)
 (filters/add-filter! :notification-options-url links/notification-options)
 (filters/add-filter! :swirldeleteurl links/delete-swirl)
@@ -70,6 +72,7 @@
                :dev (env :dev)
                :csrf-token *anti-forgery-token*
                :user (if (nil? current-user) nil (auth-repo/get-user (current-user :username))) ; todo lookup by remember-me token
+               :groups (if (nil? current-user) nil (group-repo/get-groups-for (current-user :id)))
                :unread-count unread-count
                :notifications-count notifications-count
                :constraints constraints

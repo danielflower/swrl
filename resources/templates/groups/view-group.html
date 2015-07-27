@@ -3,7 +3,11 @@
 <div class="standard-page padded">
     <h1>{{group.name}}</h1>
 
-    <p>{{group.description}}</p>
+    <p class="group-description">{{group.description}}</p>
+
+    <h2>Swirls created for this group</h2>
+
+    {% include "components/swirls-list-with-paging.html" %}
 
     <h2>Group members</h2>
 
@@ -12,6 +16,7 @@
         <li><a href="{{ member.username|user-url }}">{{member.email_md5|gravatar-img:40}} {{member.username}}</a></li>
         {% endfor %}
     </ul>
+
 
 </div>
 {% endblock %}
