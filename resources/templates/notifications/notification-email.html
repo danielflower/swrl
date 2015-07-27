@@ -10,6 +10,14 @@
 
 <p>Here are some recent updates...</p>
 
+{% for note in non-swirl-notifications %}
+{% ifequal note.notification_type "G" %}
+<div class="notification">
+    {{note.instigator-username}} added you to <a href="{{ note.subject_id|groupurl|absoluteurl }}">a new group</a>
+</div>
+{% endifequal %}
+{% endfor %}
+
 {% for swirl-note in notifications %}
 <div class="notification">
     <h2><a href="{{ swirl-note.swirl.id|swirlurl|absoluteurl }}">{{swirl-note.swirl.title}}</a></h2>
@@ -32,7 +40,8 @@
 {% endfor %}
 
 
-<p style="padding-top:40px;font-style: italic">To unsubscribe or change your email preferences, <a href="{{ ''|notification-options-url|absoluteurl }}">click here</a>.</p>
+<p style="padding-top:40px;font-style: italic">To unsubscribe or change your email preferences, <a
+        href="{{ ''|notification-options-url|absoluteurl }}">click here</a>.</p>
 
 </body>
 </html>

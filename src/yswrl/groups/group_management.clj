@@ -8,8 +8,8 @@
     [yswrl.links :as links]
     [yswrl.user.networking :as network]
     [yswrl.groups.groups-repo :as repo]
-    [yswrl.db :as db]
-    [yswrl.auth.auth-repo :as auth]))
+    [yswrl.auth.auth-repo :as auth]
+    [yswrl.user.notifications :as notifications]))
 (use 'korma.core)
 (use 'korma.db)
 
@@ -17,10 +17,12 @@
 
 (defn view-group-page [group-id user]
   (if-let [group (repo/get-group-if-allowed group-id (user :id))]
+    (do
+    (notifications/mark-subject-as-seen group-id user)
     (layout/render "groups/view-group.html" {:pageTitle (group :name)
                                              :group group
                                              :swirls (repo/get-swirls-for-group group-id (user :id))
-                                             :members (repo/get-group-members group-id)})))
+                                             :members (repo/get-group-members group-id)}))))
 
 
 (defn edit-group-page [user errors group-title group_description]
@@ -34,6 +36,7 @@
     (let [group (repo/create-group (creator :id) group-name group-description)
           found-users (auth/get-users-by-username_or_email (distinct member-usernames-and-emails))]
       (doseq [member found-users]
+        (notifications/add notifications/added-to-group (member :id) nil (group :id) (creator :id))
         (repo/add-group-member (group :id) (member :id)))
       (repo/add-group-member (group :id) (creator :id))
       (redirect (links/group (group :id))))))

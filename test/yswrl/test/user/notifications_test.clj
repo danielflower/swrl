@@ -164,6 +164,7 @@
           _ (swirl-routes/handle-comment (swirl1 :id) "This is a comment" another-user)
           _ (swirl-routes/handle-response (swirl1 :id) nil "Loved it" another-user)
           _ (swirl-routes/handle-comment (swirl1 :id) "This is a response" author)
+          _ (notifications/add notifications/added-to-group (recipient :id) nil 1 (author :id))
           swirl2 (create-swirl "generic" (author :id) "Feed the animals" "Meh" [(recipient :username) (another-user :username)])
           html (create-notification-email-body recipient (get-for-user-email (recipient :id)))
           ]
@@ -171,6 +172,7 @@
       (is (.contains html (str "<a href=\"" (links/absolute (links/swirl (swirl1 :id))) "\">All Day</a>")) html)
       (is (.contains html (str (author :username) " recommended this to you")) html)
       (is (.contains html (str (another-user :username) " added a comment")) html)
+      (is (.contains html (str (author :username) " added you to <a href=\"" (links/absolute (links/group "1")) "\">a new group</a>")) html)
       (is (.contains html (str (another-user :username) " responded <strong>Loved it</strong>")) html)
       (is (.contains html (str (author :username) " added a comment")) html)
 

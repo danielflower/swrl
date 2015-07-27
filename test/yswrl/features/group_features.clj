@@ -112,12 +112,16 @@
           (follow "My special group")
           (follow "Special Swirl")
 
-          ; A member can view the group
+          ; A member is notified and can view the group
           (actions/log-out)
           (actions/follow-login-link)
           (login-as member)
-          (visit (@test-state :group-url))
+          (visit (links/notifications))
+          (follow "a new group")
+          ;(visit (@test-state :group-url))
           (has (status? 200))
+          (within [:h1]
+                  (has (text? "My special group")))
 
           ; But non-members can't
           (actions/log-out)
