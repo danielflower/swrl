@@ -1,7 +1,13 @@
-.group-members li, .groups-list li {
+.groups-list li {
     list-style-type: none;
 }
 
+.group-members li {
+    list-style-type: none;
+    display: inline;
+    margin-right: 20px;
+    white-space: nowrap;
+}
 
 .groups-list {
     margin: 20px;

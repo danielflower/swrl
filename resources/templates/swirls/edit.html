@@ -48,7 +48,7 @@
 
         <p>Enter usernames or email addresses of the people you would like to share this with.</p>
         {% with already-selected=already-suggested suggested-contacts=contacts other-contacts=unrelated %}
-        {% include "components/user-selector.html" %}
+        {% include "components/user-selector.html" with disallow-unselects="true" %}
         {% endwith %}
 
         <div class="button-panel">

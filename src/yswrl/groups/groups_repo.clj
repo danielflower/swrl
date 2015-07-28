@@ -48,15 +48,7 @@
             (values {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))
   (doseq [group-id to-delete]
     (delete db/group-swirl-links
-            (where {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))
-  ))
-
-
-(defn get-group-if-allowed [group-id user-id]
-  (first (select db/groups
-                 (fields :id :name :date_created :created_by_id :description)
-                 (join :inner db/group-members (= :groups.id :group_members.group_id))
-                 (where {:id group-id :group_members.user_id user-id}))))
+            (where {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))))
 
 (defn get-group-members [group-id]
   (select db/users
@@ -64,3 +56,14 @@
           (join :inner db/group-members (= :users.id :group_members.user_id))
           (where {:group_members.group_id group-id})
           (order :id :asc)))
+
+(defn get-group-if-allowed [group-id user-id]
+  (first (select db/groups
+                 (fields :id :name :date_created :created_by_id :description)
+                 (join :inner db/group-members (= :groups.id :group_members.group_id))
+                 (where {:id group-id :group_members.user_id user-id}))))
+
+(defn update-group [group-id group-name group-description]
+  (update db/groups
+          (set-fields {:name group-name :description group-description})
+          (where {:id group-id})))

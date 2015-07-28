@@ -14,15 +14,12 @@
             [yswrl.swirls.lookups :as lookups]
             [yswrl.user.notifications :as notifications]
             [yswrl.swirls.swirl-links :as link-types]
+            [yswrl.utils :as utils]
             [yswrl.groups.groups-repo :as group-repo])
   (:import (java.util UUID)))
 
 (def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
 
-(defn in?
-  "true if seq contains elm"
-  [seq elm]
-  (some #(= elm %) seq))
 
 
 (defn edit-swirl-page [author swirl-id origin-swirl-id]
@@ -35,7 +32,7 @@
                                   (not (= (:author_id origin-swirl) (:user-id %)))) contacts)
           all-groups (group-repo/get-groups-for (author :id))
           selected-groups (group-repo/get-groups-linked-to-swirl swirl-id)
-          groups-model (map (fn [g] {:group g :selected (in? selected-groups g)}) all-groups)
+          groups-model (map (fn [g] {:group g :selected (utils/in? selected-groups g)}) all-groups)
           unrelated (network/get-unrelated-users (author :id) 100 0)]
       (layout/render "swirls/edit.html" {:id                  swirl-id
                                          :subject             (swirl :title)
@@ -169,7 +166,6 @@
    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
      (do
        (group-repo/set-swirl-links id (author :id) group-ids)
-       (send-unsent-suggestions)
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)

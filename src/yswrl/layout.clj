@@ -32,7 +32,7 @@
 (def human-friendly-date-formatter (f/formatter "dd MMM yyyy"))
 
 (defn swirl-title [id]
-  (:title (lookups/get-swirl (Integer. id))))
+  (:title (lookups/get-swirl (Long/parseLong id))))
 
 (parser/set-resource-path! (clojure.java.io/resource "templates"))
 
@@ -40,6 +40,7 @@
 (filters/add-filter! :absoluteurl links/absolute)
 (filters/add-filter! :swirlurl links/swirl)
 (filters/add-filter! :groupurl links/group)
+(filters/add-filter! :editgroupurl links/edit-group)
 (filters/add-filter! :swirlediturl links/edit-swirl)
 (filters/add-filter! :notification-options-url links/notification-options)
 (filters/add-filter! :swirldeleteurl links/delete-swirl)
@@ -61,7 +62,7 @@
 
 (deftype RenderableTemplate [template params]
   Renderable
-  (render [this request]
+  (render [_ request]
     (let [current-user (get (get request :session) :user)
           unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)
           notifications-count (if current-user (notifications-repo/unseen-notifications-count (get current-user :id)) nil)]

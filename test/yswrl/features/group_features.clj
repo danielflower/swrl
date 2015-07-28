@@ -82,10 +82,16 @@
 
           ; Create a group
           (follow "Create a group")
-          (fill-in "Group name" "My special group")
+          (fill-in "Group name" "Going to change this")
           (fill-in "Description" "Just for my special friends")
+          ;(fill-in :.recipients (non-member :username))
+          (actions/submit "Save group")
+
+          (follow "Edit group")
+          (fill-in "Group name" "My special group")
+          ;(uncheck (non-member :username))
           (fill-in :.recipients (member :username))
-          (actions/submit "Create group")
+          (actions/submit "Save group")
 
           ; View the group
           (within [:h1]
