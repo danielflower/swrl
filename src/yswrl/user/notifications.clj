@@ -14,6 +14,7 @@
 (def ^:const recommendation "R")
 (def ^:const new-response "P")
 (def ^:const new-comment "C")
+(def ^:const added-to-group "G")
 
 (defn user-from-session [req] (:user (:session req)))
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
@@ -73,6 +74,16 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
                    ))
     0))
 
+(defn mark-subject-as-seen [swirl-id seer]
+  (if seer
+    (update db/notifications
+            (set-fields {:date_seen (now)})
+            (where {:subject_id     swirl-id
+                    :target_user_id (seer :id)
+                    :date_seen      nil}
+                   ))
+    0))
+
 (defn clear-notifications-for-user-by-notification-type [user-id notification-type]
   (update db/notifications
           (set-fields {:date_seen (now)})
@@ -104,7 +115,9 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn create-notification-email-body [recipient notes]
   (postman/email-body "notifications/notification-email.html"
-                      {:recipient recipient :notifications (group-by-swirl notes)}))
+                      {:recipient recipient
+                       :notifications (group-by-swirl notes)
+                       :non-swirl-notifications (filter #(nil? (% :swirl_id)) notes)}))
 
 (defn send-pending-notifications
   "email pending notifications"
@@ -118,8 +131,9 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn get-notification-view-model [user]
   (let [raw (notifications-repo/get-for-user-page (user :id))]
-    (vec (filter #(not (nil? (% :swirl))) (map (fn [n] {:note  n
-                                                        :swirl (lookups/get-swirl-if-allowed-to-view (n :swirl_id) (:target_user_id (user :id)))}) raw)))))
+    (vec (filter #(not (and (not (nil? (get-in % [:note :swirl_id]))) (nil? (% :swirl)))) ; if a swirl ID was on the notification, but the looked-up swirl is nil, then the user does not have permission to view it or it was deleted
+                 (map (fn [n] {:note  n
+                               :swirl (if (nil? (n :swirl_id)) nil (lookups/get-swirl-if-allowed-to-view (n :swirl_id) (:target_user_id (user :id))))}) raw)))))
 
 (defn view-notifications-page [user]
   (let [notes (get-notification-view-model user)]

@@ -13,10 +13,14 @@
             [yswrl.swirls.types :refer [type-of]]
             [yswrl.swirls.lookups :as lookups]
             [yswrl.user.notifications :as notifications]
-            [yswrl.swirls.swirl-links :as link-types])
+            [yswrl.swirls.swirl-links :as link-types]
+            [yswrl.utils :as utils]
+            [yswrl.groups.groups-repo :as group-repo])
   (:import (java.util UUID)))
 
 (def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
+
+
 
 (defn edit-swirl-page [author swirl-id origin-swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
@@ -26,6 +30,9 @@
           origin-swirl-author (if origin-swirl (user-repo/get-user-by-id (origin-swirl :author_id)))
           not-added (filter #(and (not (contains? already-suggested %))
                                   (not (= (:author_id origin-swirl) (:user-id %)))) contacts)
+          all-groups (group-repo/get-groups-for (author :id))
+          selected-groups (group-repo/get-groups-linked-to-swirl swirl-id)
+          groups-model (map (fn [g] {:group g :selected (utils/in? selected-groups g)}) all-groups)
           unrelated (network/get-unrelated-users (author :id) 100 0)]
       (layout/render "swirls/edit.html" {:id                  swirl-id
                                          :subject             (swirl :title)
@@ -35,6 +42,7 @@
                                          :already-suggested   already-suggested
                                          :unrelated           unrelated
                                          :origin-swirl-id     origin-swirl-id
+                                         :groups-model        groups-model
                                          :origin-swirl-author origin-swirl-author}))))
 (defn delete-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
@@ -46,9 +54,9 @@
         has-inbox-items? (not (empty? swirls))
         has-responses? (not (empty? responses))
         nothing-to-show? (and (not has-inbox-items?) (not has-responses?))]
-    (layout/render "swirls/inbox.html" {:title "Swirl Inbox" :swirls swirls :responses responses
+    (layout/render "swirls/inbox.html" {:title            "Swirl Inbox" :swirls swirls :responses responses
                                         :has-inbox-items? has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
-                                        :countFrom (str count) :countTo (+ count 20)})))
+                                        :countFrom        (str count) :countTo (+ count 20)})))
 
 (defn view-firehose [count]
   (let [swirls (lookups/get-all-swirls 20 count)]
@@ -83,10 +91,6 @@
             {:login-username (user :username)}))))
     (catch Exception e (log/warn "Error while getting logister info" suggestion-code e))))
 
-(defn in?
-  "true if seq contains elm"
-  [seq elm]
-  (some #(= elm %) seq))
 
 (defn view-swirl-page [id suggestion-code current-user]
 
@@ -158,23 +162,27 @@
 
 
 (defn publish-swirl
-  ([author id usernames-and-emails-to-notify subject review origin-swirl-id]
+  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids]
    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
      (do
-       (send-unsent-suggestions)
+       (group-repo/set-swirl-links id (author :id) group-ids)
+       (doseq [group-id group-ids]
+         (let [members (group-repo/get-group-members group-id)
+               members-sans-author (filter #(not (= (% :id) (author :id))) members)]
+           (repo/add-suggestions id (author :id) (map :username members-sans-author))))
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
            (repo/add-link origin-swirl-id (link-types/swirl-response :code) id)
            (handle-comment origin-swirl-id (str "You should also " (get-in (yswrl.swirls.types/type-of (lookups/get-swirl id))
-                                                                          [:words :watch])
-                                               ": <a href=\"" (yswrl.links/swirl id) "\">"
-                                               subject "</a>")
-                          author))
+                                                                           [:words :watch])
+                                                ": <a href=\"" (yswrl.links/swirl id) "\">"
+                                                subject "</a>")
+                           author))
          (redirect (yswrl.links/swirl id))))
      nil))
   ([author id usernames-and-emails-to-notify subject review]
-   (publish-swirl author id usernames-and-emails-to-notify subject review nil)))
+   (publish-swirl author id usernames-and-emails-to-notify subject review nil [])))
 
 
 (defn delete-swirl [current-user swirl-id]
@@ -190,14 +198,27 @@
 (defn post-comment-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
 
+(defn vectorise [value-or-vector]
+  (if (nil? value-or-vector) []
+                             (if (vector? value-or-vector) value-or-vector [value-or-vector])))
+
+(defn numberise [strings]
+  (map #(Long/parseLong % 10) strings))
 
 (defroutes swirl-routes
-           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id :as req] (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) (if (clojure.string/blank? origin-swirl-id)
-                                                                                                                                                         nil
-                                                                                                                                                         (Long/parseLong origin-swirl-id)))))
-           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review :as req] (guard/requires-login #(publish-swirl (session-from req) (Long/parseLong id) (user-selector/usernames-and-emails-from-request who emails) subject review (if (clojure.string/blank? origin-swirl-id)
-                                                                                                                                                                                                                                                nil
-                                                                                                                                                                                                                                                (Long/parseLong origin-swirl-id)))))
+           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id :as req]
+             (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) (if (clojure.string/blank? origin-swirl-id)
+                                                                                              nil
+                                                                                              (Long/parseLong origin-swirl-id)))))
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups :as req]
+             (guard/requires-login #(publish-swirl
+                                     (session-from req)
+                                     (Long/parseLong id)
+                                     (user-selector/usernames-and-emails-from-request who emails)
+                                     subject
+                                     review
+                                     (if (clojure.string/blank? origin-swirl-id) nil (Long/parseLong origin-swirl-id))
+                                     (numberise (vectorise groups)))))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))

@@ -54,3 +54,6 @@
 
 (defn group [group-id]
   (str "/groups/" group-id))
+(defn edit-group [group-id]
+  (str "/groups/" group-id "/edit"))
+

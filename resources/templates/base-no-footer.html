@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-aeff3929db.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-9f6f85059b.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -60,7 +60,6 @@
             </ul>
 
 
-
         </nav>
     </div>
 </div>
@@ -85,6 +84,17 @@
 
         </ul>
 
+
+        {% if groups %}
+
+        <br class="padding">
+        <ul>
+            {% for group in groups %}
+            <li><a href="{{ group.id|groupurl }}">{{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+        {% endif %}
     </nav>
 
     <h2>Create a Swirl</h2>

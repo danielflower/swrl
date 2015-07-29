@@ -32,7 +32,7 @@
 
 (defentity groups (database db))
 (defentity group-members (database db) (table :group_members))
-(defentity group-swirl_links (database db) (table :group_swirl_links))
+(defentity group-swirl-links (database db) (table :group_swirl_links))
 (defentity group-invitees (database db) (table :group_invitees))
 
 (defentity email-blacklist (table :email_blacklist) (database db))

@@ -6,7 +6,8 @@
             [yswrl.swirls.swirl-links :as swirl-links]
             [yswrl.swirls.lookups :refer :all]
             [yswrl.swirls.swirl-states :as states]
-            [yswrl.user.notifications :as notifications])
+            [yswrl.user.notifications :as notifications]
+            [yswrl.utils :as utils])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.core)
 (use 'korma.db)
@@ -27,11 +28,20 @@
                  (fields :recipient_id :recipient_email)
                  (where {:code code}))))
 
+(defn get-suggestion-usernames [swirl-id]
+  (select db/suggestions
+          (fields :users.username [:users.id :user-id])
+          (join :inner db/users (= :suggestions.recipient_id :users.id))
+          (where {:swirl_id swirl-id})
+          (order :users.username :asc)))
+
 (defn create-suggestions [recipientUserIdsOrEmailAddresses swirlId]
-  (let [found-users (auth/get-users-by-username_or_email (distinct recipientUserIdsOrEmailAddresses))]
-    (->> found-users
+  (let [already-suggested (map :username (get-suggestion-usernames swirlId))
+        found-users (auth/get-users-by-username_or_email (distinct recipientUserIdsOrEmailAddresses))
+        not-found-users (not-found-names found-users recipientUserIdsOrEmailAddresses)]
+    (->> (filter #(not (utils/in? already-suggested (% :username))) found-users)
          (map (fn [user] {:recipient_id (:id user) :recipient_email nil}))
-         (concat (map (fn [x] {:recipient_id nil :recipient_email x}) (not-found-names found-users recipientUserIdsOrEmailAddresses)))
+         (concat (map (fn [x] {:recipient_id nil :recipient_email x}) not-found-users))
          (map (fn [sug] (assoc sug :swirl_id swirlId :code (uuid))))
          )))
 
@@ -143,11 +153,3 @@
   (suggestions INNER JOIN users ON users.id = suggestions.recipient_id)
   LEFT JOIN swirl_responses ON swirl_responses.swirl_id = suggestions.swirl_id AND swirl_responses.responder = suggestions.recipient_id
 WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
-
-(defn get-suggestion-usernames [swirl-id]
-  (select db/suggestions
-          (fields :users.username [:users.id :user-id])
-          (join :inner db/users (= :suggestions.recipient_id :users.id))
-          (where {:swirl_id swirl-id})
-          (order :users.username :asc)))
-

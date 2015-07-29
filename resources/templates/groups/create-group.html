@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="standard-page padded">
-    <h1>Create a group</h1>
+    <h1>{{ title }}</h1>
 
     <p>Groups allow you to quickly add a bunch of like-minded people to Swirls you create. When you create a group, a group home page
     will be created that everyone in the group can visit to see other Swirls sent to the group.</p>
@@ -13,18 +13,18 @@
     {% endif %}
 
 
-    <form method="POST" action="/create-group">
+    <form method="POST" action="{{ post-url }}">
         {% csrf-field %}
 
         <label for="group-name">Group name</label>
         <div class="validation-error">{{errors.group-name}}</div>
         <input id="group-name" type="text" name="group-name" autofocus required
-               maxlength="{{constraints.groups.name.max-length}}" value="{{group.name}}">
+               maxlength="{{constraints.groups.name.max-length}}" value="{{group-name}}">
 
         <label for="group-description">Description</label>
         <div class="validation-error">{{errors.group-description}}</div>
         <input id="group-description" type="text" name="group-description"
-               maxlength="2000" value="{{group.description}}">
+               maxlength="2000" value="{{group-description}}">
 
         <div class="padding">
             <h2>Add users</h2>
@@ -35,7 +35,8 @@
         </div>
 
         <div class="padding">
-            <input type="submit" value="Create group" class="button-primary">
+            <input type="submit" value="Save group" class="button-primary">
+            <a href="{{ cancel-url }}" class="button">Cancel</a>
         </div>
     </form>
 

@@ -4,8 +4,7 @@
     <label><input type="checkbox" name="who" value="{{ origin-swirl-author.username }}" checked>{{ origin-swirl-author.username }}</label>
     {% endif %}
     {% for friend in already-selected %}
-    <label title="This cannot be unselected as an email has already been sent to them"
-            ><input type="checkbox" value="{{ friend.username }}" checked disabled>{{ friend.username }}</label>
+    <label><input type="checkbox" name="who" value="{{ friend.username }}" checked {% if disallow-unselects %}disabled{% endif %}>{{ friend.username }}</label>
     {% endfor %}
     {% for friend in suggested-contacts %}
     <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>

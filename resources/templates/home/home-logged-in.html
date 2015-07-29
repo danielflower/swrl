@@ -12,6 +12,20 @@
 
         <div class="center-wrapper">
 
+
+            {% if groups %}
+
+            <h2 class="padded-lr">Your groups</h2>
+            <ul class="groups-list">
+                <li><strong><a href="/create-group">Create a group</a></strong></li>
+                {% for group in groups %}
+                <li><a href="{{ group.id|groupurl }}">{{ group.name }}</a></li>
+                {% endfor %}
+            </ul>
+
+            {% endif %}
+
+
             <h2 class="padded-lr">Swirling</h2>
 
             {% include "components/swirls-list-with-paging.html" with swirls=swirls %}

@@ -28,6 +28,10 @@
                 with <strong>{{sn.note.summary}}</strong>
                 {% endifequal %}
 
+                {% ifequal sn.note.notification_type "G" %}
+                added you to <a href="{{ sn.note.subject_id|groupurl }}">a new group</a>
+                {% endifequal %}
+
             </li>
             {% endfor %}
         </ul>
