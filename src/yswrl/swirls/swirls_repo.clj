@@ -59,7 +59,9 @@
 
 (defn save-draft-swirl [type author-id title review image-thumbnail]
   (insert db/swirls
-          (values {:type type :author_id author-id :title title :review review :thumbnail_url image-thumbnail :state states/draft})))
+          (values {:type type :author_id author-id :title title
+                   :review review :thumbnail_url image-thumbnail :state states/draft
+                   :is_private false})))
 
 (defn add-link [swirl-id link-type-code link-value]
   (insert db/swirl-links
