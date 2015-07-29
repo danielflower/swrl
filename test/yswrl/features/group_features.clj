@@ -22,10 +22,6 @@
 
 
 
-(defn login-as [visit user]
-  (actions/login-as visit user))
-
-
 (defn save-state [session map key value]
   (swap! map (fn [old-val] (assoc old-val key value)))
   session)
@@ -35,36 +31,6 @@
     (save-state session map key url))
   session)
 
-(defn save-swirl-id [session map key]
-  (let [url (get-in session [:request :uri])
-        [_ swirl-id] (re-find #".*/swirls/([\d]+)" url)
-        swirl-id (Integer. swirl-id)]
-    (save-state session map key swirl-id))
-  session)
-
-(defn assert-user-checkbox-is-checked [session user]
-  (is (= "checked"
-         (get-attr session [(enlive/attr= :value
-                                          (user :username))] :checked))
-      "User checkbox should be checked")
-  session)
-
-(defn assert-number-of-comments [session swirl-id number-to-check]
-  (is (= number-to-check
-         (count (repo/get-swirl-comments swirl-id))))
-  session)
-
-(defn assert-number-of-links [session swirl-id number-to-check]
-  (is (= number-to-check
-         (count (repo/get-links swirl-id))))
-  session)
-
-
-(defn assert-swirl-title-in-header [session verb title]
-  (-> session
-      (within [:h1]
-              (has (text? title)))
-      ))
 
 (deftest group-creation
   (with-faked-responses
@@ -77,7 +43,7 @@
           (visit "/")
           ; Login as user 1
           (actions/follow-login-link)
-          (login-as owner)
+          (actions/login-as owner)
           (visit "/")
 
           ; Create a group
@@ -121,7 +87,7 @@
           ; A member is notified and can view the group
           (actions/log-out)
           (actions/follow-login-link)
-          (login-as member)
+          (actions/login-as member)
           (visit (links/notifications))
           (follow "a new group")
           ;(visit (@test-state :group-url))
@@ -132,7 +98,7 @@
           ; But non-members can't
           (actions/log-out)
           (actions/follow-login-link)
-          (login-as non-member)
+          (actions/login-as non-member)
           (visit (@test-state :group-url))
           (has (status? 404))
 

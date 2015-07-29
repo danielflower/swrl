@@ -166,6 +166,9 @@
    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
      (do
        (group-repo/set-swirl-links id (author :id) group-ids)
+       (doseq [group-id group-ids]
+         (let [members (group-repo/get-group-members group-id)]
+           (repo/add-suggestions id (author :id) (map :username members))))
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
