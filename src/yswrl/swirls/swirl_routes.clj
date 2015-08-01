@@ -58,8 +58,8 @@
                                         :has-inbox-items? has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
                                         :countFrom        (str count) :countTo (+ count 20)})))
 
-(defn view-firehose [count]
-  (let [swirls (lookups/get-all-swirls 20 count)]
+(defn view-firehose [count user]
+  (let [swirls (lookups/get-all-swirls 20 count (if (nil? user) nil (:id user)))]
     (layout/render "swirls/list.html" {:title             "Firehose" :pageTitle "Firehose" :swirls swirls
                                        :paging-url-prefix "/swirls?from="
                                        :countFrom         (str count) :countTo (+ count 20)})))
@@ -136,7 +136,7 @@
 (defn view-swirls-by [author-username, current-user]
   (if-let [author (user-repo/get-user author-username)]
     (if (= author-username (author :username))
-      (let [swirls (lookups/get-swirls-authored-by (:id author))
+      (let [swirls (lookups/get-swirls-authored-by (:id author) (:id current-user))
             is-current-user (and (not-nil? current-user) (= (current-user :username) (author :username)))]
         (layout/render "users/public-profile.html" {:title (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user}))
       (redirect (links/user (author :username))))))
@@ -162,8 +162,8 @@
 
 
 (defn publish-swirl
-  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids]
-   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify)
+  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private?]
+   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify private?)
      (do
        (group-repo/set-swirl-links id (author :id) group-ids)
        (doseq [group-id group-ids]
@@ -180,9 +180,7 @@
                                                 subject "</a>")
                            author))
          (redirect (yswrl.links/swirl id))))
-     nil))
-  ([author id usernames-and-emails-to-notify subject review]
-   (publish-swirl author id usernames-and-emails-to-notify subject review nil [])))
+     nil)))
 
 
 (defn delete-swirl [current-user swirl-id]
@@ -210,7 +208,7 @@
              (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) (if (clojure.string/blank? origin-swirl-id)
                                                                                               nil
                                                                                               (Long/parseLong origin-swirl-id)))))
-           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups :as req]
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private :as req]
              (guard/requires-login #(publish-swirl
                                      (session-from req)
                                      (Long/parseLong id)
@@ -218,7 +216,10 @@
                                      subject
                                      review
                                      (if (clojure.string/blank? origin-swirl-id) nil (Long/parseLong origin-swirl-id))
-                                     (numberise (vectorise groups)))))
+                                     (numberise (vectorise groups))
+                                     (if private
+                                       true
+                                       false))))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
@@ -228,7 +229,7 @@
            (post-response-route "/swirls")
            (post-comment-route "/swirls")
 
-           (GET "/swirls" [from] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from))))
+           (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
 
            (GET "/swirls/by/:authorName" [authorName :as req] (view-swirls-by authorName (session-from req)))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))

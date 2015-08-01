@@ -8,7 +8,7 @@
 ; Queries to get a single swirl with author information
 (defn select-single-swirl [id]
   (-> (select* db/swirls)
-      (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5)
+      (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5 :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (where {:id id :state [not= states/deleted]})
       (limit 1)))
@@ -17,10 +17,22 @@
   (first (-> (select-single-swirl id)
              (select))))
 
+(defn can-view-swirl? [swirl user-id]
+  (let [suggested-users (select db/suggestions              ;note can't use the swirls-repo as would create a circular dependency
+                                (fields :users.username [:users.id :user-id])
+                                (join :inner db/users (= :suggestions.recipient_id :users.id))
+                                (where {:swirl_id (:id swirl)}))]
+    (or (not (:is_private swirl))
+        (= user-id (:author_id swirl))
+        (some #{user-id} (map :user-id suggested-users)))))
+
 (defn get-swirl-if-allowed-to-view [id user-id]
-  (first (-> (select-single-swirl id)
-             (where (or {:author_id user-id} {:state states/live}))
-             (select))))
+  (let [swirl (first (-> (select-single-swirl id)
+                         (where (or {:author_id user-id} {:state states/live}))
+                         (select)))]
+    (if (can-view-swirl? swirl user-id)
+      swirl
+      nil)))
 
 (defn get-swirl-if-allowed-to-edit [id user-id]
   (first (-> (select-single-swirl id)
@@ -35,20 +47,20 @@
 
 (defn select-multiple-swirls [max-results skip]
   (-> multiple-live-swirls
-      (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url)
+      (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url :author_id :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
       (limit max-results)
-      (order :id :desc))) ; faster to order by ID rather than creation date as ID is indexed
+      (order :id :desc)))                                   ; faster to order by ID rather than creation date as ID is indexed
 
-(defn get-all-swirls [max-results skip]
-  (-> (select-multiple-swirls max-results skip)
-      (select)))
+(defn get-all-swirls [max-results skip user-id]
+  (filter #(can-view-swirl? % user-id) (-> (select-multiple-swirls max-results skip)
+                                           (select))))
 
-(defn get-swirls-authored-by [author-id]
-  (-> (select-multiple-swirls 1000 0)
-      (where {:author_id author-id})
-      (select)))
+(defn get-swirls-authored-by [author-id user-id]
+  (filter #(can-view-swirl? % user-id) (-> (select-multiple-swirls 1000 0)
+                                           (where {:author_id author-id})
+                                           (select))))
 
 (defn get-swirls-awaiting-response [user-id max-results skip]
   (-> (select-multiple-swirls max-results skip)

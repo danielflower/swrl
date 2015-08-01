@@ -32,6 +32,6 @@
 
 (defn create-swirl ([type authorId title review recipientNames]
   (let [swirl (swirls-repo/save-draft-swirl type authorId title review nil)]
-    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames)
+    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames false)
     swirl))
   )

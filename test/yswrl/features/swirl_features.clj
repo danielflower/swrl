@@ -20,7 +20,13 @@
 
 (defn now [] (System/currentTimeMillis))
 
+(defn test-log [session message]
+  (println message)
+  session)
 
+(defn print-session [session]
+  (println session)
+  session)
 
 (defn login-as [visit user]
   (actions/login-as visit user))
@@ -65,6 +71,14 @@
       (within [:h1]
               (has (text? title)))
       ))
+
+(defn cannot-follow [session selector]
+  (if (= :cannot-follow (try (follow session selector)
+                             (catch IllegalArgumentException _
+                               :cannot-follow)))
+    session
+    (do (println "Shouldn't be able to follow link: " selector)
+        (throw Exception))))
 
 (deftest swirl-security
   (with-faked-responses
@@ -846,3 +860,119 @@
         (follow "Next 20 swirls >")
         (follow "< Previous 20 swirls")
         )))
+
+
+
+(deftest can-create-a-private-swirl
+  (with-faked-responses
+    (let [author (s/create-test-user)
+          added (s/create-test-user)
+          not-added (s/create-test-user)
+          test-state (atom {})]
+      (-> (session app)
+          (visit "/")
+          ; Login as the author
+          (actions/follow-login-link)
+          (login-as author)
+
+          ; Create a swirl
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (actions/submit "Go")
+
+          (fill-in :.recipients (:username added))
+
+          ; Make the Swirl Private
+          (check :.private-toggle)
+
+          (fill-in "You should watch" (str (:id author)))   ; odd title, but makes it unique :)
+
+          (actions/save-swirl)
+          (save-url test-state :view-swirl-uri)
+
+          ; go to firehose and check can see the swirl listed
+
+          (visit "/swirls")
+
+          (follow (str (:id author)))
+          (assert-swirl-title-in-header "watch" (str (:id author)))
+
+
+          ; Now login as the added user
+
+          (actions/log-out)
+          (actions/follow-login-link)
+          (login-as added)
+
+          ;added user can see the swirl
+          (visit (@test-state :view-swirl-uri))
+
+          (assert-swirl-title-in-header "watch" (str (:id author)))
+
+          ; go to firehose and check can see the swirl listed
+
+          (visit "/swirls")
+
+          (follow (str (:id author)))
+          (assert-swirl-title-in-header "watch" (str (:id author)))
+
+          ; Now login as the not-added user
+
+          (actions/log-out)
+          (actions/follow-login-link)
+          (login-as not-added)
+
+          ;not-added user can't see the swirl
+          (visit (@test-state :view-swirl-uri))
+          (has (status? 404))
+          (has (text? "Not Found"))
+
+          ; go to firehose and check cannot see the swirl listed
+
+          (visit "/swirls")
+
+          (cannot-follow (str (:id author)))
+
+          ;nor can a logged out user
+          (visit "/")
+
+          (actions/log-out)
+
+          (visit (@test-state :view-swirl-uri))
+          (has (status? 404))
+          (has (text? "Not Found"))
+
+          ; go to firehose and check cannot see the swirl listed
+
+          (visit "/swirls")
+          (cannot-follow (str (:id author)))
+
+          ;now log-in back as author and turn off the privacy
+          (visit "/")
+          (actions/follow-login-link)
+          (actions/login-as author)
+
+          (visit (@test-state :view-swirl-uri))
+          (follow "Edit Swirl")
+
+          (uncheck :.private-toggle)
+
+          (actions/save-swirl)
+
+          (actions/log-out)
+
+          ;now anyone can see it
+
+          (visit (@test-state :view-swirl-uri))
+
+          (assert-swirl-title-in-header "watch" (str (:id author)))
+
+          ; go to firehose and check can see the swirl listed
+
+          (visit "/swirls")
+
+          (follow (str (:id author)))
+          (assert-swirl-title-in-header "watch" (str (:id author)))
+
+          )
+      )))
