@@ -18,13 +18,12 @@
              (select))))
 
 (defn can-view-swirl? [swirl user-id]
-  (let [suggested-users (select db/suggestions              ;note can't use the swirls-repo as would create a circular dependency
-                                (fields :users.username [:users.id :user-id])
-                                (join :inner db/users (= :suggestions.recipient_id :users.id))
-                                (where {:swirl_id (:id swirl)}))]
-    (or (not (:is_private swirl))
-        (= user-id (:author_id swirl))
-        (some #{user-id} (map :user-id suggested-users)))))
+  (or (not (:is_private swirl))
+      (= user-id (:author_id swirl))
+      (some #{user-id} (map :user-id (select db/suggestions ;note can't use the swirls-repo as would create a circular dependency
+                                             (fields :users.username [:users.id :user-id])
+                                             (join :inner db/users (= :suggestions.recipient_id :users.id))
+                                             (where {:swirl_id (:id swirl)}))))))
 
 (defn get-swirl-if-allowed-to-view [id user-id]
   (let [swirl (first (-> (select-single-swirl id)
