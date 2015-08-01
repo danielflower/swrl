@@ -55,6 +55,18 @@
       "User checkbox should be checked")
   session)
 
+(defn assert-is-private-checkbox-is-checked [session]
+  (is (= "checked"
+         (get-attr session [:.private-toggle] :checked))
+      "Private Toggle should be checked")
+  session)
+
+(defn assert-is-private-checkbox-is-not-checked [session]
+  (is (not (= "checked"
+              (get-attr session [:.private-toggle] :checked)))
+      "Private Toggle should not be checked")
+  session)
+
 (defn assert-number-of-comments [session swirl-id number-to-check]
   (is (= number-to-check
          (count (repo/get-swirl-comments swirl-id))))
@@ -882,8 +894,13 @@
 
           (fill-in :.recipients (:username added))
 
+          (assert-is-private-checkbox-is-not-checked)
+
           ; Make the Swirl Private
           (check :.private-toggle)
+
+          (assert-is-private-checkbox-is-checked)
+
 
           (fill-in "You should watch" (str (:id author)))   ; odd title, but makes it unique :)
 
@@ -954,6 +971,8 @@
 
           (visit (@test-state :view-swirl-uri))
           (follow "Edit Swirl")
+
+          (assert-is-private-checkbox-is-checked)
 
           (uncheck :.private-toggle)
 

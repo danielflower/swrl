@@ -43,7 +43,8 @@
                                          :unrelated           unrelated
                                          :origin-swirl-id     origin-swirl-id
                                          :groups-model        groups-model
-                                         :origin-swirl-author origin-swirl-author}))))
+                                         :origin-swirl-author origin-swirl-author
+                                         :is_private          (:is_private swirl)}))))
 (defn delete-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (layout/render "swirls/delete.html" {:swirl swirl})))

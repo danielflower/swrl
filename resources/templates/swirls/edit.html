@@ -34,7 +34,8 @@
         <h2>Sharing</h2>
 
         <p>Make this Swirl Private?</p>
-        <label><input class="private-toggle" type="checkbox" name="private" value="true"><i class="fa fa-lock"></i> Private</label>
+        <label><input class="private-toggle" type="checkbox" name="private" value="true" {% if is_private %}checked{%
+                      endif %}><i class="fa fa-lock"></i> Private</label>
 
 
         {% if groups|not-empty %}
@@ -43,7 +44,8 @@
 
         <div class="user-select-box">
             {% for gm in groups-model %}
-            <label><input type="checkbox" name="groups" value="{{ gm.group.id }}" {% if gm.selected %}checked{% endif %}>{{ gm.group.name }}</label>
+            <label><input type="checkbox" name="groups" value="{{ gm.group.id }}" {% if gm.selected %}checked{% endif
+                          %}>{{ gm.group.name }}</label>
             {% endfor %}
         </div>
 
