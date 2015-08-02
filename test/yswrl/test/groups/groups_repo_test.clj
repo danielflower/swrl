@@ -46,7 +46,7 @@
       (is (= [group] (repo/get-groups-linked-to-swirl (swirl :id))))
 
       ; the swirls can be looked up
-      (is (= [(swirl :id)] (map :id (repo/get-swirls-for-group (group :id) (member :id)))))
+      (is (= [(swirl :id)] (map :id (repo/get-swirls-for-group (group :id) member))))
 
       ; swirls not supplied will be removed
       (repo/set-swirl-links (swirl :id) (author :id) [])

@@ -18,8 +18,8 @@
       (fields :id :name :date_created :created_by_id :description)
       ))
 
-(defn get-swirls-for-group [group-id user-id]
-  (-> (lookups/select-multiple-swirls 500 0)
+(defn get-swirls-for-group [group-id requestor]
+  (-> (lookups/select-multiple-swirls requestor 500 0)
       (join :inner db/group-swirl-links (= :swirls.id :group_swirl_links.swirl_id))
       (where {:group_swirl_links.group_id group-id})
       (select)))

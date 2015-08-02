@@ -50,7 +50,7 @@
     (layout/render "swirls/delete.html" {:swirl swirl})))
 
 (defn view-inbox [count current-user]
-  (let [swirls (lookups/get-swirls-awaiting-response (:id current-user) 2000 count)
+  (let [swirls (lookups/get-swirls-awaiting-response current-user 2000 count)
         responses (lookups/get-response-count-for-user (:id current-user))
         has-inbox-items? (not (empty? swirls))
         has-responses? (not (empty? responses))
@@ -60,20 +60,20 @@
                                         :countFrom        (str count) :countTo (+ count 20)})))
 
 (defn view-firehose [count user]
-  (let [swirls (lookups/get-all-swirls 20 count (if (nil? user) nil (:id user)))]
+  (let [swirls (lookups/get-all-swirls 20 count user)]
     (layout/render "swirls/list.html" {:title             "Firehose" :pageTitle "Firehose" :swirls swirls
                                        :paging-url-prefix "/swirls?from="
                                        :countFrom         (str count) :countTo (+ count 20)})))
 
 
 (defn view-inbox-by-response [count current-user submitted-response]
-  (let [swirls (lookups/get-swirls-by-response (:id current-user) 2000 count submitted-response)]
+  (let [swirls (lookups/get-swirls-by-response current-user 2000 count submitted-response)]
     (layout/render "swirls/list.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
 
 (def not-nil? (complement nil?))
 
 (defn get-html-of-comments-since [user swirl-id comment-id-to-start-from]
-  (if (lookups/get-swirl-if-allowed-to-view swirl-id (user :id))
+  (if (lookups/get-swirl-if-allowed-to-view swirl-id user)
     (let [comments (repo/get-swirl-comments swirl-id comment-id-to-start-from)]
       (response {:maxId (reduce max 0 (map #(:id %) comments))
                  :count (count comments)
@@ -95,7 +95,7 @@
 
 (defn view-swirl-page [id suggestion-code current-user]
 
-  (if-let [swirl (lookups/get-swirl-if-allowed-to-view id (get current-user :id nil))]
+  (if-let [swirl (lookups/get-swirl-if-allowed-to-view id current-user)]
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
@@ -137,7 +137,7 @@
 (defn view-swirls-by [author-username, current-user]
   (if-let [author (user-repo/get-user author-username)]
     (if (= author-username (author :username))
-      (let [swirls (lookups/get-swirls-authored-by (:id author) (:id current-user))
+      (let [swirls (lookups/get-swirls-authored-by (:id author) current-user)
             is-current-user (and (not-nil? current-user) (= (current-user :username) (author :username)))]
         (layout/render "users/public-profile.html" {:title (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user}))
       (redirect (links/user (author :username))))))
@@ -145,7 +145,7 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn handle-response [swirl-id response-button custom-response responder]
-  (if (lookups/get-swirl-if-allowed-to-view swirl-id (responder :id))
+  (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
       (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary)
@@ -153,7 +153,7 @@
 
 (defn handle-comment [swirl-id comment-content commentor]
   (log/info "Handling comment: " swirl-id " : " comment-content " : " commentor)
-  (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id (commentor :id))
+  (let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id commentor)
         comment (repo/create-comment swirl-id comment-content commentor)]
     (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id) nil)
     (if (not= (swirl :author_id) (commentor :id))

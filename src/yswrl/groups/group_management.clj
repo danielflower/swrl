@@ -24,7 +24,7 @@
       (layout/render "groups/view-group.html" {:title    (group :name)
                                                :group    group
                                                :security {:can-edit (= (group :created_by_id) (user :id))}
-                                               :swirls   (repo/get-swirls-for-group group-id (user :id))
+                                               :swirls   (repo/get-swirls-for-group group-id user)
                                                :members  (repo/get-group-members group-id)}))))
 
 
@@ -83,6 +83,8 @@
         (repo/update-group group-id group-name group-description)
         (save-group creator group member-usernames-and-emails)))))
 
+(defn join-group [group-id join-code user]
+  )
 
 (defroutes group-routes
 
@@ -90,6 +92,7 @@
 
            (GET "/create-group" [:as req] (guard/requires-login #(create-group-page (user-from-session req) nil nil nil)))
            (POST "/create-group" [group-name group-description who emails :as req] (guard/requires-login #(create-group (user-from-session req) group-name group-description (user-selector/usernames-and-emails-from-request who emails))))
+           (GET "/groups/:id{[0-9]+}/join/:code{[0-9]+}" [id code :as req] (guard/requires-login #(join-group (Long/parseLong id) (Long/parseLong code) (user-from-session req))))
 
            (GET "/groups/:id{[0-9]+}/edit" [id :as req] (guard/requires-login #(edit-group-page (user-from-session req) (Long/parseLong id) nil)))
            (POST "/groups/:id{[0-9]+}/edit" [id group-name group-description who emails :as req] (guard/requires-login #(update-group (user-from-session req) (Long/parseLong id) group-name group-description (user-selector/usernames-and-emails-from-request who emails))))

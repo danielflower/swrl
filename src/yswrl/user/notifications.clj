@@ -107,7 +107,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   (let [swirl-id-to-notifications (group-by #(% :swirl_id) notifications)]
     (vec (filter #(not (nil? (% :swirl)))
                  (map (fn [[swirl-id notifications]]
-                        {:swirl         (lookups/get-swirl-if-allowed-to-view swirl-id (:target_user_id (first notifications)))
+                        {:swirl         (lookups/get-swirl-if-allowed-to-view swirl-id {:id (:target_user_id (first notifications))})
                          :notifications notifications
                          })
                       swirl-id-to-notifications)))))
@@ -133,7 +133,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   (let [raw (notifications-repo/get-for-user-page (user :id))]
     (vec (filter #(not (and (not (nil? (get-in % [:note :swirl_id]))) (nil? (% :swirl)))) ; if a swirl ID was on the notification, but the looked-up swirl is nil, then the user does not have permission to view it or it was deleted
                  (map (fn [n] {:note  n
-                               :swirl (if (nil? (n :swirl_id)) nil (lookups/get-swirl-if-allowed-to-view (n :swirl_id) (:target_user_id (user :id))))}) raw)))))
+                               :swirl (if (nil? (n :swirl_id)) nil (lookups/get-swirl-if-allowed-to-view (n :swirl_id) user))}) raw)))))
 
 (defn view-notifications-page [user]
   (let [notes (get-notification-view-model user)]

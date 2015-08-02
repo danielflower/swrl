@@ -10,7 +10,7 @@
 
 
 (defn get-unresponded-for-user [user-id]
-  (lookups/get-swirls-awaiting-response user-id 100 0))
+  (lookups/get-swirls-awaiting-response {:id user-id} 100 0))
 
 (defn get-users-to-nag []
   (db/query "SELECT id FROM users WHERE

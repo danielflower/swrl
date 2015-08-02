@@ -64,7 +64,7 @@
   Renderable
   (render [_ request]
     (let [current-user (get (get request :session) :user)
-          unread-count (if current-user (lookups/get-swirls-awaiting-response-count (get current-user :id nil)) nil)
+          unread-count (if current-user (lookups/get-swirls-awaiting-response-count current-user) nil)
           notifications-count (if current-user (notifications-repo/unseen-notifications-count (get current-user :id)) nil)]
 
       (content-type

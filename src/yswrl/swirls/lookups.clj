@@ -17,21 +17,33 @@
   (first (-> (select-single-swirl id)
              (select))))
 
-(defn can-view-swirl? [swirl user-id]
-  (or (not (:is_private swirl))
-      (= user-id (:author_id swirl))
-      (some #{user-id} (map :user-id (select db/suggestions ;note can't use the swirls-repo as would create a circular dependency
-                                             (fields :users.username [:users.id :user-id])
-                                             (join :inner db/users (= :suggestions.recipient_id :users.id))
-                                             (where {:swirl_id (:id swirl)}))))))
 
-(defn get-swirl-if-allowed-to-view [id user-id]
-  (let [swirl (first (-> (select-single-swirl id)
-                         (where (or {:author_id user-id} {:state states/live}))
-                         (select)))]
-    (if (can-view-swirl? swirl user-id)
-      swirl
-      nil)))
+(defn where-user-can-view [query requestor]
+  (let [anon-allowed {:is_private false :state states/live}]
+    (if (nil? requestor)
+      (where query anon-allowed)
+      (where query (or anon-allowed
+                       {:author_id (requestor :id)}
+                       {:is_private true :state states/live :id [in
+
+                                                                 ;(union (queries
+                                                                          (subselect db/suggestions (fields :swirl_id) (where {:recipient_id (requestor :id)}))
+                                                                          ;(subselect db/group-swirl-links
+                                                                          ;           (fields :group-swirl-links.swirl_id)
+                                                                          ;           (join :inner db/group-members (= :group-members.group_id :group-swirl-links.group_id))
+                                                                          ;           (where {:group-members.user_id (requestor :id)}))
+                                                                          ;))
+
+                                                                 ]}
+
+
+                       )))
+    ))
+
+(defn get-swirl-if-allowed-to-view [id requestor]
+  (first (-> (select-single-swirl id)
+             (where-user-can-view requestor)
+             (select))))
 
 (defn get-swirl-if-allowed-to-edit [id user-id]
   (first (-> (select-single-swirl id)
@@ -40,45 +52,48 @@
 
 
 ; Queries to get multiple swirls
-(def multiple-live-swirls
-  (-> (select* db/swirls)
-      (where {:state states/live})))
 
-(defn select-multiple-swirls [max-results skip]
-  (-> multiple-live-swirls
+(defn multiple-live-swirls [requestor]
+  (-> (select* db/swirls)
+      (where {:state states/live}) ; this almost looks like duplication but stops a users draft and deleted swirls from showing in list views
+      (where-user-can-view requestor)
+      ))
+
+(defn select-multiple-swirls [requestor max-results skip]
+  (-> (multiple-live-swirls requestor)
       (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url :author_id :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
       (limit max-results)
       (order :id :desc)))                                   ; faster to order by ID rather than creation date as ID is indexed
 
-(defn get-all-swirls [max-results skip user-id]
-  (filter #(can-view-swirl? % user-id) (-> (select-multiple-swirls max-results skip)
-                                           (select))))
-
-(defn get-swirls-authored-by [author-id user-id]
-  (filter #(can-view-swirl? % user-id) (-> (select-multiple-swirls 1000 0)
-                                           (where {:author_id author-id})
-                                           (select))))
-
-(defn get-swirls-awaiting-response [user-id max-results skip]
-  (-> (select-multiple-swirls max-results skip)
-      (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
-      (where {:suggestions.recipient_id user-id :suggestions.response_id nil})
+(defn get-all-swirls [max-results skip requestor]
+  (-> (select-multiple-swirls requestor max-results skip)
       (select)))
 
-(defn get-swirls-awaiting-response-count [user-id]
-  (:cnt (first (-> multiple-live-swirls
+(defn get-swirls-authored-by [author-id requestor]
+  (-> (select-multiple-swirls requestor 1000 0)
+      (where {:author_id author-id})
+      (select)))
+
+(defn get-swirls-awaiting-response [requestor max-results skip]
+  (-> (select-multiple-swirls requestor max-results skip)
+      (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
+      (where {:suggestions.recipient_id (requestor :id) :suggestions.response_id nil})
+      (select)))
+
+(defn get-swirls-awaiting-response-count [requestor]
+  (:cnt (first (-> (multiple-live-swirls requestor)
                    (aggregate (count :*) :cnt)
                    (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
-                   (where {:suggestions.recipient_id user-id :suggestions.response_id nil})
+                   (where {:suggestions.recipient_id (requestor :id) :suggestions.response_id nil})
                    (select)))))
 
 
-(defn get-swirls-by-response [user-id max-results skip response]
-  (-> (select-multiple-swirls max-results skip)
+(defn get-swirls-by-response [requestor max-results skip response]
+  (-> (select-multiple-swirls requestor max-results skip)
       (join :inner db/swirl-responses (= :swirls.id :swirl_responses.swirl_id))
-      (where {:swirl_responses.responder user-id})
+      (where {:swirl_responses.responder (requestor :id)})
       (where {(raw "LOWER(swirl_responses.summary)") (clojure.string/lower-case response)})
       (select)))
 

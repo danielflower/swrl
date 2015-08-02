@@ -11,7 +11,7 @@
     (layout/render "home/home-not-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count nil)
                                                    :paging-url-prefix "/?from="
                                                    :countFrom         (str count) :countTo (+ count 20)})
-    (layout/render "home/home-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count (:id user))
+    (layout/render "home/home-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count user)
                                                :paging-url-prefix "/?from="
                                                :countFrom         (str count) :countTo (+ count 20)})))
 
