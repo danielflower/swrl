@@ -21,22 +21,21 @@
 (defn where-user-can-view [query requestor]
   (let [anon-allowed {:is_private false :state states/live}]
     (if (nil? requestor)
+      ; for anon users, use the anon query
       (where query anon-allowed)
-      (where query (or anon-allowed
-                       {:author_id (requestor :id)}
-                       {:is_private true :state states/live :id [in
 
-                                                                 ;(union (queries
-                                                                          (subselect db/suggestions (fields :swirl_id) (where {:recipient_id (requestor :id)}))
-                                                                          ;(subselect db/group-swirl-links
-                                                                          ;           (fields :group-swirl-links.swirl_id)
-                                                                          ;           (join :inner db/group-members (= :group-members.group_id :group-swirl-links.group_id))
-                                                                          ;           (where {:group-members.user_id (requestor :id)}))
-                                                                          ;))
-
-                                                                 ]}
-
-
+      ; for logged in users, one of the following:
+      (where query (or anon-allowed ; anon users can see it, or...
+                       {:author_id (requestor :id)} ; the user is the author, or ...
+                       {:is_private true ; it's a private swirl but the current user is one of the suggestees. or...
+                        :state      states/live
+                        :id         [in (subselect db/suggestions (fields :swirl_id) (where { :swirl_id :swirls.id :recipient_id (requestor :id)}))]}
+                       {:is_private true ; it's a private swirl but it's associated with a group the user is a part of
+                        :state      states/live
+                        :id         [in (subselect db/group-swirl-links
+                                                   (fields :group_swirl_links.swirl_id)
+                                                   (join :inner db/group-members (= :group_members.group_id :group_swirl_links.group_id))
+                                                   (where {:swirl_id :swirls.id :group_members.user_id (requestor :id)}))]}
                        )))
     ))
 
@@ -55,7 +54,7 @@
 
 (defn multiple-live-swirls [requestor]
   (-> (select* db/swirls)
-      (where {:state states/live}) ; this almost looks like duplication but stops a users draft and deleted swirls from showing in list views
+      (where {:state states/live})                          ; this almost looks like duplication but stops a users draft and deleted swirls from showing in list views
       (where-user-can-view requestor)
       ))
 
