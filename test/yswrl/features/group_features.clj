@@ -1,15 +1,11 @@
 (ns yswrl.features.group-features
   (:require [yswrl.handler :refer [app]]
             [yswrl.test.scaffolding :as s]
-            [net.cgrand.enlive-html :as enlive]
-            [yswrl.links :as linky]
             [yswrl.features.actions :as actions]
             [kerodon.core :refer :all]
             [kerodon.impl :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]
-            [yswrl.swirls.swirls-repo :as repo]
-            [yswrl.db :as db]
             [yswrl.links :as links])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
@@ -19,8 +15,6 @@
 (selmer.parser/cache-off!)
 
 (defn now [] (System/currentTimeMillis))
-
-
 
 (defn save-state [session map key value]
   (swap! map (fn [old-val] (assoc old-val key value)))
@@ -69,6 +63,8 @@
           (within [:.group-members]
                   (has (some-text? (member :username))))
           (save-url test-state :group-url)
+          (within [:.join-url]
+                  (has (some-text? (str "http://www.swrl.co" (@test-state :group-url) "/join/"))))
 
           ; Create a swirl
           (actions/follow-create-link)
@@ -104,3 +100,25 @@
 
           ))))
 
+
+(deftest group-joining
+  (with-faked-responses
+    (let [owner (s/create-test-user)
+          member (s/create-test-user)
+          group (s/create-group "Some group" "Some description" owner)
+          join-url (links/join-group group)]
+
+      (-> (session app)
+          (visit join-url)
+          (follow-redirect)
+          (actions/login-as member)
+          (follow-redirect)
+          (within [:h1]
+                  (has (text? "Some group")))
+
+
+          ; invalid codes lead to 404 errors
+          (visit (links/join-group (group :id) 1234))
+          (has (status? 404))
+
+          ))))

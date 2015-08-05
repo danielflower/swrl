@@ -40,6 +40,7 @@
 (filters/add-filter! :absoluteurl links/absolute)
 (filters/add-filter! :swirlurl links/swirl)
 (filters/add-filter! :groupurl links/group)
+(filters/add-filter! :joingroupurl links/join-group)
 (filters/add-filter! :editgroupurl links/edit-group)
 (filters/add-filter! :swirlediturl links/edit-swirl)
 (filters/add-filter! :notification-options-url links/notification-options)

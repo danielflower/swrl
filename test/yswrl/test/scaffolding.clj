@@ -1,6 +1,7 @@
 (ns yswrl.test.scaffolding
   (:require [yswrl.auth.auth-routes :as auth]
             [yswrl.auth.auth-repo :as auth-repo]
+            [yswrl.groups.groups-repo :as group-repo]
             [yswrl.swirls.swirls-repo :as swirls-repo])
   (:use clojure.test))
 
@@ -33,5 +34,7 @@
 (defn create-swirl ([type authorId title review recipientNames & {:keys [is-private?] :or {is-private? false}}]
   (let [swirl (swirls-repo/save-draft-swirl type authorId title review nil)]
     (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames is-private?)
-    swirl))
-  )
+    swirl)))
+
+(defn create-group [group-name group-description owner]
+  (group-repo/create-group (owner :id) group-name group-description))

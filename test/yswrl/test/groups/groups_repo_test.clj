@@ -27,9 +27,14 @@
           non-member (create-test-user)
           group (repo/create-group (member :id) "Exclusive" "This is a group is what it is")
           _ (repo/add-group-member (group :id) (member :id))]
-
       (is (= group (repo/get-group-if-allowed (group :id) (member :id))))
       (is (nil? (repo/get-group-if-allowed (group :id) (non-member :id))))))
+
+  (testing "Getting group by code returns nil if code wrong"
+    (let [member (create-test-user)
+          group (repo/create-group (member :id) "Exclusive" "This is a group is what it is")]
+      (is (= group (repo/get-group-by-code (group :id) (group :join_code))))
+      (is (nil? (repo/get-group-by-code (group :id) (+ 1 (group :join_code)))))))
 
   (testing "can associate a swirl with a group"
     (let [author (create-test-user)

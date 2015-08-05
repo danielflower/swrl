@@ -7,7 +7,7 @@
 
 (defn create-group [creator-id group-name description]
   (insert db/groups
-          (values {:name group-name :created_by_id creator-id :description description})))
+          (values {:name group-name :created_by_id creator-id :description description :join_code (Math/round (* (Math/random) Integer/MAX_VALUE))})))
 
 (defn add-group-member [group-id user-id]
   (insert db/group-members
@@ -15,7 +15,8 @@
 
 (defn multiple-groups []
   (-> (select* db/groups)
-      (fields :id :name :date_created :created_by_id :description)
+      (fields :id :name :date_created :created_by_id :description :join_code)
+      (order :name :asc)
       ))
 
 (defn get-swirls-for-group [group-id requestor]
@@ -25,11 +26,10 @@
       (select)))
 
 (defn get-groups-for [user-id]
-  (select db/groups
-          (fields :id :name :date_created :created_by_id :description)
-          (join :inner db/group-members (= :groups.id :group_members.group_id))
-          (where {:group_members.user_id user-id})
-          (order :name :asc)))
+  (-> (multiple-groups)
+      (join :inner db/group-members (= :groups.id :group_members.group_id))
+      (where {:group_members.user_id user-id})
+      (select)))
 
 (defn get-groups-linked-to-swirl [swirl-id]
   (-> (multiple-groups)
@@ -40,15 +40,15 @@
 (defn set-swirl-links [swirl-id added-by-id group-ids]
   (let [group-set (set group-ids)
         current (set (map :id (get-groups-linked-to-swirl swirl-id)))
-        to-add (clojure.set/difference group-set current) ; items selected but not already in the current set
+        to-add (clojure.set/difference group-set current)   ; items selected but not already in the current set
         to-delete (clojure.set/difference current group-set) ; any current ones which weren't passed in
         ]
-  (doseq [group-id to-add]
-    (insert db/group-swirl-links
-            (values {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))
-  (doseq [group-id to-delete]
-    (delete db/group-swirl-links
-            (where {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))))
+    (doseq [group-id to-add]
+      (insert db/group-swirl-links
+              (values {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))
+    (doseq [group-id to-delete]
+      (delete db/group-swirl-links
+              (where {:group_id group-id :swirl_id swirl-id :added_by_id added-by-id})))))
 
 (defn get-group-members [group-id]
   (select db/users
@@ -58,10 +58,15 @@
           (order :id :asc)))
 
 (defn get-group-if-allowed [group-id user-id]
-  (first (select db/groups
-                 (fields :id :name :date_created :created_by_id :description)
-                 (join :inner db/group-members (= :groups.id :group_members.group_id))
-                 (where {:id group-id :group_members.user_id user-id}))))
+  (first (-> (multiple-groups)
+             (join :inner db/group-members (= :groups.id :group_members.group_id))
+             (where {:id group-id :group_members.user_id user-id})
+             (select))))
+
+(defn get-group-by-code [group-id code]
+  (first (-> (multiple-groups)
+             (where {:id group-id :join_code code})
+             (select))))
 
 (defn update-group [group-id group-name group-description]
   (update db/groups

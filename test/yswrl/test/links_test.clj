@@ -35,6 +35,10 @@
     (is (= "/swirls/123/edit?origin-swirl-id=12"
            (links/edit-swirl 123 12))))
 
+  (testing "group join"
+    (is (= "/groups/123/join/1234123412342" (links/join-group 123 1234123412342)))
+    (is (= (links/join-group 123 1234123412342) (links/join-group {:id 123 :join_code 1234123412342}))))
+
   (testing "edit swirl link has no params if origin swirl id is nil"
     (is (= "/swirls/123/edit"
            (links/edit-swirl 123 nil)))

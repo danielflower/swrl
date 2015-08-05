@@ -19,6 +19,8 @@
         {% endfor %}
     </ul>
 
+    <p><strong>Invite your friends to this group.</strong> Just give them this link: <code class="join-url">{{ group|joingroupurl|absoluteurl }}</code></p>
+
     <h2>Swirls created for this group</h2>
 
     {% include "components/swirls-list-with-paging.html" %}

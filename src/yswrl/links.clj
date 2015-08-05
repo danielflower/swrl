@@ -13,7 +13,7 @@
      (str "/swirls/" id)
      (str "/swirls/" id "#" comment-id)))
   ([id]
-    (swirl id nil)))
+   (swirl id nil)))
 
 (defn notifications []
   "/notifications")
@@ -51,6 +51,12 @@
   ([] "/swirls/inbox")
   ([response]
    (str "/swirls/inbox/" (.toLowerCase (url-encode response)))))
+
+(defn join-group
+  ([group-id join-code]
+   (str "/groups/" group-id "/join/" join-code))
+  ([group]
+   (join-group (group :id) (group :join_code))))
 
 (defn group [group-id]
   (str "/groups/" group-id))

@@ -84,7 +84,11 @@
         (save-group creator group member-usernames-and-emails)))))
 
 (defn join-group [group-id join-code user]
-  )
+  (if-let [group (repo/get-group-by-code group-id join-code)]
+    (let [not-already-member? (nil? (repo/get-group-if-allowed group-id (user :id)))]
+      (if not-already-member?
+        (repo/add-group-member group-id (user :id)))
+      (redirect (links/group (group :id))))))
 
 (defroutes group-routes
 
