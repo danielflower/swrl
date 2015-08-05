@@ -44,7 +44,7 @@
 (defn save-swirl-id [session map key]
   (let [url (get-in session [:request :uri])
         [_ swirl-id] (re-find #".*/swirls/([\d]+)" url)
-        swirl-id (Integer. swirl-id)]
+        swirl-id (Long/parseLong swirl-id)]
     (save-state session map key swirl-id))
   session)
 
@@ -867,7 +867,6 @@
         (visit "/")
         (follow "Next 20 swirls >")
         (follow "< Previous 20 swirls")
-        (actions/follow-login-link)
         (login-as user)
         (follow "Next 20 swirls >")
         (follow "< Previous 20 swirls")

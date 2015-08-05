@@ -19,7 +19,7 @@
   (layout/render "auth/register.html" map))
 
 (defn login-page [& {:keys [username error return-url fb-errors error-message]}]
-  (layout/render "auth/login.html" {:username  username :error error :return-url return-url
+  (layout/render "auth/login.html" { :logister-info { :login-username username } :login-error error :return-url return-url
                                     :fb-errors fb-errors :error-message error-message}))
 
 (defn logged-out-page []

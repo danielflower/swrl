@@ -119,6 +119,7 @@
       (layout/render "swirls/view-page.html"
                      {:title         title
                       :logister-info logister-info
+                      :return-url    (links/swirl id)
                       :model         {
                                       :title                    title
                                       :swirl                    swirl

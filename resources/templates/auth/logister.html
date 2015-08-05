@@ -5,7 +5,7 @@
 
         <form method="POST" action="/register" class="register-form">
             {% csrf-field %}
-            <input type="hidden" name="return-url" value="{{request.uri}}">
+            <input type="hidden" name="return-url" value="{{ return-url }}">
 
             <label><span>Username</span><input placeholder="Username"
                           type="text" autocomplete="nickname" name="username" required
@@ -34,14 +34,26 @@
 
     <div class="logister--panel register">
         <h2>Sign in</h2>
+
+        {% if fb-errors %}
+        <p class="validation-error">Sorry, something went wrong with your Facebook Login. Please try again.</p>
+        <p class="validation-error">Error Details: {{ error-message }}</p>
+        {% endif %}
+        {% if login-error %}
+        <p class="validation-error">Sorry, you have entered an invalid username or password. Please try again.</p>
+        {% endif %}
+
+
         <form method="POST" action="/login">
             {% csrf-field %}
-            <input type="hidden" name="return-url" value="{{request.uri}}">
+            <input type="hidden" name="return-url" value="{{ return-url }}">
 
             <label><span>Username or email</span><input placeholder="Username or email" type="text" autocomplete="nickname" name="username" required
+                                                        class="logister-login-username-field"
                                            value="{{ logister-info.login-username }}" maxlength="{{constraints.users.username.max-length}}"></label>
 
             <label><span>Password</span><input placeholder="Password" type="password" required pattern=".{8,}" title="Enter at least 8 characters"
+                                               class="logister-login-password-field"
                                   name="password"></label>
 
             <label><input type="checkbox" name="remember" checked> Keep me logged in

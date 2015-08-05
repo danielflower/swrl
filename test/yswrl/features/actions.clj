@@ -26,8 +26,8 @@
 
 (defn login-as [visit user]
   (-> visit
-      (fill-in "Username or email" (user :username))
-      (fill-in "Password" s/test-user-password)
+      (fill-in :.logister-login-username-field (user :username))
+      (fill-in :.logister-login-password-field s/test-user-password)
       (press "Login")
       (follow-redirect)))
 
