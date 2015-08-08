@@ -79,7 +79,8 @@
    (if tmdb-id
      (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
            review "<p data-ph=\"Say something about this movie here....\"></p>"
-           swirl (repo/save-draft-swirl "movie" (user :id) (movie :title) review (movie :large-image-url))]
+           title (str (movie :title) " (" (movie :release-year) ")")
+           swirl (repo/save-draft-swirl "movie" (user :id) title review (movie :large-image-url))]
        (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
        (redirect (links/edit-swirl (swirl :id) query-string))
        )

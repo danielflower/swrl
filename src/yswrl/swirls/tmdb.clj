@@ -1,5 +1,6 @@
 (ns yswrl.swirls.tmdb
   (:require [clj-http.client :as client]
+            [clj-time.format :as f]
             [yswrl.links :as links]))
 
 (def TMDB-API-KEY "c3356e66739e40233c7870d42b30bc34")
@@ -13,7 +14,7 @@
      (let [encoded (links/url-encode search-term)
            url (str "https://api.themoviedb.org/3/search/movie?api_key=" TMDB-API-KEY "&query=" encoded)
            result (client/get url {:accept :json :as :json})]
-       {:results (map (fn [r] {:title           (r :title)
+       {:results (map (fn [r] {:title           (str (r :title) " (" (if (> (.length (r :release_date)) 4) (.substring (r :release_date) 0 4)) ")")
                                :tmdb-id         (r :id)
                                :create-url      (str "/create/movie?tmdb-id=" (r :id) "&" query-string)
                                :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
@@ -25,9 +26,11 @@
 (defn get-movie-from-tmdb-id [tmdb-id]
   (let [url (str "https://api.themoviedb.org/3/movie/" tmdb-id "?api_key=" TMDB-API-KEY)
         result (client/get url {:accept :json :as :json})
-        body (result :body)]
+        body (result :body)
+        rd (body :release_date)]
     {:title           (body :title)
      :overview        (body :overview)
+     :release-year    (if (> (.length rd) 4) (.substring rd 0 4))
      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
      :tmdb-id         (body :id)

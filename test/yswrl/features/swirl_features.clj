@@ -289,7 +289,7 @@
           (fill-in "Movie Title" "garden state")
           (press :#movie-search-go-button)
 
-          (follow "Garden State")
+          (follow "Garden State (2004)")
           (follow-redirect)
           ; user1 should be pre-selected as a recipient
 
@@ -598,7 +598,7 @@
           (fill-in "Movie Title" "garden state")
           (press :#movie-search-go-button)
 
-          (follow "Garden State")
+          (follow "Garden State (2004)")
 
           ; Not logged in, so expect login page redirect
           (follow-redirect)
@@ -607,12 +607,12 @@
           (follow-redirect)
 
           ;Don't need to fill in as should be this by default:
-          ;(fill-in "You should watch" "Garden State")
+          ;(fill-in "You should watch" "Garden State (2004)")
           (actions/save-swirl)
 
-          (assert-swirl-title-in-header "watch" "Garden State")
+          (assert-swirl-title-in-header "watch" "Garden State (2004)")
 
-          (within [:title] (has (text? "You should watch Garden State")))
+          (within [:title] (has (text? "You should watch Garden State (2004)")))
 
           ))))
 
@@ -661,12 +661,12 @@
           (follow-redirect)
 
           ;Don't need to fill in as should be this by default:
-          ;(fill-in "You should watch" "Garden State")
+          ;(fill-in "You should watch" "Garden State (2004)")
           (actions/save-swirl)
 
-          (assert-swirl-title-in-header "watch" "Garden State")
+          (assert-swirl-title-in-header "watch" "Garden State (2004)")
 
-          (within [:title] (has (text? "You should watch Garden State")))
+          (within [:title] (has (text? "You should watch Garden State (2004)")))
 
           ))))
 
@@ -687,12 +687,12 @@
           (follow-redirect)
 
           ;Don't need to fill in as should be this by default:
-          ;(fill-in "You should watch" "Garden State")
+          ;(fill-in "You should watch" "Garden State (2004)")
           (actions/save-swirl)
 
-          (assert-swirl-title-in-header "watch" "Garden State")
+          (assert-swirl-title-in-header "watch" "Garden State (2004)")
 
-          (within [:title] (has (text? "You should watch Garden State")))
+          (within [:title] (has (text? "You should watch Garden State (2004)")))
 
           ))))
 
@@ -739,7 +739,7 @@
           (follow-redirect)
 
           ;Don't need to fill in as should be this by default:
-          ;(fill-in "You should watch" "Garden State")
+          ;(fill-in "You should watch" "Garden State (2004)")
           (actions/save-swirl)
 
           (assert-swirl-title-in-header "see" "Progressive enhancement is still important - JakeArchibald.com")
