@@ -14,7 +14,7 @@
                placeholder="{{ search-box-placeholder }}"
                value="{{search-term}}">
         <input type="submit" value="Search" class="button-primary">
-        <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
+        <input type="hidden" name="query-string" value="{{ request.params.query-string }}">
     </form>
 
     {% for result in search-result.results %}

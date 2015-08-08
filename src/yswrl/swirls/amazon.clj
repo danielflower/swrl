@@ -61,40 +61,34 @@
     (zip/xml-zip result-data)))
 
 (defn search-books
-  ([search-term origin-swirl-id]
+  ([search-term query-string]
    (if (clojure.string/blank? search-term)
      {:results []}
-     (let [result (handle-amazon search-term)] {
-                                                :results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
-                                                                       :title           (apply str (xml-> r :ItemAttributes :Title text))
-                                                                       :author          (apply str (xml-> r :ItemAttributes :Author text))
-                                                                       :create-url      (str "/create/book?book-id=" (apply str (xml-> r :ASIN text))
-                                                                                             (if (clojure.string/blank? origin-swirl-id)
-                                                                                               nil
-                                                                                               (str "&origin-swirl-id=" origin-swirl-id)))
-                                                                       :book-id         (apply str (xml-> r :ASIN text))
-                                                                       :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
-                                                                       :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
-                                                })))
+     (let [result (handle-amazon search-term)]
+       {:results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
+                               :title           (apply str (xml-> r :ItemAttributes :Title text))
+                               :author          (apply str (xml-> r :ItemAttributes :Author text))
+                               :create-url      (str "/create/book?book-id=" (apply str (xml-> r :ASIN text)) "&" query-string)
+                               :book-id         (apply str (xml-> r :ASIN text))
+                               :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
+                               :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
+        })))
   ([search-term]
    (search-books search-term "")))
 
 (defn search-games
-  ([search-term origin-swirl-id]
+  ([search-term query-string]
    (if (clojure.string/blank? search-term)
      {:results []}
-     (let [result (handle-amazon-games search-term)] {
-                                                      :results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
-                                                                             :title           (apply str (xml-> r :ItemAttributes :Title text))
-                                                                             :platform        (apply str (xml-> r :ItemAttributes :Platform text))
-                                                                             :create-url      (str "/create/game?game-id=" (apply str (xml-> r :ASIN text))
-                                                                                                   (if (clojure.string/blank? origin-swirl-id)
-                                                                                                     nil
-                                                                                                     (str "&origin-swirl-id=" origin-swirl-id)))
-                                                                             :game-id         (apply str (xml-> r :ASIN text))
-                                                                             :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
-                                                                             :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
-                                                      })))
+     (let [result (handle-amazon-games search-term)]
+       {:results (map (fn [r] {:url             (apply str (xml-> r :DetailPageURL text))
+                               :title           (apply str (xml-> r :ItemAttributes :Title text))
+                               :platform        (apply str (xml-> r :ItemAttributes :Platform text))
+                               :create-url      (str "/create/game?game-id=" (apply str (xml-> r :ASIN text)) "&" query-string)
+                               :game-id         (apply str (xml-> r :ASIN text))
+                               :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
+                               :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
+        })))
   ([search-term]
    (search-books search-term "")))
 

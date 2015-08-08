@@ -20,18 +20,6 @@
     <div class="swirl-admin-panel">
         <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
         <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
-
-        {% if model.non-responders|not-empty %}
-        <div class="non-responders">
-            Yet to respond:
-
-            {% for non-responder in model.non-responders %}
-            <a class="username" rel="author"
-               href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
-            {% endfor %}
-        </div>
-        {% endif %}
-
     </div>
 
     {% endif %}
@@ -53,6 +41,17 @@
 
         </div>
         {% endfor %}
+        {% if model.non-responders|not-empty %}
+        <div class="non-responders">
+            Yet to respond:
+
+            {% for non-responder in model.non-responders %}
+            <a class="username" rel="author"
+               href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
 
 
         {% if model.can-respond %}
@@ -72,11 +71,18 @@
 
     </div>
 
+
+    {% if model.swirl.is_private %}
+    <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share this with others, click the re-swirl button:</p>
+    {% endif %}
+
     <div id="share-buttons">
 
+        {% if not model.swirl.is_private %}
         <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl" data-dnt="true">Tweet</a>
         <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
              data-layout="button_count"></span>
+        {% endif %}
 
         <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img
                 src="/immutable/images/swrl-logo.svg" height="15px"></a>

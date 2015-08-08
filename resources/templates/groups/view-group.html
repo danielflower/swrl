@@ -21,7 +21,19 @@
 
     <p><strong>Invite your friends to this group.</strong> Just give them this link: <code class="join-url">{{ group|joingroupurl|absoluteurl }}</code></p>
 
-    <h2>Swirls created for this group</h2>
+
+    <h2>Group Swirls</h2>
+
+    <p>Touch the big pink button to share something with the group.</p>
+
+    <div class="bpb-wrapper">
+        <a href="/swirls/start?group-id={{ group.id }}&is-private=true" class="bpb">
+            <span>TOUCH ME TO</span>
+            <img src="/immutable/images/swrl-logo-white.svg"/>
+        </a>
+    </div>
+
+
 
     {% include "components/swirls-list-with-paging.html" %}
 

@@ -7,21 +7,18 @@
 (def LARGE-IMAGE-URL-PREFIX "http://image.tmdb.org/t/p/original")
 
 (defn search-movies
-  ([search-term origin-swirl-id]
+  ([search-term query-string]
    (if (clojure.string/blank? search-term)
      {:results []}
      (let [encoded (links/url-encode search-term)
            url (str "https://api.themoviedb.org/3/search/movie?api_key=" TMDB-API-KEY "&query=" encoded)
-           result (client/get url {:accept :json :as :json})] {
-                                                               :results (map (fn [r] {:title           (r :title)
-                                                                                      :tmdb-id         (r :id)
-                                                                                      :create-url      (str "/create/movie?tmdb-id=" (r :id)
-                                                                                                            (if (clojure.string/blank? origin-swirl-id)
-                                                                                                              nil
-                                                                                                              (str "&origin-swirl-id=" origin-swirl-id)))
-                                                                                      :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
-                                                                                      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
-                                                               })))
+           result (client/get url {:accept :json :as :json})]
+       {:results (map (fn [r] {:title           (r :title)
+                               :tmdb-id         (r :id)
+                               :create-url      (str "/create/movie?tmdb-id=" (r :id) "&" query-string)
+                               :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
+                               :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
+        })))
   ([search-term]
    (search-movies search-term "")))
 
@@ -56,21 +53,18 @@
     ))
 
 (defn search-tv
-  ([search-term origin-swirl-id]
+  ([search-term query-string]
    (if (clojure.string/blank? search-term)
      {:results []}
      (let [encoded (links/url-encode search-term)
            url (str "https://api.themoviedb.org/3/search/tv?api_key=" TMDB-API-KEY "&query=" encoded)
-           result (client/get url {:accept :json :as :json})] {
-                                                               :results (map (fn [r] {:title           (r :name)
-                                                                                      :tmdb-id         (r :id)
-                                                                                      :create-url      (str "/create/tv?tmdb-id=" (r :id)
-                                                                                                            (if (clojure.string/blank? origin-swirl-id)
-                                                                                                              nil
-                                                                                                              (str "&origin-swirl-id=" origin-swirl-id)))
-                                                                                      :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
-                                                                                      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
-                                                               })))
+           result (client/get url {:accept :json :as :json})]
+       {:results (map (fn [r] {:title           (r :name)
+                               :tmdb-id         (r :id)
+                               :create-url      (str "/create/tv?tmdb-id=" (r :id) "&" query-string)
+                               :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
+                               :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))
+        })))
   ([search-term]
    (search-tv search-term ""))
   )

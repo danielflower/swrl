@@ -19,10 +19,10 @@
   "/notifications")
 
 (defn edit-swirl
-  ([id origin-swirl-id]
-   (if (nil? origin-swirl-id)
+  ([id query-string]
+   (if (nil? query-string)
      (str "/swirls/" id "/edit")
-     (str "/swirls/" id "/edit?origin-swirl-id=" origin-swirl-id)))
+     (str "/swirls/" id "/edit?" query-string)))
   ([id]
    (edit-swirl id nil)))
 

@@ -80,6 +80,18 @@
           (follow "My special group")
           (follow "Special Swirl")
 
+          ; A swirl can also be created by pressing the big pink button and it will be shared with the group and by private by default
+          (follow "My special group")
+          (follow :.bpb)
+          (fill-in "Album or Song Title" "Mellon Collie")
+          (press :#album-search-go-button)
+          (follow "Mellon Collie and the Infinite Sadness (Remastered)")
+          (follow-redirect)
+          (actions/save-swirl)
+          (within [:.private-swirl-message] (has (text? "This is a private Swirl so only those invited can see it. To share this with others, click the re-swirl button:")))
+          (follow "My special group")
+          (follow "Mellon Collie and the Infinite Sadness (Remastered)")
+
           ; A member is notified and can view the group
           (actions/log-out)
           (actions/follow-login-link)

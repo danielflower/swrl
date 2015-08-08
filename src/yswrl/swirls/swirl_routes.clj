@@ -22,7 +22,7 @@
 
 
 
-(defn edit-swirl-page [author swirl-id origin-swirl-id]
+(defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
           contacts (network/get-relations (author :id) :knows)
@@ -31,7 +31,8 @@
           not-added (filter #(and (not (contains? already-suggested %))
                                   (not (= (:author_id origin-swirl) (:user-id %)))) contacts)
           all-groups (group-repo/get-groups-for (author :id))
-          selected-groups (group-repo/get-groups-linked-to-swirl swirl-id)
+          already-selected-groups (group-repo/get-groups-linked-to-swirl swirl-id)
+          selected-groups (concat already-selected-groups (filter #(= (.toString (% :id)) group-id) all-groups))
           groups-model (map (fn [g] {:group g :selected (utils/in? selected-groups g)}) all-groups)
           unrelated (network/get-unrelated-users (author :id) 100 0)]
       (layout/render "swirls/edit.html" {:id                  swirl-id
@@ -44,7 +45,7 @@
                                          :origin-swirl-id     origin-swirl-id
                                          :groups-model        groups-model
                                          :origin-swirl-author origin-swirl-author
-                                         :is_private          (:is_private swirl)}))))
+                                         :is_private          (or is-private? (:is_private swirl))}))))
 (defn delete-swirl-page [author swirl-id]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (layout/render "swirls/delete.html" {:swirl swirl})))
@@ -101,7 +102,7 @@
           logister-info (logister-info is-logged-in suggestion-code)
           responses (repo/get-swirl-responses (:id swirl))
           comments (repo/get-swirl-comments (:id swirl))
-          non-responders (if is-author (repo/get-non-responders (:id swirl)))
+          non-responders (repo/get-non-responders (:id swirl))
           can-respond (and (not is-author) is-logged-in)
           response-of-current-user (if is-logged-in (first (filter #(= (:id current-user) (:responder %)) responses)) nil)
           type (type-of swirl)
@@ -206,8 +207,8 @@
   (map #(Long/parseLong % 10) strings))
 
 (defroutes swirl-routes
-           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id :as req]
-             (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) (if (clojure.string/blank? origin-swirl-id)
+           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private :as req]
+             (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) group-id (= "true" is-private) (if (clojure.string/blank? origin-swirl-id)
                                                                                               nil
                                                                                               (Long/parseLong origin-swirl-id)))))
            (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private :as req]

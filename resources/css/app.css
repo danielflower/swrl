@@ -214,7 +214,11 @@ article{
     margin: 20px 0;
 }
 
+.private-swirl-message {
+    margin-top: 30px;
+}
 #share-buttons {
+    margin-top: 20px;
     height: 50px; /* fixed height to prevent reflows of page while the buttons reload themselves */
     overflow-y: hidden;
     width: 100%;

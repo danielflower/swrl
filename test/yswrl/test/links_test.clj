@@ -31,15 +31,15 @@
            (links/gravatar-url "0bc83cb571cd1c50ba6f3e8a78ef1346" 40)))
     )
 
-  (testing "edit swirl link has origin swirl id param"
-    (is (= "/swirls/123/edit?origin-swirl-id=12"
-           (links/edit-swirl 123 12))))
+  (testing "edit swirl link has query strings added"
+    (is (= "/swirls/123/edit?origin-swirl-id=12&private=true"
+           (links/edit-swirl 123 "origin-swirl-id=12&private=true"))))
 
   (testing "group join"
     (is (= "/groups/123/join/1234123412342" (links/join-group 123 1234123412342)))
     (is (= (links/join-group 123 1234123412342) (links/join-group {:id 123 :join_code 1234123412342}))))
 
-  (testing "edit swirl link has no params if origin swirl id is nil"
+  (testing "edit swirl link has no params if query-string id is nil"
     (is (= "/swirls/123/edit"
            (links/edit-swirl 123 nil)))
     (is (= "/swirls/123/edit"
