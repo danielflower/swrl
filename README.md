@@ -85,7 +85,7 @@ and just run tests from from:
 
 Run DB migrations remotely from your dev machine to Heroku:
 
-    set "JDBC_DATABASE_URL=jdbc:postgresql://ec2-107-20-159-103.compute-1.amazonaws.com:5432/dekbme81p64129?user=_________________&password=___________________&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+    set "JDBC_DATABASE_URL=jdbc:postgresql://ec2-54-243-149-147.compute-1.amazonaws.com:5432/d9b1u6iuu53rj9?user=_____________________&password=______________________&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
     lein ragtime migrate
 
 Then deploy the app:
