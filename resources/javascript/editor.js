@@ -36,9 +36,16 @@ class RichTextEditor {
 
 
         $rteDiv.closest("form").on("submit", () => {
-            this.$textarea.val(this.getHtmlContent());
+            this.copyInputFromEditableDivToPostableTextArea();
             return true;
         });
+        this.$editorDiv.focusout(() => {
+            this.copyInputFromEditableDivToPostableTextArea();
+        });
+    }
+
+    copyInputFromEditableDivToPostableTextArea() {
+        this.$textarea.val(this.getHtmlContent());
     }
 
     visitDescendents(startNode, visitor) {

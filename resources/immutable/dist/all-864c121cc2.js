@@ -1009,12 +1009,20 @@ var RichTextEditor = (function () {
         this.$editorDiv.html(html);
 
         $rteDiv.closest('form').on('submit', function () {
-            _this.$textarea.val(_this.getHtmlContent());
+            _this.copyInputFromEditableDivToPostableTextArea();
             return true;
+        });
+        this.$editorDiv.focusout(function () {
+            _this.copyInputFromEditableDivToPostableTextArea();
         });
     }
 
     _createClass(RichTextEditor, [{
+        key: 'copyInputFromEditableDivToPostableTextArea',
+        value: function copyInputFromEditableDivToPostableTextArea() {
+            this.$textarea.val(this.getHtmlContent());
+        }
+    }, {
         key: 'visitDescendents',
         value: function visitDescendents(startNode, visitor) {
             var children = startNode.childNodes;
