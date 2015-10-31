@@ -1,8 +1,7 @@
-<div class="affiliates">
 
     {% for link in model.swirl-links %}
 
-    <div class="swirl-link">
+    <span class="swirl-link">
 
         {% ifequal link.type_code "I" %}
         <a href="{{ link.code|itunesalbum }}" target="_blank"><img
@@ -45,14 +44,11 @@
         {% endifequal %}
 
 
-    </div>
+    </span>
     {% endfor %}
 
     {% ifequal model.swirl.type "tv" %}
-    <div class="swirl-link">
+    <span class="swirl-link">
         <a href="http://www.netflix.com/search/{{ model.swirl.title|urlescape }}" target="_blank">Search on Netflix</a>
-    </div>
+    </span>
     {% endifequal %}
-
-</div>
-<div style="clear:both;"></div>

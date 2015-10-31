@@ -30,7 +30,7 @@
         embed-html (if (clojure.string/blank? (metadata :embed-html))
                      ""
                      (str (metadata :embed-html) "<p data-h=\"....or write something here\"></p>"))
-        review (str "<p data-ph=\"Say something about this " (metadata :type) " here....\"></p>" embed-html)
+        review (str "<p data-ph=\"Why should your friends see this?\"></p>" embed-html)
         swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url))]
     (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id) query-string))))
@@ -44,7 +44,7 @@
         title (album :title)
         thumbnail-url (album :thumbnail-url)
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
-        review (str "<p data-ph=\"Say something about this album here\"></p>"
+        review (str "<p data-ph=\"Why should your friends listen to this album?\"></p>"
                     "<p>Track listing:</p><ol>" track-html "</ol>")]
     (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url)]
       (repo/add-link (swirl :id) (link-types/itunes-id :code) itunes-collection-id)
@@ -56,7 +56,7 @@
         title (str (book :title) publish-line)
         big-img-url (book :big-img-url)
         url (book :url)
-        review "<p data-ph=\"Say something about this item here....\"></p>"
+        review "<p data-ph=\"Why should your friends read this book?\"></p>"
         swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url)]
     (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
@@ -68,7 +68,7 @@
         title (str (game :title) platform-line)
         big-img-url (game :big-img-url)
         url (game :url)
-        review "<p data-ph=\"Say something about this game here....\"></p>"
+        review "<p data-ph=\"Why should your friends play this game?\"></p>"
         swirl (repo/save-draft-swirl "game" (user :id) title review big-img-url)]
     (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
@@ -78,7 +78,7 @@
   ([tmdb-id user url query-string]
    (if tmdb-id
      (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
-           review "<p data-ph=\"Say something about this movie here....\"></p>"
+           review "<p data-ph=\"Why should your friends watch this movie?\"></p>"
            title (str (movie :title) " (" (movie :release-year) ")")
            swirl (repo/save-draft-swirl "movie" (user :id) title review (movie :large-image-url))]
        (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
@@ -93,7 +93,7 @@
   ([tmdb-id user url query-string]
    (if tmdb-id
      (let [tv-show (tmdb/get-tv-from-tmdb-id tmdb-id)
-           review "<p data-ph=\"Say something about this TV Show here....\"></p>"
+           review "<p data-ph=\"Why should your friends watch this TV show?\"></p>"
            swirl (repo/save-draft-swirl "tv" (user :id) (tv-show :title) review (tv-show :large-image-url))]
        (repo/add-link (swirl :id) (link-types/website-url :code) (tv-show :url))
        (redirect (links/edit-swirl (swirl :id) query-string))
@@ -105,7 +105,7 @@
 
 (defn handle-reswirl-creation [swirl-id author]
   (let [swirl (lookups/get-swirl swirl-id)
-        review  "<p data-ph=\"Say something about this here....\"></p>"
+        review  "<p data-ph=\"Why should your friends see this?\"></p>"
         new-swirl (repo/save-draft-swirl (:type swirl) (author :id) (:title swirl) review (:thumbnail_url swirl))]
     (if-let [link (first(repo/get-links swirl-id))]
       (repo/add-link (new-swirl :id) (:type_code link) (:code link)))

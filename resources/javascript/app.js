@@ -20,7 +20,8 @@ $(document).ready(function () {
     swirlList.init($);
     ga.addAnalyticsIfProd();
 
-    if (document.getElementById('share-buttons')) {
+    $('.expansion-content').hide();
+    $('#show-share-button').click((e) => {
         !function (d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
             if (!d.getElementById(id)) {
@@ -38,5 +39,11 @@ $(document).ready(function () {
             js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
-    }
+    });
+
+    $('.expand-toggle-button').click((e, i) => {
+        var content = $(e.currentTarget).closest('.expansion-area').find('.expansion-content');
+        content.toggle(250);
+    });
+
 });

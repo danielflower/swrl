@@ -64,7 +64,7 @@ h1.headline {
 
 
 article{
-    padding-top: 20px;
+    padding: 10px 2px;
 }
 .comments img, article img {
     display: block;
@@ -187,13 +187,8 @@ article{
     text-align: center;
 }
 
-.affiliates {
-    margin: 20px 0;
-}
 .swirl-link {
-    margin-bottom: 20px;
-    float: left;
-    padding-right: 20px;
+    padding: 20px;
 }
 
 
@@ -217,9 +212,28 @@ article{
 .private-swirl-message {
     margin-top: 30px;
 }
-#share-buttons {
-    margin-top: 20px;
-    height: 50px; /* fixed height to prevent reflows of page while the buttons reload themselves */
-    overflow-y: hidden;
+
+.expand-toggle-button {
     width: 100%;
+    margin: 0;
+    border: 0;
+    color: White;
+    font-size: larger;
+}
+
+.expansion-content {
+    padding-top: 20px;
+    padding-bottom: 50px;
+    width: 100%;
+    text-align: center;
+}
+
+#show-admin-button {
+    background-color: var(--movie-color);
+}
+#show-share-button {
+    background-color: var(--book-color);
+}
+#show-links-button {
+    background-color: var(--video-color);
 }

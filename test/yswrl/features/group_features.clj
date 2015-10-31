@@ -88,7 +88,7 @@
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
           (follow-redirect)
           (actions/save-swirl)
-          (within [:.private-swirl-message] (has (text? "This is a private Swirl so only those invited can see it. To share this with others, click the re-swirl button:")))
+          (within [:.private-swirl-message] (has (some-text? "This is a private Swirl so only those invited can see it.")))
           (follow "My special group")
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
 

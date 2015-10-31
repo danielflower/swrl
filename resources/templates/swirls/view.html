@@ -16,19 +16,10 @@
             {{model.swirl.creation_date|timetag}}
         </div>
     </header>
-    {% if model.can-edit %}
-    <div class="swirl-admin-panel">
-        <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
-        <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
-    </div>
-
-    {% endif %}
 
     <article>
         {{model.swirl.review|safe}}
     </article>
-
-    {% include "swirls/affiliate-links.html" %}
 
     <div class="responses">
 
@@ -53,40 +44,17 @@
         {% endif %}
 
 
-
         {% if model.can-respond %}
-
-        <h2>{{model.type.words.seen-it|capitalize}}? What did you think?</h2>
 
 
         {% include "components/response-form.html" %}
 
-        <hr/>
-        <h2>Want to swirl back something similar?</h2>
-        {% include "components/respond-with-swirl-form.html" %}
-        <hr/>
 
         {% endif %}
 
 
     </div>
 
-
-    {% if model.swirl.is_private %}
-    <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share this with others, click the re-swirl button:</p>
-    {% endif %}
-
-    <div id="share-buttons">
-
-        {% if not model.swirl.is_private %}
-        <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl" data-dnt="true">Tweet</a>
-        <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
-             data-layout="button_count"></span>
-        {% endif %}
-
-        <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img
-                src="/immutable/images/swrl-logo.svg" height="15px"></a>
-    </div>
 
     <div class="comment-area">
         <h2>Comments</h2>
@@ -117,13 +85,59 @@
                     <article class="editor" contenteditable="true"></article>
                 </div>
 
-                <input type="submit" value="Add comment" class="swirl-button">
+                <input type="submit" value="Add comment" class="button-primary">
             </div>
 
         </form>
 
+
         {% endif %}
 
+        {% include "components/respond-with-swirl-form.html" %}
+
     </div>
-</div>
+
+
+    {% if model.swirl.is_private %}
+    <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share with others,
+        <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends">re-swirl
+            it!</a></p>
+    {% endif %}
+
+
+    {% if model.can-edit %}
+    <div class="expansion-area">
+        <button type="button" id="show-admin-button" class="expand-toggle-button">Change your swirl</button>
+        <div class="expansion-content">
+            <div class="swirl-admin-panel">
+                <a href="{{ model.swirl.id|swirlediturl }}" class="button">Edit Swirl</a>
+                <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="expansion-area">
+        <button type="button" id="show-share-button" class="expand-toggle-button">Share this with others</button>
+        <div class="expansion-content">
+
+            {% if not model.swirl.is_private %}
+            <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl"
+               data-dnt="true">Tweet</a>
+        <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
+              data-layout="button_count"></span>
+            {% endif %}
+
+            <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img
+                    src="/immutable/images/swrl-logo.svg" height="15px"></a>
+        </div>
+    </div>
+
+    <div class="expansion-area">
+        <button type="button" id="show-links-button" class="expand-toggle-button">Buy or search for this item</button>
+        <div class="expansion-content">
+            {% include "swirls/affiliate-links.html" %}
+        </div>
+    </div>
+
 </div>

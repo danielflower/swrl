@@ -799,7 +799,8 @@ $(document).ready(function () {
     _swirlList2['default'].init($);
     _ga2['default'].addAnalyticsIfProd();
 
-    if (document.getElementById('share-buttons')) {
+    $('.expansion-content').hide();
+    $('#show-share-button').click(function (e) {
         !(function (d, s, id) {
             var js,
                 fjs = d.getElementsByTagName(s)[0],
@@ -820,7 +821,12 @@ $(document).ready(function () {
             js.src = '//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576';
             fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
-    }
+    });
+
+    $('.expand-toggle-button').click(function (e, i) {
+        var content = $(e.currentTarget).closest('.expansion-area').find('.expansion-content');
+        content.toggle(250);
+    });
 });
 
 },{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./swirl-list":13}],5:[function(require,module,exports){
