@@ -94,6 +94,10 @@
     (catch Exception e (log/warn "Error while getting logister info" suggestion-code e))))
 
 
+(defn website-link-if-appropriate [swirl links]
+  (if (= (:name (type-of swirl)) "website")
+    (:code (first (filter #(= (% :type_code) "W") links)))))
+
 (defn view-swirl-page [id suggestion-code current-user]
 
   (if-let [swirl (lookups/get-swirl-if-allowed-to-view id current-user)]
@@ -108,6 +112,7 @@
           type (type-of swirl)
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           swirl-links (repo/get-links id)
+          external-website-link (website-link-if-appropriate swirl swirl-links)
           max-comment-id (reduce max 0 (map #(:id %) comments))
           seen-response-options (if can-respond
                                   (distinct (concat seen-responses
@@ -125,6 +130,7 @@
                                       :title                    title
                                       :swirl                    swirl
                                       :swirl-links              swirl-links
+                                      :external-website-link    external-website-link
                                       :type                     type
                                       :is-author                is-author
                                       :responses                responses
@@ -209,8 +215,8 @@
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private :as req]
              (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) group-id (= "true" is-private) (if (clojure.string/blank? origin-swirl-id)
-                                                                                              nil
-                                                                                              (Long/parseLong origin-swirl-id)))))
+                                                                                                                             nil
+                                                                                                                             (Long/parseLong origin-swirl-id)))))
            (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private :as req]
              (guard/requires-login #(publish-swirl
                                      (session-from req)

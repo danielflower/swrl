@@ -17,6 +17,13 @@
         </div>
     </header>
 
+    {% if model.external-website-link %}
+    <div class="swirl-link">
+        <i class="fa fa-link"></i> <a href="{{ model.external-website-link }}" target="_blank">Go to website
+        &gt;&gt;</a>
+    </div>
+    {% endif %}
+
     <article>
         {{model.swirl.review|safe}}
     </article>
