@@ -64,7 +64,8 @@ h1.headline {
 
 
 article{
-    padding: 10px 2px;
+    padding: 0 2px 30px;
+    font-size: 1.2em;
 }
 .comments img, article img {
     display: block;

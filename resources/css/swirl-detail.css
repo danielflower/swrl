@@ -69,3 +69,9 @@
     transform:translate3d(-50%,-52%,0) rotateX(10deg);
 }
 
+.non-responders {
+    color: #AAAAAA;
+}
+.non-responders a {
+    color: #AAAAAA;
+}

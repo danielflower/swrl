@@ -25,13 +25,16 @@
 
         {% for resp in model.responses %}
         <div class="response">
-
             {{ resp.email_md5|gravatar-img:40 }}
             <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
             <span class="response-text">{{resp.summary}}</span>
-
         </div>
         {% endfor %}
+
+        {% if model.can-respond %}
+        {% include "components/response-form.html" %}
+        {% endif %}
+
         {% if model.non-responders|not-empty %}
         <div class="non-responders">
             Yet to respond:
@@ -41,15 +44,6 @@
                href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
             {% endfor %}
         </div>
-        {% endif %}
-
-
-        {% if model.can-respond %}
-
-
-        {% include "components/response-form.html" %}
-
-
         {% endif %}
 
 
