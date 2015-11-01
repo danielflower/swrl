@@ -221,22 +221,26 @@ nav .nav-count {
 .border-bottom {
     border-bottom: 7px solid var(--generic-color);
 }
-.tv .border-bottom {
+.border-bottom-thin{
+    border-bottom: 1px solid var(--generic-color);
+
+}
+.tv .border-bottom, .tv .border-bottom-thin{
     border-bottom-color: var(--tv-color);
 }
-.album .border-bottom {
+.album .border-bottom, .album .border-bottom-thin {
     border-bottom-color: var(--album-color);
 }
-.movie .border-bottom {
+.movie .border-bottom , .movie .border-bottom-thin {
     border-bottom-color: var(--movie-color);
 }
-.book .border-bottom {
+.book .border-bottom, .book .border-bottom-thin {
     border-bottom-color: var(--book-color);
 }
-.video .border-bottom {
+.video .border-bottom, .video .border-bottom-thin {
      border-bottom-color: var(--video-color);
  }
-.game .border-bottom {
+.game .border-bottom, .game .border-bottom-thin {
      border-bottom-color: var(--game-color);
 }
 

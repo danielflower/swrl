@@ -9,6 +9,7 @@
             {{ comment.html_content|safe }}
         </div>
         <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
+
     </div>
 </div>
 {% endfor %}

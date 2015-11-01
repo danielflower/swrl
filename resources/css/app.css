@@ -49,6 +49,7 @@ h1.headline {
 .comment {
     clear: both;
     margin-bottom: 30px;
+    text-align: left;
 }
 
 
@@ -72,7 +73,7 @@ h1.headline {
 
 
 article{
-    padding: 0 2px 30px;
+    padding: 0 2px 10px;
     font-size: 1.1em;
 }
 .comments img, article img {
@@ -174,7 +175,7 @@ article{
 
 
 .respond-form {
-    text-align: center;
+    text-align: left;
 }
 
 .response-group {
@@ -237,12 +238,18 @@ article{
     text-align: center;
 }
 
-#show-admin-button {
-    background-color: var(--movie-color);
+#show-responses-button {
+    background-color: var(--video-color);
+}
+#show-comments-button {
+    background-color: var(--tv-color);
 }
 #show-share-button {
-    background-color: var(--book-color);
+    background-color: var(--movie-color);
 }
 #show-links-button {
-    background-color: var(--video-color);
+    background-color: var(--book-color);
+}
+#show-admin-button {
+    background-color: var(--album-color);
 }

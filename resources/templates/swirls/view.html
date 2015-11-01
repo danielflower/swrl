@@ -7,7 +7,7 @@
         <div class="swirl-type">{{ model.swirl.type }}</div>
     </div>
     <br class="padded">
-    <header>
+    <header class="border-bottom-thin">
         <h1 class="headline type-color">{{model.swirl.title}}
             <span class="avatar-with-name">{{ model.swirl.email_md5|gravatar-img:30 }}
             <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
@@ -25,95 +25,129 @@
     {% if not model.swirl.review|empty-review? %}
     <h2 class="swirl-title title-color">Why should you {{model.type.words.watch}} it?</h2>
 
-    <article>
+    <article class="border-bottom-thin">
         {{model.swirl.review|safe}}
     </article>
     {% endif %}
 
-    <h2 class="swirl-title title-color">Responses</h2>
-    <div class="responses">
-
-        {% for resp in model.responses %}
-        <div class="response">
-            {{ resp.email_md5|gravatar-img:40 }}
-            <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
-            <span class="response-text">{{resp.summary}}</span>
-        </div>
-        {% endfor %}
-
-        {% if model.responses|empty? %}
-        <div class="response">
-            <article>No Responses yet.</article>
-        </div>
-        {% endif %}
-
-        {% if model.can-respond %}
-        {% include "components/response-form.html" %}
-        {% endif %}
-
-        {% if model.non-responders|not-empty %}
-        <div class="non-responders">
-            Yet to respond:
-
-            {% for non-responder in model.non-responders %}
-            <a class="username" rel="author"
-               href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-
-    </div>
-
-
-    <div class="comment-area">
-        <h2 class="title-color">Comments</h2>
-
-        <div class="comments">
-
-            {% with thecomments=model.comments %}
-            {% include "components/comment-list.html" %}
-            {% endwith %}
-
-        </div>
-
-        {% if user %}
-
-        <form method="POST" action="/swirls/{{model.swirl.id}}/comment" class="comment">
-            {% csrf-field %}
-
-            <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
-            <input type="hidden" class="max-comment-id-field" name="max-comment-id"
-                   value="{{model.max-comment-id}}">
-
-            {{ user.email_md5|gravatar-img:40 }}
-            <div class="comment-body">
-                <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
-
-                <div class="rte">
-                    <textarea name="comment">{{model.current-comment}}</textarea>
-                    <article class="editor" contenteditable="true"></article>
-                </div>
-
-                <input type="submit" value="Add comment" class="button-primary">
-            </div>
-
-        </form>
-
-
-        {% endif %}
-
-        {% include "components/respond-with-swirl-form.html" %}
-
-    </div>
-
-
-    {% if model.swirl.is_private %}
-    <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share with others,
-        <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends">re-swirl
-            it!</a></p>
+    {% if model.can-respond %}
+    {% include "components/response-form.html" %}
     {% endif %}
 
+
+    <div class="expansion-area">
+        <button type="button" id="show-responses-button" class="expand-toggle-button">Responses
+            ({{model.responses|count}})
+        </button>
+        <div class="expansion-content">
+            <div class="responses">
+
+                {% for resp in model.responses %}
+                <div class="response">
+                    {{ resp.email_md5|gravatar-img:40 }}
+                    <span class="username"><a href="{{resp.username|user-url}}">{{resp.username}}</a> said</span>
+                    <span class="response-text">{{resp.summary}}</span>
+                </div>
+                {% endfor %}
+
+                {% if model.responses|empty? %}
+                <div class="response">
+                    <article>No Responses yet.</article>
+                </div>
+                {% endif %}
+
+                {% if model.non-responders|not-empty %}
+                <div class="non-responders">
+                    Yet to respond:
+
+                    {% for non-responder in model.non-responders %}
+                    <a class="username" rel="author"
+                       href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="expansion-area">
+        <button type="button" id="show-comments-button" class="expand-toggle-button">Comments
+            ({{model.comments|count}})
+        </button>
+        <div class="expansion-content">
+            <div class="comment-area">
+                <div class="comments">
+
+                    {% with thecomments=model.comments %}
+                    {% include "components/comment-list.html" %}
+                    {% endwith %}
+
+                </div>
+
+                {% if user %}
+
+                <form method="POST" action="/swirls/{{model.swirl.id}}/comment" class="comment">
+                    {% csrf-field %}
+
+                    <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
+                    <input type="hidden" class="max-comment-id-field" name="max-comment-id"
+                           value="{{model.max-comment-id}}">
+
+                    {{ user.email_md5|gravatar-img:40 }}
+                    <div class="comment-body">
+                        <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
+
+                        <div class="rte">
+                            <textarea name="comment">{{model.current-comment}}</textarea>
+                            <article class="editor" contenteditable="true"></article>
+                        </div>
+
+                        <input type="submit" value="Add comment" class="button-primary">
+                    </div>
+
+                </form>
+
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="expansion-area">
+        <button type="button" id="show-share-button" class="expand-toggle-button">Share this with others
+        </button>
+        <div class="expansion-content">
+
+            {% if not model.swirl.is_private %}
+            <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl"
+               data-dnt="true">Tweet</a>
+        <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
+              data-layout="button_count"></span>
+
+            <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl"
+               title="Re-Swirl to your friends"><img
+                    src="/immutable/images/swrl-logo.svg" height="15px"></a>
+            {% endif %}
+            {% if model.swirl.is_private %}
+            <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share with
+                others,
+                <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends">re-swirl
+                    it!</a></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="expansion-area">
+        <button type="button" id="show-links-button" class="expand-toggle-button">Buy or search for this item
+        </button>
+        <div class="expansion-content">
+            {% include "swirls/affiliate-links.html" %}
+        </div>
+    </div>
 
     {% if model.can-edit %}
     <div class="expansion-area">
@@ -126,28 +160,5 @@
         </div>
     </div>
     {% endif %}
-
-    <div class="expansion-area">
-        <button type="button" id="show-share-button" class="expand-toggle-button">Share this with others</button>
-        <div class="expansion-content">
-
-            {% if not model.swirl.is_private %}
-            <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl"
-               data-dnt="true">Tweet</a>
-        <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
-              data-layout="button_count"></span>
-            {% endif %}
-
-            <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl" title="Re-Swirl to your friends"><img
-                    src="/immutable/images/swrl-logo.svg" height="15px"></a>
-        </div>
-    </div>
-
-    <div class="expansion-area">
-        <button type="button" id="show-links-button" class="expand-toggle-button">Buy or search for this item</button>
-        <div class="expansion-content">
-            {% include "swirls/affiliate-links.html" %}
-        </div>
-    </div>
 
 </div>

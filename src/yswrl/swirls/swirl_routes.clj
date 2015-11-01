@@ -18,7 +18,8 @@
             [yswrl.groups.groups-repo :as group-repo])
   (:import (java.util UUID)))
 
-(def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
+#_(def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
+(def seen-responses ["Loved it", "Not bad", "Not for me"])
 
 
 
