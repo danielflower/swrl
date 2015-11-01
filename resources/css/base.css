@@ -251,6 +251,9 @@ nav .nav-count {
 .type-color {
     color: var(--generic-color);
 }
+.title-color {
+    color: var(--movie-color);
+}
 .tv .type-color {
     color: var(--tv-color);
 }
@@ -270,6 +273,24 @@ nav .nav-count {
  color: var(--game-color);
  }
 
+.tv .title-color {
+     color: var(--movie-color);
+}
+.album .title-color {
+     color: var(--video-color);
+}
+.movie .title-color {
+     color: var(--book-color);
+}
+.book .title-color {
+      color: var(--album-color);
+}
+.video .title-color {
+      color: var(--tv-color);
+}
+.game .title-color {
+      color: var(--movie-color);
+}
 
 .feedback {
     margin: 100px 0;

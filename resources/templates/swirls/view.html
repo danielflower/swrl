@@ -8,13 +8,11 @@
     </div>
     <br class="padded">
     <header>
-        <h1 class="headline type-color">{{model.swirl.title}}</h1>
-
-        <div class="avatar-with-name">
-            {{ model.swirl.email_md5|gravatar-img:30 }}
+        <h1 class="headline type-color">{{model.swirl.title}}
+            <span class="avatar-with-name">{{ model.swirl.email_md5|gravatar-img:30 }}
             <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
-            {{model.swirl.creation_date|timetag}}
-        </div>
+            {{model.swirl.creation_date|timetag}}</span>
+        </h1>
     </header>
 
     {% if model.external-website-link %}
@@ -23,6 +21,8 @@
         &gt;&gt;</a>
     </div>
     {% endif %}
+
+    <h2 class="swirl-title title-color">Why should you {{model.type.words.watch}} it?</h2>
 
     <article>
         {{model.swirl.review|safe}}
@@ -58,7 +58,7 @@
 
 
     <div class="comment-area">
-        <h2>Comments</h2>
+        <h2 class="title-color">Comments</h2>
 
         <div class="comments">
 

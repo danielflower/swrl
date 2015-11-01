@@ -8,6 +8,9 @@
 #swirl-title {
     width: 90%;
 }
+.swirl-title{
+    padding-top: 10px;
+}
 
 .responses input, .responses textarea, .responses select, .responses button {
     display: inline;
@@ -24,8 +27,13 @@
 
 .avatar-with-name {
     padding-top: 20px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     padding-left: 10px;
+    font-size: 0.6em; /* currently ems cause chrome bug misinterpreting rems on body element */
+    font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--main-font-color);
+    font-weight: normal;
+
 }
 
 nav ul{
@@ -35,7 +43,7 @@ nav ul{
 
 
 h1.headline {
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .comment {
@@ -65,7 +73,7 @@ h1.headline {
 
 article{
     padding: 0 2px 30px;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 .comments img, article img {
     display: block;
