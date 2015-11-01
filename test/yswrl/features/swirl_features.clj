@@ -160,7 +160,7 @@
 
           ; You are taken to your profile page after deleting
           (within [:h1]
-                  (has (text? (str "Edit your profile"))))
+                  (has (some-text? (str (:username user1)))))
 
           ; ...and it's now deleted
           (visit (@test-state :view-swirl-uri))
@@ -181,15 +181,15 @@
 
         ; Their inbox is empty
         (visit (links/inbox))
-        (within [:p] (has (some-text? "This is where Swirls will appear when someone recommends you something.")))
+        (within [:p] (has (some-text? "We've run out of swirls. Gomen Nasai")))
 
         ; Make sure the links work
         (follow "create a recommendation for one of your friends")
         (within [:h1] (has (text? "Recommend something")))
 
         (visit (links/inbox))
-        (follow "visit the firehose")
-        (within [:h1] (has (text? "Firehose")))
+        (follow "see what's Swirling")
+        (within [:h1] (has (text? "Swirling")))
 
         )))
 
@@ -516,14 +516,10 @@
           (check (existing-user :username))
           (assert-user-checkbox-is-checked existing-user)
 
-          ; With no responses, there is a related message
-          (visit (links/inbox))
-          (within [:p] (has (some-text? "Items remain in your inbox until")))
-
           ; Can immediately make a response and it will be in the response inbox
           (visit (@test-state :view-swirl-uri))
           (actions/submit [(enlive/attr= :value "Loved it")])
-          (visit (links/inbox))
+          (visit (links/user new-user-username))
           (follow "Loved it")
           (follow "The onion video")
 

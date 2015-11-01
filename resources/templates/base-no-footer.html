@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-82c565c9a0.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-2ef1f766a5.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -41,23 +41,24 @@
     <nav class="paradeiser" id="paradeiser">
         <a href="/" title="Go home"><img src="/immutable/images/swrl-logo.svg" class="site-header__logo"
                                          height="30"/></a>
-        <a href="/swirls/start">Create</a>
+        <a href="/swirls/groups">Groups</a>
 
 
         {% if user %}
-        <a href="/notifications">New <span class="nav-count">{{notifications-count}}</span></a>
         <a href="/swirls/inbox">Inbox <span class="nav-count">{{unread-count}}</span></a>
+        <a href="/notifications">Notifications <span class="nav-count">{{notifications-count}}</span></a>
         {% else %}
         <a href="/login" class="login-link">Login</a>
         <a href="/register">Register</a>
         {% endif %}
-        <a href="/how-to-add" class="paradeiser-hidden-phone paradeiser-hidden-tablet">How to add</a>
 
         {% if user %}
-        <a href="/logout" class="logout-link paradeiser-hidden-phone paradeiser-hidden-tablet paradeiser-hidden-desktop">Logout</a>
+        <a href="/logout"
+           class="logout-link paradeiser-hidden-phone paradeiser-hidden-tablet paradeiser-hidden-desktop">Logout</a>
         <a href="{{ user.username|user-url }}" class="avatar logged-in-user" title="Go to your profile">
             {{ user.email_md5|gravatar-img:36 }}
         </a>
+
         {% endif %}
 
     </nav>
@@ -70,6 +71,7 @@
 
 
 <p class="feedback">We'd love to hear your feedback - email us at <a href="mailto:feedback@swrl.co">feedback@swrl.co</a>
+    <br><a href="/logout">Logout</a>
 </p>
 
 <script src="/immutable/js/jquery-3.0.0-alpha1.min.js"></script>

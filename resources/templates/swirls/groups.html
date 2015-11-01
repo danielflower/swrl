@@ -1,0 +1,28 @@
+{% extends "base-no-footer.html" %}
+{% block main-content %}
+<main>
+    <div class="home">
+
+        {% include "components/big-pink-button.html" %}
+
+        <div class="center-wrapper">
+
+
+            {% if groups %}
+
+            <h1 class="padded-lr">Groups</h1>
+            <ul class="groups-list">
+                <li><strong><a href="/create-group">Create a group</a></strong></li>
+                {% for group in groups %}
+                <li><a href="{{ group.id|groupurl }}">{{ group.name }}</a></li>
+                {% endfor %}
+            </ul>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}

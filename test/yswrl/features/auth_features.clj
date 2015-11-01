@@ -8,6 +8,10 @@
             [yswrl.links :as links]))
 (selmer.parser/cache-off!)
 
+(defn print-session [session]
+  (println session)
+  session)
+
 (defn now [] (System/currentTimeMillis))
 
 (deftest registration
@@ -27,9 +31,7 @@
         (follow-redirect)
         (follow [:.logged-in-user])
         (within [:h1]
-                (has (text? (str "Edit your profile"))))
-        (within [:main :h2]
-                (has (text? (str "Swirls you've made"))))
+                (has (some-text? (str username))))
 
         ; Logout
         (actions/log-out)
@@ -71,7 +73,7 @@
 
         (visit (links/user (user :username)))
         (within [:h1]
-                (has (text? "Edit your profile")))
+                (has (some-text? (str (:username user)))))
         (follow "Update your username or email")
         (within [:h1]
                 (has (text? "Edit your profile")))

@@ -1,45 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
+<main>
+    <div class="home">
+        {% include "components/big-pink-button.html" %}
 
-<div class="list-page">
-    <div class="padded-lr">
-        <h2>Inbox</h2>
+        <div class="center-wrapper">
+            <h1>Inbox ({{unread-count}})</h1>
 
-        {% if nothing-to-show? %}
+            {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 
-        <p>
-            This is where Swirls will appear when someone recommends you something.
-        </p>
-
-        <p>
-            To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
-            or to <a href="/swirls">visit the firehose</a> to see what other people are recommending.
-        </p>
-
-        {% else %}
-
-
-        {% if has-responses? %}
-        <h2>Your tagged swirls</h2>
-
-        <ul>
-            {% for response in responses %}
-            <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})</li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>Items remain in your inbox until you click one of the response buttons. Just click on a swirl below, and
-            press
-            one of the buttons. All of your responses will show up here.</p>
-        {% endif %}
-
-        <h2>Swirls awaiting responses</h2>
-
-        <p>&nbsp;</p>
+        </div>
     </div>
-    {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
-
-    {% endif %}
-
-</div>
+</main>
 {% endblock %}

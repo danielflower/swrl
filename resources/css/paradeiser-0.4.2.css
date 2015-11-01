@@ -14,12 +14,16 @@ body {
     left: 0;
     z-index: 999;
     width: 100%;
+    white-space: nowrap;
+
 }
 
 .paradeiser {
     height: 50px;
     background: rgba(255, 255, 255, .95);
     display: flex;
+    white-space: nowrap;
+
 }
 
 @media (min-width: 768px) {
@@ -43,8 +47,11 @@ body {
     font-family: -apple-system, -apple-system-body, Roboto, "Helvetica Neue", "Segoe UI", Arial, sans-serif;
     cursor: pointer;
     align-items: center;
-    flex-grow: 5;
+    flex-grow: 1;
+    flex: 1;
     justify-content: center;
+    white-space: nowrap;
+
 }
 
 @media (min-width: 1025px) {
@@ -60,6 +67,8 @@ body {
 .paradeiser span {
     margin-top: 5px;
     font-size: 10px
+        white-space: nowrap;
+
 }
 
 @media (min-width: 1025px) {
@@ -74,11 +83,15 @@ body {
 
 .paradeiser span.paradeiser_dropdown > a {
     width: 100%
+    white-space: nowrap;
+
 }
 
 .paradeiser .paradeiser_logo {
     max-width: 40px;
     width: 100%
+    white-space: nowrap;
+
 }
 
 .paradeiser ul {
@@ -96,7 +109,9 @@ body {
     opacity: 0;
     -webkit-transition: opacity .4s;
     transition: opacity .4s;
-    pointer-events: none
+    pointer-events: none;
+    white-space: nowrap;
+
 }
 
 @media (min-width: 768px) {
@@ -111,6 +126,8 @@ body {
     -webkit-transition: opacity .4s;
     transition: opacity .4s;
     pointer-events: auto
+    white-space: nowrap;
+
 }
 
 .paradeiser ul li {
@@ -118,6 +135,7 @@ body {
     width: 100%;
     background: #4a4a4a;
     text-align: center
+    white-space: nowrap;
 }
 
 .paradeiser ul li a {
@@ -125,10 +143,11 @@ body {
     padding: 15px 0;
     width: 100%;
     color: #fff;
-    font-size: 15px
+    font-size: 15px;
+    white-space: nowrap;
 }
 
-.paradeiser ul li a:hover, .paradeiser ul li span:hover {
+.paradeiser ul li a:hover, .paradeiser ul li span:hover, .paradeiser ul li a:active {
     background: #575757
 }
 

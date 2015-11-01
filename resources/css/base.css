@@ -38,9 +38,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    font-size: 2.8rem;
+    font-size: 4rem;
     margin-bottom: 2rem;
     font-weight: bold;
+    text-align: left;
+    color: var(--generic-color);
 }
 
 h2 {
@@ -193,7 +195,6 @@ img.gravatar{
 }
 
 nav .nav-count {
-    display: inline-block;
     text-align: center;
     vertical-align: middle;
     line-height: 18px;
@@ -204,8 +205,6 @@ nav .nav-count {
     font-size:0.7em;
     height: 18px;
     position:relative;
-    top:-7px;
-    margin-left:-6px;
     padding:0 5px;
     box-shadow:0 0 0 2px #fafafa;
 }
@@ -231,7 +230,7 @@ nav .nav-count {
 .album .border-bottom, .album .border-bottom-thin {
     border-bottom-color: var(--album-color);
 }
-.movie .border-bottom , .movie .border-bottom-thin {
+.movie .border-bottom, .movie .border-bottom-thin {
     border-bottom-color: var(--movie-color);
 }
 .book .border-bottom, .book .border-bottom-thin {

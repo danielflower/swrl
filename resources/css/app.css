@@ -176,6 +176,7 @@ article{
 
 .respond-form {
     text-align: left;
+    margin-bottom: 0px;
 }
 
 .response-group {
@@ -235,7 +236,7 @@ article{
     padding-top: 20px;
     padding-bottom: 50px;
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 
 #show-responses-button {
@@ -252,4 +253,17 @@ article{
 }
 #show-admin-button {
     background-color: var(--album-color);
+}
+
+#show-swirls-sent-button {
+    background-color: var(--video-color);
+}
+#show-swirls-responded-button {
+    background-color: var(--tv-color);
+}
+#show-help-button {
+    background-color: var(--movie-color);
+}
+#show-edit-profile-button {
+    background-color: var(--book-color);
 }

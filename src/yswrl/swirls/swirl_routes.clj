@@ -63,7 +63,7 @@
 
 (defn view-firehose [count user]
   (let [swirls (lookups/get-all-swirls 20 count user)]
-    (layout/render "swirls/list.html" {:title             "Firehose" :pageTitle "Firehose" :swirls swirls
+    (layout/render "swirls/list.html" {:title             "Swirling" :pageTitle "Swirling" :swirls swirls
                                        :paging-url-prefix "/swirls?from="
                                        :countFrom         (str count) :countTo (+ count 20)})))
 
@@ -147,8 +147,12 @@
   (if-let [author (user-repo/get-user author-username)]
     (if (= author-username (author :username))
       (let [swirls (lookups/get-swirls-authored-by (:id author) current-user)
-            is-current-user (and (not-nil? current-user) (= (current-user :username) (author :username)))]
-        (layout/render "users/public-profile.html" {:title (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user}))
+            is-current-user (and (not-nil? current-user) (= (current-user :username) (author :username)))
+            notifications (notifications/get-notification-view-model author)
+            responses (lookups/get-response-count-for-user (:id author))
+            has-responses? (not (empty? responses))]
+        (layout/render "users/public-profile.html" {:title (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user
+                                                    :notifications notifications :has-responses? has-responses? :responses responses}))
       (redirect (links/user (author :username))))))
 
 (defn session-from [req] (:user (:session req)))
@@ -199,6 +203,9 @@
       (repo/delete-swirl (swirl :id) (current-user :id))
       (redirect (links/user (current-user :username))))))
 
+(defn groups-page []
+  (layout/render "swirls/groups.html"))
+
 
 (defn post-response-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
@@ -240,6 +247,8 @@
            (post-comment-route "/swirls")
 
            (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
+
+           (GET "/swirls/groups" [] (groups-page))
 
            (GET "/swirls/by/:authorName" [authorName :as req] (view-swirls-by authorName (session-from req)))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
