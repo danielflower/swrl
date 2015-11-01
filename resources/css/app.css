@@ -33,7 +33,7 @@
     font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: var(--main-font-color);
     font-weight: normal;
-
+    white-space: nowrap;
 }
 
 nav ul{
