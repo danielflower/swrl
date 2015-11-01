@@ -24,19 +24,19 @@
       (if-let [response (handler request)]
         (-> response
             (assoc-in [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *; style-src 'self' 'unsafe-inline'; script-src 'self' www.google-analytics.com http://platform.twitter.com/widgets.js https://connect.facebook.net/en_GB/sdk.js http://connect.facebook.net/en_GB/sdk.js")
-            (assoc-in [:headers "Cache-Control"] "private"))))))
+            (assoc-in [:headers "Cache-Control"] "private, no-transform"))))))
 
 (defn wrap-api-routes [handler]
     (fn [request]
       (if-let [response (handler request)]
         (-> response
-            (assoc-in [:headers "Cache-Control"] "private")))))
+            (assoc-in [:headers "Cache-Control"] "private, no-transform")))))
 
 
 (defn wrap-infinite-cache-policy [handler]
   (fn [request]
     (if-let [response (handler request)]
-      (assoc-in response [:headers "Cache-Control"] "public, max-age=31556926"))))
+      (assoc-in response [:headers "Cache-Control"] "public, max-age=31556926, no-transform"))))
 
 (defroutes base-routes
            (route/resources "/" {:mime-types {"map" "application/json"}})
