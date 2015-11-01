@@ -22,11 +22,13 @@
     </div>
     {% endif %}
 
+    {% if not model.swirl.review|empty-review? %}
     <h2 class="swirl-title title-color">Why should you {{model.type.words.watch}} it?</h2>
 
     <article>
         {{model.swirl.review|safe}}
     </article>
+    {% endif %}
 
     <h2 class="swirl-title title-color">Responses</h2>
     <div class="responses">
@@ -38,6 +40,12 @@
             <span class="response-text">{{resp.summary}}</span>
         </div>
         {% endfor %}
+
+        {% if model.responses|empty? %}
+        <div class="response">
+            <article>No Responses yet.</article>
+        </div>
+        {% endif %}
 
         {% if model.can-respond %}
         {% include "components/response-form.html" %}

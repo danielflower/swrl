@@ -59,6 +59,9 @@
 (filters/add-filter! :gravatar-img-url (fn [email-hash size] (links/gravatar-url email-hash size)))
 
 (filters/add-filter! :swirl-title swirl-title)
+(filters/add-filter! :empty-review? (fn [review]
+                                      (boolean (re-matches #"<p data\-ph.*" review))))
+
 
 
 (deftype RenderableTemplate [template params]
