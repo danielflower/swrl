@@ -16,16 +16,16 @@
             [yswrl.user.notifications-repo :as notifications-repo]))
 
 (def response-icons {
-                     "loved it" "fa-heart"
-                     "meh" "fa-meh-o"
-                     "not bad" "fa-thumbs-up"
-                     "ha" "fa-smile-o"
-                     "haha" "fa-smile-o"
-                     "later" "fa-clock-o"
+                     "loved it"   "fa-heart"
+                     "meh"        "fa-meh-o"
+                     "not bad"    "fa-thumbs-up"
+                     "ha"         "fa-smile-o"
+                     "haha"       "fa-smile-o"
+                     "later"      "fa-clock-o"
                      "not for me" "fa-times"
-                     "purchased" "fa-usd"
-                     "wtf" "fa-question"
-                     "um" "fa-question"
+                     "purchased"  "fa-usd"
+                     "wtf"        "fa-question"
+                     "um"         "fa-question"
                      })
 
 (def iso-date-formatter (f/formatter "yyyy-MM-dd'T'HH:mmZ"))
@@ -51,8 +51,8 @@
 (filters/add-filter! :response-icon #(get response-icons (clojure.string/lower-case %) "fa-star"))
 (filters/add-filter! :img (fn [src] (if (nil? src) "" (str "<img src=\"" src "\">"))))
 (filters/add-filter! :timetag (fn [javaDate]
-                             (let [date (c/from-date javaDate)]
-                               [:safe (str "<time datetime=\"" (f/unparse iso-date-formatter date) "\">" (f/unparse human-friendly-date-formatter date) "</time>")])))
+                                (let [date (c/from-date javaDate)]
+                                  [:safe (str "<time datetime=\"" (f/unparse iso-date-formatter date) "\">" (f/unparse human-friendly-date-formatter date) "</time>")])))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
 (filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
@@ -60,7 +60,8 @@
 
 (filters/add-filter! :swirl-title swirl-title)
 (filters/add-filter! :empty-review? (fn [review]
-                                      (boolean (re-matches #"<p data\-ph.*" review))))
+                                      (boolean (or (= "" review)
+                                                   (re-matches #"<p data\-ph=\"[^\"]+\"><\/p>" review)))))
 
 
 
