@@ -81,7 +81,7 @@
 (defn assert-swirl-title-in-header [session verb title]
   (-> session
       (within [:h1]
-              (has (text? title)))
+              (has (some-text? title)))
       ))
 
 (defn cannot-follow [session selector]
@@ -856,7 +856,7 @@
           (follow "< Previous 20 swirls")
           (follow (swirl :title))
           (within [:h1]
-                  (has (text? (swirl :title))))
+                  (has (some-text? (swirl :title))))
 
           ))))
 
