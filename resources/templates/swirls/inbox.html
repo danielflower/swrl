@@ -3,37 +3,40 @@
 
 <div class="list-page">
     <div class="padded-lr">
-    <h2>Inbox</h2>
+        <h2>Inbox</h2>
 
-    {% if nothing-to-show? %}
+        {% if nothing-to-show? %}
 
-    <p>
-        This is where Swirls will appear when someone recommends you something.
-    </p>
-    <p>
-        To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
-        or to <a href="/swirls">visit the firehose</a> to see what other people are recommending.
-    </p>
+        <p>
+            This is where Swirls will appear when someone recommends you something.
+        </p>
 
-    {% else %}
+        <p>
+            To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
+            or to <a href="/swirls">visit the firehose</a> to see what other people are recommending.
+        </p>
+
+        {% else %}
 
 
-    {% if has-responses? %}
-    <h2>Your tagged swirls</h2>
+        {% if has-responses? %}
+        <h2>Your tagged swirls</h2>
 
-    <ul>
-        {% for response in responses %}
-        <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>Items remain in your inbox until you click one of the response buttons. Just click on a swirl below, and press
-        one of the buttons. All of your responses will show up here.</p>
-    {% endif %}
+        <ul>
+            {% for response in responses %}
+            <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>Items remain in your inbox until you click one of the response buttons. Just click on a swirl below, and
+            press
+            one of the buttons. All of your responses will show up here.</p>
+        {% endif %}
 
-    <h2>Swirls awaiting responses</h2>
-    <p>&nbsp;</p>
-</div>
+        <h2>Swirls awaiting responses</h2>
+
+        <p>&nbsp;</p>
+    </div>
     {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 
     {% endif %}

@@ -76,11 +76,13 @@
 
           (actions/save-swirl)
 
-          ; Go back to the group page via the link that is in the template and click the swirl
+          ; Go back to the group page via the link that is in the homepage and click the swirl
+          (visit "/")
           (follow "My special group")
           (follow "Special Swirl")
 
           ; A swirl can also be created by pressing the big pink button and it will be shared with the group and by private by default
+          (visit "/")
           (follow "My special group")
           (follow :.bpb)
           (fill-in "Album or Song Title" "Mellon Collie")
@@ -89,6 +91,7 @@
           (follow-redirect)
           (actions/save-swirl)
           (within [:.private-swirl-message] (has (some-text? "This is a private Swirl so only those invited can see it.")))
+          (visit "/")
           (follow "My special group")
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
 

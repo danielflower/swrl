@@ -1,4 +1,5 @@
 @import "normalize-3.0.2.css";
+@import "paradeiser-0.4.2.css";
 @import "form-elements.css";
 
 *, *:before, *:after {
@@ -13,7 +14,6 @@ body {
     width: 100%;
     min-height: 100%;
     background-color: #F1F1F1;
-    margin: 0;
     padding:0;
 }
 
@@ -26,7 +26,6 @@ body {
     font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
     font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: var(--main-font-color);
-    padding-top:75px;
 }
 
 
@@ -158,42 +157,6 @@ p {
 }
 
 
-.site-header {
-    width: 100%;
-    font-size: 0.8em;
-    font-weight: bold;
-    background-color: #fafafa;
-    color: var(--nav-color);
-    position:fixed;
-    top:0;
-    height:75px;
-    z-index:50;
-}
-.site-header__content {
-    padding: 0 10px 0 20px;
-    margin: 0 auto;
-    max-width: 1000px;
-    line-height:70px;
-    height:70px;
-}
-
-.site-header:after{
-    content:'';
-    position:absolute;
-    height:5px;
-    width:100%;
-    bottom:0;
-    background: #FF2E63;
-    background: linear-gradient(to right, var(--album-color) 0%, var(--album-color) 20%,var(--book-color) 20%, var(--book-color) 40%, var(--movie-color) 40%, var(--movie-color) 60%, var(--tv-color) 60%, var(--tv-color) 80%, var(--video-color) 80%, var(--video-color) 100% );
-}
-
-.site-header__logo{
-    display:inline-block;
-    vertical-align: middle;
-    position:relative;
-    top:-3px;
-}
-
 .standard-page {
     max-width: 1000px;
     margin: 0 auto;
@@ -207,18 +170,11 @@ p {
 
 nav a, nav a:focus, nav a:hover, nav a:visited {
     color: var(--nav-color);
-    text-decoration: none;
-    position:relative;
-    padding:0 10px;
 }
 nav a:hover {
     color: var(--swirl-hot-pink);
 }
 
-
-.site-header nav {
-    float: right;
-}
 
 nav {
     text-transform: uppercase;
@@ -227,16 +183,6 @@ nav img {
     vertical-align: middle;
 }
 
-nav ul {
-    display: inline-block;
-    margin:0;
-    padding:0;
-    list-style:none;
- }
- nav ul li{
-    float:left;
-    margin-bottom:0;
- }
 
 nav .avatar img, img.gravatar {
     border: 3px solid #6DA8D4;
@@ -331,38 +277,6 @@ nav .nav-count {
     font-style: italic;
 }
 
-
-a.menu-button i {
-    color: var(--swirl-hot-pink);
-    font-size: 2.5em;
-    transition: transform 500ms;
-    vertical-align: middle;
-    padding: 10px;
-    margin: -10px 5px -10px -10px;
-}
-
-.menu-open .site-header i {
-    transform: rotate(90deg);
-}
-
-
-.big-menu {
-    text-align: center;
-    display: none;
-}
-.menu-open .big-menu {
-    display: block;
-}
-
-.big-menu nav {
-    font-weight: bold;
-    display: block;
-    padding: 20px 5px;
-}
-.big-menu nav li a {
-    line-height: 250%;
-    white-space: nowrap;
-}
 
 .rainbow {
     content:'';
