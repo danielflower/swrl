@@ -12,7 +12,10 @@
                                             "")))))
 
 (defn get-content-from-resource [resource property]
-  (:content (:attrs (first (filter (fn [r] (= property (:property (r :attrs)))) resource)))))
+  (-> (filter (fn [r] (= property (:property (r :attrs)))) resource)
+      first
+      :attrs
+      :content))
 
 (defn nil-if-blank [str]
   (if (clojure.string/blank? str)
