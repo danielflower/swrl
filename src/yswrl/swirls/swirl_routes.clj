@@ -23,7 +23,8 @@
 
 
 
-(defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id]
+(defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit?]
+                                                                               :or   {edit? false}}]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
     (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
           contacts (network/get-relations (author :id) :knows)
@@ -40,6 +41,8 @@
                                          :subject             (swirl :title)
                                          :review              (swirl :review)
                                          :type                (type-of swirl)
+                                         :swirl               swirl
+                                         :edit?               edit?
                                          :contacts            not-added
                                          :already-suggested   already-suggested
                                          :unrelated           unrelated
@@ -151,7 +154,7 @@
             notifications (notifications/get-notification-view-model author)
             responses (lookups/get-response-count-for-user (:id author))
             has-responses? (not (empty? responses))]
-        (layout/render "users/public-profile.html" {:title (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user
+        (layout/render "users/public-profile.html" {:title         (str "Reviews by " (author :username)) :author author :swirls swirls :is-current-user is-current-user
                                                     :notifications notifications :has-responses? has-responses? :responses responses}))
       (redirect (links/user (author :username))))))
 
@@ -221,10 +224,11 @@
   (map #(Long/parseLong % 10) strings))
 
 (defroutes swirl-routes
-           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private :as req]
+           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private edit :as req]
              (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) group-id (= "true" is-private) (if (clojure.string/blank? origin-swirl-id)
                                                                                                                              nil
-                                                                                                                             (Long/parseLong origin-swirl-id)))))
+                                                                                                                             (Long/parseLong origin-swirl-id))
+                                                     :edit? edit)))
            (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private :as req]
              (guard/requires-login #(publish-swirl
                                      (session-from req)

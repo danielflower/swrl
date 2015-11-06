@@ -2,7 +2,11 @@
 {% block content %}
 <div class="standard-page padded">
 
+    {% if edit? %}
+    <h1>Edit your swirl</h1>
+    {% else %}
     <h1>Create a swirl</h1>
+    {% endif %}
 
     {% if error %}
 
@@ -15,12 +19,20 @@
 
 
         <input type="hidden" name="origin-swirl-id" value="{{origin-swirl-id}}">
-        <label for="swirl-title">You should {{type.words.watch}}</label>
+
+        <div class="swirl-header border-bottom">
+            <div class="swirl-header__bgimage" style="background-image: url({{ swirl.thumbnail_url }})"></div>
+            <img class="swirl-header__image {{ swirl.type }}" src="{{ swirl.thumbnail_url }}"/>
+
+            <div class="swirl-type">{{ swirl.type }}</div>
+        </div>
+        <h2>Title</h2>
         <input id="swirl-title" type="text" name="subject" required
                maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
                placeholder="Title of a movie, book, song, album, etc">
 
         <div class="rte">
+            <h2>Why should they {{type.words.watch}} this?</h2>
             <textarea name="review">{{review}}</textarea>
 
             <div class="rte--toolbar">
@@ -34,7 +46,8 @@
         <h2>Sharing</h2>
 
         <label><input class="private-toggle" type="checkbox" name="private" value="true" {% if is_private %}checked{%
-                      endif %}> <i class="fa fa-lock"></i> Make this swirl private so only the selected users and groups can see it</label>
+                      endif %}> <i class="fa fa-lock"></i> Make this swirl private so only the selected users and groups
+            can see it</label>
 
 
         {% if groups|not-empty %}

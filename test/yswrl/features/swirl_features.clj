@@ -118,7 +118,7 @@
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
           (follow "Edit Swirl")
-          (fill-in "You should watch" "The onion video")
+          (fill-in :#swirl-title "The onion video")
           (actions/save-swirl)
           (assert-swirl-title-in-header "watch" "The onion video")
 
@@ -487,7 +487,7 @@
           (actions/follow-create-link)
           (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
           (actions/submit "Go")
-          (fill-in "You should watch" "The onion video")
+          (fill-in :#swirl-title "The onion video")
           (fill-in :.recipients new-user-email)
           (actions/save-swirl)
           (save-url test-state :view-swirl-uri)
@@ -496,7 +496,7 @@
           (actions/follow-create-link)
           (fill-in "Enter a website link" "http://exact.match.com/vimeo.3718294.html")
           (actions/submit "Go")
-          (fill-in "You should watch" "Vimeo video")
+          (fill-in :#swirl-title "Vimeo video")
           (fill-in :.recipients new-user-email)
           (actions/save-swirl)
 
@@ -549,7 +549,7 @@
           (login-as user)
           (follow-redirect)
 
-          (fill-in "You should listen to" "Mellon Collie and the Infinite Sadness")
+          (fill-in :#swirl-title "Mellon Collie and the Infinite Sadness")
           (actions/save-swirl)
 
           (assert-swirl-title-in-header "listen to" "Mellon Collie and the Infinite Sadness")
@@ -575,7 +575,7 @@
           (login-as user)
           (follow-redirect)
 
-          (fill-in "You should see" "A website")
+          (fill-in :#swirl-title "A website")
           (actions/save-swirl)
 
           (assert-swirl-title-in-header "see" "A website")
@@ -896,7 +896,7 @@
           (assert-is-private-checkbox-is-checked)
 
 
-          (fill-in "You should watch" (str (:id author)))   ; odd title, but makes it unique :)
+          (fill-in :#swirl-title (str (:id author)))   ; odd title, but makes it unique :)
 
           (actions/save-swirl)
           (save-url test-state :view-swirl-uri)

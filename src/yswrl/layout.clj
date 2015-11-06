@@ -43,6 +43,7 @@
 (filters/add-filter! :joingroupurl links/join-group)
 (filters/add-filter! :editgroupurl links/edit-group)
 (filters/add-filter! :swirlediturl links/edit-swirl)
+(filters/add-filter! :swirlediturledit #(links/edit-swirl % "edit=true"))
 (filters/add-filter! :notification-options-url links/notification-options)
 (filters/add-filter! :swirldeleteurl links/delete-swirl)
 (filters/add-filter! :itunesalbum links/itunes-album)
