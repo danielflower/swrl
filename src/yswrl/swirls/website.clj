@@ -8,8 +8,13 @@
 (defn fetch-url [url]
   (html/html-resource (StringReader. (try (:body (client/get (str url)))
                                           (catch Exception e
-                                            (log/warn "Getting website failed" url e)
-                                            "")))))
+                                            (try (:body (client/get (str "http://" url)))
+                                                 (catch Exception e
+                                                   (try (:body (client/get (str "https://" url)))
+                                                        (catch Exception e
+                                                          (log/warn "Getting website failed" url e)
+                                                          "")))))
+                                          ))))
 
 (defn get-content-from-resource [resource property]
   (-> (filter (fn [r] (= property (:property (r :attrs)))) resource)

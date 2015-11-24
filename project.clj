@@ -7,7 +7,7 @@
                            [ch.qos.logback/logback-classic "1.1.3"]
                            [org.slf4j/log4j-over-slf4j "1.7.12"]
                            [org.clojure/tools.logging "0.3.1"]
-                           [org.clojure/clojure "1.6.0"]
+                           [org.clojure/clojure "1.7.0"]
                            [ring-server "0.4.0"]
                            [selmer "0.8.5"]
                            [clj-time "0.9.0"]
@@ -39,7 +39,8 @@
                       [lein-environ "1.0.0"]
                       [lein-ancient "0.6.5"]
                       [com.jakemccrary/lein-test-refresh "0.9.0"]
-                      [ragtime/ragtime.lein "0.3.8"]]
+                      [ragtime/ragtime.lein "0.3.8"]
+                      [lein-midje "3.1.3"]]
 
             :test-refresh {:quiet true}
 
@@ -62,7 +63,8 @@
                                                        [ring/ring-devel "1.3.2"]
                                                        [clj-http-fake "1.0.1"]
                                                        [pjstadig/humane-test-output "0.7.0"]
-                                                       [kerodon "0.6.1"]]
+                                                       [kerodon "0.6.1"]
+                                                       [midje "1.8.2" :exclusions [org.clojure/clojure]]]
                                         :source-paths ["env/dev/clj"]
                                         :main         yswrl.core
 

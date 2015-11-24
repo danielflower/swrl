@@ -1,9 +1,10 @@
 (ns yswrl.test.groups.group-management-test
   (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.groups.group-management :as mgmt]
-            [yswrl.groups.groups-repo :as repo])
+            [yswrl.groups.groups-repo :as repo]
+            [korma.core
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:use clojure.test))
-(use 'korma.core)
 
 
 (deftest group-management-test

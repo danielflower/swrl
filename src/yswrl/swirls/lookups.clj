@@ -1,7 +1,10 @@
 (ns yswrl.swirls.lookups
   (:require [yswrl.db :as db]
-            [yswrl.swirls.swirl-states :as states]))
-(use 'korma.core)
+            [yswrl.swirls.swirl-states :as states]
+            [korma.core
+             :refer [select* limit subselect offset order
+                     aggregate defentity database prepare transform table exec-raw
+                     insert values where join fields set-fields select raw modifier]]))
 (use 'korma.db)
 
 

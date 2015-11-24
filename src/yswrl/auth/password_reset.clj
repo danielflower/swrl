@@ -10,8 +10,10 @@
             [yswrl.db :as db]
             [clj-time.core :as t]
             [clj-time.coerce :as coerce]
-            [yswrl.constraints :refer [max-length]]))
-(use 'korma.core)
+            [korma.core
+             :refer [insert delete values where join fields set-fields select raw modifier]]
+            [yswrl.constraints :refer [max-length]])
+  (:import (java.util UUID)))
 
 (defn forgot-password-page [usernameOrEmail error]
   (layout/render "auth/forgot-password.html" {:usernameOrEmail usernameOrEmail :error error :maxUsernameOrEmailLength (max (max-length :users :email) (max-length :users :username))}))
@@ -33,7 +35,7 @@
   (hashers/encrypt token {:algorithm :sha256 :salt "salthylskjdflaskjdfkl"}))
 
 (defn create-reset-token []
-  (let [unhashed (str (java.util.UUID/randomUUID))]
+  (let [unhashed (str (UUID/randomUUID))]
     {:unhashed unhashed
      :hashed   (hash-token unhashed)}))
 

@@ -1,8 +1,9 @@
 (ns yswrl.test.groups.groups-repo-test
   (:require [yswrl.test.scaffolding :refer :all]
-            [yswrl.groups.groups-repo :as repo])
+            [yswrl.groups.groups-repo :as repo]
+            [korma.core
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:use clojure.test))
-(use 'korma.core)
 
 
 (deftest groups-repo

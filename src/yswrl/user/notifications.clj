@@ -7,8 +7,11 @@
     [yswrl.db :as db]
     [yswrl.swirls.postman :as postman]
     [yswrl.swirls.lookups :as lookups]
-    [yswrl.user.notifications-repo :as notifications-repo]))
-(use 'korma.core)
+    [korma.core
+     :as k
+     :refer [insert values where join fields set-fields select raw modifier]]
+    [yswrl.user.notifications-repo :as notifications-repo])
+  (:import (java.sql Timestamp)))
 
 
 (def ^:const recommendation "R")
@@ -17,7 +20,7 @@
 (def ^:const added-to-group "G")
 
 (defn user-from-session [req] (:user (:session req)))
-(defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
+(defn now [] (Timestamp. (System/currentTimeMillis)))
 
 (defn add [notification-type target-user-id swirl-id subject-id instigator-id]
   (insert db/notifications (values {
@@ -66,7 +69,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn mark-as-seen [swirl-id seer]
   (if seer
-    (update db/notifications
+    (k/update db/notifications
             (set-fields {:date_seen (now)})
             (where {:swirl_id       swirl-id
                     :target_user_id (seer :id)
@@ -76,7 +79,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 (defn mark-subject-as-seen [swirl-id seer]
   (if seer
-    (update db/notifications
+    (k/update db/notifications
             (set-fields {:date_seen (now)})
             (where {:subject_id     swirl-id
                     :target_user_id (seer :id)
@@ -85,7 +88,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
     0))
 
 (defn clear-notifications-for-user-by-notification-type [user-id notification-type]
-  (update db/notifications
+  (k/update db/notifications
           (set-fields {:date_seen (now)})
           (where {:target_user_id    user-id
                   :notification_type notification-type
@@ -95,11 +98,11 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
   ([seer]
    (mark-email-sent seer (now)))
   ([seer timestamp]
-   (update db/notifications
+   (k/update db/notifications
            (set-fields {:date_emailed timestamp})
            (where {:target_user_id (seer :id)
                    :date_emailed   nil}))
-   (update db/users
+   (k/update db/users
            (set-fields {:date_last_emailed timestamp})
            (where {:id (seer :id)}))))
 

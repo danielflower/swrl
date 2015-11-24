@@ -1,7 +1,9 @@
 (ns yswrl.db
-  (:require [clojure.set :refer [rename-keys]]))
+  (:require [clojure.set :refer [rename-keys]]
+            [korma.core
+             :refer [defentity database prepare transform table exec-raw
+                     insert values where join fields set-fields select raw modifier]]))
 (use 'korma.db)
-(use 'korma.core)
 
 
 (def db-uri (or (System/getenv "DATABASE_URL")
@@ -33,7 +35,6 @@
 (defentity groups (database db))
 (defentity group-members (database db) (table :group_members))
 (defentity group-swirl-links (database db) (table :group_swirl_links))
-(defentity group-invitees (database db) (table :group_invitees))
 
 (defentity email-blacklist (table :email_blacklist) (database db))
 (defentity notifications (database db))

@@ -4,9 +4,11 @@
             [yswrl.db :as db]
             [yswrl.swirls.postman :as postman]
             [ring.util.response :refer [redirect response]]
-            [yswrl.auth.guard :as guard])
+            [yswrl.auth.guard :as guard]
+            [korma.core
+             :as k
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:import (org.postgresql.util PGInterval)))
-(use 'korma.core)
 
 (defn notification-options-page [email]
   ; NOTE: should really figure out current value (if logged in) and pre-select the correct radio button. Currently it just hard codes values in the HTML ignoring current setting
@@ -32,7 +34,7 @@
                  )))
 
 (defn update-notification-preferences [user notification-interval inbox-interval]
-  (update db/users
+  (k/update db/users
           (set-fields {:notification_email_interval (key-to-interval notification-interval)
                        :inbox_email_interval        (key-to-interval inbox-interval)})
           (where {:id (user :id)}))

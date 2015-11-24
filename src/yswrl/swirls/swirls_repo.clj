@@ -7,9 +7,9 @@
             [yswrl.swirls.lookups :refer :all]
             [yswrl.swirls.swirl-states :as states]
             [yswrl.user.notifications :as notifications]
-            [yswrl.utils :as utils])
+            [yswrl.utils :as utils]
+            [korma.core :as k])
   (:import (org.postgresql.util PSQLException)))
-(use 'korma.core)
 (use 'korma.db)
 
 (defn uuid [] (java.util.UUID/randomUUID))
@@ -24,16 +24,16 @@
     (filter (fn [name] (not-in? found-user-names name)) all-names)))
 
 (defn get-suggestion [code]
-  (first (select db/suggestions
-                 (fields :recipient_id :recipient_email)
-                 (where {:code code}))))
+  (first (k/select db/suggestions
+                 (k/fields :recipient_id :recipient_email)
+                 (k/where {:code code}))))
 
 (defn get-suggestion-usernames [swirl-id]
-  (select db/suggestions
-          (fields :users.username [:users.id :user-id])
-          (join :inner db/users (= :suggestions.recipient_id :users.id))
-          (where {:swirl_id swirl-id})
-          (order :users.username :asc)))
+  (k/select db/suggestions
+          (k/fields :users.username [:users.id :user-id])
+          (k/join :inner db/users (= :suggestions.recipient_id :users.id))
+          (k/where {:swirl_id swirl-id})
+          (k/order :users.username :asc)))
 
 (defn create-suggestions [recipientUserIdsOrEmailAddresses swirlId]
   (let [already-suggested (map :username (get-suggestion-usernames swirlId))
@@ -50,35 +50,35 @@
 (defn respond-to-swirl [swirl-id summary author]
   (transaction
     (let [response
-          (if (= 0 (update db/swirl-responses (set-fields {:summary summary}) (where {:swirl_id swirl-id :responder (author :id)})))
-            (insert db/swirl-responses
-                    (values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
-            (first (select db/swirl-responses (where {:swirl_id swirl-id :responder (author :id)}))))]
-      (update db/suggestions
-              (set-fields {:response_id (response :id)})
-              (where (or
+          (if (= 0 (k/update db/swirl-responses (k/set-fields {:summary summary}) (k/where {:swirl_id swirl-id :responder (author :id)})))
+            (k/insert db/swirl-responses
+                    (k/values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
+            (first (k/select db/swirl-responses (k/where {:swirl_id swirl-id :responder (author :id)}))))]
+      (k/update db/suggestions
+              (k/set-fields {:response_id (response :id)})
+              (k/where (or
                        {:swirl_id swirl-id :recipient_id (author :id)}
                        {:swirl_id swirl-id :recipient_email (author :email)}
                        )))
       response)))
 
 (defn create-comment [swirld-id comment author]
-  (insert db/comments
-          (values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
+  (k/insert db/comments
+          (k/values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
           ))
 
 (defn save-draft-swirl [type author-id title review image-thumbnail]
-  (insert db/swirls
-          (values {:type type :author_id author-id :title title
+  (k/insert db/swirls
+          (k/values {:type type :author_id author-id :title title
                    :review review :thumbnail_url image-thumbnail :state states/draft
                    :is_private false})))
 
 (defn add-link [swirl-id link-type-code link-value]
-  (insert db/swirl-links
-          (values {:swirl_id swirl-id :type_code link-type-code :code link-value})))
+  (k/insert db/swirl-links
+          (k/values {:swirl_id swirl-id :type_code link-type-code :code link-value})))
 
 (defn get-links [swirl-id]
-  (let [links (select db/swirl-links (where {:swirl_id swirl-id}))]
+  (let [links (k/select db/swirl-links (k/where {:swirl_id swirl-id}))]
     (map #(assoc % :type (swirl-links/link-type-of (% :type_code))) links)))
 
 (defn setup-network-links-and-notifications [swirl-id author-id other-user-id]
@@ -91,7 +91,7 @@
           recipient-ids (map #(% :recipient_id) (filter #(and (not (nil? (% :recipient_id))) (not= (% :recipient_id) author-id)) suggestions))]
 
       (doseq [sug suggestions]
-        (try (insert db/suggestions (values sug))
+        (try (k/insert db/suggestions (k/values sug))
              (catch PSQLException e (if (.contains (.getMessage e) "duplicate key value violates unique constraint")
                                       (log/info "Duplicate suggestion detected. Form was probably submitted twice. Okay to ignore.")
                                       (log/warn "Error while saving suggestion" e)))))
@@ -103,18 +103,18 @@
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
   swirl belonging to the author; otherwise false."
   [swirl-id author-id title review recipient-names-or-emails private?]
-  (let [updated (update db/swirls
-                        (set-fields {:title title :review review :state states/live :is_private private?})
-                        (where {:id swirl-id :author_id author-id}))]
+  (let [updated (k/update db/swirls
+                        (k/set-fields {:title title :review review :state states/live :is_private private?})
+                        (k/where {:id swirl-id :author_id author-id}))]
     (add-suggestions swirl-id author-id recipient-names-or-emails)
     (= updated 1)))
 
 (defn delete-swirl
   "Deletes the swirl with the given ID if the deleter-id is the author. Returns the swirl-id if it was deleted, otherwise nil"
   [swirl-id deleter-id]
-  (if (= 1 (update db/swirls
-                   (set-fields {:state states/deleted})
-                   (where {:id swirl-id :author_id deleter-id})))
+  (if (= 1 (k/update db/swirls
+                   (k/set-fields {:state states/deleted})
+                   (k/where {:id swirl-id :author_id deleter-id})))
     swirl-id
     nil))
 
@@ -123,30 +123,30 @@
 ; response and comment stuff
 
 (defn get-swirl-responses [swirld-id]
-  (select db/swirl-responses
-          (fields :summary :users.username :users.email_md5 :responder)
-          (join :inner db/users (= :users.id :swirl_responses.responder))
-          (where {:swirl_id swirld-id})
+  (k/select db/swirl-responses
+          (k/fields :summary :users.username :users.email_md5 :responder)
+          (k/join :inner db/users (= :users.id :swirl_responses.responder))
+          (k/where {:swirl_id swirld-id})
           ))
 
 (defn get-swirl-comments
   ([swirl-id]
    (get-swirl-comments swirl-id 0))
   ([swirld-id id-to-start-after]
-   (select db/comments
-           (fields :id :html_content :users.username :users.email_md5 :date_responded)
-           (join :inner db/users (= :users.id :comments.author_id))
-           (where {:swirl_id swirld-id :id [> id-to-start-after]})
-           (order :date_responded :asc))))
+   (k/select db/comments
+           (k/fields :id :html_content :users.username :users.email_md5 :date_responded)
+           (k/join :inner db/users (= :users.id :comments.author_id))
+           (k/where {:swirl_id swirld-id :id [> id-to-start-after]})
+           (k/order :date_responded :asc))))
 
 
 (defn get-recent-responses-by-user-and-type [user-id swirl-type excluded]
-  (map #(% :summary) (select db/swirl-responses
-                             (fields :summary)
-                             (join :inner db/swirls (= :swirls.id :swirl_responses.swirl_id))
-                             (where {:responder user-id :swirls.type swirl-type :summary [not-in excluded]})
-                             (order :date_responded :desc)
-                             (limit 5))))
+  (map #(% :summary) (k/select db/swirl-responses
+                             (k/fields :summary)
+                             (k/join :inner db/swirls (= :swirls.id :swirl_responses.swirl_id))
+                             (k/where {:responder user-id :swirls.type swirl-type :summary [not-in excluded]})
+                             (k/order :date_responded :desc)
+                             (k/limit 5))))
 
 (defn get-non-responders [swirl-id]
   (db/query "SELECT users.username, users.email_md5 FROM

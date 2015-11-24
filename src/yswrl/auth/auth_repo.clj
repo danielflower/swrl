@@ -3,22 +3,23 @@
             [yswrl.db :as db]
             [buddy.core.hash :as hash]
             [buddy.core.codecs :refer :all]
-            [yswrl.user.networking :as networking])
+            [yswrl.user.networking :as networking]
+            [korma.core :as k])
   )
-(use 'korma.core)
+
 
 (defn gravatar-code [email]
   (-> (hash/md5 (clojure.string/lower-case email))
       (bytes->hex)))
 
 (defn create-user [username email password]
-  (insert users
-          (values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email)})))
+  (k/insert users
+          (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email)})))
 
 (defn change-password [user-id hashed-password]
-  (update users
-          (set-fields {:password hashed-password})
-          (where {:id user-id})))
+  (k/update users
+          (k/set-fields {:password hashed-password})
+          (k/where {:id user-id})))
 
 (defn get-user [username]
   (db/query-single "SELECT * FROM users WHERE LOWER(username) = ?" (clojure.string/lower-case username)))
@@ -61,22 +62,22 @@
 
 (defn migrate-suggestions-from-email [user-id user-email]
   (let [where-map {:recipient_email user-email}
-        updates (select db/suggestions
-                        (fields :swirls.author_id)
-                        (join :inner db/swirls (= :swirls.id :suggestions.swirl_id))
-                        (where where-map))]
+        updates (k/select db/suggestions
+                        (k/fields :swirls.author_id)
+                        (k/join :inner db/swirls (= :swirls.id :suggestions.swirl_id))
+                        (k/where where-map))]
     (networking/store-multiple user-id :knows (map #(% :author_id) updates))
-    (update db/suggestions
-            (set-fields {:recipient_id user-id :recipient_email nil})
-            (where where-map))))
+    (k/update db/suggestions
+            (k/set-fields {:recipient_id user-id :recipient_email nil})
+            (k/where where-map))))
 
 (defn users-for-dropdown []
-  (select db/users
-          (fields :username :email_md5)
-          (order :username :asc)
-          (limit 100)))
+  (k/select db/users
+          (k/fields :username :email_md5)
+          (k/order :username :asc)
+          (k/limit 100)))
 
 (defn update-user [user-id new-username new-email]
-  (update db/users
-          (set-fields {:username new-username :email new-email :email_md5 (gravatar-code new-email)})
-          (where {:id user-id})))
+  (k/update db/users
+          (k/set-fields {:username new-username :email new-email :email_md5 (gravatar-code new-email)})
+          (k/where {:id user-id})))

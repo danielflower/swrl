@@ -4,16 +4,18 @@
             [yswrl.db :as db]
             [yswrl.user.notifications :refer [recommendation new-response new-comment mark-as-seen mark-email-sent users-with-pending-notifications create-notification-email-body]]
             [yswrl.user.notifications-repo :refer [get-for-user-email get-for-user-page]]
-            [yswrl.swirls.swirl-routes :as swirl-routes])
+            [yswrl.swirls.swirl-routes :as swirl-routes]
+            [korma.core
+             :as k
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:use clojure.test))
-(use 'korma.core)
 
 
 (deftest nagging
   (let [author (create-test-user)]
     (testing "suggested but unanswered swirls are sent to the user if they have been registered long enough"
       (let [recipient (create-test-user)
-            _ (update db/users
+            _ (k/update db/users
                       (set-fields {:date_registered (raw "(date_registered - inbox_email_interval) - INTERVAL '1 second'")}) ; pretend the user has been registered at least as long as the nagbot interval
                       (where {:id (recipient :id)}))
             emailed-user (create-test-user)
@@ -21,7 +23,6 @@
             _ (swirl-routes/handle-response (responded :id) nil "Loved it" recipient)
             _ (nagbot/email-user (emailed-user :id))
             ignored (create-swirl "generic" (author :id) "Thing that was ignored" "Yeah" [(recipient :username)])
-            unrelated (create-swirl "generic" (author :id) "Thing that was never suggested" "Yeah" [])
             users-to-nag (nagbot/get-users-to-nag)
             awaiting (nagbot/get-unresponded-for-user (recipient :id))]
         (is (= 1 (count (filter #(or (= (emailed-user :id) (:id %)) (= (recipient :id) (:id %))) users-to-nag))))
@@ -32,9 +33,8 @@
 
     (testing "suggested but unanswered swirls are not sent to new users"
       (let [recipient (create-test-user)
-            ignored (create-swirl "generic" (author :id) "Thing that was ignored" "Yeah" [(recipient :username)])
+            _ignored (create-swirl "generic" (author :id) "Thing that was ignored" "Yeah" [(recipient :username)])
             users-to-nag (nagbot/get-users-to-nag)
-            awaiting (nagbot/get-unresponded-for-user (recipient :id))
-            ]
+            awaiting (nagbot/get-unresponded-for-user (recipient :id))]
         (is (= 0 (count (filter #(= (recipient :id) (:id %)) users-to-nag))))
         (is (= 1 (count awaiting)))))))

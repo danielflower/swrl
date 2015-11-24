@@ -10,10 +10,11 @@
             [clojure.test :refer :all]
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.db :as db]
-            [yswrl.links :as links])
+            [yswrl.links :as links]
+            [korma.core
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
-(use 'korma.core)
 (use 'korma.db)
 
 (selmer.parser/cache-off!)

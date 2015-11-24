@@ -74,12 +74,23 @@ To generate the CSS and JavaScript artifacts run `gulp` but during development y
 
 ## Testing
 
-While you can run `lein test` from the command line, it takes many seconds to
+NB - We have changed from `lein test` to `lein midje`
+
+While you can run `lein midje` from the command line, it takes many seconds to
 start up and is too slow for TDD. Instead, start an interactive lein session
 and just run tests from from:
 
-    $ lein test-refresh
+    $ lein midje :autotest
     
+OR if you like working in the REPL and would also like to enjoy auto-loading of namespaces you are working on as well as seeing up-to-date test runs run these commands in the REPL:
+
+    (use 'midje.repl)
+    (autotest)
+
+NB.
+1. Ignore the errors midje throws when launching
+2. Autotest works by reloading only the current namespace after the first run (so it's quick). This means it may hide failures from other namespaces, so is recommended to run a full `lein midje` before pushing.
+3. Midje runs all previously written clojure.test tests, so worry not.
 
 ## Deploying
 

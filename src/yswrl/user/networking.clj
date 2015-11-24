@@ -1,10 +1,13 @@
 (ns yswrl.user.networking
-  (:require [yswrl.db :as db]))
-(use 'korma.core)
+  (:require [yswrl.db :as db]
+            [korma.core
+             :as k
+             :refer [insert values where join fields set-fields select raw modifier]]
+            ))
 
 
 (defn store [user-id relation-type another-user-id]
-  (let [updated-count (update db/network-connections
+  (let [updated-count (k/update db/network-connections
                               (set-fields {:relation_type (name relation-type)})
                               (where {:user_id user-id :another_user_id another-user-id}))]
     (if (= 0 updated-count)

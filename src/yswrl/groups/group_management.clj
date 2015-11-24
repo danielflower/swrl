@@ -11,8 +11,8 @@
     [yswrl.auth.auth-repo :as auth]
     [yswrl.user.notifications :as notifications]
     [yswrl.utils :refer :all]
-    [yswrl.db :as db]))
-(use 'korma.core)
+    [yswrl.db :as db]
+    [korma.core :as k]))
 (use 'korma.db)
 
 
@@ -60,8 +60,8 @@
       (notifications/add notifications/added-to-group user-id nil group-id added-by-id)
       (repo/add-group-member group-id user-id))
     (doseq [user-id to-delete]
-      (delete db/group-members
-              (where {:group_id group-id :user_id user-id})))
+      (k/delete db/group-members
+              (k/where {:group_id group-id :user_id user-id})))
     ))
 
 (defn save-group [creator group member-usernames-and-emails]

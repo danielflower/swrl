@@ -6,10 +6,11 @@
             [kerodon.impl :refer :all]
             [kerodon.test :refer :all]
             [clojure.test :refer :all]
-            [yswrl.links :as links])
+            [yswrl.links :as links]
+            [korma.core
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
-(use 'korma.core)
 (use 'korma.db)
 
 (selmer.parser/cache-off!)

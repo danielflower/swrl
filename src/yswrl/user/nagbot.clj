@@ -1,9 +1,11 @@
 (ns yswrl.user.nagbot
   (:require [yswrl.swirls.lookups :as lookups]
             [yswrl.db :as db]
-            [yswrl.swirls.postman :as postman])
+            [yswrl.swirls.postman :as postman]
+            [korma.core
+             :as k
+             :refer [insert values where join fields set-fields select raw modifier]])
   (:import (java.sql Timestamp)))
-(use 'korma.core)
 (use 'korma.db)
 
 (defn now [] (Timestamp. (System/currentTimeMillis)))
@@ -24,7 +26,7 @@
                         "Swirls awaiting your response"
                         (postman/email-body "notifications/nag-email.html"
                                             {:swirls swirls :recipient recipient}))
-    (update db/users
+    (k/update db/users
             (set-fields {:date_last_nagged (now)})
             (where {:id user-id}))))
 

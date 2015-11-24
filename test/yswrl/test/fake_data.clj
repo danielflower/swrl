@@ -1,9 +1,10 @@
 (ns yswrl.test.fake_data
   (:require [yswrl.test.scaffolding :refer :all]
             [yswrl.swirls.swirls-repo :as swirl]
-            [yswrl.auth.auth-repo :as user])
+            [yswrl.auth.auth-repo :as user]
+            [korma.core
+             :refer [insert values where join fields set-fields select raw modifier]])
   )
-(use 'korma.core)
 (use 'korma.db)
 
 (def books ["Babel-17",

@@ -1,9 +1,12 @@
 (ns yswrl.swirls.postman
   (:require [clojure.tools.logging :as log]
-            [yswrl.db :as db]))
+            [yswrl.db :as db]
+            [korma.core
+             :refer [select* limit subselect offset order
+                     aggregate defentity database prepare transform table exec-raw
+                     insert values where join fields set-fields select raw modifier]]))
 (use 'clj-mandrill.core)
 (use 'selmer.parser)
-(use 'korma.core)
 
 (def mandrill-api-key-or-nil
   (let [env-var-name "MANDRILL_APIKEY"
@@ -28,7 +31,7 @@
   (insert db/email-blacklist
           (values [{:email email}])))
 
-(defn test-mandrill []
+#_(defn test-mandrill []
   (wrap-mandrill-call call-mandrill "users/ping" {}))
 
 (defn send-email [to-email to-name subject body]
