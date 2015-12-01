@@ -20,4 +20,4 @@ node_modules/
 bower_components/
 
 #mac crap
-.DS_Store
+*.DS_Store
