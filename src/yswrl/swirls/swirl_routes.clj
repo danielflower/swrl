@@ -150,7 +150,7 @@
                                       :response-of-current-user response-of-current-user
                                       :seen-response-options    seen-response-options}}))))
 
-(defn view-swirls-by [author-username, current-user]
+(defn view-profile [author-username, current-user]
   (if-let [author (user-repo/get-user author-username)]
     (if (= author-username (author :username))
       (let [swirls (lookups/get-swirls-authored-by (:id author) current-user)
@@ -259,6 +259,6 @@
 
            (GET "/swirls/groups" [] (groups-page))
 
-           (GET "/swirls/by/:authorName" [authorName :as req] (view-swirls-by authorName (session-from req)))
+           (GET "/profile/:authorName" [authorName :as req] (view-profile authorName (session-from req)))
            (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
            (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))

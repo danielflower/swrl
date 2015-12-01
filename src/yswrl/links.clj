@@ -30,7 +30,7 @@
   (str "/swirls/" id "/delete"))
 
 (defn user [username]
-  (str "/swirls/by/" (url-encode username)))
+  (str "/profile/" (url-encode username)))
 
 (defn password-reset [token]
   (str "/reset-password?token=" (url-encode token)))

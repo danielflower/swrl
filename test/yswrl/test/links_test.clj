@@ -14,7 +14,7 @@
     (is (= "/reset-password?token=ADSF%25%26" (links/password-reset "ADSF%&"))))
 
   (testing "user links"
-    (is (= "/swirls/by/Dan%20%26%20%2F%20co" (links/user "Dan & / co"))))
+    (is (= "/profile/Dan%20%26%20%2F%20co" (links/user "Dan & / co"))))
 
   (testing "absolute URLs"
     (is (= "http://www.swrl.co/swirls/10" (links/absolute "/swirls/10"))))
