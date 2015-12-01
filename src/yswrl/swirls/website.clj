@@ -7,9 +7,9 @@
 
 (defn fetch-url [url]
   (html/html-resource (StringReader. (try (:body (client/get (str url)))
-                                          (catch Exception e
+                                          (catch Exception _
                                             (try (:body (client/get (str "http://" url)))
-                                                 (catch Exception e
+                                                 (catch Exception _
                                                    (try (:body (client/get (str "https://" url)))
                                                         (catch Exception e
                                                           (log/warn "Getting website failed" url e)
