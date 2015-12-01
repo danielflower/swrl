@@ -3,7 +3,13 @@
 
 <main>
     <div class="home">
-        {% include "components/big-pink-button.html" %}
+        <div class="swirl-header border-bottom">
+            <div class="swirl-header__bgimage" style="background-image: url({{ author.email_md5|gravatar-img-url:600 }})"></div>
+            <img class="swirl-header__image {{ model.swirl.type }}" src="{{ author.email_md5|gravatar-img-url:600 }}"/>
+            <div class="swirl-type">Profile page</div>
+        </div>
+
+        <br class="padded">
 
         <div class="center-wrapper">
             <h1>{{author.username}}</h1>
