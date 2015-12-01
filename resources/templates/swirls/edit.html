@@ -26,6 +26,14 @@
 
             <div class="swirl-type">{{ swirl.type }}</div>
         </div>
+        <h2>Swirl Type</h2>
+
+        <select id="swirl-type" name="swirl-type" class="type-selector">
+            {% for type in all-types %}
+                <option value="{{type}}" {% ifequal type swirl.type %}selected{% endifequal %}>{{type}}</option>
+            {% endfor %}
+        </select>
+
         <h2>Title</h2>
         <input id="swirl-title" type="text" name="subject" required
                maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"

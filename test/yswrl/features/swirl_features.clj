@@ -11,6 +11,7 @@
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.db :as db]
             [yswrl.links :as links]
+            [yswrl.swirls.lookups :as lookups]
             [korma.core
              :refer [insert values where join fields set-fields select raw modifier]])
   (:use clj-http.fake)
@@ -56,6 +57,12 @@
       "User checkbox should be checked")
   session)
 
+(defn assert-default-selection-is-value [session selection]
+    (is (= "selected"
+           (get-attr session [(enlive/attr= :value selection)] :selected))
+        (str "Selected item should be " selection))
+    session)
+
 (defn assert-is-private-checkbox-is-checked [session]
   (is (= "checked"
          (get-attr session [:.private-toggle] :checked))
@@ -78,6 +85,10 @@
          (count (repo/get-links swirl-id))))
   session)
 
+(defn assert-swirl-type [session swirl-id type-to-check]
+  (is (= type-to-check
+         (:type (lookups/get-swirl swirl-id))))
+  session)
 
 (defn assert-swirl-title-in-header [session verb title]
   (-> session
@@ -990,3 +1001,45 @@
 
           )
       )))
+
+(deftest can-change-the-type-of-swirl
+  (with-faked-responses
+    (let [author (s/create-test-user)
+          test-state (atom {})]
+      (-> (session app)
+          (visit "/")
+          ; Login as the author
+          (actions/follow-login-link)
+          (login-as author)
+
+          ; Create a website swirl
+          (actions/follow-create-link)
+          (fill-in "Enter a website link" "http://exact.match.com/youtube.onions.html")
+          (actions/submit "Go")
+
+          (assert-default-selection-is-value "video")
+
+          (actions/save-swirl)
+
+          (save-swirl-id test-state :swirl-id)
+
+          ;type should be website
+
+          (assert-swirl-type (@test-state :swirl-id) "video")
+
+          ; Now back to edit
+          (follow "Edit Swirl")
+
+          (assert-default-selection-is-value "video")
+
+          ; let's choose movie instead
+
+          (choose :.type-selector "movie")
+
+          (actions/save-swirl)
+
+          ; type should now be video
+
+          (assert-swirl-type (@test-state :swirl-id) "movie")
+
+          ))))

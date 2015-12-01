@@ -102,9 +102,9 @@
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
   swirl belonging to the author; otherwise false."
-  [swirl-id author-id title review recipient-names-or-emails private?]
+  [swirl-id author-id title review recipient-names-or-emails private? type]
   (let [updated (k/update db/swirls
-                        (k/set-fields {:title title :review review :state states/live :is_private private?})
+                        (k/set-fields {:title title :review review :state states/live :is_private private? :type type})
                         (k/where {:id swirl-id :author_id author-id}))]
     (add-suggestions swirl-id author-id recipient-names-or-emails)
     (= updated 1)))

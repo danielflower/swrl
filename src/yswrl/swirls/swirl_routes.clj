@@ -10,7 +10,7 @@
             [ring.util.response :refer [status redirect response not-found]]
             [clojure.tools.logging :as log]
             [yswrl.auth.guard :as guard]
-            [yswrl.swirls.types :refer [type-of]]
+            [yswrl.swirls.types :refer [type-of] :as swirl-types]
             [yswrl.swirls.lookups :as lookups]
             [yswrl.user.notifications :as notifications]
             [yswrl.swirls.swirl-links :as link-types]
@@ -41,6 +41,8 @@
                                          :subject             (swirl :title)
                                          :review              (swirl :review)
                                          :type                (type-of swirl)
+                                         :all-types           (keys swirl-types/types)
+
                                          :swirl               swirl
                                          :edit?               edit?
                                          :contacts            not-added
@@ -179,8 +181,8 @@
 
 
 (defn publish-swirl
-  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private?]
-   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify private?)
+  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private? type]
+   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify private? type)
      (do
        (group-repo/set-swirl-links id (author :id) group-ids)
        (doseq [group-id group-ids]
@@ -229,7 +231,7 @@
                                                                                                                              nil
                                                                                                                              (Long/parseLong origin-swirl-id))
                                                      :edit? edit)))
-           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private :as req]
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type :as req]
              (guard/requires-login #(publish-swirl
                                      (session-from req)
                                      (Long/parseLong id)
@@ -240,7 +242,8 @@
                                      (numberise (vectorise groups))
                                      (if private
                                        true
-                                       false))))
+                                       false)
+                                     swirl-type)))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))

@@ -19,9 +19,9 @@
         draft-swirl (repo/save-draft-swirl "generic" (author :id) "Animals (draft)" "What to write...." nil)]
 
     (testing "Users can be added via the select box and via groups and they are notified only once"
-      (routes/publish-swirl author (draft-swirl :id) ["somebody"] "The published swirl" "It is a great swirl" nil [(group :id)] false)
+      (routes/publish-swirl author (draft-swirl :id) ["somebody"] "The published swirl" "It is a great swirl" nil [(group :id)] false "movie")
       (is (= (map :notification_type (notifications-repo/get-for-user-page (recipient :id))) [notifications/recommendation]))
-      (routes/publish-swirl author (draft-swirl :id) ["somebody"] "The published swirl" "It is a great swirl" nil [(group :id)] false)
+      (routes/publish-swirl author (draft-swirl :id) ["somebody"] "The published swirl" "It is a great swirl" nil [(group :id)] false "movie")
       (is (= (map :notification_type (notifications-repo/get-for-user-page (recipient :id))) [notifications/recommendation]))
       (is (empty? (notifications-repo/get-for-user-page (author :id))))
       (is (= [(recipient :id)] (map :user-id (repo/get-suggestion-usernames (draft-swirl :id)))))
