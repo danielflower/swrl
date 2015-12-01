@@ -42,15 +42,30 @@ h1 {
     margin-bottom: 2rem;
     font-weight: bold;
     text-align: left;
-    color: var(--generic-color);
+    color: var(--swirl-blue);
 }
 
 h2 {
     font-size: 2.0rem;
     padding-top: 20px;
     padding-bottom: 20px;
-    color: #737373;
+    color: var(--swirl-blue);
+    white-space: nowrap;
+    display: block;
+
 }
+.inline {
+    white-space: nowrap;
+    display: flex;
+}
+
+.inline select, input {
+    margin-left: 0.4em;
+    font-size: 1em; /* currently ems cause chrome bug misinterpreting rems on body element */
+    font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--main-font-color);
+}
+
 
 h3 {
     font-size: 1.8rem;
@@ -255,7 +270,7 @@ nav .nav-count {
     color: var(--generic-color);
 }
 .title-color {
-    color: var(--generic-color);
+    color: var(--swirl-blue);
 }
 .tv .type-color {
     color: var(--tv-color);

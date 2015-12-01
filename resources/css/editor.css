@@ -52,19 +52,25 @@
 .user-select-box label {
     display: inline;
     white-space: nowrap;
-    background-color: var(--swirl-blue);
+    background-color: none;
     border: 1px solid var(--swirl-blue-darker);
     border-radius: 5px;
     padding: 5px;
     margin: 0 5px 5px 0;
-    color: #FFF;
+    color: var(--swirl-blue);
     font-weight: normal;
 }
 .user-select-box label:hover {
-    background-color: var(--swirl-blue-darker);
+    background-color: var(--swirl-blue);
+    color: #FFF
 }
 .user-select-box label input {
     margin-right: 4px;
+}
+
+.user-select-box label + input:checked{
+    background-color: var(--swirl-blue);
+    color: #FFF
 }
 
 .button-panel {

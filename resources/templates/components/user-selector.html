@@ -1,20 +1,33 @@
 <div class="user-select-box">
 
+    <h3>Enter usernames or email addresses of the people you would like to share this with.</h3>
+
     {% if origin-swirl-id %}
-    <label><input type="checkbox" name="who" value="{{ origin-swirl-author.username }}" checked>{{ origin-swirl-author.username }}</label>
+    <label><input type="checkbox" name="who" value="{{ origin-swirl-author.username }}" checked>{{ friend.email_md5|gravatar-img:40 }}{{ origin-swirl-author.username }}</label>
     {% endif %}
-    {% for friend in already-selected %}
-    <label><input type="checkbox" name="who" value="{{ friend.username }}" checked {% if disallow-unselects %}disabled{% endif %}>{{ friend.username }}</label>
-    {% endfor %}
-    {% for friend in suggested-contacts %}
-    <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.username }}</label>
-    {% endfor %}
+
     <input type="text" list="users" name="emails" class="recipients" maxlength="1000" placeholder="username or emails"
            placeholder="username or emails"
            value="{{who}}">
+
+    {% if suggested-contacts|not-empty %}
+        <h3>People who may also like this Swirl:</h3>
+        {% for friend in suggested-contacts %}
+            <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.email_md5|gravatar-img:40 }}{{ friend.username }}</label>
+        {% endfor %}
+    {% endif %}
+
+    {% if already-selected|not-empty %}
+    <br class="padded"><br class="padded">
+    <h3>Already added:</h3>
+    {% for friend in already-selected %}
+    <label><input type="checkbox" name="who" value="{{ friend.username }}" checked {% if disallow-unselects %}disabled{% endif %}>{{ friend.email_md5|gravatar-img:40 }}{{ friend.username }}</label>
+    {% endfor %}
+    {% endif %}
+
     <datalist id="users">
-        {% for user in other-contacts %}
-        <option value="{{ user.username }}">
-            {% endfor %}
+        {% for friend in other-contacts %}
+        <option value="{{ friend.username }}">{{ friend.email_md5|gravatar-img:40 }}{{ friend.username }}</option>
+        {% endfor %}
     </datalist>
 </div>

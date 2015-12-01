@@ -30,7 +30,7 @@
 
 (defn get-suggestion-usernames [swirl-id]
   (k/select db/suggestions
-          (k/fields :users.username [:users.id :user-id])
+          (k/fields :users.username [:users.id :user-id] :users.email_md5)
           (k/join :inner db/users (= :suggestions.recipient_id :users.id))
           (k/where {:swirl_id swirl-id})
           (k/order :users.username :asc)))

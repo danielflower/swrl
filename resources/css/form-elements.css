@@ -119,6 +119,10 @@ label > .label-body {
     margin-left: .5rem;
     font-weight: normal; }
 
+input[type="text"]{
+    width: 30%
+}
+
 
 /* Spacing
 �������������������������������������������������� */

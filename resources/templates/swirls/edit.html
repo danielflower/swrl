@@ -26,19 +26,19 @@
 
             <div class="swirl-type">{{ swirl.type }}</div>
         </div>
-        <h2>Swirl Type</h2>
-
-        <select id="swirl-type" name="swirl-type" class="type-selector">
-            {% for type in all-types %}
-                <option value="{{type}}" {% ifequal type swirl.type %}selected{% endifequal %}>{{type}}</option>
-            {% endfor %}
-        </select>
 
         <h2>Title</h2>
-        <input id="swirl-title" type="text" name="subject" required
-               maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
-               placeholder="Title of a movie, book, song, album, etc">
 
+        <div class="inline">
+            <select id="swirl-type" name="swirl-type" class="type-selector" data-text="Change the Swirl Type">
+                {% for type in all-types %}
+                <option value="{{type}}" {% ifequal type swirl.type %}selected{% endifequal %}>{{type}}</option>
+                {% endfor %}
+            </select>
+            <input id="swirl-title" type="text" name="subject" required
+                   maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
+                   placeholder="Title of a movie, book, song, album, etc">
+        </div>
         <div class="rte">
             <h2>Why should they {{type.words.watch}} this?</h2>
             <textarea name="review">{{review}}</textarea>
@@ -60,7 +60,7 @@
 
         {% if groups|not-empty %}
 
-        <p>Share this with a group.</p>
+        <h3>Share this with a group.</h3>
 
         <div class="user-select-box">
             {% for gm in groups-model %}
@@ -72,7 +72,6 @@
 
         {% endif %}
 
-        <p>Enter usernames or email addresses of the people you would like to share this with.</p>
         {% with already-selected=already-suggested suggested-contacts=contacts other-contacts=unrelated %}
         {% include "components/user-selector.html" with disallow-unselects="true" %}
         {% endwith %}

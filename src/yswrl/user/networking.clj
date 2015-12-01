@@ -21,7 +21,7 @@
 
 (defn get-relations [user-id relation-type]
   (select db/network-connections
-          (fields [:another_user_id :user-id] :users.username)
+          (fields [:another_user_id :user-id] :users.username :users.email_md5)
           (join :inner db/users (= :users.id :network_connections.another_user_id))
           (where {:user_id user-id :relation_type (name relation-type)})))
 

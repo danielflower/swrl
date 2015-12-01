@@ -95,8 +95,8 @@
 
     (testing "the same user can not be suggested twice"
       (repo/add-suggestions (swirl :id) (author :id) [(non-responder :username)])
-      (is (= [{:username (responder :username) :user-id (responder :id)}
-              {:username (non-responder :username) :user-id (non-responder :id)}]
+      (is (= [{:username (responder :username) :user-id (responder :id) :email_md5 (responder :email_md5)}
+              {:username (non-responder :username) :user-id (non-responder :id) :email_md5 (non-responder :email_md5)}]
              (repo/get-suggestion-usernames (swirl :id))))
       (is (= 1 (count (repo/get-non-responders (swirl :id))))))
 

@@ -26,17 +26,19 @@
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit?]
                                                                                :or   {edit? false}}]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
-    (let [already-suggested (set (repo/get-suggestion-usernames swirl-id))
+    (let [already-added (set (repo/get-suggestion-usernames swirl-id))
           contacts (network/get-relations (author :id) :knows)
           origin-swirl (lookups/get-swirl origin-swirl-id)
           origin-swirl-author (if origin-swirl (user-repo/get-user-by-id (origin-swirl :author_id)))
-          not-added (filter #(and (not (contains? already-suggested %))
-                                  (not (= (:author_id origin-swirl) (:user-id %)))) contacts)
+          all-users (user-repo/get-all-users)
+          suggested-users (take 5 (filter #(and (not (contains? already-added %))
+                                   (not (= (:author_id origin-swirl) (:user-id %)))) contacts))
+          all-not-added (filter #(and (not (contains? already-added %))
+                                      (not (= (:author_id origin-swirl) (:user-id %)))) all-users)
           all-groups (group-repo/get-groups-for (author :id))
           already-selected-groups (group-repo/get-groups-linked-to-swirl swirl-id)
           selected-groups (concat already-selected-groups (filter #(= (.toString (% :id)) group-id) all-groups))
-          groups-model (map (fn [g] {:group g :selected (utils/in? selected-groups g)}) all-groups)
-          unrelated (network/get-unrelated-users (author :id) 100 0)]
+          groups-model (map (fn [g] {:group g :selected (utils/in? selected-groups g)}) all-groups)]
       (layout/render "swirls/edit.html" {:id                  swirl-id
                                          :subject             (swirl :title)
                                          :review              (swirl :review)
@@ -45,9 +47,9 @@
 
                                          :swirl               swirl
                                          :edit?               edit?
-                                         :contacts            not-added
-                                         :already-suggested   already-suggested
-                                         :unrelated           unrelated
+                                         :contacts            suggested-users
+                                         :already-suggested   already-added
+                                         :unrelated           all-not-added
                                          :origin-swirl-id     origin-swirl-id
                                          :groups-model        groups-model
                                          :origin-swirl-author origin-swirl-author

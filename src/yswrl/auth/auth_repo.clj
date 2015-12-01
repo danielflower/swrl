@@ -21,6 +21,11 @@
           (k/set-fields {:password hashed-password})
           (k/where {:id user-id})))
 
+(defn get-all-users []
+  (k/select db/users
+            (k/fields [:id :user-id] :username :email_md5)
+            (k/limit 500)))
+
 (defn get-user [username]
   (db/query-single "SELECT * FROM users WHERE LOWER(username) = ?" (clojure.string/lower-case username)))
 

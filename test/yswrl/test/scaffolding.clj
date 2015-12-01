@@ -26,7 +26,7 @@
     (auth-repo/get-user-by-id user-id)))
 
 (defn user-to-relation [user]
-  {:user-id (user :id) :username (user :username)})
+  {:user-id (user :id) :username (user :username) :email_md5 (user :email_md5)})
 
 (defn equal-ignoring-order? [& colls]
   (apply = (map frequencies colls)))
