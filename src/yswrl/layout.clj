@@ -51,13 +51,25 @@
 (filters/add-filter! :user-url links/user)
 (filters/add-filter! :response-icon #(get response-icons (clojure.string/lower-case %) "fa-star"))
 (filters/add-filter! :img (fn [src] (if (nil? src) "" (str "<img src=\"" src "\">"))))
+
 (filters/add-filter! :timetag (fn [javaDate]
                                 (let [date (c/from-date javaDate)]
                                   [:safe (str "<time datetime=\"" (f/unparse iso-date-formatter date) "\">" (f/unparse human-friendly-date-formatter date) "</time>")])))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
-(filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">")]))
+(defn generate-gravatar-img-html [email-hash size]
+  (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">"))
+
+(filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (generate-gravatar-img-html email-hash size)]))
+
 (filters/add-filter! :gravatar-img-url (fn [email-hash size] (links/gravatar-url email-hash size)))
+
+(defn generate-user-selector-label [email-hash username]
+  (str "<input id=\"" username "\" type=\"checkbox\" name=\"who\" value=\"" username "\" checked><label for=\"" username "\">" (generate-gravatar-img-html email-hash 35) "" username "</label>"))
+
+(filters/add-filter! :user-selector-label (fn [user] (let [email-hash (:email_md5 user)
+                                                           username (:username user)]
+                                                       (generate-user-selector-label email-hash username))))
 
 (filters/add-filter! :swirl-title swirl-title)
 (filters/add-filter! :empty-review? (fn [review]

@@ -46,4 +46,7 @@ $(document).ready(function () {
         content.toggle(250);
     });
 
+    document.documentElement.className +=
+        (("ontouchstart" in document.documentElement) ? ' touch' : ' no-touch');
+
 });

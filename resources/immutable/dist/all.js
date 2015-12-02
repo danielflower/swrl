@@ -827,6 +827,8 @@ $(document).ready(function () {
         var content = $(e.currentTarget).closest('.expansion-area').find('.expansion-content');
         content.toggle(250);
     });
+
+    document.documentElement.className += 'ontouchstart' in document.documentElement ? ' touch' : ' no-touch';
 });
 
 },{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./swirl-list":13}],5:[function(require,module,exports){
@@ -954,16 +956,36 @@ var setup = function setup() {
 
     var addUser = function addUser(textbox) {
         var nameOrEmail = textbox.value;
-        var label = $(document.createElement('label'));
-        $(textbox).before(label);
-        var cb = $(document.createElement('input')).attr('type', 'checkbox').attr('name', 'who').attr('value', nameOrEmail).attr('checked', 'checked');
-        label.append(cb);
-        label.append(document.createTextNode(nameOrEmail));
+        var allUsersList = textbox.getAttribute('list');
+        var allUsersOptions = document.querySelectorAll('#' + allUsersList + ' option');
+        var userHTML = false;
+
+        for (var i = 0; i < allUsersOptions.length; i++) {
+            var option = allUsersOptions[i];
+
+            if (option.innerText === nameOrEmail) {
+                userHTML = option.getAttribute('data-value');
+                break;
+            }
+        }
+
+        if (userHTML) {
+            $(textbox).before(userHTML);
+        } else {
+            var input = $(document.createElement('input')).attr('type', 'checkbox').attr('name', 'who').attr('value', nameOrEmail).attr('checked', 'checked').attr('id', nameOrEmail);
+            var label = $(document.createElement('label')).attr('for', nameOrEmail).attr('class', 'no-avatar');
+            $(textbox).before(input);
+            $(textbox).before(label);
+            label.append(document.createTextNode(nameOrEmail));
+        }
+        var br = $(document.createElement('div')).attr('class', 'small-padding');
+        $(textbox).before(br);
         textbox.value = '';
     };
 
-    $('.user-select-box input').keypress(function (event) {
-        if (event.which == 13) {
+    $('.user-select-box input').keydown(function (event) {
+        if (event.which == 13 || event.which == 9) {
+            event.preventDefault();
             addUser(this);
             return false;
         }

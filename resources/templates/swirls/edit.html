@@ -57,21 +57,6 @@
                       endif %}> <i class="fa fa-lock"></i> Make this swirl private so only the selected users and groups
             can see it</label>
 
-
-        {% if groups|not-empty %}
-
-        <h3>Share this with a group.</h3>
-
-        <div class="user-select-box">
-            {% for gm in groups-model %}
-            <label><input type="checkbox" name="groups" value="{{ gm.group.id }}" {% if gm.selected %}checked{% endif
-                          %}>{{ gm.group.name }}</label>
-            {% endfor %}
-        </div>
-
-
-        {% endif %}
-
         {% with already-selected=already-suggested suggested-contacts=contacts other-contacts=unrelated %}
         {% include "components/user-selector.html" with disallow-unselects="true" %}
         {% endwith %}

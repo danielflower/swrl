@@ -1,33 +1,52 @@
 <div class="user-select-box">
 
+    {% if groups|not-empty %}
+
+    <h3>Share this with a group.</h3>
+
+    {% for gm in groups-model %}
+    <input id="{{ gm.group.id }}" type="checkbox" name="groups" value="{{ gm.group.id }}" {% if gm.selected %}checked{% endif %}>
+    <label class="no-avatar" for="{{ gm.group.id }}">{{ gm.group.name }}</label>
+    {% endfor %}
+
+    <br class="padded"><br class="padded">
+
+    {% endif %}
+
     <h3>Enter usernames or email addresses of the people you would like to share this with.</h3>
 
     {% if origin-swirl-id %}
-    <label><input type="checkbox" name="who" value="{{ origin-swirl-author.username }}" checked>{{ friend.email_md5|gravatar-img:40 }}{{ origin-swirl-author.username }}</label>
+    <input id="{{ origin-swirl-author.username }}" type="checkbox" name="who" value="{{ origin-swirl-author.username }}"
+           checked>
+    <label for="{{ origin-swirl-author.username }}">{{friend.email_md5|gravatar-img:40 }}{{ origin-swirl-author.username
+        }}</label>
     {% endif %}
 
     <input type="text" list="users" name="emails" class="recipients" maxlength="1000" placeholder="username or emails"
-           placeholder="username or emails"
            value="{{who}}">
 
     {% if suggested-contacts|not-empty %}
-        <h3>People who may also like this Swirl:</h3>
-        {% for friend in suggested-contacts %}
-            <label><input type="checkbox" name="who" value="{{ friend.username }}">{{ friend.email_md5|gravatar-img:40 }}{{ friend.username }}</label>
-        {% endfor %}
+    <h3>People who may also like this Swirl:</h3>
+    {% for friend in suggested-contacts %}
+    <input id="{{ friend.username }}" type="checkbox" name="who" value="{{ friend.username }}">
+    <label for="{{ friend.username }}">{{ friend.email_md5|gravatar-img:35 }}{{ friend.username }}</label>
+    {% endfor %}
     {% endif %}
 
     {% if already-selected|not-empty %}
     <br class="padded"><br class="padded">
+
     <h3>Already added:</h3>
     {% for friend in already-selected %}
-    <label><input type="checkbox" name="who" value="{{ friend.username }}" checked {% if disallow-unselects %}disabled{% endif %}>{{ friend.email_md5|gravatar-img:40 }}{{ friend.username }}</label>
+    <input type="checkbox" name="who" value="{{ friend.username }}" checked {% if disallow-unselects %}disabled{% endif
+           %}>
+    <label>{{ friend.email_md5|gravatar-img:35 }}{{ friend.username }}</label>
     {% endfor %}
     {% endif %}
 
     <datalist id="users">
         {% for friend in other-contacts %}
-        <option value="{{ friend.username }}">{{ friend.email_md5|gravatar-img:40 }}{{ friend.username }}</option>
+        <option data-value="{{ friend|user-selector-label }}">{{ friend.username }}</option>
         {% endfor %}
     </datalist>
 </div>

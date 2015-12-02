@@ -56,22 +56,50 @@
     border: 1px solid var(--swirl-blue-darker);
     border-radius: 5px;
     padding: 5px;
+    padding-left: 0px;
     margin: 0 5px 5px 0;
     color: var(--swirl-blue);
     font-weight: normal;
+    position: relative;
 }
-.user-select-box label:hover {
+.user-select-box label.no-avatar {
+    padding-left: 5px;
+}
+/* Only applying the hover style for non-touch devices as touch devices make this 'sticky' and looks
+ confusing as will stay on until the user clicks somewhere else */
+.no-touch .user-select-box label:hover {
     background-color: var(--swirl-blue);
     color: #FFF
 }
-.user-select-box label input {
-    margin-right: 4px;
+.no-touch .user-select-box input:checked + label:hover {
+    background-color: var(--swirl-blue-darker);
+}
+.user-select-box input:checked + label {
+    background-color: var(--swirl-blue-darker);
+    color: #FFF
+}
+.user-select-box input[type="checkbox"] {
+    display: none;
 }
 
-.user-select-box label + input:checked{
-    background-color: var(--swirl-blue);
-    color: #FFF
+.user-select-box label > img.gravatar {
+    left:-6px;
+    top:-1.75px;
+    vertical-align: middle;
 }
+
+.user-select-box div.small-padding{
+    padding: 7.5px;
+}
+
+.no-touch .user-select-box input[type="text"]{
+    width: 30%
+}
+
+.touch .user-select-box input[type="text"]{
+    width: 80%
+}
+
 
 .button-panel {
     margin-top: 20px;

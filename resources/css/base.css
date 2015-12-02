@@ -204,7 +204,8 @@ nav img {
 nav .avatar img, img.gravatar {
     border: 3px solid #6DA8D4;
 }
-img.gravatar{
+
+img.gravatar {
     position: relative;
     top:-3px;
 }
