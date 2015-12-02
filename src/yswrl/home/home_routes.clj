@@ -9,10 +9,12 @@
 (defn home-page [count user]
   (if (nil? user)
     (layout/render "home/home-not-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count nil)
+                                                   :more-swirls       (lookups/get-all-swirls 500 (+ 20 count) nil)
                                                    :paging-url-prefix "/?from="
                                                    :return-url        "/"
                                                    :countFrom         (str count) :countTo (+ count 20)})
     (layout/render "home/home-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count user)
+                                               :more-swirls       (lookups/get-all-swirls 500 (+ 20 count) nil)
                                                :paging-url-prefix "/?from="
                                                :countFrom         (str count) :countTo (+ count 20)})))
 

@@ -759,7 +759,7 @@
 
 (deftest quick-login
   (let [user (s/create-test-user)
-        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [])]
+        swirl (s/create-swirl "website" (user :id) "Great swirls" "This is a great swirl" [])]
     (-> (session app)
 
         ; when not logged in, the page can be viewed
@@ -774,7 +774,7 @@
 
 (deftest quick-register
   (let [user (s/create-test-user)
-        swirl (s/create-swirl "generic" (user :id) "Great swirls" "This is a great swirl" [])
+        swirl (s/create-swirl "website" (user :id) "Great swirls" "This is a great swirl" [])
         consumption-verb "see"]
     (-> (session app)
 
@@ -796,7 +796,7 @@
   (let [author (s/create-test-user)
         responder (s/create-test-user)
         non-responder (s/create-test-user)
-        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
+        swirl (s/create-swirl "website" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         _ (repo/respond-to-swirl (swirl :id) "HOT" responder)]
     (-> (session app)
         (visit "/")
@@ -857,7 +857,7 @@
 (deftest firehose-can-load
   (with-faked-responses
     (let [user (s/create-test-user)
-          swirl (s/create-swirl "generic" (user :id) "The latest swirl" "This is a great swirl" [])]
+          swirl (s/create-swirl "website" (user :id) "The latest swirl" "This is a great swirl" [])]
       (-> (session app)
           (visit "/swirls")
           (follow "Next 20 swirls >")

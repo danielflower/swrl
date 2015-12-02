@@ -38,4 +38,11 @@
 </div>
 {% endif %}
 
+<datalist id="more-swirls">
+{% for swirl in more-swirls %}
+   <option data-value="{{ swirl|swirl-html }}" data-swirl-type="{{ swirl.type }}">{{ swirl.id }}</option>
+{% endfor %}
+</datalist>
+
+
 {% endif %}

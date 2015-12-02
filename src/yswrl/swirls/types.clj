@@ -67,15 +67,6 @@
                                }
                        }
 
-            "generic" {
-                       :name  "generic"
-                       :words {
-                               :watch   "see"
-                               :seen    "seen"
-                               :seen-it "seen it"
-                               }
-                       }
-
             })
 
 (defn type-of [swirl]

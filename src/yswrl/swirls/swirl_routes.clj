@@ -69,8 +69,10 @@
                                         :countFrom        (str count) :countTo (+ count 20)})))
 
 (defn view-firehose [count user]
-  (let [swirls (lookups/get-all-swirls 20 count user)]
+  (let [swirls (lookups/get-all-swirls 20 count user)
+        more-swirls (lookups/get-all-swirls 500 (+ 20 count) user)]
     (layout/render "swirls/list.html" {:title             "Swirling" :pageTitle "Swirling" :swirls swirls
+                                       :more-swirls more-swirls
                                        :paging-url-prefix "/swirls?from="
                                        :countFrom         (str count) :countTo (+ count 20)})))
 

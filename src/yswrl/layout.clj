@@ -76,6 +76,8 @@
                                       (boolean (or (= "" review)
                                                    (re-matches #"<p data\-ph=\"[^\"]+\"><\/p>" review)))))
 
+(selmer.filters/add-filter! :swirl-html (fn [swirl]
+                                          (parser/render-file "components/mini-swirl.html" {:swirl swirl})))
 
 
 (deftype RenderableTemplate [template params]
