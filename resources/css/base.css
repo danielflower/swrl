@@ -50,9 +50,6 @@ h2 {
     padding-top: 20px;
     padding-bottom: 20px;
     color: var(--swirl-blue);
-    white-space: nowrap;
-    display: block;
-
 }
 .inline {
     white-space: nowrap;
