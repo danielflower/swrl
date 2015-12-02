@@ -23,7 +23,7 @@
   (testing "are generated for the recipient whenever a swirl is recommended to them"
     (let [recipient (create-test-user)
           author (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Animals" "Yeah" [(recipient :username)])
+          swirl (create-swirl "website" (author :id) "Animals" "Yeah" [(recipient :username)])
           notes (get-for-user-email (recipient :id))
           ]
       (is (= 1 (count notes)))
@@ -37,7 +37,7 @@
   (testing "are generated for the author when someone comments or responds to a swirl they authored"
     (let [responder (create-test-user)
           author (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Something to respond to" "Yeah" [(responder :username)])
+          swirl (create-swirl "website" (author :id) "Something to respond to" "Yeah" [(responder :username)])
           _ (swirl-routes/handle-comment (swirl :id) "This is a comment" responder)
           _ (swirl-routes/handle-response (swirl :id) nil "Loved it" responder)
           notes (get-for-user-email (author :id))]
@@ -62,7 +62,7 @@
           suggested-user-that-has-seen-page (create-test-user)
           author (create-test-user)
           unrelated-bystander (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Something to respond to" "Yeah" [(suggested-user :username) (responder :username) (suggested-user-that-has-seen-page :username)])
+          swirl (create-swirl "website" (author :id) "Something to respond to" "Yeah" [(suggested-user :username) (responder :username) (suggested-user-that-has-seen-page :username)])
           _ (swirl-routes/handle-comment (swirl :id) "This is a comment" responder)
           _ (swirl-routes/handle-response (swirl :id) nil "Loved it" responder)
           _ (swirl-routes/handle-comment (swirl :id) "This is a response" author)
@@ -76,7 +76,7 @@
   (testing "a read notification is no longer returned"
     (let [recipient (create-test-user)
           author (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)])
+          swirl (create-swirl "website" (author :id) "Aready read" "Meh" [(recipient :username)])
           _ (mark-as-seen (swirl :id) recipient)
           notes (get-for-user-email (recipient :id))
           ]
@@ -87,7 +87,7 @@
     (let [recipient (create-test-user)
           responder (create-test-user)
           author (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username) (responder :username)])
+          swirl (create-swirl "website" (author :id) "Aready read" "Meh" [(recipient :username) (responder :username)])
           _ (swirl-routes/handle-response (swirl :id) nil "Loved it" responder)
           before (get-for-user-page (recipient :id))]
       (is (= 2 (unseen-notifications-count (recipient :id)) (count (filter #(nil? (% :date_seen)) before))))
@@ -97,7 +97,7 @@
   (testing "an emailed notification is no longer returned for emails, but is for the webpage"
     (let [recipient (create-test-user)
           author (create-test-user)
-          _ (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)])
+          _ (create-swirl "website" (author :id) "Aready read" "Meh" [(recipient :username)])
           _ (mark-email-sent recipient)
           for-email (get-for-user-email (recipient :id))
           for-page (get-for-user-page (recipient :id))
@@ -109,7 +109,7 @@
     (let [recipient (create-test-user)
           author (create-test-user)
           random-user (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)])
+          swirl (create-swirl "website" (author :id) "Aready read" "Meh" [(recipient :username)])
           _ (mark-as-seen (swirl :id) recipient)]
       (is (= 0 (mark-as-seen (swirl :id) random-user)))
       (is (= 0 (mark-as-seen (swirl :id) nil)))
@@ -121,7 +121,7 @@
           seen-it (create-test-user)
           been-emailed (create-test-user)
           was-emailed-ages-ago (create-test-user)
-          swirl (create-swirl "generic" (author :id) "Aready read" "Meh" [(recipient :username)
+          swirl (create-swirl "website" (author :id) "Aready read" "Meh" [(recipient :username)
                                                                           (seen-it :username)
                                                                           (been-emailed :username)
                                                                           (was-emailed-ages-ago :username)])
@@ -142,12 +142,12 @@
     (let [emailed-recently (create-test-user)
           not-emailed-recently (create-test-user)
           author (create-test-user)
-          _ (create-swirl "generic" (author :id) "Some older swirl" "Meh" [(emailed-recently :username)
+          _ (create-swirl "website" (author :id) "Some older swirl" "Meh" [(emailed-recently :username)
                                                                            (not-emailed-recently :username)])
           _ (mark-email-sent not-emailed-recently (Timestamp. 1420070400))
           _ (mark-email-sent emailed-recently)
 
-          _ (create-swirl "generic" (author :id) "Newer swirl" "Meh" [(emailed-recently :username)
+          _ (create-swirl "website" (author :id) "Newer swirl" "Meh" [(emailed-recently :username)
                                                                       (not-emailed-recently :username)])
 
           actual-list (users-with-pending-notifications)
@@ -160,12 +160,12 @@
     (let [author (create-test-user)
           recipient (create-test-user)
           another-user (create-test-user)
-          swirl1 (create-swirl "generic" (author :id) "All Day" "Meh" [(recipient :username) (another-user :username)])
+          swirl1 (create-swirl "website" (author :id) "All Day" "Meh" [(recipient :username) (another-user :username)])
           _ (swirl-routes/handle-comment (swirl1 :id) "This is a comment" another-user)
           _ (swirl-routes/handle-response (swirl1 :id) nil "Loved it" another-user)
           _ (swirl-routes/handle-comment (swirl1 :id) "This is a response" author)
           _ (notifications/add notifications/added-to-group (recipient :id) nil 1 (author :id))
-          swirl2 (create-swirl "generic" (author :id) "Feed the animals" "Meh" [(recipient :username) (another-user :username)])
+          swirl2 (create-swirl "website" (author :id) "Feed the animals" "Meh" [(recipient :username) (another-user :username)])
           html (create-notification-email-body recipient (get-for-user-email (recipient :id)))
           ]
       (is (.contains html (str "Dear " (recipient :username))) html)

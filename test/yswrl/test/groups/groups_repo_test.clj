@@ -42,7 +42,7 @@
           member (create-test-user)
           group (repo/create-group (author :id) "Exclusive" "This is a group is what it is")
           _ (repo/add-group-member (group :id) (member :id))
-          swirl (create-swirl "generic" (author :id) "This is my swirl" "And I like it" [])]
+          swirl (create-swirl "website" (author :id) "This is my swirl" "And I like it" [])]
 
       (repo/set-swirl-links (swirl :id) (author :id) [(group :id)])
       (is (= [group] (repo/get-groups-linked-to-swirl (swirl :id))))

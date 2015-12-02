@@ -14,9 +14,9 @@
         responder (s/create-test-user)
         non-responder (s/create-test-user)
         outsider (s/create-test-user)
-        swirl (s/create-swirl "generic" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
-        draft-swirl (repo/save-draft-swirl "generic" (author :id) "Animals (draft)" "What to write...." nil)
-        deleted-swirl-id (repo/delete-swirl (:id (s/create-swirl "generic" (author :id) "Gonna delete this" "I'm going to delete this" [])) (author :id))
+        swirl (s/create-swirl "website" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
+        draft-swirl (repo/save-draft-swirl "website" (author :id) "Animals (draft)" "What to write...." nil)
+        deleted-swirl-id (repo/delete-swirl (:id (s/create-swirl "website" (author :id) "Gonna delete this" "I'm going to delete this" [])) (author :id))
         _ (repo/respond-to-swirl (swirl :id) "Loved it" responder)]
 
     (testing "Responses can be gotten and changed"
@@ -60,7 +60,7 @@
             sugesstee (s/create-test-user)
             unrelated-user (s/create-test-user)
             group (group-repo/create-group (author :id) "Group for private swirl" "This group has a private swirl")
-            swirl (s/create-swirl "generic" (author :id) "Private swirl" "This is private" [(sugesstee :username)] :is-private? true)
+            swirl (s/create-swirl "website" (author :id) "Private swirl" "This is private" [(sugesstee :username)] :is-private? true)
             swirl-id (:id swirl)
             group-member (s/create-test-user)
             ]

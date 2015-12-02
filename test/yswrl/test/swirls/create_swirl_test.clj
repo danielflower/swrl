@@ -13,7 +13,7 @@
     (testing "A user can create a swirl and selected users will be included"
       (let [
             unregistered-user-email (str "jondoe" (System/currentTimeMillis) "@example.org")
-            created (create-swirl "generic" (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) unregistered-user-email])
+            created (create-swirl "website" (author :id) "Some thing" "Boz it's really <b>great</b>.", [(friend :username) unregistered-user-email])
             retrieved (lookups/get-swirl (created :id))]
         (is (= (retrieved :title) "Some thing"))
         (is (= (retrieved :review) "Boz it's really <b>great</b>."))
@@ -26,7 +26,7 @@
         ))
 
     (testing "Adding the same users again causes no issues"
-      (create-swirl "generic" (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"])
-      (create-swirl "generic" (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"]))
+      (create-swirl "website" (author :id) "Thing 1" "I'm thing 1", [(friend :username) "someoneelse@example.org"])
+      (create-swirl "website" (author :id) "Thing 2" "And this is thing 2", [(friend :username) "someoneelse@example.org"]))
 
     ))
