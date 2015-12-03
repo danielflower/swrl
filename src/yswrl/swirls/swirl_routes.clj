@@ -59,12 +59,14 @@
     (layout/render "swirls/delete.html" {:swirl swirl})))
 
 (defn view-inbox [count current-user]
-  (let [swirls (lookups/get-swirls-awaiting-response current-user 2000 count)
+  (let [swirls (lookups/get-swirls-awaiting-response current-user 20 count)
+        more-swirls (lookups/get-swirls-awaiting-response current-user 2000 (+ count 20))
         responses (lookups/get-response-count-for-user (:id current-user))
         has-inbox-items? (not (empty? swirls))
         has-responses? (not (empty? responses))
         nothing-to-show? (and (not has-inbox-items?) (not has-responses?))]
     (layout/render "swirls/inbox.html" {:title            "Swirl Inbox" :swirls swirls :responses responses
+                                        :more-swirls more-swirls
                                         :has-inbox-items? has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
                                         :countFrom        (str count) :countTo (+ count 20)})))
 

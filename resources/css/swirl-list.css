@@ -42,23 +42,32 @@
     box-shadow:0 2px 2px rgba(0,0,0,0.2);
 }
 
-.mini-swirl .mini-swirl__dismiss{
+.mini-swirl .mini-swirl__later{
     position: absolute;
-    width: 10px;
-    height: 10px;
     top: 0;
-    right: 40px;
+    right: 29px;
     text-align: right;
     center-align: right;
-}
-.mini-swirl .mini-swirl__dismiss button {
-    font-size: 1em;
+    color: var(--swirl-blue);
 }
 
-.mini-swirl .mini-swirl__dismiss button:hover {
-    background-color: #FF0000;
-    color: #FFFFFF;
+.mini-swirl .mini-swirl__later i:hover {
+    color: var(--swirl-blue-darker);
 }
+
+.mini-swirl .mini-swirl__dismiss{
+    position: absolute;
+    top: 0;
+    right: 2px;
+    text-align: right;
+    center-align: right;
+    color: #FF0000;
+}
+
+.mini-swirl .mini-swirl__dismiss i:hover {
+    color: var(--swirl-blue);
+}
+
 .mini-swirl .mini-swirl__link{
     text-decoration: none;
     display: flex;

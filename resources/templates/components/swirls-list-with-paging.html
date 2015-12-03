@@ -19,13 +19,13 @@
     <button data-swirl-type="website" class="website">Links</button>
 </div>
 
-<div class="swirl-list">
+<div class="swirl-list" id="swirl-list">
     {% for swirl in swirls %}
     {% include "components/mini-swirl.html" with swirl=swirl %}
     {% endfor %}
 </div>
 
-{% if paging-url-prefix %}
+{% if more-swirls|not-empty %}
 <div class="paging">
     <button class="previous-swirls">&lt; Previous 20 Swirls</button>
     <button class="next-swirls">Next 20 Swirls &gt;</button>
