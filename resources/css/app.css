@@ -215,11 +215,13 @@ article{
     color: #ffbf00;
 }
 
-
-
 .paging {
-    text-align: right;
+    text-align: center;
     margin: 20px 0;
+}
+
+.paging button {
+    width: 150px;
 }
 
 .private-swirl-message {

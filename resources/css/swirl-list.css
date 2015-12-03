@@ -145,3 +145,7 @@
     border-bottom-color: #F1F1F1;
     color: #989898;
 }
+
+.no-touch .paging button:hover {
+    background-color: var(--swirl-blue);
+}
