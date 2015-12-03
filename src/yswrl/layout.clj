@@ -17,6 +17,7 @@
 
 (def response-icons {
                      "loved it"   "fa-heart"
+                     "dismissed"  "fa-times"
                      "meh"        "fa-meh-o"
                      "not bad"    "fa-meh-o"
                      "ha"         "fa-smile-o"

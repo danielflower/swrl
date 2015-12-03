@@ -1328,6 +1328,12 @@ module.exports = { init: init };
 },{"./http.js":10}],13:[function(require,module,exports){
 'use strict';
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _httpJs = require('./http.js');
+
+var _httpJs2 = _interopRequireDefault(_httpJs);
+
 var currentFilter = null;
 var chosenSwirlType = null;
 var currentPagingNumber = 0;
@@ -1462,10 +1468,24 @@ function init($) {
             }
         }
     });
+
+    $('button.dismiss-button').click(function (b) {
+        var swirlElement = b.target.parentNode.parentNode;
+        var swirlID = swirlElement.getAttribute('id');
+        console.log(swirlID);
+        _httpJs2['default'].post('/swirls/' + swirlID + '/respond', { responseButton: 'dismissed' }).then(function () {
+            $(swirlElement).remove();
+            var nextSwirlOption = document.querySelectorAll('#more-swirls option')[0];
+            var nextSwirlHTML = nextSwirlOption.getAttribute('data-value');
+            var swirlList = document.getElementsByClassName('swirl-list')[0];
+            $(swirlList).append(nextSwirlHTML);
+            $(nextSwirlOption).remove();
+        });
+    });
 }
 
 module.exports = {
     init: init
 };
 
-},{}]},{},[4]);
+},{"./http.js":10}]},{},[4]);

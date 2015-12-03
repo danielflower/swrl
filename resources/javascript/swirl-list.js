@@ -1,3 +1,5 @@
+import http from './http.js';
+
 var currentFilter = null;
 var chosenSwirlType = null;
 var currentPagingNumber = 0;
@@ -132,6 +134,20 @@ function init($) {
              }
          }
     })
+
+    $('button.dismiss-button').click((b) => {
+         var swirlElement = b.target.parentNode.parentNode;
+         var swirlID = swirlElement.getAttribute('id');
+         console.log(swirlID);
+         http.post('/swirls/' + swirlID + '/respond', {responseButton: 'dismissed'}).then(() => {
+             $(swirlElement).remove();
+             var nextSwirlOption = document.querySelectorAll('#more-swirls option')[0];
+             var nextSwirlHTML = nextSwirlOption.getAttribute('data-value');
+             var swirlList = document.getElementsByClassName('swirl-list')[0];
+             $(swirlList).append(nextSwirlHTML);
+             $(nextSwirlOption).remove();
+         });
+    });
 }
 
 

@@ -10,6 +10,9 @@
             <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
         </div>
     </div>
+    <div class="mini-swirl__dismiss">
+        <button class="dismiss-button">X</button>
+    </div>
     <div class="author-bit">
 
         <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.email_md5|gravatar-img:25 }} {{swirl.username}}</a>
