@@ -53,6 +53,7 @@
 
 .mini-swirl .mini-swirl__later i:hover {
     color: var(--swirl-blue-darker);
+    cursor: hand;
 }
 
 .mini-swirl .mini-swirl__dismiss{

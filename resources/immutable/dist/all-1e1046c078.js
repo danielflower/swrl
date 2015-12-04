@@ -1395,22 +1395,20 @@ var respondAndRemove = function respondAndRemove(element, response) {
     var swirlElement = $(element)[0].parentNode.parentNode;
     var swirlID = swirlElement.getAttribute('id');
     var wasAdded = $(swirlElement).hasClass('added');
-    _httpJs2['default'].post('/swirls/' + swirlID + '/respond', { responseButton: response }).then(function () {
-        $(swirlElement).remove();
-        var nextSwirlOption = document.querySelectorAll('#more-swirls option')[0];
-        if (nextSwirlOption != null) {
-            var nextSwirlID = nextSwirlOption.innerText;
-            var nextSwirlHTML = nextSwirlOption.getAttribute('data-value');
-            var swirlList = document.getElementById('swirl-list');
-            $(swirlList).append(nextSwirlHTML);
-            if (wasAdded) {
-                // then the Swirl it is replacing was added and we should mark the new Swirl as 'added' too
-                $(document.getElementById(nextSwirlID)).addClass('added'); //FIXME: This isn't working and I don't know why
-            }
+    $(swirlElement).remove();
+    var nextSwirlOption = document.querySelectorAll('#more-swirls option')[0];
+    if (nextSwirlOption != null) {
+        var nextSwirlID = nextSwirlOption.innerText;
+        var nextSwirlHTML = nextSwirlOption.getAttribute('data-value');
+        var swirlList = document.getElementById('swirl-list');
+        $(swirlList).append(nextSwirlHTML);
+        if (wasAdded) {
+            // then the Swirl it is replacing was added and we should mark the new Swirl as 'added' too
+            $(document.getElementById(nextSwirlID)).addClass('added'); //FIXME: This isn't working and I don't know why
         }
-
         $(nextSwirlOption).remove();
-    });
+    }
+    _httpJs2['default'].post('/swirls/' + swirlID + '/respond', { responseButton: response });
 };
 
 function init($) {
