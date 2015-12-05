@@ -5,8 +5,6 @@
     [compojure.core :refer [defroutes context GET POST]]
     [yswrl.swirls.swirl-routes :as swirl-routes]))
 
-
-
 (defroutes swirl-rest-routes
            (context "/api/v1/swirls" []
              (defroutes swirl-rest-routes-erm

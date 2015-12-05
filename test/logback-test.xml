@@ -1,4 +1,4 @@
-<configuration scan="true" scanPeriod="10 seconds">
+<configuration scan="true" scanPeriod="10 seconds" debug="false">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -9,7 +9,7 @@
     <!-- Shut up, connection pool -->
     <logger name="com.mchange.v2" level="WARN"/>
 
-    <root level="ERROR">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
