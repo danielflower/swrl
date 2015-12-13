@@ -160,7 +160,7 @@ function init($) {
     })
 
     $('#swirl-list').on('click', 'i.dismiss-button', function(){
-        respondAndRemove(this, 'Dismissed');
+        respondAndRemove(this, 'Not for me');
     });
 
     $('#swirl-list').on('click', 'i.later-button', function(){
