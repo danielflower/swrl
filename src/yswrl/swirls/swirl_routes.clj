@@ -21,6 +21,8 @@
 #_(def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
 (def seen-responses ["Loved it", "Not bad", "Not for me"])
 
+(defn should-notify-users-of-response [response]
+  (not (some #{(clojure.string/lower-case response)} #{"dismissed" "later" "not for me"})))
 
 
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit?]
@@ -145,7 +147,7 @@
                                       :external-website-link    external-website-link
                                       :type                     type
                                       :is-author                is-author
-                                      :responses                responses
+                                      :responses                (filter #(should-notify-users-of-response (% :summary)) responses)
                                       :comments                 comments
                                       :max-comment-id           max-comment-id
                                       :can-respond              can-respond
@@ -167,9 +169,6 @@
       (redirect (links/user (author :username))))))
 
 (defn session-from [req] (:user (:session req)))
-
-(defn should-notify-users-of-response [response]
-  (not (some #{(clojure.string/lower-case response)} #{"dismissed" "later" "not for me"})))
 
 (defn handle-response [swirl-id response-button custom-response responder]
   (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
