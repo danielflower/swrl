@@ -168,11 +168,15 @@
 
 (defn session-from [req] (:user (:session req)))
 
+(defn should-notify-users-of-response [response]
+  (not (some #{(clojure.string/lower-case response)} #{"dismissed" "later" "not for me"})))
+
 (defn handle-response [swirl-id response-button custom-response responder]
   (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
-      (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary)
+      (if (should-notify-users-of-response summary)
+        (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))
       (redirect (yswrl.links/swirl swirl-id)))))
 
 (defn handle-comment [swirl-id comment-content commentor]
