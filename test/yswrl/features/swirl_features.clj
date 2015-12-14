@@ -201,7 +201,7 @@
 
         (visit (links/inbox))
         (follow "see what's Swirling")
-        (within [:h1] (has (text? "Swirling")))
+        (within [:h1] (has (text? "Discover")))
 
         )))
 

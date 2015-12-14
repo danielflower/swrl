@@ -40,8 +40,6 @@
                       [lein-ancient "0.6.5"]
                       [lein-midje "3.1.3"]]
 
-            :test-refresh {:quiet true}
-
             :ring {:handler      yswrl.handler/app
                    :init         yswrl.handler/init
                    :destroy      yswrl.handler/destroy

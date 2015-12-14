@@ -13,7 +13,7 @@
         key (System/getenv env-var-name)]
     (if (clojure.string/blank? key)
       (do
-        (log/warn "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
+        (log/info "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
         nil)
       key)))
 

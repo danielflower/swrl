@@ -7,16 +7,20 @@
 
 
 (defn home-page [count user]
-  (if (nil? user)
-    (layout/render "home/home-not-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count nil)
-                                                   :more-swirls       (lookups/get-all-swirls 500 (+ 20 count) nil)
+  (let [max-swirls-to-get 500
+        swirls-per-page 20]
+    (if (nil? user)
+      (let [swirls (lookups/get-all-swirls max-swirls-to-get count nil)]
+        (layout/render "home/home-not-logged-in.html" {:swirls            (take swirls-per-page swirls)
+                                                       :more-swirls       (nthrest swirls swirls-per-page)
+                                                       :paging-url-prefix "/?from="
+                                                       :return-url        "/"
+                                                       :countFrom         (str count) :countTo (+ count swirls-per-page)}))
+      (let [swirls (lookups/get-all-swirls-not-responded-to max-swirls-to-get count user)]
+        (layout/render "home/home-logged-in.html" {:swirls            (take swirls-per-page swirls)
+                                                   :more-swirls       (nthrest swirls swirls-per-page)
                                                    :paging-url-prefix "/?from="
-                                                   :return-url        "/"
-                                                   :countFrom         (str count) :countTo (+ count 20)})
-    (layout/render "home/home-logged-in.html" {:swirls            (lookups/get-all-swirls 20 count user)
-                                               :more-swirls       (lookups/get-all-swirls 500 (+ 20 count) nil)
-                                               :paging-url-prefix "/?from="
-                                               :countFrom         (str count) :countTo (+ count 20)})))
+                                                   :countFrom         (str count) :countTo (+ count swirls-per-page)})))))
 
 (defn bookmarklet []
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))
