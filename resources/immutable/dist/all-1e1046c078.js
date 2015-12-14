@@ -1494,7 +1494,7 @@ function init($) {
     });
 
     $('#swirl-list').on('click', 'i.dismiss-button', function () {
-        respondAndRemove(this, 'Not for me');
+        respondAndRemove(this, 'Dismissed');
     });
 
     $('#swirl-list').on('click', 'i.later-button', function () {
