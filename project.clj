@@ -22,7 +22,7 @@
                            [bouncer "0.3.3"]
                            [prone "0.8.2"]
                            [buddy "0.5.2"]
-                           [ragtime "0.3.8"]
+                           [ragtime "0.5.2"]
                            [org.clojure/data.zip "0.1.1"]
                            [org.clojure/data.xml "0.0.8"]
                            [org.postgresql/postgresql "9.3-1102-jdbc41"]
@@ -38,8 +38,6 @@
             :plugins [[lein-ring "0.9.1"]
                       [lein-environ "1.0.0"]
                       [lein-ancient "0.6.5"]
-                      [com.jakemccrary/lein-test-refresh "0.9.0"]
-                      [ragtime/ragtime.lein "0.3.8"]
                       [lein-midje "3.1.3"]]
 
             :test-refresh {:quiet true}
@@ -48,12 +46,6 @@
                    :init         yswrl.handler/init
                    :destroy      yswrl.handler/destroy
                    :uberwar-name "yswrl.war"}
-
-            :ragtime
-            {:migrations ragtime.sql.files/migrations
-             :database   (or (System/getenv "JDBC_DATABASE_URL") "jdbc:postgresql://localhost/yswrl?user=dev&password=password")}
-
-
 
             :profiles {:uberjar        {:omit-source true
                                         :env         {:production true}

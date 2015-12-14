@@ -1,5 +1,7 @@
 (ns yswrl.db
   (:require [clojure.set :refer [rename-keys]]
+            [ragtime.jdbc :as raggy]
+            [ragtime.repl :as repl]
             [korma.core
              :refer [defentity database prepare transform table exec-raw
                      insert values where join fields set-fields select raw modifier]]))
@@ -19,8 +21,18 @@
      :db       db
      }))
 
-
 (defdb db (postgres (convert-db-uri db-uri)))
+
+(defn ragtime-config []
+  (let [db (convert-db-uri db-uri)
+        resources-with-wrong-ids-on-windows (raggy/load-resources "migrations")]
+    {:datastore  (raggy/sql-database {:connection-uri (str "jdbc:postgresql://" (db :host) ":" (db :port) "/" (db :db) "?user=" (db :user) "&password=" (db :password))})
+     :migrations (map (fn [m] (raggy/sql-migration {:id (clojure.string/replace (:id m) #".*/" "") :down (:down m) :up (:up m)})) resources-with-wrong-ids-on-windows)}))
+
+(defn update-db []
+    (repl/migrate (ragtime-config)))
+(defn rollback-db []
+  (repl/rollback (ragtime-config)))
 
 (defentity users (database db))
 

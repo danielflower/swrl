@@ -50,6 +50,10 @@
    put any initialization code here"
   []
 
+
+  (log/info "Running DB migration")
+  (yswrl.db/update-db)
+  (log/info "DB migration complete")
   (if (env :dev) (parser/cache-off!))
   (log/info "-=[ yswrl started successfully"
             (when (env :dev) "using the development profile") "]=-"))

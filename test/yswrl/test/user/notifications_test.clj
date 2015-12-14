@@ -73,6 +73,22 @@
       (is (= [] (notification-types-for suggested-user-that-has-seen-page)))
       (is (= [recommendation new-comment] (notification-types-for responder)))))
 
+  (testing "are not sent for certain responses such as Dismissed or Later"
+    (let [responder (create-test-user)
+          suggested-user (create-test-user)
+          suggested-user-that-has-seen-page (create-test-user)
+          author (create-test-user)
+          unrelated-bystander (create-test-user)
+          swirl (create-swirl "website" (author :id) "Something to respond to" "Yeah" [(suggested-user :username) (responder :username) (suggested-user-that-has-seen-page :username)])
+          _ (swirl-routes/handle-response (swirl :id) nil "Dismissed" responder)
+          _ (swirl-routes/handle-response (swirl :id) nil "Later" responder)
+          _ (swirl-routes/handle-response (swirl :id) nil "Not for me" responder)]
+      (is (= [recommendation] (notification-types-for suggested-user)) "user added by author should just see notification")
+      (is (= [] (notification-types-for author)) "Author should have no notifications")
+      (is (= [] (notification-types-for unrelated-bystander)) "unrelated people should have no notifications")
+      (is (= [recommendation] (notification-types-for responder))) "the responder should have something... what?"))
+
+
   (testing "a read notification is no longer returned"
     (let [recipient (create-test-user)
           author (create-test-user)

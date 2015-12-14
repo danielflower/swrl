@@ -43,11 +43,7 @@ To run postgres:
 
     "pg_ctl" -D "D:\apps\pgsql\data" -l logfile start
 
-To update the database:
-
-    lein ragtime migrate
-
-Note: you can use IntelliJ as a GUI for postgres.
+The database gets upgraded every time you run the web server.
 
 To start a web server for the application, run:
 

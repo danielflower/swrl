@@ -21,6 +21,8 @@
 #_(def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
 (def seen-responses ["Loved it", "Not bad", "Not for me"])
 
+(defn should-notify-users-of-response [response]
+  (not (some #{(clojure.string/lower-case response)} #{"dismissed" "later" "not for me"})))
 
 
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit?]
@@ -145,7 +147,7 @@
                                       :external-website-link    external-website-link
                                       :type                     type
                                       :is-author                is-author
-                                      :responses                responses
+                                      :responses                (filter #(should-notify-users-of-response (% :summary)) responses)
                                       :comments                 comments
                                       :max-comment-id           max-comment-id
                                       :can-respond              can-respond
@@ -172,7 +174,8 @@
   (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
-      (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary)
+      (if (should-notify-users-of-response summary)
+        (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))
       (redirect (yswrl.links/swirl swirl-id)))))
 
 (defn handle-comment [swirl-id comment-content commentor]

@@ -29,13 +29,11 @@
     )
 
   (testing "Getting unrelated-users"
-    (let [sum_users (:count (db/query-single "select count(*) from users"))
-          skip (let [skip (- sum_users 50)] (if (neg? skip) 0 skip))
-          bob (create-test-user)
+    (let [bob (create-test-user)
           user-bob-knows (create-test-user)
           user-bob-doesnt-know (create-test-user)
           _ (networking/store (bob :id) :knows (user-bob-knows :id))
-          unrelated-users (networking/get-unrelated-users (bob :id) 100 skip)]
+          unrelated-users (networking/get-unrelated-users (bob :id) Long/MAX_VALUE 0)]
 
       (is (some #{user-bob-doesnt-know}
                 unrelated-users))
