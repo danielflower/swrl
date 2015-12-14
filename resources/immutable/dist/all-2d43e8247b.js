@@ -826,6 +826,7 @@ $(document).ready(function () {
     $('.expand-toggle-button').click(function (e, i) {
         var content = $(e.currentTarget).closest('.expansion-area').find('.expansion-content');
         content.toggle(250);
+        $(e.currentTarget).toggleClass('expanded');
     });
 
     document.documentElement.className += 'ontouchstart' in document.documentElement ? ' touch' : ' no-touch';
@@ -1413,7 +1414,7 @@ var respondAndRemove = function respondAndRemove(element, response) {
 
 function init($) {
     $('button.previous-swirls').hide();
-    $('.type-filter button').click(function (b) {
+    $('.type-filter button:NOT(.expand-toggle-button)').click(function (b) {
         restoreToInitialState(); // restore paging back to first page
         chosenSwirlType = b.target.getAttribute('data-swirl-type');
         if (currentFilter == null || currentFilter !== b.target) {

@@ -234,6 +234,15 @@ article{
     border: 0;
     color: White;
     font-size: larger;
+    text-align: left;
+}
+button.expand-toggle-button::before {
+    content: "+ ";
+    font-size: larger;
+}
+button.expand-toggle-button.expanded::before {
+    content: "- ";
+    font-size: larger;
 }
 
 .expansion-content {

@@ -79,7 +79,7 @@ var respondAndRemove = function (element, response){
 
 function init($) {
     $('button.previous-swirls').hide();
-    $('.type-filter button').click((b) => {
+    $('.type-filter button:NOT(.expand-toggle-button)').click((b) => {
         restoreToInitialState(); // restore paging back to first page
         chosenSwirlType = b.target.getAttribute('data-swirl-type');
         if (currentFilter == null || currentFilter !== b.target) {
