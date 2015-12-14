@@ -87,6 +87,7 @@
 (defn get-all-swirls-not-responded-to [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
       (where {:swirls.id [not-in (subselect db/swirl-responses (fields :swirl_id) (where {:responder (requestor :id)}))]})
+      (where {:author_id [not= (requestor :id)]})
       (select)))
 
 (defn get-swirls-awaiting-response-count [requestor]
