@@ -10,12 +10,12 @@
             <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
         </div>
     </div>
-    <div class="mini-swirl__later">
-        <i class="fa fa-clock-o fa-2x later-button"></i>
+    {% if user %}
+    <div class="mini-swirl__action-buttons">
+           <i class="fa fa-clock-o fa-2x later-button"></i>
+           <i class="fa fa-times-circle fa-2x dismiss-button"></i>
     </div>
-    <div class="mini-swirl__dismiss">
-        <i class="fa fa-times-circle fa-2x dismiss-button"></i>
-    </div>
+    {% endif %}
     <div class="author-bit">
 
         <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.email_md5|gravatar-img:25 }} {{swirl.username}}</a>
