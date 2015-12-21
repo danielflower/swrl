@@ -8,6 +8,9 @@
 (defroutes swirl-rest-routes
            (context "/api/v1/swirls" []
              (defroutes swirl-rest-routes-erm
+
+                        (swirl-routes/get-swirls-by-id)
+
                         (GET "/:id{[0-9]+}/comments" [id comment-id-start :as req]
                           (swirl-routes/get-html-of-comments-since
                             (swirl-routes/session-from req)

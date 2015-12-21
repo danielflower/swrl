@@ -5,8 +5,11 @@
 
 <p>
     To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
-    or <a href="/">see what's Swirling</a> to see what other people are recommending.
+    or <a href="/">see what's Swirling</a> or see the swirls you <a href="/swirls/inbox/later">see the swirls you saved for later</a>.
 </p>
+
+
+
 {% else %}
 
 <div class="type-filter">
@@ -23,20 +26,15 @@
     {% for swirl in swirls %}
     {% include "components/mini-swirl.html" with swirl=swirl %}
     {% endfor %}
+
+    <span class="swirl-insertion-point"></span>
 </div>
 
 {% if more-swirls|not-empty %}
 <div class="paging">
-    <button class="previous-swirls">&lt; Previous 20 Swirls</button>
-    <button class="next-swirls">Next 20 Swirls &gt;</button>
+    <a href="{{paging-url-prefix}}{{countTo}}" class="button more-swirls-button" data-ids="{{more-swirls}}"
+       data-url-prefix="{{paging-url-prefix}}" data-per-page="{{swirls-per-page}}" data-num-loads="0">View more</a>
 </div>
 {% endif %}
-
-<datalist id="more-swirls">
-{% for swirl in more-swirls %}
-   <option data-value="{{ swirl|swirl-html }}" data-swirl-type="{{ swirl.type }}">{{ swirl.id }}</option>
-{% endfor %}
-</datalist>
-
 
 {% endif %}

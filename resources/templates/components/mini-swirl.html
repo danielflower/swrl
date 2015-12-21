@@ -5,19 +5,17 @@
                 <div class="swirl-type">{{ swirl.type }}</div>
             </div>
         </a>
-
         <div class="mini-swirl__content">
             <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
         </div>
     </div>
     {% if user %}
     <div class="mini-swirl__action-buttons">
-           <i class="fa fa-clock-o fa-2x later-button"></i>
-           <i class="fa fa-times-circle fa-2x dismiss-button"></i>
+           <i class="fa fa-clock-o fa-2x later-button" title="Save for later"></i>
+           <i class="fa fa-times-circle fa-2x dismiss-button" title="Dismiss"></i>
     </div>
     {% endif %}
     <div class="author-bit">
-
         <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.email_md5|gravatar-img:25 }} {{swirl.username}}</a>
         {{swirl.creation_date|timetag}}
     </div>

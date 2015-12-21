@@ -15,6 +15,7 @@
             [yswrl.user.notifications :as notifications]
             [yswrl.swirls.swirl-links :as link-types]
             [yswrl.utils :as utils]
+            [clojure.string :refer [join]]
             [yswrl.groups.groups-repo :as group-repo])
   (:import (java.util UUID)))
 
@@ -61,24 +62,29 @@
     (layout/render "swirls/delete.html" {:swirl swirl})))
 
 (defn view-inbox [count current-user]
-  (let [swirls (lookups/get-swirls-awaiting-response current-user 20 count)
-        more-swirls (lookups/get-swirls-awaiting-response current-user 2000 (+ count 20))
+  (let [swirls-per-page 20
+        swirls (lookups/get-swirls-awaiting-response current-user 200 count)
         responses (lookups/get-response-count-for-user (:id current-user))
         has-inbox-items? (not (empty? swirls))
         has-responses? (not (empty? responses))
         nothing-to-show? (and (not has-inbox-items?) (not has-responses?))]
     (layout/render "swirls/inbox.html" {:title            "Swirl Inbox" :swirls swirls :responses responses
-                                        :more-swirls more-swirls
+                                        :more-swirls      (join "," (map :id (nthrest swirls swirls-per-page)))
                                         :has-inbox-items? has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
-                                        :countFrom        (str count) :countTo (+ count 20)})))
+                                        :paging-url-prefix "/swirls/inbox?from="
+                                        :swirls-per-page  swirls-per-page
+                                        :countFrom        (str count)
+                                        :countTo          (+ count swirls-per-page)})))
 
 (defn view-firehose [count user]
-  (let [swirls (lookups/get-all-swirls 20 count user)
-        more-swirls (lookups/get-all-swirls 500 (+ 20 count) user)]
+  (let [swirls-per-page 20
+        swirls (lookups/get-all-swirls 200 count user)]
     (layout/render "swirls/list.html" {:title             "Swirling" :pageTitle "Swirling" :swirls swirls
-                                       :more-swirls more-swirls
+                                       :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
                                        :paging-url-prefix "/swirls?from="
-                                       :countFrom         (str count) :countTo (+ count 20)})))
+                                       :swirls-per-page   swirls-per-page
+                                       :countFrom         (str count)
+                                       :countTo           (+ count swirls-per-page)})))
 
 
 (defn view-inbox-by-response [count current-user submitted-response]
@@ -233,6 +239,13 @@
 
 (defn numberise [strings]
   (map #(Long/parseLong % 10) strings))
+
+(defn get-swirls-by-id []
+  (GET "/" [swirl-list :as req]
+    (let [ids (map #(Long/parseLong %) (clojure.string/split swirl-list #","))
+          swirls (lookups/get-swirls-by-id ids (session-from req))]
+      (layout/render "swirls/swirl-list-for-rest-api.html"
+                                              {:swirls swirls}))))
 
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private edit :as req]

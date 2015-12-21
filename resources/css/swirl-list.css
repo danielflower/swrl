@@ -168,3 +168,9 @@
 .no-touch .paging button:hover {
     background-color: var(--swirl-blue);
 }
+
+.pending-to-appear {
+    opacity: 0.0;
+    transition-property: opacity;
+    transition-duration: 1s;
+}

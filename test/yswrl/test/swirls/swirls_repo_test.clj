@@ -15,6 +15,7 @@
         non-responder (s/create-test-user)
         outsider (s/create-test-user)
         swirl (s/create-swirl "website" (author :id) "Animals" "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
+        another-swirl (s/create-swirl "website" (author :id) "Yeah" "Animals" [])
         draft-swirl (repo/save-draft-swirl "website" (author :id) "Animals (draft)" "What to write...." nil)
         deleted-swirl-id (repo/delete-swirl (:id (s/create-swirl "website" (author :id) "Gonna delete this" "I'm going to delete this" [])) (author :id))
         _ (repo/respond-to-swirl (swirl :id) "Loved it" responder)]
@@ -112,6 +113,16 @@
         (let [results (lookups/get-swirls-awaiting-response responder 100 0)]
           (is (= 0 (count results)))
           )))
+
+    (testing "get-swirls-by-id"
+      (testing "gets swirls that the user is allowed to see in the order created"
+        (is (= [(another-swirl :id) (swirl :id)]
+               (map :id (lookups/get-swirls-by-id [(draft-swirl :id) (another-swirl :id) deleted-swirl-id (swirl :id)] non-responder))))
+        (is (= [(another-swirl :id) (swirl :id)]
+               (map :id (lookups/get-swirls-by-id [(swirl :id) (another-swirl :id)] non-responder)))))
+
+      (testing "ignores-invalid-swirls"
+        (is (= 0 (count (lookups/get-swirls-by-id [1000000 1000001] responder))))))
 
     (testing "get-swirls-by-response"
       (testing "returns an empty list if there are no responses for that user"

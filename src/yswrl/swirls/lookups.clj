@@ -1,10 +1,7 @@
 (ns yswrl.swirls.lookups
   (:require [yswrl.db :as db]
             [yswrl.swirls.swirl-states :as states]
-            [korma.core
-             :refer [select* limit subselect offset order
-                     aggregate defentity database prepare transform table exec-raw
-                     insert values where join fields set-fields select raw modifier]]))
+            [korma.core :refer :all]))
 (use 'korma.db)
 
 
@@ -28,12 +25,12 @@
       (where query anon-allowed)
 
       ; for logged in users, one of the following:
-      (where query (or anon-allowed ; anon users can see it, or...
-                       {:author_id (requestor :id)} ; the user is the author, or ...
-                       {:is_private true ; it's a private swirl but the current user is one of the suggestees. or...
+      (where query (or anon-allowed                         ; anon users can see it, or...
+                       {:author_id (requestor :id)}         ; the user is the author, or ...
+                       {:is_private true                    ; it's a private swirl but the current user is one of the suggestees. or...
                         :state      states/live
-                        :id         [in (subselect db/suggestions (fields :swirl_id) (where { :swirl_id :swirls.id :recipient_id (requestor :id)}))]}
-                       {:is_private true ; it's a private swirl but it's associated with a group the user is a part of
+                        :id         [in (subselect db/suggestions (fields :swirl_id) (where {:swirl_id :swirls.id :recipient_id (requestor :id)}))]}
+                       {:is_private true                    ; it's a private swirl but it's associated with a group the user is a part of
                         :state      states/live
                         :id         [in (subselect db/group-swirl-links
                                                    (fields :group_swirl_links.swirl_id)
@@ -71,6 +68,12 @@
 
 (defn get-all-swirls [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
+      (select)))
+
+
+(defn get-swirls-by-id [ids requestor]
+  (-> (select-multiple-swirls requestor 100 0)
+      (where {:swirls.id [in ids]})
       (select)))
 
 (defn get-swirls-authored-by [author-id requestor]

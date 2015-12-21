@@ -1,169 +1,98 @@
 import http from './http.js';
 
 var currentFilter = null;
-var chosenSwirlType = null;
-var currentPagingNumber = 0;
-var indexesFetchedFromPaging = [];
-var lastIndexFetchedFromFilter = null;
-var p1IndexFetched = null;
-var p2IndexFetched = null;
 
-var scrollToTop = function () {
-    $('html, body').animate({ scrollTop: $("#page-title").offset().top }, 'fast');
-};
 
-var hideSwirls = function (button) {
-    var swirlType = button.getAttribute('data-swirl-type');
-    $(button).toggleClass('hidden', true);
-    $('.mini-swirl.' + swirlType).hide();
-    $('.mini-swirl.' + swirlType).addClass('hidden');
-};
 
-var fillInHiddenSwirls = function (chosenSwirlType, start) {
-    var nextSwirlOptions = document.querySelectorAll('#more-swirls option');
-    var allSwirlsCount = document.getElementsByClassName('mini-swirl').length;
-    var hiddenCount = document.getElementsByClassName('mini-swirl hidden').length;
-    var missingCount = 20 - allSwirlsCount + hiddenCount;
-    var swirlList = document.getElementById('swirl-list');
 
-    for(var i = start; i < nextSwirlOptions.length; i++) {
-        if(missingCount === 0){
-            break;
+
+var respondAndRemove = function (element, response) {
+    var swirlElement = $(element)[0].parentNode.parentNode;
+    var swirlID = swirlElement.getAttribute('id');
+    var wasAdded = $(swirlElement).hasClass('added');
+    $(swirlElement).remove();
+    var nextSwirlOption = document.querySelectorAll('#more-swirls option')[0];
+    if (nextSwirlOption != null) {
+        var nextSwirlID = nextSwirlOption.innerText;
+        var nextSwirlHTML = nextSwirlOption.getAttribute('data-value');
+        var swirlList = document.getElementById('swirl-list');
+        $(swirlList).append(nextSwirlHTML);
+        if (wasAdded) {
+            // then the Swirl it is replacing was added and we should mark the new Swirl as 'added' too
+            $(document.getElementById(nextSwirlID)).addClass('added'); //FIXME: This isn't working and I don't know why
         }
-        var option = nextSwirlOptions[i];
-        if(chosenSwirlType === 'all' || option.getAttribute('data-swirl-type') === chosenSwirlType){
-            var nextSwirlHTML = option.getAttribute('data-value');
-            var nextSwirlID = option.innerText;
-            $(swirlList).append(nextSwirlHTML);
-            var swirlAdded = document.getElementById(nextSwirlID);
-            $(swirlAdded).addClass('added');
-            lastIndexFetchedFromFilter = i;
-            missingCount--;
-        }
+        $(nextSwirlOption).remove();
     }
-}
+    http.post('/swirls/' + swirlID + '/respond', {responseButton: response});
+};
 
-var removeAddedSwirls = function (){
-    $('.mini-swirl.added').remove();
-}
-
-var restoreToInitialState = function(){
-    removeAddedSwirls();
-    $('.mini-swirl').show();
-    $('.mini-swirl').removeClass('hidden');
-    currentPagingNumber = 0;
-    lastIndexFetchedFromFilter = null;
-    indexesFetchedFromPaging = [];
-    $('button.previous-swirls').hide();
-}
-
-var respondAndRemove = function (element, response){
-     var swirlElement = $(element)[0].parentNode.parentNode;
-     var swirlID = swirlElement.getAttribute('id');
-     var wasAdded = $(swirlElement).hasClass('added');
-     $(swirlElement).remove();
-     var nextSwirlOption = document.querySelectorAll('#more-swirls option')[0];
-     if(nextSwirlOption != null){
-         var nextSwirlID = nextSwirlOption.innerText;
-         var nextSwirlHTML = nextSwirlOption.getAttribute('data-value');
-         var swirlList = document.getElementById('swirl-list');
-         $(swirlList).append(nextSwirlHTML);
-         if(wasAdded){
-         // then the Swirl it is replacing was added and we should mark the new Swirl as 'added' too
-          $(document.getElementById(nextSwirlID)).addClass('added'); //FIXME: This isn't working and I don't know why
-         }
-         $(nextSwirlOption).remove();
-     }
-     http.post('/swirls/' + swirlID + '/respond', {responseButton: response});
-}
-
+var filterVisibleSwirls = function ($) {
+    $('.type-filter button').each((i, typeButton) => {
+        const curType = typeButton.getAttribute('data-swirl-type');
+        const show = currentFilter == null || currentFilter === curType;
+        $(typeButton).toggleClass('hidden', !show);
+        $('.mini-swirl.' + curType).toggle(show);
+    });
+};
 function init($) {
-    $('button.previous-swirls').hide();
+
+    $('.more-swirls-button').click((e) => {
+        const b = $(e.target);
+        if (b.attr('data-disabled')) {
+            return false; // button is disabled as it is still loading data, so do nothing
+        }
+
+        const ids = b.attr('data-ids').split(',');
+        const numLoads = parseInt(b.attr('data-num-loads'), 10);
+        const pageSize = parseInt(b.attr('data-per-page'), 10);
+        const to = numLoads * pageSize + pageSize;
+        const idsToGet = ids.slice(numLoads * pageSize, to);
+        const nextPageUrl = b.attr('data-url-prefix') + to;
+        const originalValue = b.text();
+
+        if (idsToGet.length === 0) {
+            return true; // run out of pre-fetched IDs so let the standard link work
+        }
+
+        b.attr('data-disabled', 'true'); // disable the button
+        b.html('<i class="fa fa-spin fa-spinner"></i> Loading');
+
+        const fetchUrl = '/api/v1/swirls?swirl-list=' + idsToGet.join(',');
+        fetch(fetchUrl, {credentials: 'same-origin'})
+            .then((resp) => {
+                if (resp.status !== 200) {
+                    throw 'from ' + fetchUrl + ': ' + resp.status + ' ' + resp.statusText;
+                }
+                return resp.text();
+            })
+            .then((html) => {
+                $('.swirl-insertion-point').before(html);
+                filterVisibleSwirls($);
+                setTimeout(function () { $('.pending-to-appear').css('opacity', '1.0') }, 20);
+                b.removeAttr('data-disabled');
+                b.text(originalValue);
+                b.attr('href', nextPageUrl);
+            })
+            .catch((e) => {
+                console.log('Error while getting more', e);
+                location.href = nextPageUrl;
+            });
+
+        b.attr('data-num-loads', numLoads + 1);
+        return false;
+    });
+
     $('.type-filter button').click((b) => {
-        restoreToInitialState(); // restore paging back to first page
-        chosenSwirlType = b.target.getAttribute('data-swirl-type');
-        if (currentFilter == null || currentFilter !== b.target) {
-            $('.type-filter button').each((i, typeButton) => {
-                if (b.target !== typeButton) {
-                    hideSwirls(typeButton);
-                }
-            });
-            $(b.target).toggleClass('hidden', false);
-            fillInHiddenSwirls(chosenSwirlType, 0);
-            currentFilter = b.target;
-        } else {
-            $('.type-filter button').each((i, typeButton) => {
-                if (b.target !== typeButton) {
-                    $(typeButton).toggleClass('hidden', false);
-                }
-            });
-            currentFilter = null;
-            chosenSwirlType = null;
-        }
+        const clickedType = b.target.getAttribute('data-swirl-type');
+        currentFilter = (clickedType === currentFilter) ? null : clickedType;
+        filterVisibleSwirls($);
     });
 
-    $('button.next-swirls').click((b) => {
-        if (currentFilter == null){
-            // no filter, so just grab the next 20 swirls and keep track of how many pages
-            removeAddedSwirls();
-            $('.mini-swirl').hide();
-            $('.mini-swirl').addClass('hidden');
-            fillInHiddenSwirls('all', 20 * currentPagingNumber);
-            currentPagingNumber++;
-            $('button.previous-swirls').show();
-        } else {
-            // filter applied, so only grab chosen type and keep track of the last index
-            removeAddedSwirls();
-            $('.mini-swirl').hide();
-            $('.mini-swirl').addClass('hidden');
-            if(lastIndexFetchedFromFilter == null){
-            // the filter didn't need to grab any new swirls
-                indexesFetchedFromPaging.push(0);
-            } else {
-                indexesFetchedFromPaging.push(lastIndexFetchedFromFilter + 1);
-            }
-            fillInHiddenSwirls(chosenSwirlType, indexesFetchedFromPaging[indexesFetchedFromPaging.length - 1]);
-            $('button.previous-swirls').show();
-        }
-        scrollToTop();
-    });
-
-    $('button.previous-swirls').click((b) => {
-         if(currentFilter == null){
-             // no filter, so just restore the previous page as per the paging number
-             removeAddedSwirls();
-             currentPagingNumber--;
-             if(currentPagingNumber === 0){
-                 restoreToInitialState();
-             }else {
-                 fillInHiddenSwirls('all', 20 * (currentPagingNumber - 1));
-             }
-         } else {
-             // filter applied, so restore the previous page as per the tracked index.
-             if(indexesFetchedFromPaging.length === 1){
-             // means we need to restore the initial page and apply the original filter
-                 restoreToInitialState();
-                 $('.type-filter button').each((i, typeButton) => {
-                     if (currentFilter !== typeButton) {
-                         hideSwirls(typeButton);
-                     }
-                 });
-                 fillInHiddenSwirls(chosenSwirlType, 0);
-             } else {
-             // means we should restore to the previous index marker
-                 removeAddedSwirls();
-                 indexesFetchedFromPaging.pop();
-                 fillInHiddenSwirls(chosenSwirlType, indexesFetchedFromPaging[indexesFetchedFromPaging.length - 1]);
-             }
-         }
-         scrollToTop();
-    })
-
-    $('#swirl-list').on('click', 'i.dismiss-button', function(){
+    $('#swirl-list').on('click', 'i.dismiss-button', function () {
         respondAndRemove(this, 'Dismissed');
     });
 
-    $('#swirl-list').on('click', 'i.later-button', function(){
+    $('#swirl-list').on('click', 'i.later-button', function () {
         respondAndRemove(this, 'Later');
     });
 }
