@@ -253,8 +253,15 @@ nav .nav-count {
      border-bottom-color: var(--video-color);
  }
 .game .border-bottom, .game .border-bottom-thin {
-     border-bottom-color: var(--game-color);
-}
+      border-bottom-color: var(--game-color);
+ }
+.app .border-bottom, .app .border-bottom-thin {
+      border-bottom-color: var(--app-color);
+ }
+.podcast .border-bottom, .podcast .border-bottom-thin {
+      border-bottom-color: var(--podcast-color);
+ }
+
 
 .padded {
     padding: 20px;
@@ -288,6 +295,12 @@ nav .nav-count {
 .game .type-color {
  color: var(--game-color);
  }
+.podcast .type-color{
+ color: var(--podcast-color);
+}
+.app .type-color{
+ color: var(--app-color);
+}
 
 
 .feedback {
@@ -302,5 +315,5 @@ nav .nav-count {
     height:5px;
     width:100%;
     background: #FF2E63;
-    background: linear-gradient(to right, var(--video-color) 0%, var(--video-color) 20%,var(--tv-color) 20%, var(--tv-color) 40%, var(--movie-color) 40%, var(--movie-color) 60%, var(--book-color) 60%, var(--book-color) 80%, var(--album-color) 80%, var(--album-color) 100% );
+    background: linear-gradient(to right, var(--video-color) 0%, var(--video-color) 20%,var(--generic-color) 20%, var(--generic-color) 40%, var(--movie-color) 40%, var(--movie-color) 60%, var(--book-color) 60%, var(--book-color) 80%, var(--album-color) 80%, var(--album-color) 100% );
 }

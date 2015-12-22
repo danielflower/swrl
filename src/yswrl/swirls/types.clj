@@ -66,6 +66,22 @@
                                :seen-it "visited it"
                                }
                        }
+            "podcast" {
+                       :name  "podcast"
+                       :words {
+                               :watch   "listen to"
+                               :seen    "heard"
+                               :seen-it "heard it"
+                               }
+                       }
+            "app" {
+                       :name  "app"
+                       :words {
+                               :watch   "get"
+                               :seen    "got"
+                               :seen-it "got it"
+                               }
+                       }
 
             })
 

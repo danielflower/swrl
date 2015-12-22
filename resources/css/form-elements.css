@@ -175,3 +175,9 @@ input[type="submit"].swirl-button, button.swirl-button {
 .game .swirl-button {
     background-color: var(--game-color);
 }
+.app .swirl-button {
+    background-color: var(--app-color);
+}
+.podcast .swirl-button {
+    background-color: var(--podcast-color);
+}

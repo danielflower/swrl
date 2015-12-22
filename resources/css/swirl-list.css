@@ -1,11 +1,15 @@
-.type-filter {
+.type-filter, .type-filter .expansion-content {
     text-align: center;
     text-transform: uppercase;
     font-size: 11px;
     margin-bottom: 10px;
+    padding-bottom: 0px;
+    padding-top: 10px;
 }
 .type-filter button {
+    font-size: 11px;
     cursor: hand;
+    color: #555;
     background: transparent;
     border: 0;
     margin: 0;
@@ -13,6 +17,8 @@
     text-transform: uppercase;
     padding:0 5px;
     border-bottom: solid 7px var(--generic-color);
+    width: 7%;
+    text-align: center;
 }
 
 .swirl-list {
@@ -96,6 +102,12 @@
 .mini-swirl__bgimage.game,.type-filter .game {
     border-bottom-color: var(--game-color);
 }
+.mini-swirl__bgimage.app,.type-filter .app {
+    border-bottom-color: var(--app-color);
+}
+.mini-swirl__bgimage.podcast,.type-filter .podcast {
+    border-bottom-color: var(--podcast-color);
+}
 
 
 .mini-swirl h2 {
@@ -158,6 +170,12 @@
 }
 .game .swirl-type, .game-background-color {
     background-color: var(--game-color);
+}
+.app .swirl-type, .app-background-color {
+    background-color: var(--app-color);
+}
+.podcast .swirl-type, .podcast-background-color {
+    background-color: var(--podcast-color);
 }
 
 .type-filter button.hidden {

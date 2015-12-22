@@ -9,11 +9,12 @@
     --main-font-color: #222222;
 
     --generic-color: #71A8D6;
-    --tv-color: #71A8D6;
+    --tv-color: #4169e1;
     --movie-color: #3EB283;
     --book-color: #F6A900;
     --album-color: #FF2E63;
     --video-color: #CE8BC9;
     --game-color: #663399;
-
+    --podcast-color: #FF2E63;
+    --app-color: #F6A900;
 }

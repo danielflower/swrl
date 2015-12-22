@@ -826,6 +826,7 @@ $(document).ready(function () {
     $('.expand-toggle-button').click(function (e, i) {
         var content = $(e.currentTarget).closest('.expansion-area').find('.expansion-content');
         content.toggle(250);
+        $(e.currentTarget).toggleClass('expanded');
     });
 
     document.documentElement.className += 'ontouchstart' in document.documentElement ? ' touch' : ' no-touch';
