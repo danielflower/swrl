@@ -9,14 +9,19 @@
 </p>
 {% else %}
 
-<div class="type-filter">
-    <button data-swirl-type="album" class="album">Albums</button>
-    <button data-swirl-type="book" class="book">Books</button>
-    <button data-swirl-type="movie" class="movie">Movies</button>
-    <button data-swirl-type="tv" class="tv">TV Shows</button>
+<div class="type-filter expansion-area">
     <button data-swirl-type="video" class="video">Videos</button>
-    <button data-swirl-type="game" class="game">Games</button>
-    <button data-swirl-type="website" class="website">Links</button>
+    <button data-swirl-type="website" class="website">Websites</button>
+    <button data-swirl-type="movie" class="movie">Movies</button>
+    <button data-swirl-type="book" class="book">Books</button>
+    <button data-swirl-type="album" class="album">Albums</button>
+    <button class="expand-toggle-button">More</button>
+    <div class="expansion-content type-filter">
+        <button data-swirl-type="tv" class="tv">TV</button>
+        <button data-swirl-type="game" class="game">Games</button>
+        <button data-swirl-type="podcast" class="podcast">Podcasts</button>
+        <button data-swirl-type="app" class="app">Apps</button>
+    </div>
 </div>
 
 <div class="swirl-list" id="swirl-list">
