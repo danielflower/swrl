@@ -15,15 +15,15 @@
             [yswrl.user.notifications :as notifications]
             [yswrl.swirls.swirl-links :as link-types]
             [yswrl.utils :as utils]
-            [clojure.string :refer [join]]
+            [clojure.string :refer [join lower-case]]
             [yswrl.groups.groups-repo :as group-repo])
   (:import (java.util UUID)))
 
-#_(def seen-responses ["Loved it", "Not bad", "Meh", "Later", "Not for me"])
 (def seen-responses ["Loved it", "Not bad", "Not for me"])
 
+(def responses-to-hide #{"dismissed" "later" "not for me"})
 (defn should-notify-users-of-response [response]
-  (not (some #{(clojure.string/lower-case response)} #{"dismissed" "later" "not for me"})))
+  (not (some #{(lower-case response)} responses-to-hide)))
 
 
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit?]
@@ -124,7 +124,7 @@
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
-          responses (repo/get-swirl-responses (:id swirl))
+          responses (repo/get-swirl-responses (:id swirl) responses-to-hide)
           comments (repo/get-swirl-comments (:id swirl))
           non-responders (repo/get-non-responders (:id swirl))
           can-respond (and (not is-author) is-logged-in)
@@ -133,13 +133,12 @@
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
           swirl-links (repo/get-links id)
           external-website-link (website-link-if-appropriate swirl swirl-links)
-          max-comment-id (reduce max 0 (map #(:id %) comments))
+          max-comment-id (reduce max 0 (map :id comments))
           seen-response-options (if can-respond
                                   (distinct (concat seen-responses
                                                     (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) seen-responses))
                                                     (if (not (nil? response-of-current-user)) [(response-of-current-user :summary)] [])))
                                   [])
-
           can-edit is-author]
       (notifications/mark-as-seen id current-user)
       (layout/render "swirls/view-page.html"
@@ -153,8 +152,8 @@
                                       :external-website-link    external-website-link
                                       :type                     type
                                       :is-author                is-author
-                                      :responses                (filter #(should-notify-users-of-response (% :summary)) responses)
-                                      :comments                 comments
+                                      :responses                responses
+                                      :comments                 (sort-by :date_responded (concat comments responses))
                                       :max-comment-id           max-comment-id
                                       :can-respond              can-respond
                                       :can-edit                 can-edit

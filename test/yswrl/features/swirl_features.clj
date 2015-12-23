@@ -804,7 +804,7 @@
         (login-as author)
 
         (visit (linky/swirl (swirl :id)))
-        (within [:.response] (has (some-text? (str (responder :username) " said HOT"))))
+        (within [:.comment-body] (has (some-text? "HOT")))
         (within [:.non-responders] (has (some-text? (str "Yet to respond: " (non-responder :username)))))
 
         )))

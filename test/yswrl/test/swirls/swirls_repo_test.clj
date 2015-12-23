@@ -24,14 +24,17 @@
       (is (= [{:responder (responder :id),
                :email_md5 (responder :email_md5),
                :username  (responder :username),
-               :summary   "Loved it"}]
-             (repo/get-swirl-responses (swirl :id))))
+               :summary   "Loved it"
+               :html_content   "Loved it"}]
+             (map #(dissoc % :date_responded) (repo/get-swirl-responses (swirl :id) ["gah"]))))
+      (is (= [] (repo/get-swirl-responses (swirl :id) ["loved it"])))
       (repo/respond-to-swirl (swirl :id) "Not interested" responder)
       (is (= [{:responder (responder :id),
                :email_md5 (responder :email_md5),
                :username  (responder :username),
-               :summary   "Not interested"}]
-             (repo/get-swirl-responses (swirl :id))))
+               :summary   "Not interested"
+               :html_content   "Not interested"}]
+             (map #(dissoc % :date_responded) (repo/get-swirl-responses (swirl :id) ["gah"]))))
       (repo/respond-to-swirl (swirl :id) "Loved it" responder))
 
 
