@@ -7,7 +7,13 @@
         <div class="swirl-type">{{ model.swirl.type }}</div>
     </div>
     <br class="padded">
-    <h1 class="headline type-color">{{model.swirl.title}}</h1>
+    <header>
+        <h1 class="headline type-color">{{model.swirl.title}}</h1>
+        <div class="avatar-with-name">{{ model.swirl.email_md5|gravatar-img:30 }}
+            <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
+            {{model.swirl.creation_date|timetag}}
+        </div>
+    </header>
 
     {% if model.external-website-link %}
     <div class="swirl-link">
@@ -18,20 +24,12 @@
 
     {% if not model.swirl.review|empty-review? %}
     <h2 class="swirl-title title-color">Why should you {{model.type.words.watch}} it?</h2>
+    <article>
+        {{model.swirl.review|safe}}
+    </article>
+    {% endif %}
 
-    <div class="comment">
-        {{ model.swirl.email_md5|gravatar-img:40 }}
 
-        <div class="comment-body">
-            <a rel="author" class="user-link" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
-
-            <div>
-                {{model.swirl.review|safe}}
-            </div>
-            <time datetime="{{model.swirl.creation_date}}">{{model.swirl.creation_date|date:longDateTime}}</time>
-
-        </div>
-    </div>
     <div class="comment-area">
         <div class="comments">
 
@@ -68,8 +66,6 @@
 
     </div>
 
-
-    {% endif %}
 
     {% if model.can-respond %}
     {% include "components/response-form.html" %}
