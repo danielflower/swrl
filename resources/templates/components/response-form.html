@@ -12,7 +12,6 @@
                 class="fa fa-fw {{ response|response-icon }}"></i> {{ response }}
         </button>
         {% endfor %}
-    </div>
 
     <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
            value="{{model.response-summary}}" class="custom-response" required
@@ -20,5 +19,7 @@
     <button type="submit" name="responseButton" value="Add" data-button-type="custom"
             class="custom-response-button">Add
     </button>
+    </div>
+
 
 </form>
