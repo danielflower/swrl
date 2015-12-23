@@ -266,6 +266,9 @@ nav .nav-count {
 .padded {
     padding: 20px;
 }
+.padded-standard-page{
+    padding-top: 10px;
+}
 .padded-lr{
     padding-left:20px;
     padding-right: 20px;
