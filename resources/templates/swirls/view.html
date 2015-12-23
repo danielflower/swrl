@@ -9,6 +9,7 @@
     <br class="padded">
     <header>
         <h1 class="headline type-color">{{model.swirl.title}}</h1>
+
         <div class="avatar-with-name">{{ model.swirl.email_md5|gravatar-img:30 }}
             <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
             {{model.swirl.creation_date|timetag}}
@@ -35,7 +36,9 @@
     {% endif %}
 
 
-    <h2 class="swirl-title title-color">What are others saying?</h2>
+    <h2 class="swirl-title title-color">{% if model.comments|not-empty %}What are others saying?{% else %}Be the first
+        to comment!{% endif %}</h2>
+
     <div class="comment-area">
         <div class="comments">
 
