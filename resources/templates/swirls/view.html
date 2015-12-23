@@ -30,6 +30,12 @@
     {% endif %}
 
 
+    {% if model.can-respond %}
+    {% include "components/response-form.html" %}
+    {% endif %}
+
+
+    <h2 class="swirl-title title-color">What are others saying?</h2>
     <div class="comment-area">
         <div class="comments">
 
@@ -67,12 +73,6 @@
     </div>
 
 
-    {% if model.can-respond %}
-    {% include "components/response-form.html" %}
-    {% include "components/respond-with-swirl-form.html" %}
-    {% endif %}
-
-
     {% if model.non-responders|not-empty %}
     <div class="non-responders padded">
         Yet to respond:
@@ -83,6 +83,12 @@
         {% endfor %}
     </div>
     {% endif %}
+
+
+    {% if model.can-respond %}
+    {% include "components/respond-with-swirl-form.html" %}
+    {% endif %}
+
 
     <div class="expansion-area">
         <button type="button" id="show-share-button" class="expand-toggle-button">Share this with others
