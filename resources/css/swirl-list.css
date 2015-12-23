@@ -17,8 +17,8 @@
     text-transform: uppercase;
     padding:0 5px;
     border-bottom: solid 7px var(--generic-color);
-    width: 7%;
     text-align: center;
+    width: auto;
 }
 
 .swirl-list {
