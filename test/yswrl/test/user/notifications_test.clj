@@ -81,8 +81,7 @@
           unrelated-bystander (create-test-user)
           swirl (create-swirl "website" (author :id) "Something to respond to" "Yeah" [(suggested-user :username) (responder :username) (suggested-user-that-has-seen-page :username)])
           _ (swirl-routes/handle-response (swirl :id) nil "Dismissed" responder)
-          _ (swirl-routes/handle-response (swirl :id) nil "Later" responder)
-          _ (swirl-routes/handle-response (swirl :id) nil "Not for me" responder)]
+          _ (swirl-routes/handle-response (swirl :id) nil "Later" responder)]
       (is (= [recommendation] (notification-types-for suggested-user)) "user added by author should just see notification")
       (is (= [] (notification-types-for author)) "Author should have no notifications")
       (is (= [] (notification-types-for unrelated-bystander)) "unrelated people should have no notifications")

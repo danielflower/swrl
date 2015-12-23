@@ -5,10 +5,10 @@
     <div class="comment-body">
         <a id="{{comment.id}}" class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
 
-        <div>
+        <div class="comment-html">
             {{ comment.html_content|safe }}
         </div>
-        <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:longDateTime}}</time>
+        <time datetime="{{comment.date_responded}}">{{comment.date_responded|date:mediumDate}}</time>
 
     </div>
 </div>

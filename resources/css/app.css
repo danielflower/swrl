@@ -69,6 +69,10 @@ h1.headline {
     color: #AAAAAA;
 }
 
+.comment-html {
+     padding-top: 10px;
+     padding-bottom: 10px;
+}
 
 article{
     padding: 0 1.8em 10px;

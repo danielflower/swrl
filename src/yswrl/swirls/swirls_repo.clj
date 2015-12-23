@@ -124,7 +124,7 @@
 
 (defn get-swirl-responses [swirld-id responses-to-exclude]
   (k/select db/swirl-responses
-          (k/fields :summary [:summary :html_content] :users.username :users.email_md5 :responder :date_responded)
+          (k/fields :summary :users.username :users.email_md5 :responder :date_responded)
           (k/join :inner db/users (= :users.id :swirl_responses.responder))
           (k/where {:swirl_id swirld-id (k/raw "LOWER(summary)") [not-in responses-to-exclude]})))
 

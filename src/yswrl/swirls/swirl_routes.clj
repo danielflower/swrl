@@ -21,7 +21,7 @@
 
 (def seen-responses ["Loved it", "Not bad", "Not for me"])
 
-(def responses-to-hide #{"dismissed" "later" "not for me"})
+(def responses-to-hide #{"dismissed" "later"})
 (defn should-notify-users-of-response [response]
   (not (some #{(lower-case response)} responses-to-hide)))
 
@@ -118,13 +118,19 @@
   (if (= (:name (type-of swirl)) "website")
     (:code (first (filter #(= (% :type_code) "W") links)))))
 
+(defn response-summary-as-html [response-summary]
+  (str "<i class=\"fa fa-fw title-color "
+       (get layout/response-icons (clojure.string/lower-case response-summary) "fa-star")
+       "\"></i> "
+       response-summary))
+
 (defn view-swirl-page [id suggestion-code current-user]
 
   (if-let [swirl (lookups/get-swirl-if-allowed-to-view id current-user)]
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
-          responses (repo/get-swirl-responses (:id swirl) responses-to-hide)
+          responses (map #(assoc % :html_content (response-summary-as-html (:summary %))) (repo/get-swirl-responses (:id swirl) responses-to-hide))
           comments (repo/get-swirl-comments (:id swirl))
           non-responders (repo/get-non-responders (:id swirl))
           can-respond (and (not is-author) is-logged-in)
