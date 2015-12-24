@@ -29,6 +29,7 @@
 
         <h2>Title</h2>
 
+
         <div class="inline">
             <select id="swirl-type" name="swirl-type" class="type-selector" data-text="Change the Swirl Type">
                 {% for type in all-types %}
@@ -39,6 +40,15 @@
                    maxlength="{{ constraints.swirls.title.max-length }}" value="{{subject}}"
                    placeholder="Title of a movie, book, song, album, etc">
         </div>
+
+        <div class="inline">
+            <h3>Image URL:</h3>
+            <input id="swirl-image-url" type="url" name="image-url" value="{{swirl.thumbnail_url}}"
+                   placeholder="Image URL for the Swirl - As big as possible please!">
+        </div>
+        <a class="button" href="{{subject|image-search-url}}" target="_blank" title="Search for large images on Google!">Google Image Search</a>
+
+
         <div class="rte">
             <h2>Why should they {{type.words.watch}} this?</h2>
             <textarea name="review">{{review}}</textarea>

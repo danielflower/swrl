@@ -5,7 +5,7 @@
 @import "swirl-list.css";
 @import "swirl-detail.css";
 
-#swirl-title {
+#swirl-title, #swirl-image-url {
     width: 80%;
 }
 .swirl-title{

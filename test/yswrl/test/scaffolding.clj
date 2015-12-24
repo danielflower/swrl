@@ -33,7 +33,7 @@
 
 (defn create-swirl ([type authorId title review recipientNames & {:keys [is-private?] :or {is-private? false}}]
   (let [swirl (swirls-repo/save-draft-swirl type authorId title review nil)]
-    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames is-private? (:type swirl))
+    (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames is-private? (:type swirl) (:thumbnail_url swirl))
     swirl)))
 
 (defn create-group [group-name group-description owner]

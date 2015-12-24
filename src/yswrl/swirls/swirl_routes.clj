@@ -201,8 +201,8 @@
 
 
 (defn publish-swirl
-  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private? type]
-   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify private? type)
+  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private? type image-url]
+   (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify private? type image-url)
      (do
        (group-repo/set-swirl-links id (author :id) group-ids)
        (doseq [group-id group-ids]
@@ -258,7 +258,7 @@
                                                                                                                              nil
                                                                                                                              (Long/parseLong origin-swirl-id))
                                                      :edit? edit)))
-           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type :as req]
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type image-url :as req]
              (guard/requires-login #(publish-swirl
                                      (session-from req)
                                      (Long/parseLong id)
@@ -270,7 +270,8 @@
                                      (if private
                                        true
                                        false)
-                                     swirl-type)))
+                                     swirl-type
+                                     image-url)))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))

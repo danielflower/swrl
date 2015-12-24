@@ -79,6 +79,10 @@
 
 (selmer.filters/add-filter! :swirl-html (fn [swirl]
                                           (parser/render-file "components/mini-swirl.html" {:swirl swirl})))
+(filters/add-filter! :image-search-url (fn [title]
+                                         (str "https://www.google.co.uk/search?q="
+                                              (links/url-encode title)
+                                              "&tbm=isch&tbs=isz:l")))
 
 
 (deftype RenderableTemplate [template params]
