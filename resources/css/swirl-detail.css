@@ -71,7 +71,17 @@
 
 .non-responders {
     color: #AAAAAA;
+    display: inline;
 }
+
+.non-responders img.gravatar{
+    margin-right: 5px;
+}
+
+label.non-responsers {
+    display: inline;
+}
+
 .non-responders a {
     color: #AAAAAA;
 }

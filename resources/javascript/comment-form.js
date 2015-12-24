@@ -40,7 +40,7 @@ class CommentForm {
         return http.getJson('/swirls/' + me.swirlId + '/comments?comment-id-start=' + me.$maxCommentIdField.val())
             .then(comments => {
                 if (comments.count > 0) {
-                    $('.comments').append(comments.html);
+                    $('.comments').prepend(comments.html);
                     me.$maxCommentIdField.val(comments.maxId);
                 }
                 me.refreshToken = setTimeout(me.addMissingComments.bind(me), 30000);

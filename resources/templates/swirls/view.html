@@ -14,7 +14,9 @@
             <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
             {{model.swirl.creation_date|timetag}}
         </div>
+
     </header>
+
 
     {% if model.external-website-link %}
     <div class="swirl-link">
@@ -34,20 +36,33 @@
     {% if model.can-respond %}
     {% include "components/response-form.html" %}
     {% endif %}
+    {% if model.can-respond %}
+    {% include "components/respond-with-swirl-form.html" %}
+    {% endif %}
 
 
     <h2 class="swirl-title title-color">{% if model.comments|not-empty %}What are others saying?{% else %}Be the first
         to comment!{% endif %}</h2>
 
+    {% if model.non-responders|not-empty %}
+    <div class="non-responders padded">
+        Yet to respond:
+
+        {% for non-responder in model.non-responders %}
+        {% if forloop.counter = 3 %}
+        <input type=radio class="more-radio" id="more-responders">
+        <label class="non-responders more-link" for="more-responders">more...</label>
+        {% endif %}
+        <a class="username {% if forloop.counter >= 3 %}more-content{% endif %}"
+           rel="author"
+           href="{{non-responder.username|user-url}}">{{ non-responder.email_md5|gravatar-img:25
+            }}{{non-responder.username}}</a>
+        {% endfor %}
+
+    </div>
+    {% endif %}
+
     <div class="comment-area">
-        <div class="comments">
-
-            {% with thecomments=model.comments %}
-            {% include "components/comment-list.html" %}
-            {% endwith %}
-
-        </div>
-
         {% if user %}
 
         <form method="POST" action="/swirls/{{model.swirl.id}}/comment" class="comment">
@@ -72,37 +87,28 @@
         </form>
 
         {% endif %}
+        <div class="comments">
+
+            {% with thecomments=model.comments %}
+            {% include "components/comment-list.html" %}
+            {% endwith %}
+
+        </div>
 
     </div>
-
-
-    {% if model.non-responders|not-empty %}
-    <div class="non-responders padded">
-        Yet to respond:
-
-        {% for non-responder in model.non-responders %}
-        <a class="username" rel="author"
-           href="{{non-responder.username|user-url}}">{{non-responder.username}}</a>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-
-    {% if model.can-respond %}
-    {% include "components/respond-with-swirl-form.html" %}
-    {% endif %}
 
 
     <div class="expansion-area">
-        <button type="button" id="show-share-button" class="expand-toggle-button">Share this with others
+        <button type="button" id="show-share-button" class="expand-toggle-button">Share to Social Media
         </button>
         <div class="expansion-content">
 
             {% if not model.swirl.is_private %}
             <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl"
                data-dnt="true">Tweet</a>
-        <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
-              data-layout="button_count"></span>
+
+            <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
+                  data-layout="button_count"></span>
 
             <a href="/create/reswirl?id={{model.swirl.id}}" class="re-swirl"
                title="Re-Swirl to your friends"><img

@@ -29,9 +29,29 @@
     font-size: 2rem;
     font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin-top: -10px;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     color: var(--main-font-color);
     font-weight: normal;
+}
+
+input.more-radio{
+    display:none;
+}
+
+.more-link{
+  cursor: pointer;
+}
+
+input.more-radio:checked + .more-link{
+  display: none;
+}
+
+.more-content {
+    display:none;
+}
+
+input.more-radio:checked ~ .more-content {
+  display: inline;
 }
 
 nav ul{
@@ -50,6 +70,12 @@ h1.headline {
     text-align: left;
 }
 
+.comment.last-comment {
+    margin-bottom: 15px;
+}
+.comment.first-old-comment {
+    padding-top: 15px;
+}
 
 .comment .user-link {
     font-weight: bold;
@@ -83,6 +109,12 @@ article{
 
 .comment-area {
     margin-top: 20px;
+}
+
+.comment-area label.more-link{
+    color: var(--swirl-blue);
+    margin-bottom: 20px;
+    margin-left: 20px;
 }
 
 .comments img, article img {

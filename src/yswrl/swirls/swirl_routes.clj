@@ -115,8 +115,7 @@
 
 
 (defn website-link-if-appropriate [swirl links]
-  (if (= (:name (type-of swirl)) "website")
-    (:code (first (filter #(= (% :type_code) "W") links)))))
+  (:code (first (filter #(= (% :type_code) "W") links))))
 
 (defn response-summary-as-html [response-summary]
   (str "<i class=\"fa fa-fw title-color "
