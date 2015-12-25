@@ -22,10 +22,9 @@
   (ring.middleware.anti-forgery/wrap-anti-forgery
     (fn [request]
       (if-let [response (handler request)]
-        (let [cache-control (if (get-in request [:session :user]) "private, no-transform" "public, no-transform")]
-          (-> response
-              (assoc-in [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *; style-src 'self' 'unsafe-inline'; script-src 'self' www.google-analytics.com http://platform.twitter.com/widgets.js https://connect.facebook.net/en_GB/sdk.js http://connect.facebook.net/en_GB/sdk.js")
-              (assoc-in [:headers "Cache-Control"] cache-control)))))))
+        (-> response
+            (assoc-in [:headers "Content-Security-Policy"] "default-src 'self'; img-src *; frame-src *; child-src *; style-src 'self' 'unsafe-inline'; script-src 'self' www.google-analytics.com http://platform.twitter.com/widgets.js https://connect.facebook.net/en_GB/sdk.js http://connect.facebook.net/en_GB/sdk.js")
+            (assoc-in [:headers "Cache-Control"] "private, no-transform"))))))
 
 (defn wrap-api-routes [handler]
     (fn [request]
