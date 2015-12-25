@@ -9,8 +9,7 @@
       (is (= 200 (:status response)))
       (is (= "default-src 'self'; img-src *; frame-src *; child-src *; style-src 'self' 'unsafe-inline'; script-src 'self' www.google-analytics.com http://platform.twitter.com/widgets.js https://connect.facebook.net/en_GB/sdk.js http://connect.facebook.net/en_GB/sdk.js" ((:headers response) "Content-Security-Policy")))
       (is (= "0; mode=block" ((:headers response) "X-XSS-Protection")))
-      (is (= "private, no-transform" ((:headers response) "Cache-Control")))
-    ))
+      (is (= "public, no-transform" ((:headers response) "Cache-Control")))))
 
   (testing "immutable folder likes big caches and you know it can't lie"
     (let [response (app (request :get "/immutable/images/swirl-logo-v3.svg"))]
