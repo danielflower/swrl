@@ -1,24 +1,19 @@
 {% extends "base-no-footer.html" %}
 {% block main-content %}
 <main>
-    <div class="home">
-
-        {% include "components/big-pink-button.html" %}
+    <div class="standard-page padded">
 
         <div class="center-wrapper">
 
+            <h1>Groups</h1>
+            <p>Create groups to share books, movies, music or websites with a bunch of people at the same time.</p>
 
-            {% if groups %}
-
-            <h1 class="padded-lr">Groups</h1>
             <ul class="groups-list">
                 <li><strong><a href="/create-group">Create a group</a></strong></li>
                 {% for group in groups %}
                 <li><a href="{{ group.id|groupurl }}">{{ group.name }}</a></li>
                 {% endfor %}
             </ul>
-
-            {% endif %}
 
         </div>
 

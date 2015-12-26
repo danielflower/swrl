@@ -30,7 +30,7 @@
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))
 
 (defn bookmarklet-page []
-  (layout/render "home/bookmarklet.html" {:bookmarklet (bookmarklet)}))
+  (layout/render "home/bookmarklet.html" {:title "Help page" :bookmarklet (bookmarklet)}))
 
 
 (defn session-from [req] (:user (:session req)))

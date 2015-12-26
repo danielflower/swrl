@@ -79,7 +79,7 @@
 (defn view-firehose [count user]
   (let [swirls-per-page 20
         swirls (lookups/get-all-swirls 200 count user)]
-    (layout/render "swirls/list.html" {:title             "Swirling" :pageTitle "Swirling" :swirls swirls
+    (layout/render "swirls/list.html" {:title             "The Firehose - all public swirls" :pageTitle "Firehose" :swirls swirls
                                        :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
                                        :paging-url-prefix "/swirls?from="
                                        :swirls-per-page   swirls-per-page
@@ -228,7 +228,7 @@
       (redirect (links/user (current-user :username))))))
 
 (defn groups-page []
-  (layout/render "swirls/groups.html"))
+  (layout/render "swirls/groups.html" {:title "Swirl groups"}))
 
 
 (defn post-response-route [url-prefix]

@@ -17,7 +17,7 @@
   (:import (java.net URI)))
 
 (defn start-page [req]
-  (layout/render "swirls/start.html" {:query-string (:query-string req)}))
+  (layout/render "swirls/start.html" {:title "Create a recommendation" :query-string (:query-string req)}))
 
 (defn session-from [req] (:user (:session req)))
 
