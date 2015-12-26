@@ -17,6 +17,7 @@
                            [compojure "1.3.4"]
                            [ring/ring-defaults "0.1.5"]
                            [ring-middleware-format "0.5.0"]
+                           [amalloy/ring-gzip-middleware "0.1.3"]
                            [noir-exception "0.2.5"]
                            [korma "0.4.2"]
                            [bouncer "0.3.3"]

@@ -8,7 +8,7 @@
 (deftest homepage-greeting
   (-> (session app)
       (visit "/")
-      (within [:.subhead]
+      (within [:.home--content :h2]
                 (has (text? "Reviews for your friends")))))
 
 (deftest bookmarklet-page
@@ -24,5 +24,5 @@
   (-> (session app)
       (visit "/create/from-url?url=chrome%3A%2F%2Fnewtab%2F&title=New%20Tab")
       (follow-redirect)
-      (within [:.subhead]
+      (within [:.home--content :h2]
               (has (text? "Reviews for your friends")))))

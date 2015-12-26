@@ -6,6 +6,7 @@
             [ring.util.response :refer [redirect]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [noir-exception.core :refer [wrap-internal-error]]
+            [ring.middleware.gzip :refer [wrap-gzip]]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.format :refer [wrap-restful-format]]
             [buddy.auth.middleware :refer [wrap-authentication]]
@@ -60,4 +61,5 @@
             (assoc-in [:security :anti-forgery] false)
             (assoc-in [:security :xss-protection :enable?] false)
             ))
+      (wrap-gzip)
       (wrap-internal-error :log #(log/error (get-unhandled-error-text %)))))
