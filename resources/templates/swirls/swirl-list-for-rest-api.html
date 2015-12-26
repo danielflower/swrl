@@ -1,5 +1,3 @@
 {% for swirl in swirls %}
-<div class="pending-to-appear">
-{% include "components/mini-swirl.html" with swirl=swirl %}
-</div>
+{% include "components/mini-swirl.html" with extraclass="pending-to-appear" %}
 {% endfor %}

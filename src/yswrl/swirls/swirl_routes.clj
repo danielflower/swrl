@@ -68,7 +68,9 @@
         has-inbox-items? (not (empty? swirls))
         has-responses? (not (empty? responses))
         nothing-to-show? (and (not has-inbox-items?) (not has-responses?))]
-    (layout/render "swirls/inbox.html" {:title            "Swirl Inbox" :swirls swirls :responses responses
+    (layout/render "swirls/inbox.html" {:title            "Swirl Inbox"
+                                        :swirls (take swirls-per-page swirls)
+                                        :responses responses
                                         :more-swirls      (join "," (map :id (nthrest swirls swirls-per-page)))
                                         :has-inbox-items? has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
                                         :paging-url-prefix "/swirls/inbox?from="
@@ -79,7 +81,9 @@
 (defn view-firehose [count user]
   (let [swirls-per-page 20
         swirls (lookups/get-all-swirls 200 count user)]
-    (layout/render "swirls/list.html" {:title             "The Firehose - all public swirls" :pageTitle "Firehose" :swirls swirls
+    (layout/render "swirls/list.html" {:title             "The Firehose - all public swirls"
+                                       :pageTitle "Firehose"
+                                       :swirls (take swirls-per-page swirls)
                                        :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
                                        :paging-url-prefix "/swirls?from="
                                        :swirls-per-page   swirls-per-page
