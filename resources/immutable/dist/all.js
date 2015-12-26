@@ -1373,12 +1373,15 @@ function init($) {
             return false; // button is disabled as it is still loading data, so do nothing
         }
 
+        // data-ids contains a fixed number of IDs that come AFTER those returned from the server.
         var ids = b.attr('data-ids').split(',');
         var numLoads = parseInt(b.attr('data-num-loads'), 10);
         var pageSize = parseInt(b.attr('data-per-page'), 10);
-        var to = numLoads * pageSize + pageSize;
-        var idsToGet = ids.slice(numLoads * pageSize, to);
-        var nextPageUrl = b.attr('data-url-prefix') + to;
+        var from = numLoads * pageSize;
+        var to = from + pageSize;
+        var idsToGet = ids.slice(from, to);
+        var nextPageUrl = b.attr('data-url-prefix') + (to + pageSize);
+        var nextPageUrlIfQueryFails = b.attr('data-url-prefix') + to;
         var originalValue = b.text();
 
         if (idsToGet.length === 0) {
@@ -1405,7 +1408,7 @@ function init($) {
             b.attr('href', nextPageUrl);
         })['catch'](function (e) {
             console.log('Error while getting more', e);
-            location.href = nextPageUrl;
+            location.href = nextPageUrlIfQueryFails;
         });
 
         b.attr('data-num-loads', numLoads + 1);

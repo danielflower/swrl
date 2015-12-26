@@ -42,12 +42,15 @@ function init($) {
             return false; // button is disabled as it is still loading data, so do nothing
         }
 
+        // data-ids contains a fixed number of IDs that come AFTER those returned from the server.
         const ids = b.attr('data-ids').split(',');
         const numLoads = parseInt(b.attr('data-num-loads'), 10);
         const pageSize = parseInt(b.attr('data-per-page'), 10);
-        const to = numLoads * pageSize + pageSize;
-        const idsToGet = ids.slice(numLoads * pageSize, to);
-        const nextPageUrl = b.attr('data-url-prefix') + to;
+        const from = numLoads * pageSize;
+        const to = from + pageSize;
+        const idsToGet = ids.slice(from, to);
+        const nextPageUrl = b.attr('data-url-prefix') + (to + pageSize);
+        const nextPageUrlIfQueryFails = b.attr('data-url-prefix') + to;
         const originalValue = b.text();
 
         if (idsToGet.length === 0) {
@@ -75,7 +78,7 @@ function init($) {
             })
             .catch((e) => {
                 console.log('Error while getting more', e);
-                location.href = nextPageUrl;
+                location.href = nextPageUrlIfQueryFails;
             });
 
         b.attr('data-num-loads', numLoads + 1);
