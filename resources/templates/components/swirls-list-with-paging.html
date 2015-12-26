@@ -35,7 +35,7 @@
 {% if more-swirls|not-empty %}
 <div class="paging">
     <a href="{{paging-url-prefix}}{{countTo}}" class="button more-swirls-button" data-ids="{{more-swirls}}"
-       data-url-prefix="{{paging-url-prefix}}" data-per-page="{{swirls-per-page}}" data-num-loads="0">View more</a>
+       data-url-prefix="{{paging-url-prefix}}" data-per-page="{{swirls-per-page}}" data-start-index="{{countFrom}}" data-num-loads="0">View more</a>
 </div>
 {% endif %}
 

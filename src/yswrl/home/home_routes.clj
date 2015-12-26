@@ -21,7 +21,7 @@
       (let [swirls (lookups/get-all-swirls-not-responded-to 200 from user)]
         (layout/render "home/home-logged-in.html" {:swirls            (take swirls-per-page swirls)
                                                    :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
-                                                   :paging-url-prefix "/swirls?from="
+                                                   :paging-url-prefix "/?from="
                                                    :swirls-per-page   swirls-per-page
                                                    :countFrom         (str from)
                                                    :countTo           (+ from swirls-per-page)})))))

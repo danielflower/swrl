@@ -49,8 +49,9 @@ function init($) {
         const from = numLoads * pageSize;
         const to = from + pageSize;
         const idsToGet = ids.slice(from, to);
-        const nextPageUrl = b.attr('data-url-prefix') + (to + pageSize);
-        const nextPageUrlIfQueryFails = b.attr('data-url-prefix') + to;
+        const startIndex = parseInt(b.attr('data-start-index'), 10);
+        const nextPageUrl = b.attr('data-url-prefix') + (startIndex + to + pageSize);
+        const nextPageUrlIfQueryFails = b.attr('data-url-prefix') + (startIndex + to);
         const originalValue = b.text();
 
         if (idsToGet.length === 0) {

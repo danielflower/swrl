@@ -1380,8 +1380,9 @@ function init($) {
         var from = numLoads * pageSize;
         var to = from + pageSize;
         var idsToGet = ids.slice(from, to);
-        var nextPageUrl = b.attr('data-url-prefix') + (to + pageSize);
-        var nextPageUrlIfQueryFails = b.attr('data-url-prefix') + to;
+        var startIndex = parseInt(b.attr('data-start-index'), 10);
+        var nextPageUrl = b.attr('data-url-prefix') + (startIndex + to + pageSize);
+        var nextPageUrlIfQueryFails = b.attr('data-url-prefix') + (startIndex + to);
         var originalValue = b.text();
 
         if (idsToGet.length === 0) {
