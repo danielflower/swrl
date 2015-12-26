@@ -320,3 +320,9 @@ nav .nav-count {
     background: #FF2E63;
     background: linear-gradient(to right, var(--video-color) 0%, var(--video-color) 20%,var(--generic-color) 20%, var(--generic-color) 40%, var(--movie-color) 40%, var(--movie-color) 60%, var(--book-color) 60%, var(--book-color) 80%, var(--album-color) 80%, var(--album-color) 100% );
 }
+
+
+.keep-logged-in-label {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
