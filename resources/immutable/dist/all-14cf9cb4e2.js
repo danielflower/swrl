@@ -918,7 +918,7 @@ var CommentForm = (function () {
             var me = this;
             return _httpJs2['default'].getJson('/swirls/' + me.swirlId + '/comments?comment-id-start=' + me.$maxCommentIdField.val()).then(function (comments) {
                 if (comments.count > 0) {
-                    $('.comments').prepend(comments.html);
+                    $('.comments').append(comments.html);
                     me.$maxCommentIdField.val(comments.maxId);
                 }
                 me.refreshToken = setTimeout(me.addMissingComments.bind(me), 30000);

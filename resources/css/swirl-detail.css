@@ -71,6 +71,9 @@
 
 .non-responders {
     color: #AAAAAA;
+    margin-bottom: 30px;
+}
+.non-responders label {
     display: inline;
 }
 
@@ -78,10 +81,7 @@
     margin-right: 5px;
 }
 
-label.non-responsers {
-    display: inline;
-}
-
 .non-responders a {
     color: #AAAAAA;
+    padding-left: 10px;
 }
