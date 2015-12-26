@@ -41,15 +41,15 @@
     <nav class="paradeiser" id="paradeiser">
         <a href="/" title="Go home"><img src="/immutable/images/swrl-logo.svg" class="site-header__logo"
                                          height="30"/></a>
-        <a href="/swirls/groups">Groups</a>
+        <a href="/swirls/groups" rel="nofollow">Groups</a>
 
 
         {% if user %}
-        <a href="/swirls/inbox">Inbox <span class="nav-count">{{unread-count}}</span></a>
-        <a href="/notifications">Notifications <span class="nav-count">{{notifications-count}}</span></a>
+        <a href="/swirls/inbox" rel="nofollow">Inbox <span class="nav-count">{{unread-count}}</span></a>
+        <a href="/notifications" rel="nofollow">Notifications <span class="nav-count">{{notifications-count}}</span></a>
         {% else %}
-        <a href="/login" class="login-link">Login</a>
-        <a href="/register">Register</a>
+        <a href="/login" class="login-link" rel="nofollow">Login</a>
+        <a href="/register" rel="nofollow">Register</a>
         {% endif %}
 
         {% if user %}
@@ -72,11 +72,10 @@
 
 
 <p class="feedback">We'd love to hear your feedback - email us at <a href="mailto:feedback@swrl.co">feedback@swrl.co</a>
-    <br><a href="/logout">Logout</a>
+    <br><a href="/logout" rel="nofollow">Logout</a>
 </p>
 
 <script src="/immutable/js/jquery-3.0.0-alpha1.min.js"></script>
-<!--<script src="/immutable/js/jquery-2.1.3.min.js"></script>-->
 <script src="/immutable/dist/all-7680a8428e.js"></script>
 </body>
 </html>
