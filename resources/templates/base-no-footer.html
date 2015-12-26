@@ -72,7 +72,7 @@
 
 
 <p class="feedback">We'd love to hear your feedback - email us at <a href="mailto:feedback@swrl.co">feedback@swrl.co</a>
-    <br><a href="/logout" rel="nofollow">Logout</a>
+   {% if user %} <br><a href="/logout" rel="nofollow">Logout</a> {% endif %}
 </p>
 
 <script src="/immutable/js/jquery-3.0.0-alpha1.min.js"></script>
