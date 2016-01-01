@@ -35,7 +35,7 @@
           origin-swirl-author (if origin-swirl (user-repo/get-user-by-id (origin-swirl :author_id)))
           all-users (user-repo/get-all-users)
           suggested-users (take 5 (filter #(and (not (contains? already-added %))
-                                   (not (= (:author_id origin-swirl) (:user-id %)))) contacts))
+                                                (not (= (:author_id origin-swirl) (:user-id %)))) contacts))
           all-not-added (filter #(and (not (contains? already-added %))
                                       (not (= (:author_id origin-swirl) (:user-id %)))) all-users)
           all-groups (group-repo/get-groups-for (author :id))
@@ -68,28 +68,34 @@
         has-inbox-items? (not (empty? swirls))
         has-responses? (not (empty? responses))
         nothing-to-show? (and (not has-inbox-items?) (not has-responses?))]
-    (layout/render "swirls/inbox.html" {:title            "Swirl Inbox"
-                                        :swirls (take swirls-per-page swirls)
-                                        :responses responses
-                                        :more-swirls      (join "," (map :id (nthrest swirls swirls-per-page)))
-                                        :has-inbox-items? has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
+    (layout/render "swirls/inbox.html" {:title             "Swirl Inbox"
+                                        :swirls            (take swirls-per-page swirls)
+                                        :responses         responses
+                                        :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
+                                        :has-inbox-items?  has-inbox-items? :has-responses? has-responses? :nothing-to-show? nothing-to-show?
                                         :paging-url-prefix "/swirls/inbox?from="
-                                        :swirls-per-page  swirls-per-page
-                                        :countFrom        (str count)
-                                        :countTo          (+ count swirls-per-page)})))
+                                        :swirls-per-page   swirls-per-page
+                                        :countFrom         (str count)
+                                        :countTo           (+ count swirls-per-page)})))
 
-(defn view-firehose [count user]
+(defn view-firehose [from user]
   (let [swirls-per-page 20
-        swirls (lookups/get-all-swirls 200 count user)]
+        swirls (lookups/get-all-swirls 200 from user)]
     (layout/render "swirls/list.html" {:title             "The Firehose - all public swirls"
-                                       :pageTitle "Firehose"
-                                       :swirls (take swirls-per-page swirls)
+                                       :pageTitle         "Firehose"
+                                       :swirls            (take swirls-per-page swirls)
                                        :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
                                        :paging-url-prefix "/swirls?from="
                                        :swirls-per-page   swirls-per-page
-                                       :countFrom         (str count)
-                                       :countTo           (+ count swirls-per-page)})))
+                                       :countFrom         (str from)
+                                       :countTo           (+ from swirls-per-page)})))
 
+(defn search [query user]
+  (let [swirls (if (clojure.string/blank? query) [] (lookups/search-for-swirls 100 0 user query))]
+    (layout/render "swirls/search-swirls.html" {:title  "Search results"
+                                                :swirls swirls
+                                                :query  query
+                                                })))
 
 (defn view-inbox-by-response [count current-user submitted-response]
   (let [swirls (lookups/get-swirls-by-response current-user 2000 count submitted-response)]
@@ -253,7 +259,14 @@
     (let [ids (map #(Long/parseLong %) (clojure.string/split swirl-list #","))
           swirls (lookups/get-swirls-by-id ids (session-from req))]
       (layout/render "swirls/swirl-list-for-rest-api.html"
-                                              {:swirls swirls}))))
+                     {:swirls swirls}))))
+
+(defn search-for-swirls []
+  (GET "/search" [query :as req]
+    (let [swirls (lookups/search-for-swirls 100 0 (session-from req) query)]
+      (layout/render "swirls/swirl-list-for-rest-api.html"
+                     {:swirls swirls}))))
+
 
 (defroutes swirl-routes
            (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private edit :as req]
@@ -285,6 +298,8 @@
            (post-comment-route "/swirls")
 
            (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
+
+           (GET "/search" [query :as req] (search query (session-from req)))
 
            (GET "/swirls/groups" [] (groups-page))
 

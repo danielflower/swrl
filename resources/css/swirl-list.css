@@ -192,3 +192,8 @@
     transition-property: opacity;
     transition-duration: 1s;
 }
+
+
+.search-form label {
+    display: none;
+}

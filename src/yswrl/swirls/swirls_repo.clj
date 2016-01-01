@@ -107,6 +107,7 @@
                         (k/set-fields {:title title :review review :state states/live :is_private private? :type type :thumbnail_url image-url})
                         (k/where {:id swirl-id :author_id author-id}))]
     (add-suggestions swirl-id author-id recipient-names-or-emails)
+    (db/execute "REFRESH MATERIALIZED VIEW search_index")   ; WARNING: the whole index is refreshed on every update
     (= updated 1)))
 
 (defn delete-swirl

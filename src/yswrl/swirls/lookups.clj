@@ -1,7 +1,7 @@
 (ns yswrl.swirls.lookups
   (:require [yswrl.db :as db]
             [yswrl.swirls.swirl-states :as states]
-            [korma.core :refer :all]))
+            [korma.core :refer [select* limit subselect aggregate offset order where join fields select raw modifier]]))
 (use 'korma.db)
 
 
@@ -63,34 +63,45 @@
       (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url :author_id :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
-      (limit max-results)
-      (order :id :desc)))                                   ; faster to order by ID rather than creation date as ID is indexed
+      (limit max-results)))                                   ; faster to order by ID rather than creation date as ID is indexed
 
 (defn get-all-swirls [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
+      (order :id :desc)
       (select)))
 
+(defn search-for-swirls [max-results skip requestor search-query]
+  (let [escaped-search-query (clojure.string/escape search-query {\' "''"})]
+    (-> (select-multiple-swirls requestor max-results skip)
+        (join :inner (raw "search_index") (= :swirls.id (raw "search_index.swirl_id")))
+        (where (raw (str "search_index.document @@ plainto_tsquery('english', '" escaped-search-query "')")))
+        (order (raw (str "ts_rank(search_index.document, plainto_tsquery('english', '" escaped-search-query "'))")) :desc)
+        (select))))
 
 (defn get-swirls-by-id [ids requestor]
   (-> (select-multiple-swirls requestor 100 0)
       (where {:swirls.id [in ids]})
+      (order :id :desc)
       (select)))
 
 (defn get-swirls-authored-by [author-id requestor]
   (-> (select-multiple-swirls requestor 1000 0)
       (where {:author_id author-id})
+      (order :id :desc)
       (select)))
 
 (defn get-swirls-awaiting-response [requestor max-results skip]
   (-> (select-multiple-swirls requestor max-results skip)
       (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
       (where {:suggestions.recipient_id (requestor :id) :suggestions.response_id nil})
+      (order :id :desc)
       (select)))
 
 (defn get-all-swirls-not-responded-to [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
       (where {:swirls.id [not-in (subselect db/swirl-responses (fields :swirl_id) (where {:responder (requestor :id)}))]})
       (where {:author_id [not= (requestor :id)]})
+      (order :id :desc)
       (select)))
 
 (defn get-swirls-awaiting-response-count [requestor]
@@ -106,6 +117,7 @@
       (join :inner db/swirl-responses (= :swirls.id :swirl_responses.swirl_id))
       (where {:swirl_responses.responder (requestor :id)})
       (where {(raw "LOWER(swirl_responses.summary)") (clojure.string/lower-case response)})
+      (order :id :desc)
       (select)))
 
 

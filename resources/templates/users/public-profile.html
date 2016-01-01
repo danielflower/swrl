@@ -1,97 +1,96 @@
 {% extends "base.html" %}
 {% block content %}
 
-<main>
-    <div class="home">
-        <div class="swirl-header border-bottom">
-            <div class="swirl-header__bgimage" style="background-image: url({{ author.email_md5|gravatar-img-url:600 }})"></div>
-            <img class="swirl-header__image {{ model.swirl.type }}" src="{{ author.email_md5|gravatar-img-url:600 }}"/>
-            <div class="swirl-type">Profile page</div>
-        </div>
-
-        <br class="padded">
-
-        <div class="center-wrapper">
-            <h1>{{author.username}}</h1>
-
-
-            <div class="expansion-area">
-                <button type="button" id="show-swirls-sent-button" class="expand-toggle-button">
-                    {% if is-current-user %}
-                    Swirls you've sent
-                    {% else %}
-                    Swirls from {{ author.username }}
-                    {% endif %}
-                </button>
-                <div class="expansion-content">
-                    {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
-                </div>
-
-            </div>
-
-            <div class="expansion-area">
-                <button type="button" id="show-swirls-responded-button" class="expand-toggle-button">
-                    {% if is-current-user %}
-                    Swirls you've responded to
-                    {% else %}
-                    Swirls responded by {{ author.username }}
-                    {% endif %}
-                </button>
-                <div class="expansion-content">
-                    {% if has-responses? %}
-                    <h2>By Response:</h2>
-                    <ul>
-                        {% for response in responses %}
-                        <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                    {% if is-current-user %}
-                    <p>You haven't responded to any Swirls yet. See your <a href="/swirls/inbox">waiting Swirls</a> to
-                        see
-                        Swirls recommended to you, then let them know what you think!</p>
-                    {% else %}
-                    <p>{{ author.username }} hasn't responded to any Swirls yet. Send them a recommendation <a
-                            href="/swirls/start">here!</a></p>
-                    {% endif %}
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="expansion-area">
-                <button type="button" id="show-help-button" class="expand-toggle-button">
-                    Help
-                </button>
-                <div class="expansion-content">
-                    {% include "home/how-to-add.html" %}
-                </div>
-            </div>
-
-            {% if is-current-user %}
-            <div class="expansion-area">
-                <button type="button" id="show-edit-profile-button" class="expand-toggle-button">Edit your profile
-                </button>
-                <div class="expansion-content">
-                    <ul>
-                        <li><strong>Change your avatar:</strong>
-                            <a href="https://en.gravatar.com/emails/" target="_blank">click here to go to
-                                Gravatar.com</a> and upload an avatar.
-                            By signing up at Gravatar, you only have to upload your avatar once and it will be
-                            automatically available on many
-                            sites including Swirl.
-                        </li>
-                        <li><a href="/edit-profile">Update your username or email</a></li>
-                        <li><a href="/forgot-password?username={{ user.username|urlescape }}">Reset your
-                            password</a></li>
-                        <li><a href="{{ ''|notification-options-url }}">Set your email preferences</a></li>
-                        <li><a href="/logout" class="logout-link">Log out</a></li>
-                    </ul>
-                </div>
-            </div>
-            {% endif %}
-
-        </div>
+<div class="home">
+    <div class="swirl-header border-bottom">
+        <div class="swirl-header__bgimage"
+             style="background-image: url({{ author.email_md5|gravatar-img-url:600 }})"></div>
+        <img class="swirl-header__image {{ model.swirl.type }}" src="{{ author.email_md5|gravatar-img-url:600 }}"/>
+        <div class="swirl-type">Profile page</div>
     </div>
-</main>
+
+    <br class="padded">
+
+    <div class="center-wrapper">
+        <h1>{{author.username}}</h1>
+
+
+        <div class="expansion-area">
+            <button type="button" id="show-swirls-sent-button" class="expand-toggle-button">
+                {% if is-current-user %}
+                Swirls you've sent
+                {% else %}
+                Swirls from {{ author.username }}
+                {% endif %}
+            </button>
+            <div class="expansion-content">
+                {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
+            </div>
+
+        </div>
+
+        <div class="expansion-area">
+            <button type="button" id="show-swirls-responded-button" class="expand-toggle-button">
+                {% if is-current-user %}
+                Swirls you've responded to
+                {% else %}
+                Swirls responded by {{ author.username }}
+                {% endif %}
+            </button>
+            <div class="expansion-content">
+                {% if has-responses? %}
+                <h2>By Response:</h2>
+                <ul>
+                    {% for response in responses %}
+                    <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                {% if is-current-user %}
+                <p>You haven't responded to any Swirls yet. See your <a href="/swirls/inbox">waiting Swirls</a> to
+                    see
+                    Swirls recommended to you, then let them know what you think!</p>
+                {% else %}
+                <p>{{ author.username }} hasn't responded to any Swirls yet. Send them a recommendation <a
+                        href="/swirls/start">here!</a></p>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="expansion-area">
+            <button type="button" id="show-help-button" class="expand-toggle-button">
+                Help
+            </button>
+            <div class="expansion-content">
+                {% include "home/how-to-add.html" %}
+            </div>
+        </div>
+
+        {% if is-current-user %}
+        <div class="expansion-area">
+            <button type="button" id="show-edit-profile-button" class="expand-toggle-button">Edit your profile
+            </button>
+            <div class="expansion-content">
+                <ul>
+                    <li><strong>Change your avatar:</strong>
+                        <a href="https://en.gravatar.com/emails/" target="_blank">click here to go to
+                            Gravatar.com</a> and upload an avatar.
+                        By signing up at Gravatar, you only have to upload your avatar once and it will be
+                        automatically available on many
+                        sites including Swirl.
+                    </li>
+                    <li><a href="/edit-profile">Update your username or email</a></li>
+                    <li><a href="/forgot-password?username={{ user.username|urlescape }}">Reset your
+                        password</a></li>
+                    <li><a href="{{ ''|notification-options-url }}">Set your email preferences</a></li>
+                    <li><a href="/logout" class="logout-link">Log out</a></li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

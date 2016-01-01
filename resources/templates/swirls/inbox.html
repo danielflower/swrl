@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<main>
-    <div class="home">
-        {% include "components/big-pink-button.html" %}
+<div class="home">
+    {% include "components/big-pink-button.html" %}
 
-        <div class="center-wrapper">
-            <h1 id="page-title">Inbox ({{unread-count}})</h1>
+    <div class="center-wrapper">
+        <h1 id="page-title">Inbox ({{unread-count}})</h1>
 
-            {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
+        {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 
-        </div>
     </div>
-</main>
+</div>
 {% endblock %}

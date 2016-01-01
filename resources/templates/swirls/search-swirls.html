@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="standard-page">
+    <h1 class="padded">Search</h1>
+
+    <form method="get" action="/search" class="search-form">
+        <label for="search-query-box">Search</label><input id="search-query-box" type="search" name="query"
+                                                           value="{{query}}" required autofocus>
+        <input type="submit" value="Go">
+    </form>
+
+    {% if query %}
+    <p>Showing <strong>{{ swirls|count }}</strong> results for <i>{{query}}</i></p>
+    {% endif %}
+
+    {% if swirls|empty? %}
+    {% else %}
+    {% include "components/swirls-list-with-paging.html" %}
+    {% endif %}
+
+</div>
+{% endblock %}
