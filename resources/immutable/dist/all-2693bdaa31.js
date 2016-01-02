@@ -1389,7 +1389,7 @@ function init($) {
                 requestAnimationFrame(function () {
                     $('.pending-to-appear').css('opacity', '1.0');
                 });
-                history.pushState({ query: query }, 'Search results for ' + query, '/search?query=' + encodeURIComponent(query));
+                history.replaceState({ query: query }, 'Search results for ' + query, '/search?query=' + encodeURIComponent(query));
             }
         }).catch(function (e) {
             console.log('Error while getting search results', e);

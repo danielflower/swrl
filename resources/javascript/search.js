@@ -48,7 +48,7 @@ function init($) {
                     $resultCount.html($('.search-results .mini-swirl').length);
                     $b.html('Go');
                     requestAnimationFrame(() => {$('.pending-to-appear').css('opacity', '1.0')});
-                    history.pushState({query: query}, 'Search results for ' + query, '/search?query=' + encodeURIComponent(query));
+                    history.replaceState({query: query}, 'Search results for ' + query, '/search?query=' + encodeURIComponent(query));
                 }
             })
             .catch((e) => {
