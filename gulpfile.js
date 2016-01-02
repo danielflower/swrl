@@ -38,7 +38,7 @@ gulp.task('browsify-javascript', ['generate-css'], function () {
     return browserify({
         entries: 'resources/javascript/app.js'
     })
-        .transform(babelify)
+        .transform(babelify, {presets: ["es2015"]})
         .bundle()
         .pipe(source('all.js'))
         .pipe(gulp.dest(dist));
@@ -58,7 +58,7 @@ gulp.task('process-javascript', ['browsify-javascript'], function () {
 
 gulp.task('default', ['process-javascript'], function () {
     return gulp.src(dist + '/**/*')
-        .pipe(sizereport())
+        .pipe(sizereport({gzip:true}))
         .pipe(exec('git add --all resources/immutable/dist/'));
 });
 

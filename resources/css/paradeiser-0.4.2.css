@@ -4,7 +4,7 @@ body {
 
 @media (max-width: 768px) {
     body {
-        margin-top: 40px
+        margin-top: 40px;
     }
 }
 
@@ -28,7 +28,7 @@ body {
 
 @media (min-width: 768px) {
     .paradeiser {
-        height: 60px
+        height: 60px;
     }
 }
 
@@ -56,24 +56,24 @@ body {
 
 @media (min-width: 1025px) {
     .paradeiser .paradeiser_dropdown, .paradeiser a {
-        font-size: 13px
+        font-size: 13px;
     }
 }
 
 .paradeiser .paradeiser_dropdown.active, .paradeiser .paradeiser_dropdown:hover, .paradeiser a.active, .paradeiser a:hover {
-    background: #eaf6fa
+    background: #eaf6fa;
 }
 
 .paradeiser span {
     margin-top: 5px;
-    font-size: 10px
-        white-space: nowrap;
+    font-size: 10px;
+    white-space: nowrap;
 
 }
 
 @media (min-width: 1025px) {
     .paradeiser span {
-        font-size: 13px
+        font-size: 13px;
     }
 }
 
@@ -82,14 +82,14 @@ body {
 }
 
 .paradeiser span.paradeiser_dropdown > a {
-    width: 100%
+    width: 100%;
     white-space: nowrap;
 
 }
 
 .paradeiser .paradeiser_logo {
     max-width: 40px;
-    width: 100%
+    width: 100%;
     white-space: nowrap;
 
 }
@@ -125,7 +125,7 @@ body {
     opacity: 1;
     -webkit-transition: opacity .4s;
     transition: opacity .4s;
-    pointer-events: auto
+    pointer-events: auto;
     white-space: nowrap;
 
 }
@@ -134,7 +134,7 @@ body {
     display: inline-block;
     width: 100%;
     background: #4a4a4a;
-    text-align: center
+    text-align: center;
     white-space: nowrap;
 }
 
