@@ -92,11 +92,11 @@ function init($) {
         filterVisibleSwirls($);
     });
 
-    $('#swirl-list').on('click', 'i.dismiss-button', function () {
+    $('.swirl-list').on('click', 'i.dismiss-button', function () {
         respondAndRemove(this, 'Dismissed');
     });
 
-    $('#swirl-list').on('click', 'i.later-button', function () {
+    $('.swirl-list').on('click', 'i.later-button', function () {
         respondAndRemove(this, 'Later');
     });
 }

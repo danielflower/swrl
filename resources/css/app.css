@@ -4,6 +4,7 @@
 @import "groups.css";
 @import "swirl-list.css";
 @import "swirl-detail.css";
+@import "search.css";
 
 #swirl-title, #swirl-image-url {
     width: 80%;
@@ -167,41 +168,12 @@ article{
 }
 
 
-.search-result {
-    clear: both;
-    border: 1px solid #CCCCCC;
-    overflow: auto;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-
-.searchbox {
-    padding-top: 20px;
-}
-
-.search-result img {
-    float: left;
-    margin-left:10px;
-    margin-right:25px;
-}
-
-.search-result em {
-    color: #737373;
-    font-style: italic;
-}
-
-.search-result h2 {
-    margin: 0;
-    padding: 0;
-}
-
 
 
 
 .chrome-only, .chrome-extension-installed, .install-chrome-extension-box {
     display: none;
 }
-
 
 .respond-form {
     text-align: left;

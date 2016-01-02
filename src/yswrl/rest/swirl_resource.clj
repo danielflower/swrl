@@ -10,6 +10,7 @@
              (defroutes swirl-rest-routes-erm
 
                         (swirl-routes/get-swirls-by-id)
+                        (swirl-routes/search-for-swirls)
 
                         (GET "/:id{[0-9]+}/comments" [id comment-id-start :as req]
                           (swirl-routes/get-html-of-comments-since

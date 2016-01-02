@@ -5,19 +5,21 @@
     <h1 class="padded">Search</h1>
 
     <form method="get" action="/search" class="search-form">
-        <label for="search-query-box">Search</label><input id="search-query-box" type="search" name="query"
+        <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
+                                                           name="query"
                                                            value="{{query}}" required autofocus>
-        <input type="submit" value="Go">
+        <button type="submit" class="submit">Go</button>
+
+        <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
+            <strong class="result-count">{{ swirls|count }}</strong> results for <i class="query-val">{{query}}</i></p>
+
     </form>
 
-    {% if query %}
-    <p>Showing <strong>{{ swirls|count }}</strong> results for <i>{{query}}</i></p>
-    {% endif %}
-
-    {% if swirls|empty? %}
-    {% else %}
-    {% include "components/swirls-list-with-paging.html" %}
-    {% endif %}
+    <div class="swirl-list search-results">
+        {% for swirl in swirls %}
+        {% include "components/mini-swirl.html" with swirl=swirl %}
+        {% endfor %}
+    </div>
 
 </div>
 {% endblock %}

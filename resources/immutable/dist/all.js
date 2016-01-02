@@ -2,13 +2,16 @@
 (function (process,global){
 "use strict";
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 (function () {
-  "use strict";function lib$es6$promise$utils$$objectOrFunction(x) {
-    return typeof x === "function" || typeof x === "object" && x !== null;
+  "use strict";
+  function lib$es6$promise$utils$$objectOrFunction(x) {
+    return typeof x === "function" || (typeof x === "undefined" ? "undefined" : _typeof(x)) === "object" && x !== null;
   }function lib$es6$promise$utils$$isFunction(x) {
     return typeof x === "function";
   }function lib$es6$promise$utils$$isMaybeThenable(x) {
-    return typeof x === "object" && x !== null;
+    return (typeof x === "undefined" ? "undefined" : _typeof(x)) === "object" && x !== null;
   }var lib$es6$promise$utils$$_isArray;if (!Array.isArray) {
     lib$es6$promise$utils$$_isArray = function (x) {
       return Object.prototype.toString.call(x) === "[object Array]";
@@ -47,7 +50,7 @@
     return function () {
       setTimeout(lib$es6$promise$asap$$flush, 1);
     };
-  }var lib$es6$promise$asap$$queue = new Array(1000);function lib$es6$promise$asap$$flush() {
+  }var lib$es6$promise$asap$$queue = new Array(1e3);function lib$es6$promise$asap$$flush() {
     for (var i = 0; i < lib$es6$promise$asap$$len; i += 2) {
       var callback = lib$es6$promise$asap$$queue[i];var arg = lib$es6$promise$asap$$queue[i + 1];callback(arg);lib$es6$promise$asap$$queue[i] = undefined;lib$es6$promise$asap$$queue[i + 1] = undefined;
     }lib$es6$promise$asap$$len = 0;
@@ -268,7 +271,7 @@
       lib$es6$promise$$internal$$subscribe(Constructor.resolve(entries[i]), undefined, onFulfillment, onRejection);
     }return promise;
   }var lib$es6$promise$promise$race$$default = lib$es6$promise$promise$race$$race;function lib$es6$promise$promise$resolve$$resolve(object) {
-    var Constructor = this;if (object && typeof object === "object" && object.constructor === Constructor) {
+    var Constructor = this;if (object && (typeof object === "undefined" ? "undefined" : _typeof(object)) === "object" && object.constructor === Constructor) {
       return object;
     }var promise = new Constructor(lib$es6$promise$$internal$$noop);lib$es6$promise$$internal$$resolve(promise, object);return promise;
   }var lib$es6$promise$promise$resolve$$default = lib$es6$promise$promise$resolve$$resolve;function lib$es6$promise$promise$reject$$reject(reason) {
@@ -688,7 +691,9 @@ function drainQueue() {
         currentQueue = queue;
         queue = [];
         while (++queueIndex < len) {
-            currentQueue[queueIndex].run();
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
         }
         queueIndex = -1;
         len = queue.length;
@@ -740,7 +745,6 @@ process.binding = function (name) {
     throw new Error('process.binding is not supported');
 };
 
-// TODO(shtylman)
 process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
@@ -749,8 +753,6 @@ process.umask = function() { return 0; };
 
 },{}],4:[function(require,module,exports){
 'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 require('../../bower_components/es6-promise/promise.min.js');
 
@@ -780,6 +782,10 @@ var _menu = require('./menu');
 
 var _menu2 = _interopRequireDefault(_menu);
 
+var _search = require('./search');
+
+var _search2 = _interopRequireDefault(_search);
+
 var _swirlList = require('./swirl-list');
 
 var _swirlList2 = _interopRequireDefault(_swirlList);
@@ -788,16 +794,19 @@ var _ga = require('./ga');
 
 var _ga2 = _interopRequireDefault(_ga);
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 $(document).ready(function () {
-    _editor2['default'].init($);
-    _editor2['default'].initWidgets($);
-    (0, _editSwirl2['default'])();
-    (0, _chromeExtension2['default'])();
-    _responseForm2['default'].init($);
-    _commentForm2['default'].init($);
-    _menu2['default'].init($);
-    _swirlList2['default'].init($);
-    _ga2['default'].addAnalyticsIfProd();
+    _editor2.default.init($);
+    _editor2.default.initWidgets($);
+    (0, _editSwirl2.default)();
+    (0, _chromeExtension2.default)();
+    _responseForm2.default.init($);
+    _commentForm2.default.init($);
+    _menu2.default.init($);
+    _swirlList2.default.init($);
+    _search2.default.init($);
+    _ga2.default.addAnalyticsIfProd();
 
     $('.expansion-content').hide();
     $('#show-share-button').click(function (e) {
@@ -818,7 +827,7 @@ $(document).ready(function () {
             if (d.getElementById(id)) return;
             js = d.createElement(s);
             js.id = id;
-            js.src = '//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576';
+            js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576";
             fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
     });
@@ -829,10 +838,10 @@ $(document).ready(function () {
         $(e.currentTarget).toggleClass('expanded');
     });
 
-    document.documentElement.className += 'ontouchstart' in document.documentElement ? ' touch' : ' no-touch';
+    document.documentElement.className += "ontouchstart" in document.documentElement ? ' touch' : ' no-touch';
 });
 
-},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./swirl-list":13}],5:[function(require,module,exports){
+},{"../../bower_components/es6-promise/promise.min.js":1,"../../bower_components/fetch/fetch.js":2,"./chrome-extension":5,"./comment-form":6,"./edit-swirl":7,"./editor":8,"./ga":9,"./menu":11,"./response-form":12,"./search":13,"./swirl-list":14}],5:[function(require,module,exports){
 'use strict';
 
 var setupChromeExtension = function setupChromeExtension() {
@@ -863,19 +872,19 @@ module.exports = setupChromeExtension;
 },{}],6:[function(require,module,exports){
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+var _http = require('./http.js');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+var _http2 = _interopRequireDefault(_http);
 
-var _httpJs = require('./http.js');
+var _editor = require('./editor.js');
 
-var _httpJs2 = _interopRequireDefault(_httpJs);
+var _editor2 = _interopRequireDefault(_editor);
 
-var _editorJs = require('./editor.js');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _editorJs2 = _interopRequireDefault(_editorJs);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CommentForm = (function () {
     function CommentForm($, form) {
@@ -883,7 +892,7 @@ var CommentForm = (function () {
 
         _classCallCheck(this, CommentForm);
 
-        this.editor = new _editorJs2['default'].RichTextEditor($(form).find('div.rte'));
+        this.editor = new _editor2.default.RichTextEditor($(form).find('div.rte'));
         this.$form = $(form);
         this.$addButton = this.$form.find('input[type=submit]');
         this.$maxCommentIdField = this.$form.find('.max-comment-id-field');
@@ -896,7 +905,7 @@ var CommentForm = (function () {
             var commentHtml = _this.editor.getHtmlContent();
             console.log('Going to post comment', commentHtml);
             if (commentHtml && commentHtml.trim().length > 0) {
-                _httpJs2['default'].post('/swirls/' + _this.swirlId + '/comment', { comment: commentHtml }).then(_this.addMissingComments.bind(_this)).then(function () {
+                _http2.default.post('/swirls/' + _this.swirlId + '/comment', { comment: commentHtml }).then(_this.addMissingComments.bind(_this)).then(function () {
                     _this.resetForm();
                 });
             } else {
@@ -916,7 +925,7 @@ var CommentForm = (function () {
                 clearTimeout(this.refreshToken);
             }
             var me = this;
-            return _httpJs2['default'].getJson('/swirls/' + me.swirlId + '/comments?comment-id-start=' + me.$maxCommentIdField.val()).then(function (comments) {
+            return _http2.default.getJson('/swirls/' + me.swirlId + '/comments?comment-id-start=' + me.$maxCommentIdField.val()).then(function (comments) {
                 if (comments.count > 0) {
                     $('.comments').append(comments.html);
                     me.$maxCommentIdField.val(comments.maxId);
@@ -928,12 +937,12 @@ var CommentForm = (function () {
         key: 'setLoading',
         value: function setLoading() {
             this.$addButton.addClass('button-loading');
-            this.$addButton.prop('disabled', true);
+            this.$addButton.prop("disabled", true);
         }
     }, {
         key: 'resetForm',
         value: function resetForm() {
-            this.$addButton.prop('disabled', false);
+            this.$addButton.prop("disabled", false);
             this.$addButton.removeClass('button-loading');
             this.editor.clear();
         }
@@ -998,15 +1007,15 @@ module.exports = setup;
 },{}],8:[function(require,module,exports){
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+var _http = require('./http.js');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+var _http2 = _interopRequireDefault(_http);
 
-var _httpJs = require('./http.js');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _httpJs2 = _interopRequireDefault(_httpJs);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var RichTextEditor = (function () {
     function RichTextEditor($rteDiv) {
@@ -1037,7 +1046,7 @@ var RichTextEditor = (function () {
         var html = this.$textarea.val();
         this.$editorDiv.html(html);
 
-        $rteDiv.closest('form').on('submit', function () {
+        $rteDiv.closest("form").on("submit", function () {
             _this.copyInputFromEditableDivToPostableTextArea();
             return true;
         });
@@ -1070,7 +1079,7 @@ var RichTextEditor = (function () {
                 if (e.href === e.innerText && e.className !== 'transforming-link') {
                     e.className = 'transforming-link';
                     $(e).append('<i class="fa fa-spin fa-spinner"></i>');
-                    _httpJs2['default'].getJson('/website-service/get-metadata?url=' + encodeURI(e.href)).then(function (metadata) {
+                    _http2.default.getJson('/website-service/get-metadata?url=' + encodeURI(e.href)).then(function (metadata) {
                         console.log('Got metadata', metadata);
                         e.innerText = metadata.title || e.href;
                         e.className = '';
@@ -1139,7 +1148,7 @@ var RichTextEditor = (function () {
 })();
 
 var setup = function setup($) {
-    $('.rte').each(function (i, holder) {
+    $(".rte").each(function (i, holder) {
         new RichTextEditor($(holder));
     });
 };
@@ -1230,15 +1239,15 @@ module.exports = { init: setup };
 },{}],12:[function(require,module,exports){
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+var _http = require('./http.js');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+var _http2 = _interopRequireDefault(_http);
 
-var _httpJs = require('./http.js');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _httpJs2 = _interopRequireDefault(_httpJs);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var RespondForm = (function () {
     function RespondForm($, form) {
@@ -1258,7 +1267,7 @@ var RespondForm = (function () {
             $(customInputBox).val('');
             if (response) {
                 _this.setSelectedButton(response, 'button-loading');
-                _httpJs2['default'].post('/swirls/' + swirlId + '/respond', { responseButton: response }).then(function () {
+                _http2.default.post('/swirls/' + swirlId + '/respond', { responseButton: response }).then(function () {
                     _this.setSelectedButton(response, 'swirl-button');
                 });
             }
@@ -1329,11 +1338,73 @@ module.exports = { init: init };
 },{"./http.js":10}],13:[function(require,module,exports){
 'use strict';
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+var currentSearch = null;
+var currentTimeout = null;
 
-var _httpJs = require('./http.js');
+function init($) {
 
-var _httpJs2 = _interopRequireDefault(_httpJs);
+    $('.search-form .query').keyup(function (e, k) {
+        if (currentTimeout) {
+            window.clearTimeout(currentTimeout);
+        }
+        currentTimeout = window.setTimeout(function () {
+            $('.search-form').submit();
+        }, 300);
+    });
+
+    $('.search-form').submit(function (e) {
+        var $f = $(e.currentTarget);
+        var query = $f.find('.query').val();
+        currentSearch = query;
+        var $summary = $f.find('.search-result-summary');
+        $summary.toggleClass('no-query', !query);
+        if (!query) {
+            return true; // nothing entered... let the browser deal with it
+        }
+        var $b = $f.find('.submit');
+
+        var $summaryQuery = $f.find('.query-val');
+        $summaryQuery.text(query);
+        var $resultCount = $f.find('.result-count');
+        $resultCount.html('<i class="fa fa-spin fa-spinner"></i>');
+
+        var fetchUrl = '/api/v1/swirls/search?query=' + encodeURIComponent(query);
+        fetch(fetchUrl, { credentials: 'same-origin' }).then(function (resp) {
+            if (resp.status !== 200) {
+                throw 'from ' + fetchUrl + ': ' + resp.status + ' ' + resp.statusText;
+            }
+            return resp.text();
+        }).then(function (html) {
+            if (currentSearch === query) {
+                $('.search-results').html(html);
+                $resultCount.html($('.search-results .mini-swirl').length);
+                $b.html('Go');
+                requestAnimationFrame(function () {
+                    $('.pending-to-appear').css('opacity', '1.0');
+                });
+            }
+        }).catch(function (e) {
+            console.log('Error while getting search results', e);
+            $f.off();
+            $f.submit();
+        });
+
+        return false;
+    });
+}
+
+module.exports = {
+    init: init
+};
+
+},{}],14:[function(require,module,exports){
+'use strict';
+
+var _http = require('./http.js');
+
+var _http2 = _interopRequireDefault(_http);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var currentFilter = null;
 
@@ -1354,7 +1425,7 @@ var respondAndRemove = function respondAndRemove(element, response) {
         }
         $(nextSwirlOption).remove();
     }
-    _httpJs2['default'].post('/swirls/' + swirlID + '/respond', { responseButton: response });
+    _http2.default.post('/swirls/' + swirlID + '/respond', { responseButton: response });
 };
 
 var filterVisibleSwirls = function filterVisibleSwirls($) {
@@ -1407,7 +1478,7 @@ function init($) {
             b.removeAttr('data-disabled');
             b.text(originalValue);
             b.attr('href', nextPageUrl);
-        })['catch'](function (e) {
+        }).catch(function (e) {
             console.log('Error while getting more', e);
             location.href = nextPageUrlIfQueryFails;
         });
@@ -1422,11 +1493,11 @@ function init($) {
         filterVisibleSwirls($);
     });
 
-    $('#swirl-list').on('click', 'i.dismiss-button', function () {
+    $('.swirl-list').on('click', 'i.dismiss-button', function () {
         respondAndRemove(this, 'Dismissed');
     });
 
-    $('#swirl-list').on('click', 'i.later-button', function () {
+    $('.swirl-list').on('click', 'i.later-button', function () {
         respondAndRemove(this, 'Later');
     });
 }

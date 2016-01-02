@@ -63,7 +63,7 @@
       (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url :author_id :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
-      (limit max-results)))                                   ; faster to order by ID rather than creation date as ID is indexed
+      (limit max-results)))
 
 (defn get-all-swirls [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)

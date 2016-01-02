@@ -6,6 +6,7 @@ import setupSwirlEdit from './edit-swirl';
 import responseForm from './response-form';
 import commentForm from './comment-form';
 import menu from './menu';
+import search from './search';
 import swirlList from './swirl-list';
 import ga from './ga';
 
@@ -18,6 +19,7 @@ $(document).ready(function () {
     commentForm.init($);
     menu.init($);
     swirlList.init($);
+    search.init($);
     ga.addAnalyticsIfProd();
 
     $('.expansion-content').hide();
