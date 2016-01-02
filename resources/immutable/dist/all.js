@@ -1341,9 +1341,15 @@ module.exports = { init: init };
 var currentSearch = null;
 var currentTimeout = null;
 
+window.onpopstate = function (event) {
+    var q = (event.state ? event.state.query : '') || '';
+    $('.search-form .query').val(q);
+    $('.search-form').submit();
+};
+
 function init($) {
 
-    $('.search-form .query').keyup(function (e, k) {
+    $('.search-form .query').keypress(function (e, k) {
         if (currentTimeout) {
             window.clearTimeout(currentTimeout);
         }
@@ -1358,6 +1364,7 @@ function init($) {
         currentSearch = query;
         var $summary = $f.find('.search-result-summary');
         $summary.toggleClass('no-query', !query);
+
         if (!query) {
             return true; // nothing entered... let the browser deal with it
         }
@@ -1382,6 +1389,7 @@ function init($) {
                 requestAnimationFrame(function () {
                     $('.pending-to-appear').css('opacity', '1.0');
                 });
+                history.pushState({ query: query }, 'Search results for ' + query, '/search?query=' + encodeURIComponent(query));
             }
         }).catch(function (e) {
             console.log('Error while getting search results', e);
