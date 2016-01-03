@@ -88,8 +88,7 @@
 (deftype RenderableTemplate [template params]
   Renderable
   (render [_ request]
-    (let [current-user (get (get request :session) :user)
-          unread-count (if current-user (lookups/get-swirls-awaiting-response-count current-user) nil)]
+    (let [current-user (get (get request :session) :user)]
 
       (content-type
         (->> (assoc params
@@ -98,7 +97,6 @@
                :csrf-token *anti-forgery-token*
                :user (if (nil? current-user) nil (auth-repo/get-user (current-user :username))) ; todo lookup by remember-me token
                :groups (if (nil? current-user) nil (group-repo/get-groups-for (current-user :id)))
-               :unread-count unread-count
                :constraints constraints
                :request request
                )

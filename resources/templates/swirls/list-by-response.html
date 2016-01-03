@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="center-wrapper">
+    <h1 class="padded">{{pageTitle}}</h1>
+
+    <p class="padded">These are all the swirls that you responded to with <strong>{{ submitted-response }}</strong>.</p>
+
+    {% include "components/swirls-list-with-paging.html" %}
+
+    {% if responses|not-empty %}
+    <h2>Other responses</h2>
+
+    <ul>
+        {% for response in responses %}
+        <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div>
+{% endblock %}

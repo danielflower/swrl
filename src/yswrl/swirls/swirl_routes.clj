@@ -98,8 +98,18 @@
                                                 })))
 
 (defn view-inbox-by-response [count current-user submitted-response]
-  (let [swirls (lookups/get-swirls-by-response current-user 2000 count submitted-response)]
-    (layout/render "swirls/list.html" {:title submitted-response :pageTitle submitted-response :swirls swirls :countFrom (str count) :countTo (+ count 20)})))
+  (let [swirls (lookups/get-swirls-by-response current-user 2000 count submitted-response)
+        is-later (.equalsIgnoreCase "later" submitted-response)
+        title (if is-later "Saved for later" submitted-response)]
+    (layout/render "swirls/list-by-response.html" {
+                                                   :title              title
+                                                   :submitted-response submitted-response
+                                                   :is-later           is-later
+                                                   :pageTitle          title
+                                                   :swirls             swirls
+                                                   :responses (lookups/get-response-count-for-user (:id current-user))
+                                                   :countFrom          (str count)
+                                                   :countTo            (+ count 20)})))
 
 (def not-nil? (complement nil?))
 
