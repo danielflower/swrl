@@ -1,0 +1,40 @@
+{% if notifications|not-empty %}
+<div class="notification">
+
+    <ul>
+
+        {% for sn in notifications %}
+        <li>
+
+
+
+
+            <a href="{{ sn.note.instigator-username|user-url }}">{{ sn.note.instigator-email-md5|gravatar-img:25 }}{{sn.note.instigator-username}}</a>
+            {% ifequal sn.note.notification_type "R" %}
+            recommended <a href="{{ sn.swirl.id|swirlurl }}">{{sn.swirl.title}}</a> to you
+            {% endifequal %}
+            {% ifequal sn.note.notification_type "C" %}
+            added a comment to <a href="{{ sn.swirl.id|swirlurl }}">{{sn.swirl.title}}</a>
+            {% endifequal %}
+            {% ifequal sn.note.notification_type "P" %}
+            responded to <a href="{{ sn.swirl.id|swirlurl }}">{{sn.swirl.title}}</a>
+            with <strong>{{sn.note.summary}}</strong>
+            {% endifequal %}
+
+            {% ifequal sn.note.notification_type "G" %}
+            added you to <a href="{{ sn.note.subject_id|groupurl }}">a new group</a>
+            {% endifequal %}
+
+            - {{sn.note.date_created|timetag}}
+            {% if not sn.note.date_seen %}
+            <span class="new"><i class="fa fa-star"></i> New</span>
+            {% endif %}
+
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% else %}
+<p>You have no updates yet. Start by <a href="/swirls/start">creating some recommendations</a> for people you know.</p>
+{% endif %}

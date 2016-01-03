@@ -22,6 +22,11 @@ $(document).ready(function () {
     search.init($);
     ga.addAnalyticsIfProd();
 
+    $('.show-notifications-button').click(() => {
+        $('.notification li').css('display', 'list-item');
+        $('.show-notifications-button').hide();
+    });
+
     $('.expansion-content').hide();
     $('#show-share-button').click((e) => {
         !function (d, s, id) {

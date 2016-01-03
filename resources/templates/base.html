@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-1d47643a0c.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-f062557752.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -41,13 +41,12 @@
     <nav class="paradeiser" id="paradeiser">
         <a href="/" title="Go home"><img src="/immutable/images/swrl-logo.svg" class="site-header__logo"
                                          height="30"/></a>
-        <!--<a href="/swirls/groups" rel="nofollow">Groups</a>-->
-        <a href="/search" rel="nofollow">Search</a>
 
+        <a href="/search" rel="nofollow">Search</a>
+        <a href="/swirls/groups" rel="nofollow">Groups</a>
 
         {% if user %}
         <a href="/swirls/inbox" rel="nofollow">Inbox <span class="nav-count">{{unread-count}}</span></a>
-        <a href="/notifications" rel="nofollow">Notifications <span class="nav-count">{{notifications-count}}</span></a>
         {% else %}
         <a href="/login" class="login-link" rel="nofollow">Login</a>
         <a href="/register" rel="nofollow">Register</a>
@@ -77,6 +76,6 @@
 </p>
 
 <script src="/immutable/js/jquery-3.0.0-alpha1.min.js"></script>
-<script src="/immutable/dist/all-2693bdaa31.js"></script>
+<script src="/immutable/dist/all-8943ac50b7.js"></script>
 </body>
 </html>

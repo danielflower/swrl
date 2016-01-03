@@ -138,9 +138,13 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
                  (map (fn [n] {:note  n
                                :swirl (if (nil? (n :swirl_id)) nil (lookups/get-swirl-if-allowed-to-view (n :swirl_id) user))}) raw)))))
 
-(defn view-notifications-page [user]
+(defn get-notifications-and-mark-responses-as-seen-for [user]
   (let [notes (get-notification-view-model user)]
     (clear-notifications-for-user-by-notification-type (user :id) new-response)
+    notes))
+
+(defn view-notifications-page [user]
+  (let [notes (get-notifications-and-mark-responses-as-seen-for user)]
     (layout/render "notifications/view-all.html" {:title         "What's new"
                                                   :pageTitle     "What's new"
                                                   :notifications notes})))

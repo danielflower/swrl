@@ -63,7 +63,6 @@ h2 {
     color: var(--main-font-color);
 }
 
-
 h3 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
@@ -325,4 +324,8 @@ nav .nav-count {
 .keep-logged-in-label {
     padding-top: 12px;
     padding-bottom: 12px;
+}
+
+.notification li {
+    list-style-type: none;
 }

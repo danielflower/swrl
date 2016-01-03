@@ -201,7 +201,7 @@
 
         (visit (links/inbox))
         (follow "see what's Swirling")
-        (within [:h1] (has (text? "Discover")))
+        (within [:h1] (has (some-text? "Discover")))
 
         )))
 
@@ -840,7 +840,7 @@
           (within [:h1]
                   (has (text? "What's new")))
           (within [:span.new]
-                  (has (text? " New: ")))
+                  (has (some-text? "New")))
 
           (follow "How to chop an ONION using CRYSTALS with Jamie Oliver")
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")

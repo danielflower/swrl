@@ -79,3 +79,7 @@
     margin: 0 auto;
     max-width: 1000px;
 }
+
+.home .notification li:nth-child(n+5) {
+    display: none;
+}

@@ -808,6 +808,11 @@ $(document).ready(function () {
     _search2.default.init($);
     _ga2.default.addAnalyticsIfProd();
 
+    $('.show-notifications-button').click(function () {
+        $('.notification li').css('display', 'list-item');
+        $('.show-notifications-button').hide();
+    });
+
     $('.expansion-content').hide();
     $('#show-share-button').click(function (e) {
         !(function (d, s, id) {

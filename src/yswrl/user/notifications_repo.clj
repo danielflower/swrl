@@ -13,7 +13,7 @@
 (defn get-notifications-for-user [user-id]
   (-> (k/select* db/notifications)
       (k/fields :swirl_id :subject_id :target_user_id :notification_type [:swirls.title :swirl-title] :summary
-              [:users.id :instigator-id] [:users.username :instigator-username] :date_seen :date_emailed :date_created)
+              [:users.id :instigator-id] [:users.username :instigator-username] [:users.email_md5 :instigator-email-md5] :date_seen :date_emailed :date_created)
       (k/join :left db/swirls (= :notifications.swirl_id :swirls.id))
       (k/join :left db/users (= :notifications.instigator_id :users.id))
       (k/where {:target_user_id user-id})))

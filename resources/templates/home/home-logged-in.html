@@ -1,17 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="home">
+<div class="home">
 
-        {% include "components/big-pink-button.html" %}
+    {% include "components/big-pink-button.html" %}
 
-        <div class="center-wrapper">
+    <div class="center-wrapper">
 
-            <h1 class="padded-lr" id="page-title">Discover</h1>
+        <h1>What's new</h1>
 
-            {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
+        {% include "components/notification-section.html" %}
 
-        </div>
+        {% if notifications|length > 4 %}
+        <button class="button show-notifications-button">Show more</button>
+        {% endif %}
+
+
+        <h1 id="page-title">Discover</h1>
+
+        {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
 
     </div>
+
+</div>
 
 {% endblock %}
