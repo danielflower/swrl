@@ -28,7 +28,8 @@
 (defn get-for-user-page [user-id]
   (-> (get-notifications-for-user user-id)
       (k/limit 100)
-      (k/order :id :desc)
+      (k/order (k/raw "(date_seen is null)") :desc)         ; show new notes first....
+      (k/order :id :desc)                                   ; ...then order by date created
       (k/select)))
 
 
