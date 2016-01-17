@@ -71,11 +71,11 @@
       (select)))
 
 (defn search-for-swirls [max-results skip requestor search-query]
-  (let [escaped-search-query (clojure.string/escape search-query {\' "''"})]
+  (let [escaped-search-query (str (clojure.string/escape search-query {\' "''"}) ":*")]
     (-> (select-multiple-swirls requestor max-results skip)
         (join :inner (raw "search_index") (= :swirls.id (raw "search_index.swirl_id")))
-        (where (raw (str "search_index.document @@ plainto_tsquery('english', '" escaped-search-query "')")))
-        (order (raw (str "ts_rank(search_index.document, plainto_tsquery('english', '" escaped-search-query "'))")) :desc)
+        (where (raw (str "search_index.document @@ to_tsquery('english', '" escaped-search-query "')")))
+        (order (raw (str "ts_rank(search_index.document, to_tsquery('english', '" escaped-search-query "'))")) :desc)
         (select))))
 
 (defn get-swirls-by-id [ids requestor]
