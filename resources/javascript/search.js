@@ -10,7 +10,7 @@ window.onpopstate = function(event) {
 
 function init($) {
 
-    $('.search-form .query').keypress((e, k) => {
+    $('.search-form .query').keydown((e, k) => {
         if (currentTimeout) {
             window.clearTimeout(currentTimeout);
         }
