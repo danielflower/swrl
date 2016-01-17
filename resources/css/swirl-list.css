@@ -193,6 +193,15 @@
     transition-duration: 1s;
 }
 
+.home .search-form input {
+    display: block;
+    margin: 20px auto 0;
+    width: 60%
+}
+
+.home form.search-form {
+   margin-bottom: 0px;
+}
 
 .search-form label {
     display: none;

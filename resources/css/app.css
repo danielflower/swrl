@@ -60,6 +60,9 @@ nav ul{
     padding-right: 10px;
 }
 
+.home h1, .add-to-wishlist, .home-page-more {
+    margin-left: 10px;
+}
 
 h1.headline {
     margin-top: 20px;
@@ -234,7 +237,10 @@ article{
     color: White;
     font-size: larger;
     text-align: left;
+    background-color: var(--generic-color);
+
 }
+
 button.expand-toggle-button::before {
     content: "+ ";
     font-size: larger;
@@ -251,16 +257,26 @@ button.expand-toggle-button.expanded::before {
     text-align: left;
 }
 
-#show-responses-button {
+.home .expansion-content{
+    padding-bottom: 0px;
+}
+
+
+#show-responses-button, #notifications-button{
     background-color: var(--video-color);
 }
+
+#public-swirls-button, .public-swirls {
+    background-color: var(--generic-color);
+}
+
 #show-comments-button {
     background-color: var(--tv-color);
 }
-#show-share-button {
+#show-share-button, #recommended-swirls-button, .recommended-swirls {
     background-color: var(--movie-color);
 }
-#show-links-button {
+#show-links-button , #friends-swirls-button, .friends-swirls{
     background-color: var(--book-color);
 }
 #show-admin-button {

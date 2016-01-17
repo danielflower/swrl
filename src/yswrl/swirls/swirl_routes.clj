@@ -16,20 +16,24 @@
             [yswrl.swirls.swirl-links :as link-types]
             [yswrl.utils :as utils]
             [clojure.string :refer [join lower-case]]
-            [yswrl.groups.groups-repo :as group-repo])
+            [yswrl.groups.groups-repo :as group-repo]
+            [yswrl.swirls.types :as types])
   (:import (java.util UUID)))
 
-(def seen-responses ["Loved it", "Not bad", "Not for me"])
+(defn seen-responses [type]
+  ["Later" (get-in types/types [type :words :watching]) "Loved it", "Not bad", "Not for me"])
 
-(def responses-to-hide #{"dismissed" "later"})
+(def responses-to-hide #{"dismissed"})
 (defn should-notify-users-of-response [response]
   (not (some #{(lower-case response)} responses-to-hide)))
 
 
-(defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit?]
-                                                                               :or   {edit? false}}]
+(defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit? wishlist]
+                                                                               :or   {edit?    false
+                                                                                      wishlist false}}]
   (if-let [swirl (lookups/get-swirl-if-allowed-to-edit swirl-id (author :id))]
-    (let [already-added (set (repo/get-suggestion-usernames swirl-id))
+    (let [wishlist (boolean wishlist)
+          already-added (set (repo/get-suggestion-usernames swirl-id))
           contacts (network/get-relations (author :id) :knows)
           origin-swirl (lookups/get-swirl origin-swirl-id)
           origin-swirl-author (if origin-swirl (user-repo/get-user-by-id (origin-swirl :author_id)))
@@ -54,6 +58,7 @@
                                          :already-suggested   already-added
                                          :unrelated           all-not-added
                                          :origin-swirl-id     origin-swirl-id
+                                         :wishlist            wishlist
                                          :groups-model        groups-model
                                          :origin-swirl-author origin-swirl-author
                                          :is_private          (or is-private? (:is_private swirl))}))))
@@ -107,7 +112,7 @@
                                                    :is-later           is-later
                                                    :pageTitle          title
                                                    :swirls             swirls
-                                                   :responses (lookups/get-response-count-for-user (:id current-user))
+                                                   :responses          (lookups/get-response-count-for-user (:id current-user))
                                                    :countFrom          (str count)
                                                    :countTo            (+ count 20)})))
 
@@ -152,7 +157,7 @@
           responses (map #(assoc % :html_content (response-summary-as-html (:summary %))) (repo/get-swirl-responses (:id swirl) responses-to-hide))
           comments (repo/get-swirl-comments (:id swirl))
           non-responders (repo/get-non-responders (:id swirl))
-          can-respond (and (not is-author) is-logged-in)
+          can-respond is-logged-in
           response-of-current-user (if is-logged-in (first (filter #(= (:id current-user) (:responder %)) responses)) nil)
           type (type-of swirl)
           title (str "You should " (get-in type [:words :watch]) " " (swirl :title))
@@ -160,9 +165,10 @@
           external-website-link (website-link-if-appropriate swirl swirl-links)
           max-comment-id (reduce max 0 (map :id comments))
           seen-response-options (if can-respond
-                                  (distinct (concat seen-responses
-                                                    (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) seen-responses))
-                                                    (if (not (nil? response-of-current-user)) [(response-of-current-user :summary)] [])))
+                                  (distinct (let [seen-responses (seen-responses (:type swirl))]
+                                              (concat seen-responses
+                                                      (sort (repo/get-recent-responses-by-user-and-type (current-user :id) (swirl :type) seen-responses))
+                                                      (if (not (nil? response-of-current-user)) [(response-of-current-user :summary)] []))))
                                   [])
           can-edit is-author]
       (notifications/mark-as-seen id current-user)
@@ -220,7 +226,7 @@
 
 
 (defn publish-swirl
-  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private? type image-url]
+  ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private? type image-url wishlist]
    (if (repo/publish-swirl id (author :id) subject review usernames-and-emails-to-notify private? type image-url)
      (do
        (group-repo/set-swirl-links id (author :id) group-ids)
@@ -228,6 +234,8 @@
          (let [members (group-repo/get-group-members group-id)
                members-sans-author (filter #(not (= (% :id) (author :id))) members)]
            (repo/add-suggestions id (author :id) (map :username members-sans-author))))
+       (if wishlist
+         (repo/respond-to-swirl id "Later" author))
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
@@ -279,12 +287,13 @@
 
 
 (defroutes swirl-routes
-           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private edit :as req]
+           (GET "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id group-id is-private edit wishlist :as req]
              (guard/requires-login #(edit-swirl-page (session-from req) (Long/parseLong id) group-id (= "true" is-private) (if (clojure.string/blank? origin-swirl-id)
                                                                                                                              nil
                                                                                                                              (Long/parseLong origin-swirl-id))
-                                                     :edit? edit)))
-           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type image-url :as req]
+                                                     :edit? edit
+                                                     :wishlist wishlist)))
+           (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type image-url wishlist :as req]
              (guard/requires-login #(publish-swirl
                                      (session-from req)
                                      (Long/parseLong id)
@@ -297,22 +306,23 @@
                                        true
                                        false)
                                      swirl-type
-                                     image-url)))
+                                     image-url
+                                     (= wishlist "true"))))
 
-           (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
-           (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
+             (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
+             (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
 
-           (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
+             (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
 
-           (post-response-route "/swirls")
-           (post-comment-route "/swirls")
+             (post-response-route "/swirls")
+             (post-comment-route "/swirls")
 
-           (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
+             (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
 
-           (GET "/search" [query :as req] (search query (session-from req)))
+             (GET "/search" [query :as req] (search query (session-from req)))
 
-           (GET "/swirls/groups" [] (groups-page))
+             (GET "/swirls/groups" [] (groups-page))
 
-           (GET "/profile/:authorName" [authorName :as req] (view-profile authorName (session-from req)))
-           (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
-           (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))
+             (GET "/profile/:authorName" [authorName :as req] (view-profile authorName (session-from req)))
+             (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
+             (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))

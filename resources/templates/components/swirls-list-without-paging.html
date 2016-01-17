@@ -1,0 +1,22 @@
+{% if swirls|empty? %}
+<p>
+    We've run out of swirls. Gomen Nasai
+</p>
+
+<p>
+    To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
+    or <a href="/">see what's Swirling</a> or see the swirls you <a href="/swirls/inbox/later">see the swirls you saved for later</a>.
+</p>
+{% else %}
+
+<div class="swirl-list">
+    {% for swirl in swirls %}
+    {% include "components/mini-swirl.html" with swirl=swirl %}
+    {% endfor %}
+</div>
+
+{% if see-more-url %}
+<a href="{{see-more-url}}" class="button home-page-more">See More...</a>
+{% endif %}
+
+{% endif %}

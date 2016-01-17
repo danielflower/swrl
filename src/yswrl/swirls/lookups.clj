@@ -1,7 +1,8 @@
 (ns yswrl.swirls.lookups
   (:require [yswrl.db :as db]
             [yswrl.swirls.swirl-states :as states]
-            [korma.core :refer [select* limit subselect aggregate offset order where join fields select raw modifier]]))
+            [korma.core :refer [select* limit subselect aggregate offset order where join fields select raw modifier]]
+            [yswrl.user.networking :as network]))
 (use 'korma.db)
 
 
@@ -71,12 +72,15 @@
       (select)))
 
 (defn search-for-swirls [max-results skip requestor search-query]
-  (let [escaped-search-query (str "''" (clojure.string/escape search-query {\' ""}) "''" ":*")]
-    (-> (select-multiple-swirls requestor max-results skip)
-        (join :inner (raw "search_index") (= :swirls.id (raw "search_index.swirl_id")))
-        (where (raw (str "search_index.document @@ to_tsquery('english', '" escaped-search-query "')")))
-        (order (raw (str "ts_rank(search_index.document, to_tsquery('english', '" escaped-search-query "'))")) :desc)
-        (select))))
+  (if (or (nil? search-query) (clojure.string/blank? search-query))
+    []
+    (let [escaped-search-query (str "''" (clojure.string/escape search-query {\' ""}) "''" ":*")]
+      (-> (select-multiple-swirls requestor max-results skip)
+          (join :inner (raw "search_index") (= :swirls.id (raw "search_index.swirl_id")))
+          (where (raw (str "search_index.document @@
+        to_tsquery('english', '" escaped-search-query "')")))
+          (order (raw (str "ts_rank(search_index.document, to_tsquery('english', '" escaped-search-query "'))")) :desc)
+          (select)))))
 
 (defn get-swirls-by-id [ids requestor]
   (-> (select-multiple-swirls requestor 100 0)
@@ -89,6 +93,13 @@
       (where {:author_id author-id})
       (order :id :desc)
       (select)))
+
+(defn get-swirls-authored-by-friends [requestor]
+  (let [friends (map :user-id (network/get-relations (requestor :id) :knows))]
+    (-> (select-multiple-swirls requestor 100000 0)
+        (where {:author_id [in friends]})
+        (order :id :desc)
+        (select))))
 
 (defn get-swirls-awaiting-response [requestor max-results skip]
   (-> (select-multiple-swirls requestor max-results skip)

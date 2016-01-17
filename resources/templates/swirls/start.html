@@ -7,9 +7,16 @@
 
     <p>What would you like to respond with?</p>
     {% else %}
-    <h1>Recommend something</h1>
 
-    <p>What would you like to recommend?</p>
+        {% if requests.params.wishlist %}
+
+        <h1>Add to your Swrl list</h1>
+
+        {% else %}
+        <h1>Recommend something</h1>
+
+        <p>What would you like to recommend?</p>
+        {% endif %}
     {% endif %}
 
     {% include "components/create-forms.html" %}

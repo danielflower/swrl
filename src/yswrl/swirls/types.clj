@@ -7,79 +7,88 @@
             "book"    {
                        :name  "book"
                        :words {
-                               :watch   "read"
-                               :seen    "read"
-                               :seen-it "seen it"
+                               :watch    "read"
+                               :watching "Reading"
+                               :seen     "read"
+                               :seen-it  "seen it"
                                }
                        }
 
             "game"    {
                        :name  "game"
                        :words {
-                               :watch   "play"
-                               :seen    "played"
-                               :seen-it "played it"
+                               :watch    "play"
+                               :watching "Playing"
+                               :seen     "played"
+                               :seen-it  "played it"
                                }
                        }
 
             "album"   {
                        :name  "album"
                        :words {
-                               :watch   "listen to"
-                               :seen    "heard"
-                               :seen-it "heard it"
+                               :watch    "listen to"
+                               :watching "Listening"
+                               :seen     "heard"
+                               :seen-it  "heard it"
                                }
                        }
 
             "video"   {
                        :name  "video"
                        :words {
-                               :watch   "watch"
-                               :seen    "seen"
-                               :seen-it "watched it"
+                               :watch    "watch"
+                               :watching "Watching"
+                               :seen     "seen"
+                               :seen-it  "watched it"
                                }
                        }
 
             "movie"   {
                        :name  "movie"
                        :words {
-                               :watch   "watch"
-                               :seen    "seen"
-                               :seen-it "seen it"
+                               :watch    "watch"
+                               :watching "Watching"
+                               :seen     "seen"
+                               :seen-it  "seen it"
                                }
                        }
 
-            "tv"   {
+            "tv"      {
                        :name  "tv"
                        :words {
-                               :watch   "watch"
-                               :seen    "seen"
-                               :seen-it "seen it"
+                               :watch    "watch"
+                               :watching "Watching"
+                               :seen     "seen"
+                               :seen-it  "seen it"
                                }
                        }
 
             "website" {
                        :name  "website"
                        :words {
-                               :watch   "see"
-                               :seen    "seen"
-                               :seen-it "visited it"
+                               :watch    "see"
+                               :watching "Looking"
+                               :seen     "seen"
+                               :seen-it  "visited it"
                                }
                        }
             "podcast" {
                        :name  "podcast"
                        :words {
-                               :watch   "listen to"
-                               :seen    "heard"
-                               :seen-it "heard it"
+                               :watch    "listen to"
+                               :watching "Listening"
+                               :seen     "heard"
+                               :seen-it  "heard it"
                                }
                        }
-            "app" {
+            "app"     {
                        :name  "app"
                        :words {
-                               :watch   "get"
-                               :seen    "got"
-                               :seen-it "got it"
+                               :watch    "get"
+                               :watching "Using"
+                               :seen     "got"
+                               :seen-it  "got it"
                                }
                        }
 

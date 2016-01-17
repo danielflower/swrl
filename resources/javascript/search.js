@@ -19,13 +19,13 @@ function init($) {
 
     $('.search-form').submit((e) => {
         const $f = $(e.currentTarget);
-        const query = $f.find('.query').val();
+        var query = $f.find('.query').val();
         currentSearch = query;
         const $summary = $f.find('.search-result-summary');
         $summary.toggleClass('no-query', !query);
 
         if (!query) {
-            return true; // nothing entered... let the browser deal with it
+            query = ''; // nothing entered... let the browser deal with it
         }
         const $b = $f.find('.submit');
 

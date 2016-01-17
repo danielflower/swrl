@@ -19,15 +19,24 @@
                                                        :swirls-per-page   swirls-per-page
                                                        :countFrom         (str from)
                                                        :countTo           (+ from swirls-per-page)}))
-      (let [swirls (lookups/get-all-swirls-not-responded-to 200 from user)
-            notifications (notifications/get-notifications-and-mark-responses-as-seen-for user)]
-        (layout/render "home/home-logged-in.html" {:swirls            (take swirls-per-page swirls)
-                                                   :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
-                                                   :paging-url-prefix "/?from="
-                                                   :swirls-per-page   swirls-per-page
-                                                   :countFrom         (str from)
-                                                   :countTo           (+ from swirls-per-page)
-                                                   :notifications     notifications})))))
+      (let [public-swirls (lookups/get-all-swirls-not-responded-to 200 from user)
+            recommended-swirls (lookups/get-swirls-awaiting-response user 200 0)
+            notifications (notifications/get-notifications-and-mark-responses-as-seen-for user)
+            wishlist (lookups/get-swirls-by-response user 200 0 "Later")
+            friends-swirls (lookups/get-swirls-authored-by-friends user)
+            num-preview 3]
+        (layout/render "home/home-logged-in.html" {:public-swirls               (take num-preview public-swirls)
+                                                   :more-public-swirls-url      "/swirls"
+                                                   :recommended-swirls          (take num-preview recommended-swirls)
+                                                   :more-recommended-swirls-url "/swirls/inbox"
+                                                   :friends-swirls              (take num-preview friends-swirls)
+                                                   :wishlist                    (take 20 wishlist)
+                                                   :more-swirls                 (join "," (map :id (nthrest wishlist swirls-per-page)))
+                                                   :paging-url-prefix           "/?from="
+                                                   :swirls-per-page             swirls-per-page
+                                                   :countFrom                   (str from)
+                                                   :countTo                     (+ from swirls-per-page)
+                                                   :notifications               notifications})))))
 
 (defn bookmarklet []
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))

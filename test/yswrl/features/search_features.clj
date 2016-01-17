@@ -42,6 +42,7 @@
         (within [:h1]
           (has (text? title)))))
 
+
   (deftest no-one-can-see-drafts
     (-> (session app)
         (visit "/login")
