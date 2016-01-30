@@ -42,6 +42,7 @@
 (defentity suggestions (database db))
 (defentity swirl-links (table :swirl_links) (database db))
 (defentity swirl-responses (table :swirl_responses) (database db))
+(defentity swirl-lists (table :swirl_lists) (database db))
 (defentity comments (database db))
 
 (defentity groups (database db))

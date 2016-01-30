@@ -62,6 +62,10 @@
                        )))
       response)))
 
+(defn add-swirl-to-wishlist [swirl-id owner]
+  (k/insert db/swirl-lists
+            (k/values {:swirl_id swirl-id :owner (:id owner) :state "wishlist" :date_added (now)})))
+
 (defn create-comment [swirld-id comment author]
   (k/insert db/comments
           (k/values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})

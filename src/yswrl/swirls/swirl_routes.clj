@@ -235,7 +235,8 @@
                members-sans-author (filter #(not (= (% :id) (author :id))) members)]
            (repo/add-suggestions id (author :id) (map :username members-sans-author))))
        (if wishlist
-         (repo/respond-to-swirl id "Later" author))
+         (do (repo/respond-to-swirl id "Later" author)
+             (repo/add-swirl-to-wishlist id author)))
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
@@ -261,6 +262,9 @@
 
 (defn post-response-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
+
+(defn post-add-to-wishlist-route [url-prefix]
+  (POST (str url-prefix "/:id{[0-9]+}/add-to-wishlist") [id :as req] (guard/requires-login #(repo/add-swirl-to-wishlist (Long/parseLong id) (session-from req)))))
 
 (defn post-comment-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
@@ -315,6 +319,7 @@
              (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
 
              (post-response-route "/swirls")
+             (post-add-to-wishlist-route "/swirls")
              (post-comment-route "/swirls")
 
              (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))

@@ -22,7 +22,7 @@
       (let [public-swirls (lookups/get-all-swirls-not-responded-to 200 from user)
             recommended-swirls (lookups/get-swirls-awaiting-response user 200 0)
             notifications (notifications/get-notifications-and-mark-responses-as-seen-for user)
-            wishlist (lookups/get-swirls-by-response user 200 0 "Later")
+            wishlist (filter #(or (= "wishlist" (:state %)) (= "consuming" (:state %))) (lookups/get-swirls-in-user-swrl-list user 200 0 user))
             friends-swirls (lookups/get-swirls-authored-by-friends user)
             num-preview 3]
         (layout/render "home/home-logged-in.html" {:public-swirls               (take num-preview public-swirls)

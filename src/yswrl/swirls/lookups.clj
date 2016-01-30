@@ -1,7 +1,7 @@
 (ns yswrl.swirls.lookups
   (:require [yswrl.db :as db]
             [yswrl.swirls.swirl-states :as states]
-            [korma.core :refer [select* limit subselect aggregate offset order where join fields select raw modifier]]
+            [korma.core :refer [select* limit subselect aggregate offset order where join fields select raw modifier group]]
             [yswrl.user.networking :as network]))
 (use 'korma.db)
 
@@ -129,6 +129,14 @@
       (where {:swirl_responses.responder (requestor :id)})
       (where {(raw "LOWER(swirl_responses.summary)") (clojure.string/lower-case response)})
       (order :id :desc)
+      (select)))
+
+(defn get-swirls-in-user-swrl-list [requestor max-results skip user]
+  (-> (select-multiple-swirls requestor max-results skip)
+      (join :inner db/swirl-lists (= :swirls.id :swirl_lists.swirl_id))
+      (where {:swirl_lists.owner (user :id)})
+      (order :id :desc)
+      (fields [:swirl_lists.state :state])
       (select)))
 
 
