@@ -2,74 +2,66 @@
 {% block content %}
 <div class="home">
 
-    <div>
-        <form method="get" action="/search" class="search-form">
-            <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
-                                                               name="query"
-                                                               value="{{query}}" required
-                                                               placeholder="Search for Swrls">
-            <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
-                <strong class="result-count">{{ swirls|count }}</strong> results for <i class="query-val">{{query}}</i>
-            </p>
-
-        </form>
-
-        <div class="swirl-list search-results">
-            {% for swirl in swirls %}
-            {% include "components/mini-swirl.html" with swirl=swirl %}
-            {% endfor %}
-        </div>
+    <div class="discovery">
+        <div class="padded-standard-page"></div>
 
         <h1>Discover</h1>
+        <a href="/swirls/start" class="button swrl-button">Swrl to friends</a>
 
-        <div class="expansion-area">
-            <button type="button" id="notifications-button" class="expand-toggle-button">What's new
-                ({{notifications|count}})
-            </button>
-            <div class="expansion-content notifications">
+        <div>
+            <form method="get" action="/search" class="search-form">
+                <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
+                                                                   name="query"
+                                                                   value="{{query}}" required
+                                                                   placeholder="Search for Swrls">
+                <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
+                    <strong class="result-count">{{ swirls|count }}</strong> results for <i
+                            class="query-val">{{query}}</i>
+                </p>
 
-                {% include "components/notification-section.html" %}
+            </form>
 
-                {% if notifications|length > 4 %}
-                <button class="button show-notifications-button">Show more</button>
-                {% endif %}
-
+            <div class="swirl-list search-results">
+                {% for swirl in swirls %}
+                {% include "components/mini-swirl.html" with swirl=swirl %}
+                {% endfor %}
             </div>
-        </div>
 
-
-        <div class="expansion-area">
-            <button type="button" id="public-swirls-button" class="expand-toggle-button">Public Swirls</button>
-            <div class="expansion-content public-swirls">
-                {% with swirls=public-swirls see-more-url=more-public-swirls-url %}
-                {% include "components/swirls-list-without-paging.html" %}
-                {% endwith %}
-            </div>
-        </div>
-
-        <div class="expansion-area">
-            <button type="button" id="recommended-swirls-button" class="expand-toggle-button">Swrled to you</button>
-            <div class="expansion-content recommended-swirls">
-
+            {% if recommended-swirls|not-empty %}
+            <div class="recommended-swirls">
+                <h2>Swrled to you</h2>
                 {% with swirls=recommended-swirls see-more-url=more-recommended-swirls-url %}
                 {% include "components/swirls-list-without-paging.html" %}
                 {% endwith %}
 
             </div>
-        </div>
 
-        <div class="expansion-area">
-            <button type="button" id="friends-swirls-button" class="expand-toggle-button">Swrled by your friends</button>
-            <div class="expansion-content friends-swirls">
+            {% endif %}
+
+            {% if friends-swirls|not-empty %}
+            <div class="friends-swirls">
+                <h2>Swrled by your friends</h2>
 
                 {% with swirls=friends-swirls see-more-url=more-friends-swirls-url %}
                 {% include "components/swirls-list-without-paging.html" %}
                 {% endwith %}
 
             </div>
-        </div>
+            {% endif %}
 
-        <div class="padded"></div>
+            <div class="public-swirls">
+                <h2>Public Swirls</h2>
+
+                {% with swirls=public-swirls see-more-url=more-public-swirls-url %}
+                {% include "components/swirls-list-without-paging.html" %}
+                {% endwith %}
+            </div>
+
+
+        </div>
+    </div>
+    <div class="swrl-list">
+        <div class="padded-standard-page"></div>
 
         <h1>Your Swrl list</h1>
 
@@ -79,7 +71,6 @@
         {% include "components/swirls-list-with-paging.html" %}
         {% endwith %}
     </div>
-
 </div>
 
 {% endblock %}

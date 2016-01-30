@@ -24,12 +24,12 @@
             notifications (notifications/get-notifications-and-mark-responses-as-seen-for user)
             wishlist (filter #(or (= "wishlist" (:state %)) (= "consuming" (:state %))) (lookups/get-swirls-in-user-swrl-list user 200 0 user))
             friends-swirls (lookups/get-swirls-authored-by-friends user)
-            num-preview 3]
+            num-preview 10]
         (layout/render "home/home-logged-in.html" {:public-swirls               (take num-preview public-swirls)
                                                    :more-public-swirls-url      "/swirls"
-                                                   :recommended-swirls          (take num-preview recommended-swirls)
+                                                   :recommended-swirls          recommended-swirls
                                                    :more-recommended-swirls-url "/swirls/inbox"
-                                                   :friends-swirls              (take num-preview friends-swirls)
+                                                   :friends-swirls              friends-swirls
                                                    :wishlist                    (take 20 wishlist)
                                                    :more-swirls                 (join "," (map :id (nthrest wishlist swirls-per-page)))
                                                    :paging-url-prefix           "/?from="

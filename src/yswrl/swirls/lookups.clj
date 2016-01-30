@@ -135,8 +135,8 @@
   (-> (select-multiple-swirls requestor max-results skip)
       (join :inner db/swirl-lists (= :swirls.id :swirl_lists.swirl_id))
       (where {:swirl_lists.owner (user :id)})
-      (order :id :desc)
-      (fields [:swirl_lists.state :state])
+      (fields [:swirl_lists.state :state] [:swirl_lists.date_added :date_added])
+      (order :swirl_lists.date_added :desc)
       (select)))
 
 

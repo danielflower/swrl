@@ -60,7 +60,13 @@ nav ul{
     padding-right: 10px;
 }
 
-.home h1, .add-to-wishlist, .home-page-more {
+.home h1, .add-to-wishlist, .swrl-button, .home-page-more {
+    margin-left: 10px;
+}
+
+.home h2 {
+    color: #FFFFFF;
+    text-align: left;
     margin-left: 10px;
 }
 

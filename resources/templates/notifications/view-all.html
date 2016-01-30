@@ -9,6 +9,9 @@
 
         {% include "components/notification-section.html" %}
 
+        {% if notifications|length > 4 %}
+        <button class="button show-notifications-button">Show more</button>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

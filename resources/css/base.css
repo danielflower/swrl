@@ -51,6 +51,7 @@ h2 {
     padding-bottom: 20px;
     color: var(--swirl-blue);
 }
+
 .inline {
     white-space: nowrap;
     display: flex;

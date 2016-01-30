@@ -88,7 +88,8 @@
 (deftype RenderableTemplate [template params]
   Renderable
   (render [_ request]
-    (let [current-user (get (get request :session) :user)]
+    (let [current-user (get (get request :session) :user)
+          notifications-count (if current-user (notifications-repo/unseen-notifications-count (get current-user :id)) nil)]
 
       (content-type
         (->> (assoc params
@@ -98,6 +99,7 @@
                :user (if (nil? current-user) nil (auth-repo/get-user (current-user :username))) ; todo lookup by remember-me token
                :groups (if (nil? current-user) nil (group-repo/get-groups-for (current-user :id)))
                :constraints constraints
+               :notifications-count notifications-count
                :request request
                )
              (parser/render-file template)

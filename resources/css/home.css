@@ -83,3 +83,24 @@
 .home .notification li:nth-child(n+5) {
     display: none;
 }
+
+div.home {
+    width: 100%;
+}
+@media (min-width: 1200px){
+    div.discovery {
+        width: 75%;
+        float: left;
+    }
+    div.swrl-list {
+        margin-left: 75%;
+        border-left: thick solid var(--album-color);
+    }
+}
+
+@media (max-width: 1200px) {
+    div.swrl-list {
+        display: none;
+    }
+}
+
