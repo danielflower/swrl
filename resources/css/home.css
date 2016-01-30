@@ -91,10 +91,11 @@ div.home {
     div.discovery {
         width: 75%;
         float: left;
+        border-right: thick solid var(--album-color);
+
     }
     div.swrl-list {
         margin-left: 75%;
-        border-left: thick solid var(--album-color);
     }
 }
 

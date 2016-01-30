@@ -28,7 +28,6 @@
         (layout/render "home/home-logged-in.html" {:public-swirls               (take num-preview public-swirls)
                                                    :more-public-swirls-url      "/swirls"
                                                    :recommended-swirls          recommended-swirls
-                                                   :more-recommended-swirls-url "/swirls/inbox"
                                                    :friends-swirls              friends-swirls
                                                    :wishlist                    (take 20 wishlist)
                                                    :more-swirls                 (join "," (map :id (nthrest wishlist swirls-per-page)))
