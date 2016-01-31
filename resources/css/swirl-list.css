@@ -6,6 +6,9 @@
     padding-bottom: 0px;
     padding-top: 10px;
 }
+.swrl-list .type-filter {
+    display: none;
+}
 .type-filter button {
     font-size: 11px;
     cursor: hand;
@@ -142,6 +145,110 @@
     vertical-align: middle;
 }
 
+.tiny-swirl {
+    margin:0 10px 20px 10px;
+    width: 300px;
+    flex-grow: 1;
+    flex-shrink: 0;
+    background-color: #FFFFFF;
+    box-shadow:0 2px 2px rgba(0,0,0,0.1);
+    transition:all 200ms ease;
+    position:relative;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+.tiny-swirl:hover{
+    transform:translate3d(0,-2px,0);
+    box-shadow:0 2px 2px rgba(0,0,0,0.2);
+}
+
+.tiny-swirl__action-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+}
+.tiny-swirl__action-buttons .later-button {
+    display: none;
+}
+.tiny-swirl__action-buttons .dismiss-button {
+    color: var(--swirl-hot-pink);
+    padding: 5px 5px 5px 3px;
+}
+.tiny-swirl__action-buttons i:hover {
+    cursor: hand;
+    color: var(--swirl-blue-darker);
+}
+
+.tiny-swirl .tiny-swirl__link{
+    text-decoration: none;
+    display: flex;
+    flex-direction:column;
+    padding-bottom:5px;
+    flex-grow: 1;
+}
+
+.tiny-swirl__bgimage{
+    height:50px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:center center;
+    border-bottom:5px solid var(--generic-color);
+    position: relative;
+}
+
+.tiny-swirl__bgimage.tv,.type-filter .tv {
+    border-bottom-color: var(--tv-color);
+}
+.tiny-swirl__bgimage.album,.type-filter .album {
+    border-bottom-color: var(--album-color);
+}
+.tiny-swirl__bgimage.movie,.type-filter .movie {
+    border-bottom-color: var(--movie-color);
+}
+.tiny-swirl__bgimage.book,.type-filter .book {
+    border-bottom-color: var(--book-color);
+}
+.tiny-swirl__bgimage.video,.type-filter .video {
+    border-bottom-color: var(--video-color);
+}
+.tiny-swirl__bgimage.game,.type-filter .game {
+    border-bottom-color: var(--game-color);
+}
+.tiny-swirl__bgimage.app,.type-filter .app {
+    border-bottom-color: var(--app-color);
+}
+.tiny-swirl__bgimage.podcast,.type-filter .podcast {
+    border-bottom-color: var(--podcast-color);
+}
+
+
+.tiny-swirl h2 {
+    padding: 0;
+    font-size: 1.8rem;
+    line-height: normal;
+    color: var(--main-font-color);
+}
+.tiny-swirl h2 a {
+    padding: 5px;
+    display: block;
+    text-decoration: none;
+    color: var(--main-font-color);
+}
+
+.tiny-swirl time {
+    color: #737373;
+}
+.tiny-swirl .author-bit {
+    display: none;
+}
+.author-bit a{
+    text-decoration: none;
+}
+.tiny-swirl .author-bit img {
+    vertical-align: middle;
+}
 .swirl-type {
     background-color: var(--generic-color);
     color: #FFFFFF;

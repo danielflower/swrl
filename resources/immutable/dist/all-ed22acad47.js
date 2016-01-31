@@ -1436,7 +1436,7 @@ var filterVisibleSwirls = function filterVisibleSwirls($) {
         var curType = typeButton.getAttribute('data-swirl-type');
         var show = currentFilter == null || currentFilter === curType;
         $(typeButton).toggleClass('hidden', !show);
-        $('.mini-swirl.' + curType).toggle(show);
+        $('.swirl.' + curType).toggle(show);
     });
 };
 function init($) {

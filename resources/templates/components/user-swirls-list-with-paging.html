@@ -1,0 +1,42 @@
+{% if swirls|empty? %}
+<p>
+    We've run out of swirls. Gomen Nasai
+</p>
+
+<p>
+    To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
+    or <a href="/">see what's Swirling</a> or see the swirls you <a href="/swirls/inbox/later">see the swirls you saved for later</a>.
+</p>
+{% else %}
+
+<div class="type-filter expansion-area">
+    <button data-swirl-type="video" class="video">Videos</button>
+    <button data-swirl-type="website" class="website">Websites</button>
+    <button data-swirl-type="movie" class="movie">Movies</button>
+    <button data-swirl-type="book" class="book">Books</button>
+    <button data-swirl-type="album" class="album">Albums</button>
+    <button class="expand-toggle-button">More</button>
+    <div class="expansion-content type-filter">
+        <button data-swirl-type="tv" class="tv">TV</button>
+        <button data-swirl-type="game" class="game">Games</button>
+        <button data-swirl-type="podcast" class="podcast">Podcasts</button>
+        <button data-swirl-type="app" class="app">Apps</button>
+    </div>
+</div>
+
+<div class="swirl-list">
+    {% for swirl in swirls %}
+    {% include "components/tiny-swirl.html" %}
+    {% endfor %}
+
+    <span class="swirl-insertion-point"></span>
+</div>
+
+{% if more-swirls|not-empty %}
+<div class="paging">
+    <a href="{{paging-url-prefix}}{{countTo}}" class="button more-swirls-button" data-ids="{{more-swirls}}"
+       data-url-prefix="{{paging-url-prefix}}" data-per-page="{{swirls-per-page}}" data-start-index="{{countFrom}}" data-num-loads="0">View more</a>
+</div>
+{% endif %}
+
+{% endif %}

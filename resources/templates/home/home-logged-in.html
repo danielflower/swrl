@@ -2,30 +2,46 @@
 {% block content %}
 <div class="home">
 
+    <div class="type-filter expansion-area">
+        <button data-swirl-type="video" class="video">Videos</button>
+        <button data-swirl-type="website" class="website">Websites</button>
+        <button data-swirl-type="movie" class="movie">Movies</button>
+        <button data-swirl-type="book" class="book">Books</button>
+        <button data-swirl-type="album" class="album">Albums</button>
+        <button class="expand-toggle-button">More</button>
+        <div class="expansion-content type-filter">
+            <button data-swirl-type="tv" class="tv">TV</button>
+            <button data-swirl-type="game" class="game">Games</button>
+            <button data-swirl-type="podcast" class="podcast">Podcasts</button>
+            <button data-swirl-type="app" class="app">Apps</button>
+        </div>
+    </div>
+
+    <div>
+        <form method="get" action="/search" class="search-form">
+            <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
+                                                               name="query"
+                                                               value="{{query}}" required
+                                                               placeholder="Search for Swrls">
+            <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
+                <strong class="result-count">{{ swirls|count }}</strong> results for <i
+                        class="query-val">{{query}}</i>
+            </p>
+
+        </form>
+
+        <div class="swirl-list search-results">
+            {% for swirl in swirls %}
+            {% include "components/mini-swirl.html" with swirl=swirl %}
+            {% endfor %}
+        </div>
+
+
     <div class="discovery">
         <div class="padded-standard-page"></div>
 
         <h1>Discover</h1>
         <a href="/swirls/start" class="button swrl-button">Swrl to friends</a>
-
-        <div>
-            <form method="get" action="/search" class="search-form">
-                <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
-                                                                   name="query"
-                                                                   value="{{query}}" required
-                                                                   placeholder="Search for Swrls">
-                <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
-                    <strong class="result-count">{{ swirls|count }}</strong> results for <i
-                            class="query-val">{{query}}</i>
-                </p>
-
-            </form>
-
-            <div class="swirl-list search-results">
-                {% for swirl in swirls %}
-                {% include "components/mini-swirl.html" with swirl=swirl %}
-                {% endfor %}
-            </div>
 
             {% if recommended-swirls|not-empty %}
             <div class="recommended-swirls">
@@ -68,7 +84,7 @@
         <a href="/swirls/start?wishlist=true" class="button add-to-wishlist">Add to your Swrl list</a>
 
         {% with swirls=wishlist %}
-        {% include "components/swirls-list-with-paging.html" %}
+        {% include "components/user-swirls-list-with-paging.html" %}
         {% endwith %}
     </div>
 </div>
