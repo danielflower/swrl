@@ -105,10 +105,10 @@
   (let [friends (map :user-id (network/get-relations (requestor :id) :knows))]
     (-> (select-multiple-swirls requestor 100000 0)
         (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
-        (where {:author_id [in friends]})
-        (where {:swirls.id [not-in (subselect db/swirl-responses (fields :swirl_id) (where {:responder (requestor :id)}))]})
-        (where {:author_id [not= (requestor :id)]})
-        (where {:suggestions.recipient_id [not= (requestor :id)]})
+        (where {:author_id [in friends]
+                :swirls.id [not-in (subselect db/swirl-responses (fields :swirl_id) (where {:responder (requestor :id)}))]
+                :author_id [not= (requestor :id)]
+                :suggestions.recipient_id [not= (requestor :id)]})
         (order :id :desc)
         (select))))
 
