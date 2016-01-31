@@ -19,6 +19,5 @@
                             (if (clojure.string/blank? comment-id-start) 0 (Long/parseLong comment-id-start))))
                         (swirl-routes/post-response-route "")
                         (swirl-routes/post-comment-route "")
-                        (swirl-routes/post-add-to-wishlist-route "")
                         ))
            )
