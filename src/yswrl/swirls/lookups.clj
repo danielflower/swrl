@@ -106,8 +106,8 @@
     (-> (select-multiple-swirls requestor 100000 0)
         (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
         (where {:author_id [in friends]
-                :swirls.id [not-in (subselect db/swirl-responses (fields :swirl_id) (where {:responder (requestor :id)}))]
-                :suggestions.recipient_id [not= (requestor :id)]})
+                :swirls.id [not-in (subselect db/swirl-responses (fields :swirl_id) (where {:responder (requestor :id)}))]})
+        (where {:swirls.id [not-in (subselect db/suggestions (fields :swirl_id) (where {:recipient_id (requestor :id)}))]})
         (order :id :desc)
         (select))))
 
