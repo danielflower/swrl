@@ -2,6 +2,31 @@
 {% block content %}
 <div class="home">
 
+    <div class="home-buttons">
+        <a href="/swirls/start" class="button swrl-button">Swrl to friends</a>
+        <a href="/swirls/start?wishlist=true" class="button add-to-wishlist">Add to your Swrl list</a>
+    </div>
+
+
+    <form method="get" action="/search" class="search-form">
+        <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
+                                                           name="query"
+                                                           value="{{query}}" required
+                                                           placeholder="Search for Swrls">
+        <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
+            <strong class="result-count">{{ swirls|count }}</strong> results for <i
+                    class="query-val">{{query}}</i>
+        </p>
+
+    </form>
+
+    <div class="swirl-list search-results">
+        {% for swirl in swirls %}
+        {% include "components/mini-swirl.html" with swirl=swirl %}
+        {% endfor %}
+    </div>
+    <div class="padded-standard-page"></div>
+
     <div class="type-filter expansion-area">
         <button data-swirl-type="video" class="video">Videos</button>
         <button data-swirl-type="website" class="website">Websites</button>
@@ -17,71 +42,44 @@
         </div>
     </div>
 
-    <div>
-        <form method="get" action="/search" class="search-form">
-            <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
-                                                               name="query"
-                                                               value="{{query}}" required
-                                                               placeholder="Search for Swrls">
-            <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
-                <strong class="result-count">{{ swirls|count }}</strong> results for <i
-                        class="query-val">{{query}}</i>
-            </p>
-
-        </form>
-
-        <div class="swirl-list search-results">
-            {% for swirl in swirls %}
-            {% include "components/mini-swirl.html" with swirl=swirl %}
-            {% endfor %}
-        </div>
-
-
     <div class="discovery">
-        <div class="padded-standard-page"></div>
 
-        <h1>Discover</h1>
-        <a href="/swirls/start" class="button swrl-button">Swrl to friends</a>
-
-            {% if recommended-swirls|not-empty %}
-            <div class="recommended-swirls">
-                <h2>Swrled to you</h2>
-                {% with swirls=recommended-swirls see-more-url=more-recommended-swirls-url %}
-                {% include "components/swirls-list-without-paging.html" %}
-                {% endwith %}
-
-            </div>
-
-            {% endif %}
-
-            {% if friends-swirls|not-empty %}
-            <div class="friends-swirls">
-                <h2>Swrled by your friends</h2>
-
-                {% with swirls=friends-swirls see-more-url=more-friends-swirls-url %}
-                {% include "components/swirls-list-without-paging.html" %}
-                {% endwith %}
-
-            </div>
-            {% endif %}
-
-            <div class="public-swirls">
-                <h2>Public Swirls</h2>
-
-                {% with swirls=public-swirls see-more-url=more-public-swirls-url %}
-                {% include "components/swirls-list-without-paging.html" %}
-                {% endwith %}
-            </div>
-
+        {% if recommended-swirls|not-empty %}
+        <div class="recommended-swirls">
+            <h2>Swrled to you</h2>
+            {% with swirls=recommended-swirls see-more-url=more-recommended-swirls-url %}
+            {% include "components/swirls-list-without-paging.html" %}
+            {% endwith %}
 
         </div>
+
+        {% endif %}
+
+        {% if friends-swirls|not-empty %}
+        <div class="friends-swirls">
+            <h2>Swrled by your friends</h2>
+
+            {% with swirls=friends-swirls see-more-url=more-friends-swirls-url %}
+            {% include "components/swirls-list-without-paging.html" %}
+            {% endwith %}
+
+        </div>
+        {% endif %}
+
+        <div class="public-swirls">
+            <h2>Public Swirls</h2>
+
+            {% with swirls=public-swirls see-more-url=more-public-swirls-url %}
+            {% include "components/swirls-list-without-paging.html" %}
+            {% endwith %}
+        </div>
+
+
     </div>
     <div class="swrl-list">
-        <div class="padded-standard-page"></div>
 
-        <h1>Your Swrl list</h1>
+        <h2>Your Swrl list</h2>
 
-        <a href="/swirls/start?wishlist=true" class="button add-to-wishlist">Add to your Swrl list</a>
 
         {% with swirls=wishlist %}
         {% include "components/user-swirls-list-with-paging.html" %}

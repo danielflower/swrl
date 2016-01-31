@@ -60,8 +60,21 @@ nav ul{
     padding-right: 10px;
 }
 
-.home h1, .add-to-wishlist, .swrl-button, .home-page-more {
+.home h1, .home-page-more {
     margin-left: 10px;
+}
+
+.home-buttons {
+    padding-top: 10px;
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+
+.home-buttons > .button {
+    background-color: var(--swirl-hot-pink);
+    color: #FFFFFF;
+    font-size: 1.25em;
 }
 
 .home h2 {
