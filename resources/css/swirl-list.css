@@ -87,28 +87,28 @@
     position: relative;
 }
 
-.mini-swirl__bgimage.tv,.type-filter .tv {
+.swrl-list .mini-swirl__bgimage.tv, .mini-swirl__bgimage.tv,.type-filter .tv {
     border-bottom-color: var(--tv-color);
 }
-.mini-swirl__bgimage.album,.type-filter .album {
+.swrl-list .mini-swirl__bgimage.album, .mini-swirl__bgimage.album,.type-filter .album {
     border-bottom-color: var(--album-color);
 }
-.mini-swirl__bgimage.movie,.type-filter .movie {
+.swrl-list .mini-swirl__bgimage.movie, .mini-swirl__bgimage.movie,.type-filter .movie {
     border-bottom-color: var(--movie-color);
 }
-.mini-swirl__bgimage.book,.type-filter .book {
+.swrl-list .mini-swirl__bgimage.book, .mini-swirl__bgimage.book,.type-filter .book {
     border-bottom-color: var(--book-color);
 }
-.mini-swirl__bgimage.video,.type-filter .video {
+.swrl-list .mini-swirl__bgimage.video, .mini-swirl__bgimage.video,.type-filter .video {
     border-bottom-color: var(--video-color);
 }
-.mini-swirl__bgimage.game,.type-filter .game {
+.swrl-list .mini-swirl__bgimage.game, .mini-swirl__bgimage.game,.type-filter .game {
     border-bottom-color: var(--game-color);
 }
-.mini-swirl__bgimage.app,.type-filter .app {
+.swrl-list .mini-swirl__bgimage.app, .mini-swirl__bgimage.app,.type-filter .app {
     border-bottom-color: var(--app-color);
 }
-.mini-swirl__bgimage.podcast,.type-filter .podcast {
+.swrl-list .mini-swirl__bgimage.podcast, .mini-swirl__bgimage.podcast,.type-filter .podcast {
     border-bottom-color: var(--podcast-color);
 }
 

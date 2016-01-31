@@ -6,14 +6,11 @@ var currentFilter = null;
 
 
 
-var respondAndRemove = function (element, response, addToWishlist) {
+var respondAndRemove = function (element, response) {
     var swirlElement = $(element)[0].parentNode.parentNode;
     var swirlID = swirlElement.getAttribute('id');
     $(swirlElement).remove();
     http.post('/swirls/' + swirlID + '/respond', {responseButton: response});
-    if (addToWishlist){
-        http.post('/swirls/' + swirlID + '/add-to-wishlist', {});
-    };
 };
 
 var filterVisibleSwirls = function ($) {
@@ -83,11 +80,11 @@ function init($) {
     });
 
     $('.swirl-list').on('click', 'i.dismiss-button', function () {
-        respondAndRemove(this, 'Dismissed', false);
+        respondAndRemove(this, 'Dismissed');
     });
 
     $('.swirl-list').on('click', 'i.later-button', function () {
-        respondAndRemove(this, 'Later', true);
+        respondAndRemove(this, 'Later');
     });
 }
 

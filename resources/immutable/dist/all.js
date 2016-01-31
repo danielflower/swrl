@@ -1421,14 +1421,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var currentFilter = null;
 
-var respondAndRemove = function respondAndRemove(element, response, addToWishlist) {
+var respondAndRemove = function respondAndRemove(element, response) {
     var swirlElement = $(element)[0].parentNode.parentNode;
     var swirlID = swirlElement.getAttribute('id');
     $(swirlElement).remove();
     _http2.default.post('/swirls/' + swirlID + '/respond', { responseButton: response });
-    if (addToWishlist) {
-        _http2.default.post('/swirls/' + swirlID + '/add-to-wishlist', {});
-    };
 };
 
 var filterVisibleSwirls = function filterVisibleSwirls($) {
@@ -1497,11 +1494,11 @@ function init($) {
     });
 
     $('.swirl-list').on('click', 'i.dismiss-button', function () {
-        respondAndRemove(this, 'Dismissed', false);
+        respondAndRemove(this, 'Dismissed');
     });
 
     $('.swirl-list').on('click', 'i.later-button', function () {
-        respondAndRemove(this, 'Later', true);
+        respondAndRemove(this, 'Later');
     });
 }
 

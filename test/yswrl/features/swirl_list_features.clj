@@ -110,7 +110,7 @@
         (throw Exception))))
 
 
-(deftest adding-a-swirl-to-wishlist
+(deftest adding-a-swirl-to-wishlist-then-changing-states
   (with-faked-responses
     (let [user (s/create-test-user)
           test-state (atom {})]
@@ -137,5 +137,23 @@
           (save-swirl-id test-state :swirl-id)
 
           (assert-swirl-state user (@test-state :swirl-id) "wishlist")
+
+          (actions/respond-to-swirl test-state user "Listening")
+
+          (assert-swirl-state user (@test-state :swirl-id) "consuming")
+
+          (actions/respond-to-swirl test-state user "Loved it")
+
+          (assert-swirl-state user (@test-state :swirl-id) "done")
+
+          (actions/respond-to-swirl test-state user "Dismissed")
+
+          (assert-swirl-state user (@test-state :swirl-id) nil)
+
+          ; Dismissing again (for some reason, maybe you really don't like it) doesn't cause an issue
+
+          (actions/respond-to-swirl test-state user "Dismissed")
+
+          (assert-swirl-state user (@test-state :swirl-id) nil)
 
           ))))

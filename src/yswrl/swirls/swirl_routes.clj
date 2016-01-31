@@ -209,7 +209,18 @@
 (defn handle-response [swirl-id response-button custom-response responder]
   (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
     (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
+          swrl-list-state (get {"Later"     "wishlist"
+                                "Reading"   "consuming"
+                                "Playing"   "consuming"
+                                "Listening" "consuming"
+                                "Watching"  "consuming"
+                                "Looking"   "consuming"
+                                "Using"     "consuming"}
+                               summary "done")
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
+      (if (= "Dismissed" summary)
+        (repo/remove-from-watchlist swirl-id responder)
+        (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder))
       (if (should-notify-users-of-response summary)
         (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))
       (redirect (yswrl.links/swirl swirl-id)))))
@@ -235,8 +246,8 @@
                members-sans-author (filter #(not (= (% :id) (author :id))) members)]
            (repo/add-suggestions id (author :id) (map :username members-sans-author))))
        (if wishlist
-         (do (repo/respond-to-swirl id "Later" author)
-             (repo/add-swirl-to-wishlist id author)))
+         (handle-response id nil "Later" author)
+         )
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)
@@ -263,8 +274,6 @@
 (defn post-response-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
 
-(defn post-add-to-wishlist-route [url-prefix]
-  (POST (str url-prefix "/:id{[0-9]+}/add-to-wishlist") [id :as req] (guard/requires-login #(repo/add-swirl-to-wishlist (Long/parseLong id) (session-from req)))))
 
 (defn post-comment-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
@@ -313,21 +322,20 @@
                                      image-url
                                      (= wishlist "true"))))
 
-             (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
-             (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
+           (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
+           (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))
 
-             (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
+           (GET "/swirls/:id{[0-9]+}" [id code :as req] (view-swirl-page (Long/parseLong id) code (session-from req)))
 
-             (post-response-route "/swirls")
-             (post-add-to-wishlist-route "/swirls")
-             (post-comment-route "/swirls")
+           (post-response-route "/swirls")
+           (post-comment-route "/swirls")
 
-             (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
+           (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
 
-             (GET "/search" [query :as req] (search query (session-from req)))
+           (GET "/search" [query :as req] (search query (session-from req)))
 
-             (GET "/swirls/groups" [] (groups-page))
+           (GET "/swirls/groups" [] (groups-page))
 
-             (GET "/profile/:authorName" [authorName :as req] (view-profile authorName (session-from req)))
-             (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
-             (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))
+           (GET "/profile/:authorName" [authorName :as req] (view-profile authorName (session-from req)))
+           (GET "/swirls/inbox" [:as req] (guard/requires-login #(view-inbox 0 (session-from req))))
+           (GET "/swirls/inbox/:response" [response :as req] (guard/requires-login #(view-inbox-by-response 0 (session-from req) response))))

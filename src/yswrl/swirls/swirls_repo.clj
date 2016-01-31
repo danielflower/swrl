@@ -62,9 +62,17 @@
                        )))
       response)))
 
-(defn add-swirl-to-wishlist [swirl-id owner]
-  (k/insert db/swirl-lists
-            (k/values {:swirl_id swirl-id :owner (:id owner) :state "wishlist" :date_added (now)})))
+(defn add-swirl-to-wishlist [swirl-id state owner]
+  (if (= 0 (k/update db/swirl-lists
+                 (k/set-fields {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)})
+                 (k/where {:swirl_id swirl-id :owner (:id owner)})))
+    (k/insert db/swirl-lists
+              (k/values {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)}))))
+
+
+(defn remove-from-watchlist [swirl-id user]
+  (k/delete db/swirl-lists
+            (k/where {:swirl_id swirl-id :owner (:id user)})))
 
 (defn create-comment [swirld-id comment author]
   (k/insert db/comments
@@ -157,3 +165,4 @@
   (suggestions INNER JOIN users ON users.id = suggestions.recipient_id)
   LEFT JOIN swirl_responses ON swirl_responses.swirl_id = suggestions.swirl_id AND swirl_responses.responder = suggestions.recipient_id
 WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
+
