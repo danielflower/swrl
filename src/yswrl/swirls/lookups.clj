@@ -102,7 +102,7 @@
         (select))))
 
 (defn get-swirls-authored-by-friends-not-recommended-personally-and-not-responded-to [requestor]
-  (let [friends (concat [(:id requestor)] (map :user-id (network/get-relations (requestor :id) :knows)))]
+  (let [friends (map :user-id (network/get-relations (requestor :id) :knows))]
     (-> (select-multiple-swirls requestor 100000 0)
         (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))
         (where {:author_id [in friends]
