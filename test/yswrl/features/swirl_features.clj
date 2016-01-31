@@ -200,8 +200,6 @@
         (within [:h1] (has (text? "Recommend something")))
 
         (visit (links/inbox))
-        (follow "see what's Swirling")
-        (within [:h1] (has (some-text? "Discover")))
 
         )))
 
