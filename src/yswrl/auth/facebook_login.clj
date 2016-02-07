@@ -57,7 +57,8 @@
         (if-let [email (get user-details "email")]
           (if-let [username (get user-details "name")]
             (routes/attempt-thirdparty-login username email {:id_type :facebook_id
-                                                             :id (get user-details "id")} (get-in req [:session :return-url]) req)
+                                                             :id (get user-details "id")
+                                                             :avatar_type "facebook"} (get-in req [:session :return-url]) req)
             (facebook-error req "Cannot get username from Facebook details"))
           (facebook-error req "Cannot get email from Facebook details"))
         (facebook-error req "Cannot get User Details from Facebook. Did you login and authorise the application?"))

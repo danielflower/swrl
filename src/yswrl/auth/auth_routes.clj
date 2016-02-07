@@ -140,10 +140,12 @@
       (let [random-password (fixed-length-password 10)]
         (handle-registration {:username username :email email :password random-password :confirmPassword random-password}
                              req return-url password-hash-options)
-        (try (users/update-thirdparty-id (:id (users/get-user username)) (:id_type id) (Long/parseLong (:id id)))
-             (catch Exception e
-               (throw (.getNextException e))))
-        (login-success (users/get-user username) true return-url req))))
+        (let [user (users/get-user username)]
+          (try (users/update-thirdparty-id (:id user) (:id_type id) (Long/parseLong (:id id)))
+               (catch Exception e
+                 (throw (.getNextException e))))
+          (users/update-avatar-type (:id user) (:avatar_type id))
+          (login-success user true return-url req)))))
   )
 
 (defn session-from [req] (:user (:session req)))
