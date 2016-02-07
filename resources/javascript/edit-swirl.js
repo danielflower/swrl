@@ -1,49 +1,56 @@
 var setup = function () {
 
     var addUser = function (textbox) {
-            var nameOrEmail = textbox.value;
-            var allUsersList = textbox.getAttribute('list');
-            var allUsersOptions = document.querySelectorAll('#' + allUsersList + ' option');
-            var userHTML = false;
+        var nameOrEmail = textbox.value;
+        var allUsersList = textbox.getAttribute('list');
+        var allUsersOptions = document.querySelectorAll('#' + allUsersList + ' option');
+        var userHTML = false;
 
-            for(var i = 0; i < allUsersOptions.length; i++) {
-                    var option = allUsersOptions[i];
+        for (var i = 0; i < allUsersOptions.length; i++) {
+            var option = allUsersOptions[i];
 
-                    if(option.innerText === nameOrEmail) {
-                        userHTML = option.getAttribute('data-value');
-                        break;
-                    }
-                }
-
-            if(userHTML){
-                $(textbox).before(userHTML);
-            }else {
-                var input = $(document.createElement('input'))
-                                .attr('type', 'checkbox')
-                                .attr('name', 'who')
-                                .attr('value', nameOrEmail)
-                                .attr('checked', 'checked')
-                                .attr('id', nameOrEmail);
-                var label = $(document.createElement('label'))
-                                .attr('for', nameOrEmail)
-                                .attr('class', 'no-avatar');
-                $(textbox).before(input);
-                $(textbox).before(label);
-                label.append(document.createTextNode(nameOrEmail));
+            if (option.innerText === nameOrEmail) {
+                userHTML = option.getAttribute('data-value');
+                break;
             }
-            var br = $(document.createElement('div'))
-                         .attr('class', 'small-padding');
-            $(textbox).before(br);
-            textbox.value = '';
-        };
+        }
+
+        if (userHTML) {
+            $(textbox).before(userHTML);
+        } else {
+            var input = $(document.createElement('input'))
+                .attr('type', 'checkbox')
+                .attr('name', 'who')
+                .attr('value', nameOrEmail)
+                .attr('checked', 'checked')
+                .attr('id', nameOrEmail);
+            var label = $(document.createElement('label'))
+                .attr('for', nameOrEmail)
+                .attr('class', 'no-avatar');
+            $(textbox).before(input);
+            $(textbox).before(label);
+            label.append(document.createTextNode(nameOrEmail));
+        }
+        var br = $(document.createElement('div'))
+            .attr('class', 'small-padding');
+        $(textbox).before(br);
+        textbox.value = '';
+    };
 
     $('.user-select-box input').keydown(function (event) {
-       if (event.which == 13 || event.which == 9) {
-           event.preventDefault();
-           addUser(this);
-           return false;
-       }
-   });
+        if (event.which == 13 || event.which == 9) {
+            event.preventDefault();
+            addUser(this);
+            return false;
+        }
+    });
+
+    $('.change-image-link').click((b) => {
+        "use strict";
+       $('.change-image-area').removeClass('start-hidden');
+        $(b.target).addClass('start-hidden');
+        return false;
+    });
 };
 
 module.exports = setup;

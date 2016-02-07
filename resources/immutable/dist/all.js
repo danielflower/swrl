@@ -1005,6 +1005,14 @@ var setup = function setup() {
             return false;
         }
     });
+
+    $('.change-image-link').click(function (b) {
+        "use strict";
+
+        $('.change-image-area').removeClass('start-hidden');
+        $(b.target).addClass('start-hidden');
+        return false;
+    });
 };
 
 module.exports = setup;
