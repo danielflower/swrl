@@ -18,7 +18,7 @@
     {% if origin-swirl-id %}
     <input id="{{ origin-swirl-author.username }}" type="checkbox" name="who" value="{{ origin-swirl-author.username }}"
            checked>
-    <label for="{{ origin-swirl-author.username }}">{{friend.username|gravatar-img:40 }}{{ origin-swirl-author.username
+    <label for="{{ origin-swirl-author.username }}">{{origin-swirl-author.username|gravatar-img:40 }}{{ origin-swirl-author.username
         }}</label>
     {% endif %}
 
