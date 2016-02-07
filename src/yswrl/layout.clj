@@ -13,7 +13,8 @@
             [yswrl.auth.auth-repo :as auth-repo]
             [clj-time.format :as f]
             [clj-time.coerce :as c]
-            [yswrl.user.notifications-repo :as notifications-repo]))
+            [yswrl.user.notifications-repo :as notifications-repo]
+            [yswrl.auth.auth-repo :as users]))
 
 (def response-icons {
                      "loved it"   "fa-heart"
@@ -58,19 +59,28 @@
                                   [:safe (str "<time datetime=\"" (f/unparse iso-date-formatter date) "\">" (f/unparse human-friendly-date-formatter date) "</time>")])))
 (filters/add-filter! :passwordreseturl links/password-reset)
 
-(defn generate-gravatar-img-html [email-hash size]
-  (str "<img class=\"gravatar\" src=\"" (links/gravatar-url email-hash size) "\" width=\"" size "\" height=\"" size "\" alt=\"\">"))
+(defn generate-avatar-img-html [link size]
+  (str "<img class=\"gravatar\" src=\"" link "\" width=\"" size "\" height=\"" size "\" alt=\"\">"))
 
-(filters/add-filter! :gravatar-img (fn [email-hash size] [:safe (generate-gravatar-img-html email-hash size)]))
 
-(filters/add-filter! :gravatar-img-url (fn [email-hash size] (links/gravatar-url email-hash size)))
+(defn get-avatar-link [username size]
+  (let [user (users/get-user username)]
+    (case (:avatar_type user)
+      "facebook" (links/facebook-image-url (:facebook_id user) size)
+      (links/gravatar-url (:email_md5 user) size))))
 
-(defn generate-user-selector-label [email-hash username]
-  (str "<input id=\"" username "\" type=\"checkbox\" name=\"who\" value=\"" username "\" checked><label for=\"" username "\">" (generate-gravatar-img-html email-hash 35) "" username "</label>"))
+(filters/add-filter! :gravatar-img (fn [username size]
+                                     [:safe (generate-avatar-img-html (get-avatar-link username size) size)]))
+
+(filters/add-filter! :gravatar-img-url (fn [username size]
+                                         (get-avatar-link username size)))
+
+(defn generate-user-selector-label [username]
+  (str "<input id=\"" username "\" type=\"checkbox\" name=\"who\" value=\"" username "\" checked><label for=\"" username "\">" (generate-avatar-img-html (get-avatar-link username 35) 35) "" username "</label>"))
 
 (filters/add-filter! :user-selector-label (fn [user] (let [email-hash (:email_md5 user)
                                                            username (:username user)]
-                                                       (generate-user-selector-label email-hash username))))
+                                                       (generate-user-selector-label username))))
 
 (filters/add-filter! :swirl-title swirl-title)
 (filters/add-filter! :empty-review? (fn [review]

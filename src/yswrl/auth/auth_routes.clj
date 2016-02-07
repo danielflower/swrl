@@ -19,8 +19,8 @@
   (layout/render "auth/register.html" map))
 
 (defn login-page [& {:keys [username error return-url fb-errors error-message]}]
-  (layout/render "auth/login.html" { :logister-info { :login-username username } :login-error error :return-url return-url
-                                    :fb-errors fb-errors :error-message error-message}))
+  (layout/render "auth/login.html" {:logister-info {:login-username username} :login-error error :return-url return-url
+                                    :fb-errors     fb-errors :error-message error-message}))
 
 (defn logged-out-page []
   (layout/render "auth/logged-out.html"))
@@ -129,14 +129,22 @@
          password (take n (repeatedly #(rand-nth chars)))]
      (reduce str password))))
 
-(defn attempt-thirdparty-login [username email return-url req]
+(defn attempt-thirdparty-login [username email id return-url req]
   (if-let [user (users/get-user-by-email email)]
-    (login-success user true return-url req)
+    (do
+      (try (users/update-thirdparty-id (:id user) (:id_type id) (Long/parseLong (:id id)))
+           (catch Exception e
+             (throw (.getNextException e))))
+      (login-success user true return-url req))
     (do
       (let [random-password (fixed-length-password 10)]
         (handle-registration {:username username :email email :password random-password :confirmPassword random-password}
                              req return-url password-hash-options)
-        (login-success (users/get-user username) true return-url req)))))
+        (try (users/update-thirdparty-id (:id (users/get-user username)) (:id_type id) (Long/parseLong (:id id)))
+             (catch Exception e
+               (throw (.getNextException e))))
+        (login-success (users/get-user username) true return-url req))))
+  )
 
 (defn session-from [req] (:user (:session req)))
 

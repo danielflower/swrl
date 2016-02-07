@@ -14,7 +14,7 @@ to respond.</p>
 {% for swirl in swirls %}
 <div>
     <h2><a href="{{ swirl.id|swirlurl|absoluteurl }}">{{swirl.title}}</a></h2>
-    <p>Recommended by {{ swirl.email_md5|gravatar-img:60 }}
+    <p>Recommended by {{ swirl.username|gravatar-img:60 }}
         <strong>{{ swirl.username }}</strong> on {{swirl.creation_date|timetag}}</p>
 </div>
 {% endfor %}

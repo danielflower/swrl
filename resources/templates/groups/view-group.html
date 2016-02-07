@@ -15,7 +15,7 @@
 
     <ul class="group-members">
         {% for member in members %}
-        <li><a href="{{ member.username|user-url }}">{{member.email_md5|gravatar-img:36}} {{member.username}}</a></li>
+        <li><a href="{{ member.username|user-url }}">{{member.username|gravatar-img:36}} {{member.username}}</a></li>
         {% endfor %}
     </ul>
 

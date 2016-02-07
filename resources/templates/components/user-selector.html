@@ -18,7 +18,7 @@
     {% if origin-swirl-id %}
     <input id="{{ origin-swirl-author.username }}" type="checkbox" name="who" value="{{ origin-swirl-author.username }}"
            checked>
-    <label for="{{ origin-swirl-author.username }}">{{friend.email_md5|gravatar-img:40 }}{{ origin-swirl-author.username
+    <label for="{{ origin-swirl-author.username }}">{{friend.username|gravatar-img:40 }}{{ origin-swirl-author.username
         }}</label>
     {% endif %}
 
@@ -29,7 +29,7 @@
     <h3>People who may also like this Swirl:</h3>
     {% for friend in suggested-contacts %}
     <input id="{{ friend.username }}" type="checkbox" name="who" value="{{ friend.username }}">
-    <label for="{{ friend.username }}">{{ friend.email_md5|gravatar-img:35 }}{{ friend.username }}</label>
+    <label for="{{ friend.username }}">{{ friend.username|gravatar-img:35 }}{{ friend.username }}</label>
     {% endfor %}
     {% endif %}
 
@@ -40,7 +40,7 @@
     {% for friend in already-selected %}
     <input type="checkbox" name="who" value="{{ friend.username }}" checked {% if disallow-unselects %}disabled{% endif
            %}>
-    <label>{{ friend.email_md5|gravatar-img:35 }}{{ friend.username }}</label>
+    <label>{{ friend.username|gravatar-img:35 }}{{ friend.username }}</label>
     {% endfor %}
     {% endif %}
 

@@ -9,7 +9,7 @@
 
 
 
-            <a href="{{ sn.note.instigator-username|user-url }}">{{ sn.note.instigator-email-md5|gravatar-img:25 }}{{sn.note.instigator-username}}</a>
+            <a href="{{ sn.note.instigator-username|user-url }}">{{ sn.note.instigator-username|gravatar-img:25 }}{{sn.note.instigator-username}}</a>
             {% ifequal sn.note.notification_type "R" %}
             recommended <a href="{{ sn.swirl.id|swirlurl }}">{{sn.swirl.title}}</a> to you
             {% endifequal %}

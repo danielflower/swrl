@@ -14,12 +14,22 @@
 
 (defn create-user [username email password]
   (k/insert users
-          (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email)})))
+          (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email) :avatar_type "gravatar"})))
 
 (defn change-password [user-id hashed-password]
   (k/update users
           (k/set-fields {:password hashed-password})
           (k/where {:id user-id})))
+
+(defn update-thirdparty-id [user-id id_type id]
+  (k/update users
+            (k/set-fields {id_type id})
+            (k/where {:id user-id})))
+
+(defn update-avatar-type [user-id type]
+  (k/update users
+            (k/set-fields {:avatar_type type})
+            (k/where {:id user-id})))
 
 (defn get-all-users []
   (k/select db/users

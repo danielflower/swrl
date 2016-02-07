@@ -55,7 +55,7 @@
         <a href="/logout"
            class="logout-link paradeiser-hidden-phone paradeiser-hidden-tablet paradeiser-hidden-desktop">Logout</a>
         <a href="{{ user.username|user-url }}" class="avatar logged-in-user" title="Go to your profile">
-            {{ user.email_md5|gravatar-img:36 }}
+            {{ user.username|gravatar-img:36 }}
         </a>
 
         {% endif %}

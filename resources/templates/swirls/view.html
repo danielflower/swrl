@@ -10,7 +10,7 @@
     <header>
         <h1 class="headline type-color">{{model.swirl.title}}</h1>
 
-        <div class="avatar-with-name">{{ model.swirl.email_md5|gravatar-img:30 }}
+        <div class="avatar-with-name">{{ model.swirl.username|gravatar-img:30 }}
             <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
             {{model.swirl.creation_date|timetag}}
         </div>
@@ -56,7 +56,7 @@
             <input type="hidden" class="max-comment-id-field" name="max-comment-id"
                    value="{{model.max-comment-id}}">
 
-            {{ user.email_md5|gravatar-img:40 }}
+            {{ user.username|gravatar-img:40 }}
             <div class="comment-body">
                 <a class="user-link" href="{{user.username|user-url}}">{{user.username}}</a>
                 <div class="rte">
@@ -80,7 +80,7 @@
         {% endif %}
         <a class="username {% if forloop.counter >= 3 %}more-content{% endif %}"
            rel="author"
-           href="{{non-responder.username|user-url}}">{{ non-responder.email_md5|gravatar-img:25
+           href="{{non-responder.username|user-url}}">{{ non-responder.username|gravatar-img:25
             }}{{non-responder.username}}</a>
         {% endfor %}
 

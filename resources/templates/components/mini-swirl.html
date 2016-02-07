@@ -16,7 +16,7 @@
     </div>
     {% endif %}
     <div class="author-bit">
-        <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.email_md5|gravatar-img:25 }} {{swirl.username}}</a>
+        <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.username|gravatar-img:25 }} {{swirl.username}}</a>
         {{swirl.creation_date|timetag}}
     </div>
 </div>

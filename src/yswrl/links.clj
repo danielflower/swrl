@@ -41,6 +41,9 @@
 (defn gravatar-url [hash size]
   (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid&r=pg"))
 
+(defn facebook-image-url [facebook-id size]
+  (str "http://graph.facebook.com/" facebook-id "/picture?width=" size "&height=" size))
+
 (defn create-swirl []
   "/swirls/start")
 

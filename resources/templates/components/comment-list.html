@@ -1,6 +1,6 @@
 {% for comment in thecomments %}
 <div class="comment">
-    {{ comment.email_md5|gravatar-img:40 }}
+    {{ comment.username|gravatar-img:40 }}
 
     <div class="comment-body">
         <a id="{{comment.id}}" class="user-link" href="{{comment.username|user-url}}">{{comment.username}}</a>
