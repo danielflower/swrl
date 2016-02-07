@@ -15,7 +15,7 @@
                                :artist        (r :artistName)
                                :create-url    (str "/create/album?itunes-album-id=" (r :collectionId) "&" query-string)
                                :itunes-id     (r :collectionId)
-                               :thumbnail-url (r :artworkUrl60)}) ((result :body) :results))
+                               :thumbnail-url (clojure.string/replace-first (r :artworkUrl100) "100x100" "600x600")}) ((result :body) :results))
         })))
   ([search-term]
    (search-albums search-term ""))
@@ -28,7 +28,7 @@
         album (first (body :results))]
     {:title         (album :collectionName)
      :artist-name   (album :artistName)
-     :thumbnail-url (clojure.string/replace-first (album :artworkUrl100) ".100x100-" ".600x600-")
+     :thumbnail-url (clojure.string/replace-first (album :artworkUrl100) "100x100" "600x600")
      :tracks        (map (fn [r] {:track-name (r :trackName)
                                   :title      (r :collectionName)}) (rest (body :results)))}
     ))
