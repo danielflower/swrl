@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="standard-page padded">
+    <h1>Avatar image options</h1>
+
+    <form method="POST" action="/update-avatar-preferences">
+        {% csrf-field %}
+
+        <h4>Choose your avatar source</h4>
+        <label><input type="radio" name="avatar-type" value="gravatar" {% ifequal user.avatar_type "gravatar" %}checked{% endifequal %}> Gravatar</label>
+        {% if user.facebook_id %}
+        <label><input type="radio" name="avatar-type" value="facebook" {% ifequal user.avatar_type "facebook" %}checked{% endifequal %}> Facebook</label>
+        {% else %}
+        <p class="padded">If you want to use your Facebook profile image, you must first <a href="/facebook_login?return-url=/edit-avatar">login via Facebook</a>.
+            <br>
+            <br>
+            <b>Please make sure your registered email with Swrl matches your Facebook email.</b>
+            <br>
+            <br>
+            If it doesn't, you can update it <a href="/edit-profile" target="_blank">here</a>.</p>
+        {% endif %}
+        <input type="submit" value="Update avatar options" class="button-primary">
+    </form>
+
+</div>
+{% endblock %}

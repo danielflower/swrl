@@ -70,16 +70,11 @@
 
         {% if is-current-user %}
         <div class="expansion-area">
-            <button type="button" id="show-edit-profile-button" class="expand-toggle-button">Edit your profile
+            <button type="button" id="show-edit-profile-button" class="expand-toggle-button">Options and Settings <i class="fa fa-cog fa-1x"></i>
             </button>
             <div class="expansion-content">
                 <ul>
-                    <li><strong>Change your avatar:</strong>
-                        <a href="https://en.gravatar.com/emails/" target="_blank">click here to go to
-                            Gravatar.com</a> and upload an avatar.
-                        By signing up at Gravatar, you only have to upload your avatar once and it will be
-                        automatically available on many
-                        sites including Swirl.
+                    <li><a href="/edit-avatar">Update your profile avatar image</a>
                     </li>
                     <li><a href="/edit-profile">Update your username or email</a></li>
                     <li><a href="/forgot-password?username={{ user.username|urlescape }}">Reset your
