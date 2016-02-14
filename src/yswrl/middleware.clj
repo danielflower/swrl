@@ -61,5 +61,5 @@
             (assoc-in [:security :anti-forgery] false)
             (assoc-in [:security :xss-protection :enable?] false)
             ))
-      (wrap-gzip)
+      #_(wrap-gzip)
       (wrap-internal-error :log #(log/error (get-unhandled-error-text %)))))
