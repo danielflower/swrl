@@ -23,9 +23,10 @@
 (defn seen-responses [type]
   ["Later" (get-in types/types [type :words :watching]) "Loved it", "Not bad", "Not for me"])
 
-(def responses-to-hide #{"dismissed"})
+
 (defn should-notify-users-of-response [response]
-  (not (some #{(lower-case response)} responses-to-hide)))
+  (not (some #{(lower-case response)} #{"dismissed" "later"})))
+(def responses-to-hide-on-view-page #{"dismissed"})
 
 
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit? wishlist]
@@ -154,7 +155,7 @@
     (let [is-logged-in (not-nil? current-user)
           is-author (and is-logged-in (= (swirl :author_id) (current-user :id)))
           logister-info (logister-info is-logged-in suggestion-code)
-          responses (map #(assoc % :html_content (response-summary-as-html (:summary %))) (repo/get-swirl-responses (:id swirl) responses-to-hide))
+          responses (map #(assoc % :html_content (response-summary-as-html (:summary %))) (repo/get-swirl-responses (:id swirl) responses-to-hide-on-view-page))
           comments (repo/get-swirl-comments (:id swirl))
           non-responders (repo/get-non-responders (:id swirl))
           can-respond is-logged-in
