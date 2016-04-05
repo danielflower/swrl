@@ -8,7 +8,11 @@ You will need [Leiningen](https://github.com/technomancy/leiningen) 2.0 or above
 
 If using Cursive Clojure in IntelliJ, add a new run configuration of type `REPL - Local REPL` and choose to use leinengen.
 
-Install Postgres. Run init_db pointing to a folder where the data will be stored. E.g. in windows:
+### DB setup
+
+Preferred option is to use Vagrant. Just install Virtual Box and Vagrant and then run `vagrant up`
+
+Alternatively, install Postgres manually . Run init_db pointing to a folder where the data will be stored. E.g. in windows:
 
     D:\apps\pgsql\9.4.1-3\bin> initdb --encoding="UTF8" D:\apps\pgsql\data
 
@@ -21,27 +25,21 @@ and then run `psql postgres` to open the SQL console:
 
 If that fails due to incompatible encodings, [follow these instructions](http://stackoverflow.com/a/26915078/131578)
 
-You should be able to connect from intellij or another GUI using:
+To run postgres:
+
+    "pg_ctl" -D "D:\apps\pgsql\data" -l logfile start
+
+#### DB connection info
+
+You should be able to connect from intellij or another SQL client using:
 
     host=localhost
     port=5432
     database=yswrl
     username=dev
     password=password
-    
-## Or Alternatively
-
-Installing stuff sucks. Wouldn't it be great if everything was scripted and just worked?
-
-Prerequisite: Install Vagrant and Virtual Box.
-
-To run: Vagrant up. Then, as above.
 
 ## Running
-
-To run postgres:
-
-    "pg_ctl" -D "D:\apps\pgsql\data" -l logfile start
 
 The database gets upgraded every time you run the web server.
 

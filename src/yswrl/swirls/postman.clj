@@ -4,42 +4,53 @@
             [korma.core
              :refer [select* limit subselect offset order
                      aggregate defentity database prepare transform table exec-raw
-                     insert values where join fields set-fields select raw modifier]]))
-(use 'clj-mandrill.core)
+                     insert values where join fields set-fields select raw modifier]]
+            [clojure.data.json :as json]
+            [clj-http.client :as client]))
 (use 'selmer.parser)
 
-(def mandrill-api-key-or-nil
-  (let [env-var-name "MANDRILL_APIKEY"
+(def postmark-api-key-or-nil
+  (let [env-var-name "POSTMARK_API_TOKEN"
         key (System/getenv env-var-name)]
     (if (clojure.string/blank? key)
       (do
-        (log/info "Skipping email sending as the Mandrill key is not set as an environment value with key" env-var-name)
+        (log/info "Skipping email sending as the Postmark key is not set as an environment value with key" env-var-name)
+        (log/info "You can set" env-var-name "to POSTMARK_API_TEST in your env vars to test sending to Postmark without actually delivering emails")
         nil)
       key)))
 
 (defn email-body [template-path model]
   (render-file template-path model))
 
-(defn wrap-mandrill-call [f & args]
-  (if (nil? mandrill-api-key-or-nil)
-    [{:email "", :status "error", :reject_reason "Mandrill not configured"}]
-    (do
-      (alter-var-root #'clj-mandrill.core/*mandrill-api-key* (constantly mandrill-api-key-or-nil))
-      (apply f args))))
-
 (defn blacklist [email]
   (insert db/email-blacklist
           (values [{:email email}])))
 
-#_(defn test-mandrill []
-  (wrap-mandrill-call call-mandrill "users/ping" {}))
-
-(defn send-email [to-email to-name subject body]
+(defn send-email [to-email subject body]
   (if (db/exists? "SELECT 1 FROM email_blacklist WHERE email = ?" to-email)
     [{:email "", :status "error", :reject_reason "Email is blacklisted"}]
-    (wrap-mandrill-call send-message {
-                                      :html       body
-                                      :subject    subject
-                                      :from_email "feedback@swrl.co"
-                                      :from_name  "feedback@swrl.co"
-                                      :to         [{:email to-email :name to-name}]})))
+    (do
+      (if (nil? postmark-api-key-or-nil)
+        [{:email "", :status "error", :reject_reason "Postmark not configured"}]
+        (let [response (client/post
+                         "https://api.postmarkapp.com/email"
+                         {:headers {"Accept"                  "application/json"
+                                    "Content-Type"            "application/json"
+                                    "X-Postmark-Server-Token" postmark-api-key-or-nil}
+                          :body    (json/write-str {:HtmlBody body
+                                                    :Subject  subject
+                                                    ; if you change sender name or email, you need to create a new signiture in postmark dashboard. Maybe just don't do it.
+                                                    :From     "Swrl <feedback@swrl.co>"
+                                                    :To       to-email})
+                          :throw-exceptions false})
+              result (json/read-str (response :body)
+                                    :eof-error? false
+                                    :eof-value {:ErrorCode -1 :Message (str "Could not parse result. Response code " (response :status))}
+                                    :key-fn clojure.core/keyword)
+              status (if (= 0 (result :ErrorCode))
+                       "sent"
+                       "error")]
+          {:_id           (result :MessageID)
+           :email         (result :To)
+           :status        status
+           :reject_reason (result :Message)})))))

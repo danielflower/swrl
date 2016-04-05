@@ -99,8 +99,8 @@
   (let [swirls (if (clojure.string/blank? query) [] (lookups/search-for-swirls 100 0 user query))]
     (layout/render "swirls/search-swirls.html" {:title  "Search results"
                                                 :swirls swirls
-                                                :query  query
-                                                })))
+                                                :query  query})))
+
 
 (defn view-inbox-by-response [count current-user submitted-response]
   (let [swirls (lookups/get-swirls-by-response current-user 2000 count submitted-response)
@@ -246,8 +246,8 @@
                members-sans-author (filter #(not (= (% :id) (author :id))) members)]
            (repo/add-suggestions id (author :id) (map :username members-sans-author))))
        (if wishlist
-         (handle-response id nil "Later" author)
-         )
+         (handle-response id nil "Later" author))
+
        (if (not-nil? origin-swirl-id)
          (do
            (repo/add-link id (link-types/swirl-progenitor :code) origin-swirl-id)

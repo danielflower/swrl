@@ -36,8 +36,8 @@
   (let [newSession (dissoc session :user)]
     (->
       (redirect "/logged-out")
-      (assoc :session newSession)
-      )))
+      (assoc :session newSession))))
+
 
 (defn months [x] (* x 2419200))
 
@@ -61,8 +61,8 @@
 
 (defn handle-update-profile [req user new-username new-email]
   (let [errors (first (b/validate user {:username [v/required [v/max-count (max-length :users :username)]]
-                                        :email    [v/required [v/max-count (max-length :users :email)] [v/email :message "Please enter a valid email address"]]
-                                        }))]
+                                        :email    [v/required [v/max-count (max-length :users :email)] [v/email :message "Please enter a valid email address"]]}))]
+
     (if errors
       (edit-profile-page errors)
       (do
@@ -145,8 +145,8 @@
                (catch Exception e
                  (throw (.getNextException e))))
           (users/update-avatar-type (:id user) (:avatar_type id))
-          (login-success user true return-url req)))))
-  )
+          (login-success user true return-url req))))))
+
 
 (defn session-from [req] (:user (:session req)))
 

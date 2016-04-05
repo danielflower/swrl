@@ -22,7 +22,7 @@
 (defn email-user [user-id]
   (let [swirls (get-unresponded-for-user user-id)
         recipient (yswrl.auth.auth-repo/get-user-by-id user-id)]
-    (postman/send-email (:email recipient) (:username recipient)
+    (postman/send-email (:email recipient)
                         "Swirls awaiting your response"
                         (postman/email-body "notifications/nag-email.html"
                                             {:swirls swirls :recipient recipient}))

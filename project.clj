@@ -8,10 +8,10 @@
                            [org.slf4j/log4j-over-slf4j "1.7.12"]
                            [org.clojure/tools.logging "0.3.1"]
                            [org.clojure/clojure "1.7.0"]
+                           [org.clojure/data.json "0.2.6"]
                            [ring-server "0.4.0"]
                            [selmer "0.8.5"]
                            [clj-time "0.9.0"]
-                           [clj-mandrill "0.1.0"]
                            [clj-http "1.1.2"]
                            [environ "1.0.0"]
                            [compojure "1.3.4"]
@@ -67,9 +67,8 @@
                        :scheduled-jobs {:omit-source true
                                         :main        yswrl.jobs
                                         :env         {:production true}
-                                        :aot         :all}
-                       }
+                                        :aot         :all}}
 
-            :aliases {"run-jobs" ["with-profile" "scheduled-jobs" "run"]}
 
-            )
+            :aliases {"run-jobs" ["with-profile" "scheduled-jobs" "run"]})
+

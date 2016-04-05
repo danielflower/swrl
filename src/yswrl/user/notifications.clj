@@ -130,7 +130,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
       (let [notifications (notifications-repo/get-for-user-email (user :id))
             html (create-notification-email-body user notifications)]
         (mark-email-sent user)
-        (postman/send-email (:email user) (:username user) "Swirl updates" html)))))
+        (postman/send-email (:email user) "Swirl updates" html)))))
 
 (defn get-notification-view-model [user]
   (let [raw (notifications-repo/get-for-user-page (user :id))]
