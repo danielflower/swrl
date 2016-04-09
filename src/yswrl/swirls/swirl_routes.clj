@@ -315,7 +315,7 @@
                    "unknown")
           review (or review "")
           title (or title "unknown")
-          private (or private true)
+          private  (not= "false" private)
           image-url (or image-url "http://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
           response (try (create-swirl-no-interaction title review type image-url user-id private)
                         (catch Exception e
