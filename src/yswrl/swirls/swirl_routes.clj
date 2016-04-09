@@ -6,6 +6,8 @@
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
             [yswrl.auth.auth-repo :as user-repo]
             [compojure.core :refer [defroutes GET POST]]
+            [compojure.coercions :refer :all]
+            [ring.middleware.anti-forgery :refer :all]
             [yswrl.links :as links]
             [ring.util.response :refer [status redirect response not-found]]
             [clojure.tools.logging :as log]
@@ -17,7 +19,9 @@
             [yswrl.utils :as utils]
             [clojure.string :refer [join lower-case]]
             [yswrl.groups.groups-repo :as group-repo]
-            [yswrl.swirls.types :as types])
+            [yswrl.swirls.types :as types]
+            [clj-json.core :as json])
+  (:use ring.middleware.json-params)
   (:import (java.util UUID)))
 
 (defn seen-responses [type]
@@ -27,6 +31,15 @@
 (defn should-notify-users-of-response [response]
   (not (some #{(lower-case response)} #{"dismissed" "later"})))
 (def responses-to-hide-on-view-page #{"dismissed"})
+
+(defn json-response [data & [status]]
+  {:status  (or status 200)
+   :headers {"Content-Type" "application/json"}
+   :body    (try (json/generate-string data)
+                 (catch Exception e
+                   (log/error "Unable to parse JSON response. Exception: " e)
+                   (json/generate-string {:message "Swrl created, but unable to parse response to JSON"
+                                          :error (str e)})))})
 
 
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit? wishlist]
@@ -285,6 +298,31 @@
 
 (defn numberise [strings]
   (map #(Long/parseLong % 10) strings))
+
+(defn create-swirl-no-interaction
+  [title review type image-url user-id]
+  (let [swirl (repo/save-draft-swirl type user-id title review image-url)
+        swirl-id (:id swirl)
+        _ (publish-swirl {:id user-id} swirl-id nil title review nil nil false type image-url true)
+        swirl (lookups/get-swirl (:id swirl))]
+    (assoc swirl :creation_date (str (:creation_date swirl)))
+    ))
+
+
+(defn create-swirl-app-api []
+  (POST "/create-swirl" [title review type image-url user-id]
+    (let [type (or  (get-in types/types [type :name])
+                   "unknown")
+          review (or review "")
+          title (or title "unknown")
+          image-url (or image-url "http://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
+          response (try (create-swirl-no-interaction title review type image-url user-id)
+                        (catch Exception e
+                          (log/error "Failure creating swirl from api. Exception:" e)
+                          {:error  (.getMessage e)
+                           :status 500}))]
+      (json-response response (or (:status response) 200)))))
+
 
 (defn get-swirls-by-id []
   (GET "/" [swirl-list :as req]

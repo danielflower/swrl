@@ -92,6 +92,16 @@
                                }
                        }
 
+            "unknown"     {
+                       :name  "unknown"
+                       :words {
+                               :watch    "check out"
+                               :watching "checking out"
+                               :seen     "checked out"
+                               :seen-it  "checked out"
+                               }
+                       }
+
             })
 
 (defn type-of [swirl]

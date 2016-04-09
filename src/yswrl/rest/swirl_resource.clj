@@ -21,3 +21,9 @@
                         (swirl-routes/post-comment-route "")
                         ))
            )
+
+(defroutes swirl-app-rest-routes
+           (context "/api/v1/app" []
+             (defroutes swirl-app-rest-routes-erm
+                        (swirl-routes/create-swirl-app-api)
+               )))

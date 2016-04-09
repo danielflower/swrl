@@ -14,9 +14,10 @@
                            [clj-time "0.9.0"]
                            [clj-http "1.1.2"]
                            [environ "1.0.0"]
-                           [compojure "1.3.4"]
+                           [compojure "1.5.0"]
                            [ring/ring-defaults "0.1.5"]
                            [ring-middleware-format "0.5.0"]
+                           [ring-json-params "0.1.0"]
                            [amalloy/ring-gzip-middleware "0.1.3"]
                            [noir-exception "0.2.5"]
                            [korma "0.4.2"]
@@ -28,7 +29,8 @@
                            [org.clojure/data.xml "0.0.8"]
                            [org.postgresql/postgresql "9.3-1102-jdbc41"]
                            [clj-oauth2 "0.2.0"]
-                           [enlive "1.1.5"]]
+                           [enlive "1.1.5"]
+                           [clj-json "0.2.0"]]
 
             :min-lein-version "2.0.0"
             :uberjar-name "yswrl.jar"
