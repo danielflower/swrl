@@ -300,23 +300,24 @@
   (map #(Long/parseLong % 10) strings))
 
 (defn create-swirl-no-interaction
-  [title review type image-url user-id]
+  [title review type image-url user-id private]
   (let [swirl (repo/save-draft-swirl type user-id title review image-url)
         swirl-id (:id swirl)
-        _ (publish-swirl {:id user-id} swirl-id nil title review nil nil false type image-url true)
+        _ (publish-swirl {:id user-id} swirl-id nil title review nil nil private type image-url true)
         swirl (lookups/get-swirl (:id swirl))]
     (assoc swirl :creation_date (str (:creation_date swirl)))
     ))
 
 
 (defn create-swirl-app-api []
-  (POST "/create-swirl" [title review type image-url user-id]
+  (POST "/create-swirl" [title review type image-url user-id private]
     (let [type (or  (get-in types/types [type :name])
                    "unknown")
           review (or review "")
           title (or title "unknown")
+          private (or private true)
           image-url (or image-url "http://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
-          response (try (create-swirl-no-interaction title review type image-url user-id)
+          response (try (create-swirl-no-interaction title review type image-url user-id private)
                         (catch Exception e
                           (log/error "Failure creating swirl from api. Exception:" e)
                           {:error  (.getMessage e)
