@@ -313,6 +313,7 @@
   (POST "/create-swirl" [title review type image-url user-id private]
     (let [type (or  (get-in types/types [type :name])
                    "unknown")
+          user-id (Long/parseLong (str user-id))
           review (or review "")
           title (or title "unknown")
           private  (not= "false" private)
