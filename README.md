@@ -115,3 +115,8 @@ Just run the tests a few times to generate fake data.
 2. Go to extensions, enable developer mode, and add the chrome folder as an extension.
 3. Once debugged, increment the version in `manifest.js`, zip the folder and upload to the Chrome store.
 
+## Takipi
+
+Playing with Takipi on a free trial. Probably will remove it immediately when it expires this week, so if you wanna play, play soon!
+
+URL: https://app.takipi.com/
