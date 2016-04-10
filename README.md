@@ -117,6 +117,6 @@ Just run the tests a few times to generate fake data.
 
 ## Takipi
 
-Playing with Takipi on a free trial. Probably will remove it immediately when it expires this week, so if you wanna play, play soon!
+Playing with Takipi on a free trial. Probably will remove it immediately when it expires this week, so if you wanna play, play soon!!
 
 URL: https://app.takipi.com/
