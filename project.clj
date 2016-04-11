@@ -48,7 +48,7 @@
                    :destroy      yswrl.handler/destroy
                    :uberwar-name "yswrl.war"}
 
-            :profiles {:uberjar        {:omit-source true
+            :profiles {:uberjar        {:omit-source false
                                         :env         {:production true}
                                         :main        yswrl.core
                                         :aot         :all}
