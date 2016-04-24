@@ -71,6 +71,10 @@
                                {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/exact/" page))}))
                            ;
 
+                           ; junk page fails
+                           #"http:\/\/www\.fjljldjfjdsoifjsdf.com\/"
+                           (fn [req]
+                             (throw (Exception. "website down")))
                            }
         body
         ))
