@@ -43,7 +43,9 @@
 (defentity swirl-links (table :swirl_links) (database db))
 (defentity swirl-responses (table :swirl_responses) (database db))
 (defentity swirl-lists (table :swirl_lists) (database db))
+(defentity swirl-weightings (table :swirl_weightings) (database db))
 (defentity comments (database db))
+(defentity positive-responses (table :positive_responses) (database db))
 
 (defentity groups (database db))
 (defentity group-members (database db) (table :group_members))

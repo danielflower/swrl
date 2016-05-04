@@ -229,12 +229,11 @@
                                 "Listening" "consuming"
                                 "Watching"  "consuming"
                                 "Looking"   "consuming"
-                                "Using"     "consuming"}
+                                "Using"     "consuming"
+                                "Dismissed" "dismissed"}
                                summary "done")
           swirl-response (repo/respond-to-swirl swirl-id summary responder)]
-      (if (= "Dismissed" summary)
-        (repo/remove-from-watchlist swirl-id responder)
-        (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder))
+      (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder)
       (if (should-notify-users-of-response summary)
         (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))
       (redirect (yswrl.links/swirl swirl-id)))))
@@ -246,7 +245,8 @@
     (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id) nil)
     (if (not= (swirl :author_id) (commentor :id))
       (do (network/store (swirl :author_id) :knows (commentor :id))
-          (network/store (commentor :id) :knows (swirl :author_id))))
+          (network/store (commentor :id) :knows (swirl :author_id))
+          (repo/update-weightings-for-friend-changes [(:id commentor) (:author_id swirl)])))
     (redirect (yswrl.links/swirl swirl-id (comment :id)))))
 
 

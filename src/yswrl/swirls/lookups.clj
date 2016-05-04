@@ -88,6 +88,12 @@
       (order :id :desc)
       (select)))
 
+;TODO: select swirls by weighting!
+;select * from swirl_weightings sw
+;join swirls s on s.id = sw.swirl_id
+;where user_id = 634
+;order by (is_recipient::int * 90000 + author_is_friend::int * 50000 + (EXTRACT(EPOCH FROM NOW()) - EXTRACT(EPOCH FROM updated)) ) desc, updated desc;
+
 (defn get-swirls-authored-by [author-id requestor]
   (-> (select-multiple-swirls requestor 1000 0)
       (where {:author_id author-id})

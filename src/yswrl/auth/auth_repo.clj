@@ -13,8 +13,14 @@
       (bytes->hex)))
 
 (defn create-user [username email password]
-  (k/insert users
-          (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email) :avatar_type "gravatar"})))
+  (let [user (k/insert users
+                  (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email) :avatar_type "gravatar"}))]
+    ;update the weightings table
+    (k/insert db/swirl-weightings
+              (k/values (k/select db/swirls
+                                  (k/fields [(k/raw (:id user)) :user_id]
+                                            [:swirls.id :swirl_id]))))
+    user))
 
 (defn change-password [user-id hashed-password]
   (k/update users

@@ -25,15 +25,15 @@
 
 (defn get-suggestion [code]
   (first (k/select db/suggestions
-                 (k/fields :recipient_id :recipient_email)
-                 (k/where {:code code}))))
+                   (k/fields :recipient_id :recipient_email)
+                   (k/where {:code code}))))
 
 (defn get-suggestion-usernames [swirl-id]
   (k/select db/suggestions
-          (k/fields :users.username [:users.id :user-id] :users.email_md5)
-          (k/join :inner db/users (= :suggestions.recipient_id :users.id))
-          (k/where {:swirl_id swirl-id})
-          (k/order :users.username :asc)))
+            (k/fields :users.username [:users.id :user-id] :users.email_md5)
+            (k/join :inner db/users (= :suggestions.recipient_id :users.id))
+            (k/where {:swirl_id swirl-id})
+            (k/order :users.username :asc)))
 
 (defn create-suggestions [recipientUserIdsOrEmailAddresses swirlId]
   (let [already-suggested (map :username (get-suggestion-usernames swirlId))
@@ -52,46 +52,123 @@
     (let [response
           (if (= 0 (k/update db/swirl-responses (k/set-fields {:summary summary}) (k/where {:swirl_id swirl-id :responder (author :id)})))
             (k/insert db/swirl-responses
-                    (k/values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
+                      (k/values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
             (first (k/select db/swirl-responses (k/where {:swirl_id swirl-id :responder (author :id)}))))]
+      (if (-> (k/select db/positive-responses (k/fields :summary) (k/where {:summary summary}))
+              count
+              (> 0))
+        (do (k/update db/swirl-weightings
+                      (k/set-fields {:number_of_positive_responses (k/raw "1 + number_of_positive_responses")})
+                      (k/where {:swirl_id swirl-id}))
+            (db/execute (str "UPDATE swirl_weightings sw
+SET
+number_of_positive_responses_from_friends = (SELECT COUNT(1) FROM swirl_responses r where r.swirl_id = sw.swirl_id and
+                                             r.summary in (SELECT summary from positive_responses) and
+                                             r.responder in (SELECT another_user_id from network_connections
+                                                              where
+                                                               user_id=sw.user_id and relation_type='knows'))
+WHERE sw.swirl_id = " swirl-id))))
       (k/update db/suggestions
-              (k/set-fields {:response_id (response :id)})
-              (k/where (or
-                       {:swirl_id swirl-id :recipient_id (author :id)}
-                       {:swirl_id swirl-id :recipient_email (author :email)}
-                       )))
+                (k/set-fields {:response_id (response :id)})
+                (k/where (or
+                           {:swirl_id swirl-id :recipient_id (author :id)}
+                           {:swirl_id swirl-id :recipient_email (author :email)}
+                           )))
+      ; update the weightings table with the response
+      (k/update db/swirl-weightings
+                (k/set-fields {:has_responded true})
+                (k/where {:swirl_id swirl-id
+                          :user_id  (:id author)}))
       response)))
 
 (defn add-swirl-to-wishlist [swirl-id state owner]
-  (if (= 0 (k/update db/swirl-lists
-                 (k/set-fields {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)})
-                 (k/where {:swirl_id swirl-id :owner (:id owner)})))
+  (while (= 0 (k/update db/swirl-lists
+                        (k/set-fields {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)})
+                        (k/where {:swirl_id swirl-id :owner (:id owner)})))
     (k/insert db/swirl-lists
-              (k/values {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)}))))
+              (k/values {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)}))
+    (k/update db/swirl-weightings
+              (k/set-fields {:list_state state})
+              (k/where {:swirl_id swirl-id :user_id (:id owner)}))))
 
 
 (defn remove-from-watchlist [swirl-id user]
   (k/delete db/swirl-lists
-            (k/where {:swirl_id swirl-id :owner (:id user)})))
+            (k/where {:swirl_id swirl-id :owner (:id user)}))
+  (k/update db/swirl-weightings
+            (k/set-fields {:list_state nil})
+            (k/where {:swirl_id swirl-id :user_id (:id user)})))
 
-(defn create-comment [swirld-id comment author]
-  (k/insert db/comments
-          (k/values {:swirl_id swirld-id :author_id (:id author) :html_content comment :date_responded (now)})
-          ))
+(defn create-comment [swirl-id comment author]
+  (let [comment (k/insert db/comments
+                          (k/values {:swirl_id swirl-id :author_id (:id author) :html_content comment :date_responded (now)})
+                          )]
+    (k/update db/swirl-weightings
+              (k/set-fields {:number_of_comments (k/raw "1 + number_of_comments")})
+              (k/where {:swirl_id swirl-id}))
+    (db/execute (str "UPDATE swirl_weightings sw
+SET
+number_of_comments_from_friends = (SELECT COUNT(1) FROM comments c
+                                   where c.swirl_id = sw.swirl_id and
+                                   c.author_id in
+                                   (SELECT another_user_id from network_connections
+                                       where
+                                       user_id=sw.user_id and relation_type='knows'))
+WHERE sw.swirl_id = " swirl-id))
+    comment))
 
-(defn save-draft-swirl [type author-id title review image-thumbnail]
-  (k/insert db/swirls
-          (k/values {:type type :author_id author-id :title title
-                   :review review :thumbnail_url image-thumbnail :state states/draft
-                   :is_private false})))
+(defn save-draft-swirl
+  "Returns the swirl if created"
+  [type author-id title review image-thumbnail]
+  (let [swirl (k/insert db/swirls
+                        (k/values {:type       type :author_id author-id :title title
+                                   :review     review :thumbnail_url image-thumbnail :state states/draft
+                                   :is_private false}))]
+    ;now add the new rows into the weighting table
+    (k/insert db/swirl-weightings
+              (k/values (k/select db/users
+                                  (k/fields [(k/raw (:id swirl)) :swirl_id]
+                                            [:users.id :user_id]
+                                            [(k/raw (str "(id = " author-id ")")) :is_author]))))
+    swirl))
 
 (defn add-link [swirl-id link-type-code link-value]
   (k/insert db/swirl-links
-          (k/values {:swirl_id swirl-id :type_code link-type-code :code link-value})))
+            (k/values {:swirl_id swirl-id :type_code link-type-code :code link-value})))
 
 (defn get-links [swirl-id]
   (let [links (k/select db/swirl-links (k/where {:swirl_id swirl-id}))]
     (map #(assoc % :type (swirl-links/link-type-of (% :type_code))) links)))
+
+(defn update-weightings-for-friend-changes [users]
+  (db/execute (format "
+with all_network_conns as (select * from network_connections),
+all_comments as (select * from comments),
+all_responses as (select * from swirl_responses),
+all_positive_responses as (select * from positive_responses)
+UPDATE swirl_weightings sw
+SET
+author_is_friend = EXISTS(SELECT 1 from all_network_conns
+                              WHERE another_user_id = s.author_id
+                             AND user_id = sw.user_id
+                             AND relation_type = 'knows'),
+number_of_comments_from_friends = (SELECT COUNT(1) FROM all_comments c
+                                   where c.swirl_id = s.id and
+                                   c.author_id in
+                                   (SELECT another_user_id from all_network_conns
+                                       where
+                                       user_id=sw.user_id and relation_type='knows')),
+number_of_positive_responses_from_friends = (SELECT COUNT(1) FROM all_responses r where r.swirl_id = s.id and
+                                             r.summary in (SELECT summary from all_positive_responses) and
+                                             r.responder in (SELECT another_user_id from all_network_conns
+                                                              where
+                                                               user_id=sw.user_id and relation_type='knows'))
+FROM swirls s
+WHERE s.id = sw.swirl_id
+AND sw.user_id IN (SELECT another_user_id from all_network_conns
+                   WHERE user_id IN (%s));" (clojure.string/join "," users))))
+
+
 
 (defn setup-network-links-and-notifications [swirl-id author-id other-user-id]
   (networking/store other-user-id :knows author-id)
@@ -109,25 +186,37 @@
                                       (log/warn "Error while saving suggestion" e)))))
       (networking/store-multiple author-id :knows recipient-ids)
       (doseq [recipient-id recipient-ids]
-        (setup-network-links-and-notifications swirl-id author-id recipient-id)))))
+        (setup-network-links-and-notifications swirl-id author-id recipient-id))
+      ;update the weightings table to reflect these changes
+      (k/update db/swirl-weightings
+                (k/set-fields {:is_recipient true})
+                (k/where {:swirl_id swirl-id
+                          :user_id  [in recipient-ids]}))
+      (update-weightings-for-friend-changes (vec (merge recipient-ids author-id)))
+      )))
 
 (defn publish-swirl
   "Updates a draft Swirl to be live, and updates the user network and sends email suggestions. Returns true if id is a
   swirl belonging to the author; otherwise false."
   [swirl-id author-id title review recipient-names-or-emails private? type image-url]
   (let [updated (k/update db/swirls
-                        (k/set-fields {:title title :review review :state states/live :is_private private? :type type :thumbnail_url image-url})
-                        (k/where {:id swirl-id :author_id author-id}))]
+                          (k/set-fields {:title title :review review :state states/live :is_private private? :type type :thumbnail_url image-url})
+                          (k/where {:id swirl-id :author_id author-id}))]
+    ; update the updated timestamp on the weightings table
+    (k/update db/swirl-weightings
+              (k/set-fields {:updated (now)})
+              (k/where {:swirl_id swirl-id}))
     (add-suggestions swirl-id author-id recipient-names-or-emails)
     (db/execute "REFRESH MATERIALIZED VIEW search_index")   ; WARNING: the whole index is refreshed on every update
+    ; now update the weightings table
     (= updated 1)))
 
 (defn delete-swirl
   "Deletes the swirl with the given ID if the deleter-id is the author. Returns the swirl-id if it was deleted, otherwise nil"
   [swirl-id deleter-id]
   (if (= 1 (k/update db/swirls
-                   (k/set-fields {:state states/deleted})
-                   (k/where {:id swirl-id :author_id deleter-id})))
+                     (k/set-fields {:state states/deleted})
+                     (k/where {:id swirl-id :author_id deleter-id})))
     swirl-id
     nil))
 
@@ -137,28 +226,28 @@
 
 (defn get-swirl-responses [swirld-id responses-to-exclude]
   (k/select db/swirl-responses
-          (k/fields :summary :users.username :users.email_md5 :responder :date_responded)
-          (k/join :inner db/users (= :users.id :swirl_responses.responder))
-          (k/where {:swirl_id swirld-id (k/raw "LOWER(summary)") [not-in responses-to-exclude]})))
+            (k/fields :summary :users.username :users.email_md5 :responder :date_responded)
+            (k/join :inner db/users (= :users.id :swirl_responses.responder))
+            (k/where {:swirl_id swirld-id (k/raw "LOWER(summary)") [not-in responses-to-exclude]})))
 
 (defn get-swirl-comments
   ([swirl-id]
    (get-swirl-comments swirl-id 0))
   ([swirld-id id-to-start-after]
    (k/select db/comments
-           (k/fields :id :html_content :users.username :users.email_md5 :date_responded)
-           (k/join :inner db/users (= :users.id :comments.author_id))
-           (k/where {:swirl_id swirld-id :id [> id-to-start-after]})
-           (k/order :date_responded :asc))))
+             (k/fields :id :html_content :users.username :users.email_md5 :date_responded)
+             (k/join :inner db/users (= :users.id :comments.author_id))
+             (k/where {:swirl_id swirld-id :id [> id-to-start-after]})
+             (k/order :date_responded :asc))))
 
 
 (defn get-recent-responses-by-user-and-type [user-id swirl-type excluded]
   (map #(% :summary) (k/select db/swirl-responses
-                             (k/fields :summary)
-                             (k/join :inner db/swirls (= :swirls.id :swirl_responses.swirl_id))
-                             (k/where {:responder user-id :swirls.type swirl-type :summary [not-in excluded]})
-                             (k/order :date_responded :desc)
-                             (k/limit 5))))
+                               (k/fields :summary)
+                               (k/join :inner db/swirls (= :swirls.id :swirl_responses.swirl_id))
+                               (k/where {:responder user-id :swirls.type swirl-type :summary [not-in excluded]})
+                               (k/order :date_responded :desc)
+                               (k/limit 5))))
 
 (defn get-non-responders [swirl-id]
   (db/query "SELECT users.username, users.email_md5 FROM

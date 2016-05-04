@@ -148,12 +148,12 @@
 
           (actions/respond-to-swirl test-state user "Dismissed")
 
-          (assert-swirl-state user (@test-state :swirl-id) nil)
+          (assert-swirl-state user (@test-state :swirl-id) "dismissed")
 
           ; Dismissing again (for some reason, maybe you really don't like it) doesn't cause an issue
 
           (actions/respond-to-swirl test-state user "Dismissed")
 
-          (assert-swirl-state user (@test-state :swirl-id) nil)
+          (assert-swirl-state user (@test-state :swirl-id) "dismissed")
 
           ))))
