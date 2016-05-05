@@ -17,7 +17,6 @@ CREATE TABLE swirl_weightings
 );
 
 
-CREATE UNIQUE INDEX ON swirl_weightings (swirl_id, user_id);
 
 -- update the swirl_lists table to include the dismissed state
 INSERT INTO swirl_lists (swirl_id, owner, state, date_added)
@@ -78,42 +77,39 @@ VALUES
 -- initial population of swirl_weightings
 INSERT INTO swirl_weightings (swirl_id, user_id, updated, created,is_author, is_recipient, has_responded,list_state,author_is_friend,
                              number_of_comments,number_of_comments_from_friends,number_of_positive_responses,number_of_positive_responses_from_friends)
-select s.id as swirl_id, u.id as user_id, s.creation_date AS updated,
-s.creation_date as created,
+select s.id, u.id, s.creation_date,
+s.creation_date,
 
-(s.author_id = u.id) AS is_author,
+(s.author_id = u.id),
 
 EXISTS(SELECT 1 FROM suggestions sug WHERE sug.swirl_id=s.id
-       AND sug.recipient_id=u.id) AS is_recipient,
+       AND sug.recipient_id=u.id LIMIT 1),
 
 EXISTS(SELECT 1 FROM swirl_responses resp WHERE resp.swirl_id=s.id
-       AND resp.responder=u.id) AS has_responded,
+       AND resp.responder=u.id LIMIT 1),
 
 (SELECT lists.state FROM swirl_lists lists WHERE lists.swirl_id=s.id
- AND lists.owner=u.id) AS list_state,
+ AND lists.owner=u.id LIMIT 1),
 
 EXISTS(SELECT 1 FROM network_connections net WHERE net.user_id=u.id
-       AND net.another_user_id=s.author_id AND relation_type='knows')
-       AS author_is_friend,
+       AND net.another_user_id=s.author_id AND relation_type='knows' LIMIT 1),
 
-(SELECT COUNT(1) FROM comments c where c.swirl_id = s.id)
-AS number_of_comments,
+(SELECT COUNT(1) FROM comments c where c.swirl_id = s.id),
 
 (SELECT COUNT(1) FROM comments c2 where c2.swirl_id = s.id and
 c2.author_id in (SELECT another_user_id from network_connections
                  where
-                 user_id=u.id and relation_type='knows'))
-AS number_of_comments_from_friends,
+                 user_id=u.id and relation_type='knows')),
 
 (SELECT COUNT(1) FROM swirl_responses resp2 where resp2.swirl_id = s.id and
-     resp2.summary in (SELECT summary from positive_responses))
-AS number_of_positive_responses,
+     resp2.summary in (SELECT summary from positive_responses)),
 
 (SELECT COUNT(1) FROM swirl_responses resp3 where resp3.swirl_id = s.id and
      resp3.summary in (SELECT summary from positive_responses) and
      resp3.responder in (SELECT another_user_id from network_connections
                          where
                          user_id=u.id and relation_type='knows'))
-AS number_of_positive_responses_from_friends
 from users u
 cross join swirls s;
+
+CREATE UNIQUE INDEX ON swirl_weightings (swirl_id, user_id);
