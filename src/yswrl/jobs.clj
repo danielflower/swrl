@@ -10,8 +10,8 @@
   (log/info "Running scheduled jobs")
 
 
-  (log/info "Running DB migration")
-  (try
+  (log/info "not Running DB migration")
+  #_(try
     (yswrl.db/update-db)
     (catch Exception e
       (log/error "Error running DB migration" e)))
