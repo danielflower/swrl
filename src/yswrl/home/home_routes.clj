@@ -4,7 +4,8 @@
             [clojure.string :refer [join]]
             [compojure.core :refer [defroutes GET]]
             [yswrl.swirls.lookups :as lookups]
-            [yswrl.user.notifications :as notifications]))
+            [yswrl.user.notifications :as notifications]
+            [yswrl.swirls.swirl-routes :as swirl-routes]))
 
 
 
@@ -14,28 +15,21 @@
       (let [swirls (lookups/get-all-swirls 100 from nil)]
         (layout/render "home/home-not-logged-in.html" {:swirls            (take swirls-per-page swirls)
                                                        :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
-                                                       :paging-url-prefix "/swirls?from="
+                                                       :paging-url-prefix "/?from="
                                                        :return-url        "/"
                                                        :swirls-per-page   swirls-per-page
                                                        :countFrom         (str from)
                                                        :countTo           (+ from swirls-per-page)}))
-      (let [public-swirls (lookups/get-all-swirls-not-responded-to 200 from user)
-            recommended-swirls (lookups/get-swirls-awaiting-response user 200 0)
-            notifications (notifications/get-notifications-and-mark-responses-as-seen-for user)
-            wishlist (filter #(or (= "wishlist" (:state %)) (= "consuming" (:state %))) (lookups/get-swirls-in-user-swrl-list user 200 0 user))
-            friends-swirls (lookups/get-swirls-authored-by-friends-not-recommended-personally-and-not-responded-to user)
-            num-preview 10]
-        (layout/render "home/home-logged-in.html" {:public-swirls               (take num-preview public-swirls)
-                                                   :more-public-swirls-url      "/swirls"
-                                                   :recommended-swirls          recommended-swirls
-                                                   :friends-swirls              friends-swirls
-                                                   :wishlist                    (take 20 wishlist)
-                                                   :more-swirls                 (join "," (map :id (nthrest wishlist swirls-per-page)))
-                                                   :paging-url-prefix           "/?from="
-                                                   :swirls-per-page             swirls-per-page
-                                                   :countFrom                   (str from)
-                                                   :countTo                     (+ from swirls-per-page)
-                                                   :notifications               notifications})))))
+      (let [swirls-per-page 20
+            swirls (lookups/get-home-swirls-with-weighting 200 from user)]
+        (layout/render "swirls/list.html" {:title             "Homw"
+                                           :pageTitle         "Home"
+                                           :swirls            (take swirls-per-page swirls)
+                                           :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
+                                           :paging-url-prefix "/?from="
+                                           :swirls-per-page   swirls-per-page
+                                           :countFrom         (str from)
+                                           :countTo           (+ from swirls-per-page)})))))
 
 (defn bookmarklet []
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))

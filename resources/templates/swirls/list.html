@@ -1,8 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="center-wrapper">
-    <h1 class="padded">{{pageTitle}}</h1>
+<div class="home">
+
+    <form method="get" action="/search" class="search-form">
+        <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
+                                                           name="query"
+                                                           value="{{query}}" required
+                                                           placeholder="Search for Swrls">
+        <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
+            <strong class="result-count">{{ swirls|count }}</strong> results for <i
+                    class="query-val">{{query}}</i>
+        </p>
+
+    </form>
+
+    <div class="swirl-list search-results">
+    </div>
 
     {% include "components/swirls-list-with-paging.html" %}
 

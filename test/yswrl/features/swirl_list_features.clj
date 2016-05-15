@@ -122,7 +122,7 @@
 
 
           (visit "/")
-          (follow "Add to your Swrl list")
+          (follow "Add to Wishlist")
 
           (fill-in "Album or Song Title" "Mellon Collie")
           (press :#album-search-go-button)

@@ -4,20 +4,25 @@
 <div class="center-wrapper">
     <h1 class="padded">{{pageTitle}}</h1>
 
-    <p class="padded">These are all the swirls that you responded to with <strong>{{ submitted-response }}</strong>.</p>
-
-    {% include "components/swirls-list-with-paging.html" %}
-
-    {% if responses|not-empty %}
-    <h2>Other responses</h2>
-
+    <p>These are all the swirls that you responded to with <strong>{{ submitted-response }}</strong>.
+        {% if responses|not-empty %} </p>
+    <p>
+        All responses:
     <ul>
         {% for response in responses %}
-        <li><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a> ({{response.count}})
+        {% if forloop.counter = 3 %}
+        <input type=radio class="more-radio" id="other-responses">
+        <label class="more-link" for="other-responses">More...</label>
+        {% endif %}
+        <li class="{% if forloop.counter >= 3 %}more-content{% endif %}"><a href="{{ response.summary|inboxlink }}">{{response.summary}}</a>
+            ({{response.count}})
         </li>
         {% endfor %}
     </ul>
     {% endif %}
+    </p>
+    {% include "components/swirls-list-with-paging.html" %}
+
 
 </div>
 {% endblock %}

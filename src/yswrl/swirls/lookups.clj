@@ -71,6 +71,25 @@
       (order :id :desc)
       (select)))
 
+(defn get-home-swirls-with-weighting [max-results skip requestor]
+  (-> (select-multiple-swirls requestor max-results skip)
+      (fields :swirl_weightings.is_recipient :swirl_weightings.author_is_friend :swirl_weightings.number_of_comments :swirl_weightings.number_of_positive_responses)
+      (join :inner db/swirl-weightings (= :swirls.id :swirl_weightings.swirl_id))
+      (where {:swirl_weightings.user_id (:id requestor)
+              :swirl_weightings.has_responded false
+              :swirl_weightings.is_author false})
+      (order (raw (str "(5 + "
+                       "(30 * is_recipient::int) + "
+                       "author_is_friend::int + "
+                       "(0.1 * number_of_comments) + "
+                       "(0.2 * number_of_comments_from_friends) + "
+                       "(0.1 * number_of_positive_responses) + "
+                       "(0.5 * number_of_positive_responses_from_friends) + "
+                       "(0.1 * extract(day from age(now(), updated))) - "
+                       "extract(day from age(now(), created)))"))
+             :desc)
+      (select)))
+
 (defn search-for-swirls [max-results skip requestor search-query]
   (if (or (nil? search-query) (clojure.string/blank? search-query))
     []

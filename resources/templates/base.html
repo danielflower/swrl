@@ -5,7 +5,7 @@
     <title>{{ title|default:"Swirl - Recommendations for your friends" }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/immutable/dist/app-f4c73adcad.css" rel="stylesheet" type="text/css"/>
+    <link href="/immutable/dist/app-a718731320.css" rel="stylesheet" type="text/css"/>
     <link href="/immutable/fonts/font-awesome-4.3.0.min.css" rel="stylesheet" type="text/css"/>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mlcecjbidbmgjjokhjapcbilmollbejc">
 
@@ -41,11 +41,24 @@
     <nav class="paradeiser" id="paradeiser">
         <a href="/" title="Go home"><img src="/immutable/images/swrl-logo.svg" class="site-header__logo"
                                          height="30"/></a>
+        {% if user %}
+        <a href="/swirls/inbox/later" rel="nofollow" class="paradeiser-hidden-phone paradeiser-hidden-tablet">Wishlist</a>
+        <a href="/swirls/inbox/later" rel="nofollow"class="paradeiser-hidden-desktop"><i class="fa fa-list-ul" aria-hidden="true"></i></a>
+        {% endif %}
 
-        <a href="/swirls/groups" rel="nofollow">Groups</a>
+        <a href="/swirls/groups" class="paradeiser-hidden-phone paradeiser-hidden-tablet" rel="nofollow">Groups</a>
+        {% if user %}
+        <a href="/swirls/start" rel="nofollow" class="paradeiser-hidden-phone paradeiser-hidden-tablet">Recommend</a>
+        <a href="/swirls/start" rel="nofollow" class="paradeiser-hidden-desktop"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
+        <a href="/swirls/start?wishlist=true" class="paradeiser-hidden-phone paradeiser-hidden-tablet" rel="nofollow">Add to Wishlist</i></a>
+        <a href="/swirls/start?wishlist=true" class="paradeiser-hidden-desktop" rel="nofollow"><i class="fa fa-plus" aria-hidden="true"></i></a>
+        {% endif %}
+
 
         {% if user %}
-        <a href="/notifications" rel="nofollow">Notifications ({{notifications-count}})</a>
+        <a href="/notifications" rel="nofollow" class="paradeiser-hidden-phone paradeiser-hidden-tablet">Notifications ({{notifications-count}})</a>
+        <a href="/notifications" rel="nofollow" class="paradeiser-hidden-desktop"><i class="fa fa-bell-o" aria-hidden="true">({{notifications-count}})</i></a>
+
         {% else %}
         <a href="/login" class="login-link" rel="nofollow">Login</a>
         <a href="/register" rel="nofollow">Register</a>

@@ -52,7 +52,11 @@ input.more-radio:checked + .more-link{
 }
 
 input.more-radio:checked ~ .more-content {
-  display: inline;
+   display: inline;
+ }
+
+input.more-radio:checked ~ li.more-content {
+  display: list-item;
 }
 
 nav ul{
