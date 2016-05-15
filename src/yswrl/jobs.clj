@@ -9,14 +9,6 @@
 (defn -main []
   (log/info "Running scheduled jobs")
 
-
-  (log/info "Running DB migration")
-  (try
-    (yswrl.db/update-db)
-    (catch Exception e
-      (log/error "Error running DB migration" e)))
-  (log/info "DB migration complete")
-
   (try
     (notifications/send-pending-notifications)
     (catch Exception e
