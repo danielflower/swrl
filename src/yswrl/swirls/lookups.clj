@@ -85,8 +85,8 @@
                        "(0.2 * number_of_comments_from_friends) + "
                        "(0.1 * number_of_positive_responses) + "
                        "(0.5 * number_of_positive_responses_from_friends) + "
-                       "(0.1 * extract(day from age(now(), updated))) - "
-                       "extract(day from age(now(), created)))"))
+                       "(0.1 * (DATE_PART('epoch', now() - updated) / 86400)) - "
+                       "(DATE_PART('epoch', now() - created) / 86400))"))
              :desc)
       (select)))
 
