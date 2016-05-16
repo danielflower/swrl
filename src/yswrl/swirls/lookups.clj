@@ -82,9 +82,9 @@
                         "(30 * number_of_positive_responses_from_friends) - "
                         "(20 * is_author::int) - "
                         "CASE WHEN list_state = 'dismissed' THEN 10000
-                              WHEN list_state = 'consuming' THEN 20
-                              WHEN list_state = 'done' THEN 100
-                              WHEN list_state = 'wishlist' THEN 10
+                              WHEN list_state = 'consuming' THEN 200
+                              WHEN list_state = 'done' THEN 1000
+                              WHEN list_state = 'wishlist' THEN 150
                               ELSE 0
                         END - "
                         "(DATE_PART('epoch', now() - created) / 86400))"
