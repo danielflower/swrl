@@ -57,19 +57,20 @@
     right: 0;
     text-align: center;
     font-size: 1.5em;
-    background: white;
 
 }
 .mini-swirl__action-buttons .later-button {
     color: var(--swirl-blue);
     padding: 3px;
     box-shadow:0 2px 2px rgba(0,0,0,0.2);
+    background: white;
 
 }
 .mini-swirl__action-buttons .dismiss-button {
     color: var(--swirl-hot-pink);
     padding: 3px;
     box-shadow:0 2px 2px rgba(0,0,0,0.2);
+    background: white;
 
 }
 .mini-swirl__action-buttons i:hover {

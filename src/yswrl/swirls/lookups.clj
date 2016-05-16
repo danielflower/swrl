@@ -79,9 +79,14 @@
                         "(5 * number_of_comments) + "
                         "(20 * number_of_comments_from_friends) + "
                         "(15 * number_of_positive_responses) + "
-                        "(30 * number_of_positive_responses_from_friends) + "
+                        "(30 * number_of_positive_responses_from_friends) - "
                         "(20 * is_author::int) - "
-                        "(30 * has_responded::int) -"
+                        "CASE WHEN list_state = 'dismissed' THEN 10000
+                              WHEN list_state = 'consuming' THEN 20
+                              WHEN list_state = 'done' THEN 100
+                              WHEN list_state = 'wishlist' THEN 10
+                              ELSE 0
+                        END - "
                         "(DATE_PART('epoch', now() - created) / 86400))"
                         " AS weighting"))
               :swirl_weightings.is_recipient :swirl_weightings.author_is_friend
