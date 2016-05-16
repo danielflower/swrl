@@ -7,7 +7,7 @@
         </a>
         <div class="mini-swirl__content">
             <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
-            <p>{% if swirl.is_recipient %}<i class="fa fa-user" title="Swirled to you"></i>{% endif %}{% if swirl.number_of_comments > 0 %} <i class="fa fa-comments-o" title="Comments"></i> {% if swirl.number_of_comments_from_friends > 0 %}<strong>{{swirl.number_of_comments}}</strong>{% else %}{{swirl.number_of_comments}}{% endif %}{% endif %}{% if swirl.number_of_positive_responses > 0 %} <i class="fa fa-heart-o" title="Positive Responses"></i>{% if swirl.number_of_positive_responses_from_friends > 0 %}<strong>{{swirl.number_of_positive_responses}}</strong>{% else %}{{swirl.number_of_positive_responses}}{% endif %}{% endif %}</p>
+            <p>{% if swirl.is_recipient %}<i class="fa fa-user" title="Swirled to you"></i>{% endif %}{% if swirl.number_of_comments > 0 %} <i class="fa fa-comments-o" title="Comments"></i> {% if swirl.number_of_comments_from_friends > 0 %}<strong>{{swirl.number_of_comments}}</strong>{% else %}{{swirl.number_of_comments}}{% endif %}{% endif %}{% if swirl.number_of_positive_responses > 0 %} <i class="fa fa-heart-o" title="Positive Responses"></i> {% if swirl.number_of_positive_responses_from_friends > 0 %}<strong>{{swirl.number_of_positive_responses}}</strong>{% else %}{{swirl.number_of_positive_responses}}{% endif %}{% endif %}</p>
         </div>
     </div>
     {% if user %}
