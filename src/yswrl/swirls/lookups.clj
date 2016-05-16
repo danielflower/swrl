@@ -73,21 +73,23 @@
 
 (defn get-home-swirls-with-weighting [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
-      (fields :swirl_weightings.is_recipient :swirl_weightings.author_is_friend :swirl_weightings.number_of_comments :swirl_weightings.number_of_positive_responses)
+      (fields (raw (str "(10 + "
+                        "(100 * is_recipient::int) + "
+                        "(30 * author_is_friend::int) + "
+                        "(5 * number_of_comments) + "
+                        "(20 * number_of_comments_from_friends) + "
+                        "(15 * number_of_positive_responses) + "
+                        "(30 * number_of_positive_responses_from_friends) + "
+                        "(20 * is_author::int) - "
+                        "(30 * has_responded::int) -"
+                        "(DATE_PART('epoch', now() - created) / 86400))"
+                        " AS weighting"))
+              :swirl_weightings.is_recipient :swirl_weightings.author_is_friend
+              :swirl_weightings.number_of_comments :swirl_weightings.number_of_positive_responses
+              :swirl_weightings.number_of_comments_from_friends :swirl_weightings.number_of_positive_responses_from_friends)
       (join :inner db/swirl-weightings (= :swirls.id :swirl_weightings.swirl_id))
-      (where {:swirl_weightings.user_id (:id requestor)
-              :swirl_weightings.has_responded false
-              :swirl_weightings.is_author false})
-      (order (raw (str "(5 + "
-                       "(30 * is_recipient::int) + "
-                       "author_is_friend::int + "
-                       "(0.1 * number_of_comments) + "
-                       "(0.2 * number_of_comments_from_friends) + "
-                       "(0.1 * number_of_positive_responses) + "
-                       "(0.5 * number_of_positive_responses_from_friends) + "
-                       "(0.1 * (DATE_PART('epoch', now() - updated) / 86400)) - "
-                       "(DATE_PART('epoch', now() - created) / 86400))"))
-             :desc)
+      (where {:swirl_weightings.user_id (:id requestor)})
+      (order (raw "weighting") :desc)
       (select)))
 
 (defn search-for-swirls [max-results skip requestor search-query]

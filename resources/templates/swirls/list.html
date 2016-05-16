@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="home">
+<div class="center-wrapper">
 
     <form method="get" action="/search" class="search-form">
         <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
                                                            name="query"
                                                            value="{{query}}" required
-                                                           placeholder="Search for Swrls">
+                                                           placeholder="Search for Swirls"
+                                                           title="Search for Swirls">
         <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
             <strong class="result-count">{{ swirls|count }}</strong> results for <i
                     class="query-val">{{query}}</i>

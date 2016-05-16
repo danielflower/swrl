@@ -22,7 +22,7 @@
                                                        :countTo           (+ from swirls-per-page)}))
       (let [swirls-per-page 20
             swirls (lookups/get-home-swirls-with-weighting 200 from user)]
-        (layout/render "swirls/list.html" {:title             "Homw"
+        (layout/render "swirls/list.html" {:title             "Swirl Home"
                                            :pageTitle         "Home"
                                            :swirls            (take swirls-per-page swirls)
                                            :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))

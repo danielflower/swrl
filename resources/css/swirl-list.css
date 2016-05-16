@@ -55,15 +55,22 @@
     position: absolute;
     top: 0;
     right: 0;
-    text-align: right;
+    text-align: center;
+    font-size: 1.5em;
+    background: white;
+
 }
 .mini-swirl__action-buttons .later-button {
     color: var(--swirl-blue);
-    padding: 5px 2px 5px 5px;
+    padding: 3px;
+    box-shadow:0 2px 2px rgba(0,0,0,0.2);
+
 }
 .mini-swirl__action-buttons .dismiss-button {
     color: var(--swirl-hot-pink);
-    padding: 5px 5px 5px 3px;
+    padding: 3px;
+    box-shadow:0 2px 2px rgba(0,0,0,0.2);
+
 }
 .mini-swirl__action-buttons i:hover {
     cursor: hand;
@@ -120,7 +127,15 @@
     color: var(--main-font-color);
 }
 .mini-swirl h2 a {
-    padding: 20px;
+    padding: 20px 20px 5px 20px;
+    display: block;
+    text-decoration: none;
+    color: var(--main-font-color);
+}
+
+.mini-swirl p {
+    padding: 0px 20px 10px 20px;
+    margin: 0;
     display: block;
     text-decoration: none;
     color: var(--main-font-color);
@@ -129,7 +144,7 @@
 .mini-swirl time {
     color: #737373;
 }
-.mini-swirl .author-bit {
+.mini-swirl .author-bit{
     font-size: 1.2rem;
     height:40px;
     bottom:0;
@@ -275,13 +290,13 @@
     transition-duration: 1s;
 }
 
-.home .search-form input {
+.home .search-form input, .center-wrapper .search-form input{
     display: block;
     margin: 20px auto 0;
     width: 60%
 }
 
-.home form.search-form {
+.home form.search-form , .center-wrapper form.search-form{
    margin-bottom: 0px;
 }
 

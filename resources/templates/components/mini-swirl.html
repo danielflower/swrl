@@ -7,16 +7,17 @@
         </a>
         <div class="mini-swirl__content">
             <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
+            <p>{% if swirl.is_recipient %}<i class="fa fa-user" title="Swirled to you"></i>  {% endif %}{% if swirl.number_of_comments > 0 %}<i class="fa fa-comments-o" title="Comments"></i> {{swirl.number_of_comments}}{% if swirl.number_of_comments_from_friends > 0 %}<strong>({{swirl.number_of_comments_from_friends}})</strong>{% endif %}{% endif %}{% if swirl.number_of_positive_responses > 0 %}<i class="fa fa-heart-o" title="Positive Responses"></i>{{swirl.number_of_positive_responses}}{% if swirl.number_of_positive_responses_from_friends > 0 %}<strong>({{swirl.number_of_positive_responses_from_friends}})</strong>{% endif %}{% endif %}</p>
         </div>
     </div>
     {% if user %}
     <div class="mini-swirl__action-buttons">
-           <i class="fa fa-clock-o fa-2x later-button" title="Save for later"></i>
-           <i class="fa fa-times-circle fa-2x dismiss-button" title="Dismiss"></i>
+           <i class="fa fa-list-ul later-button" title="Add to Wishlist"></i>
+        <i class="fa fa-times-circle dismiss-button" title="Dismiss"></i>
     </div>
     {% endif %}
     <div class="author-bit">
-        <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.username|gravatar-img:25 }} {{swirl.username}}</a>
+        <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.username|gravatar-img:25 }} {% if swirl.author_is_friend %}<strong>{{swirl.username}}</strong>{% else %}{{swirl.username}}{% endif %}</a>
         {{swirl.creation_date|timetag}}
     </div>
 </div>
