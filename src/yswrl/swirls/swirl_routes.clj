@@ -20,7 +20,10 @@
             [clojure.string :refer [join lower-case]]
             [yswrl.groups.groups-repo :as group-repo]
             [yswrl.swirls.types :as types]
-            [clj-json.core :as json])
+            [clj-json.core :as json]
+            [yswrl.swirls.itunes :as itunes]
+            [yswrl.swirls.amazon :as amazon]
+            [yswrl.swirls.tmdb :as tmdb])
   (:use ring.middleware.json-params)
   (:import (java.util UUID)))
 
@@ -39,7 +42,7 @@
                  (catch Exception e
                    (log/error "Unable to parse JSON response. Exception: " e)
                    (json/generate-string {:message "Swrl created, but unable to parse response to JSON"
-                                          :error (str e)})))})
+                                          :error   (str e)})))})
 
 
 (defn edit-swirl-page [author swirl-id group-id is-private? origin-swirl-id & {:keys [edit? wishlist]
@@ -311,12 +314,12 @@
 
 (defn create-swirl-app-api []
   (POST "/create-swirl" [title review type image-url user-id private]
-    (let [type (or  (get-in types/types [type :name])
+    (let [type (or (get-in types/types [type :name])
                    "unknown")
           user-id (Long/parseLong (str user-id))
           review (or review "")
           title (or title "unknown")
-          private  (not= "false" private)
+          private (not= "false" private)
           image-url (or image-url "http://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
           response (try (create-swirl-no-interaction title review type image-url user-id private)
                         (catch Exception e
@@ -333,9 +336,36 @@
       (layout/render "swirls/swirl-list-for-rest-api.html"
                      {:swirls swirls}))))
 
+(defn convert-to-swirl-list [search-results type]
+  (map (fn [r] {:author_id     nil
+                :thumbnail_url (:thumbnail-url r)
+                :username      nil
+                :type          type
+                :title         (:title r)
+                :creation_date nil
+                :id            nil
+                :email_md5     nil
+                :author        (:author r)
+                :platform      (:platform r)
+                :artist        (:artist r)
+                :create-url    (:create-url r)
+                }) (:results search-results)))
+
 (defn search-for-swirls []
   (GET "/search" [query :as req]
-    (let [swirls (lookups/search-for-swirls 100 0 (session-from req) query)]
+    (let [swirls (let [existing-swirls (future (lookups/search-for-swirls 100 0 (session-from req) query))
+                       albums (future (convert-to-swirl-list (itunes/search-albums query nil) "album"))
+                       books (future (convert-to-swirl-list (amazon/search-books query nil) "book"))
+                       movies (future (convert-to-swirl-list (tmdb/search-movies query nil) "movie"))
+                       tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
+                       games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))]
+                   (utils/interleave-differing-lengths
+                     @existing-swirls
+                     @albums
+                     @books
+                     @movies
+                     @tv
+                     @games))]
       (layout/render "swirls/swirl-list-for-rest-api.html"
                      {:swirls swirls}))))
 

@@ -1,23 +1,30 @@
 <div class="swirl mini-swirl {{swirl.type}} {{extraclass}}" id="{{ swirl.id }}" data-weight="{{swirl.weighting}}">
     <div class="mini-swirl__link">
-        <a href="{{ swirl.id|swirlurl }}">
+        <a {% if swirl.id %}href="{{ swirl.id|swirlurl }}"{% else %}href="{{ swirl.create-url }}"{% endif %}>
             <div class="mini-swirl__bgimage {{swirl.type}}" style="background-image: url({{ swirl.thumbnail_url }})">
                 <div class="swirl-type">{{ swirl.type }}</div>
-            </div>
-        </a>
+            </div></a>
         <div class="mini-swirl__content">
-            <h2><a href="{{ swirl.id|swirlurl }}">{{swirl.title}}</a></h2>
+            <h2><a {% if swirl.id %}href="{{ swirl.id|swirlurl }}"{% else %}href="{{ swirl.create-url }}"{% endif %}>{{swirl.title}}</a></h2>
             <p>{% if swirl.is_recipient %}<i class="fa fa-user" title="Swirled to you"></i>{% endif %}{% if swirl.number_of_comments > 0 %} <i class="fa fa-comments-o" title="Comments"></i> {% if swirl.number_of_comments_from_friends > 0 %}<strong>{{swirl.number_of_comments}}</strong>{% else %}{{swirl.number_of_comments}}{% endif %}{% endif %}{% if swirl.number_of_positive_responses > 0 %} <i class="fa fa-heart-o" title="Positive Responses"></i> {% if swirl.number_of_positive_responses_from_friends > 0 %}<strong>{{swirl.number_of_positive_responses}}</strong>{% else %}{{swirl.number_of_positive_responses}}{% endif %}{% endif %}</p>
         </div>
     </div>
     {% if user %}
     <div class="mini-swirl__action-buttons">
-           <i class="fa fa-list-ul later-button" title="Add to Wishlist"></i>
+        {% if search %}
+        {% else %}
+        <i class="fa fa-list-ul later-button" title="Add to Wishlist"></i>
         <i class="fa fa-times-circle dismiss-button" title="Dismiss"></i>
+        {% endif %}
     </div>
     {% endif %}
     <div class="author-bit">
+    {% if swirl.username %}
         <a rel="author" href="{{swirl.username|user-url}}">{{ swirl.username|gravatar-img:25 }} {% if swirl.author_is_friend %}<strong>{{swirl.username}}</strong>{% else %}{{swirl.username}}{% endif %}</a>
         {{swirl.creation_date|timetag}}
+    {% endif %}
+    {% if swirl.artist %} by <em>{{ swirl.artist }}</em> {% endif %}
+    {% if swirl.author %} by <em>{{ swirl.author }}</em> {% endif %}
+    {% if swirl.platform %} on <em>{{ swirl.platform }}</em> {% endif %}
     </div>
 </div>

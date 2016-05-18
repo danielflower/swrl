@@ -7,7 +7,8 @@
             [yswrl.user.notifications :as notifications])
   (:use clojure.test)
   (:use clj-http.fake)
-  (:use yswrl.fake.faker))
+  (:use yswrl.fake.faker)
+  (:use midje.sweet))
 
 (deftest swirls-repo-test
 
@@ -26,3 +27,27 @@
       (is (empty? (notifications-repo/get-for-user-page (author :id))))
       (is (= [(recipient :id)] (map :user-id (repo/get-suggestion-usernames (draft-swirl :id)))))
       )))
+
+(facts "about getting 'swirls' from search results"
+       (fact "can convert search-results to a swirl map"
+             (routes/convert-to-swirl-list {:results [
+                                                      {:type       "Album" :title "Mellon Collie and the Infinite Sadness (Deluxe Edition)" :artist "Smashing Pumpkins"
+                                                       :create-url "/create/album?itunes-album-id=721291853&"
+                                                       :itunes-id  721291853 :thumbnail-url "http://is1.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.600x600-75.jpg"}
+                                                      ]
+                                            } "album")
+             => [{
+                  :author_id     nil,
+                  :thumbnail_url "http://is1.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.600x600-75.jpg",
+                  :username      nil,
+                  :type          "album",
+                  :title         "Mellon Collie and the Infinite Sadness (Deluxe Edition)",
+                  :creation_date nil,
+                  :id            nil,
+                  :email_md5     nil,
+                  :author        nil
+                  :artist        "Smashing Pumpkins"
+                  :platform      nil
+                  :create-url    "/create/album?itunes-album-id=721291853&"
+                  }]))
+

@@ -13,7 +13,8 @@
             [yswrl.swirls.tmdb :as tmdb]
             [clojure.tools.logging :as log]
             [yswrl.swirls.swirl-links :as link-types]
-            [yswrl.swirls.lookups :as lookups])
+            [yswrl.swirls.lookups :as lookups]
+            [yswrl.utils :as utils])
   (:import (java.net URI)))
 
 (defn start-page [req]
@@ -105,9 +106,9 @@
 
 (defn handle-reswirl-creation [swirl-id author]
   (let [swirl (lookups/get-swirl swirl-id)
-        review  "<p data-ph=\"Why should your friends see this?\"></p>"
+        review "<p data-ph=\"Why should your friends see this?\"></p>"
         new-swirl (repo/save-draft-swirl (:type swirl) (author :id) (:title swirl) review (:thumbnail_url swirl))]
-    (if-let [link (first(repo/get-links swirl-id))]
+    (if-let [link (first (repo/get-links swirl-id))]
       (repo/add-link (new-swirl :id) (:type_code link) (:code link)))
     (redirect (links/edit-swirl (new-swirl :id) nil))))
 
@@ -148,6 +149,20 @@
     (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
                                          :search-box-placeholder "TV show title" :query-string query-string})))
 
+(defn search-all [search-term query-string]
+  (let [search-result {:results (let [albums (future (:results (itunes/search-albums search-term query-string)))
+                                      books (future (:results (amazon/search-books search-term query-string)))
+                                      movies (future (:results (tmdb/search-movies search-term query-string)))
+                                      tv (future (:results (tmdb/search-tv search-term query-string)))
+                                      games (future (:results (amazon/search-games search-term query-string)))]
+                                  (utils/interleave-differing-lengths
+                                    @albums
+                                    @books
+                                    @movies
+                                    @tv
+                                    @games))}]
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
+                                         :search-box-placeholder "Search" :query-string query-string})))
 
 (defn asin-from-url [url]
   (let [[_ result] (re-find #"/([0-9A-Z]{10})(?:[/?]|$)" url)]
@@ -200,6 +215,7 @@
            (GET "/search/movies" [search-term query-string] (search-movies-page search-term query-string))
            (GET "/search/games" [search-term query-string] (search-games-page search-term query-string))
            (GET "/search/tv" [search-term query-string] (search-tv-page search-term query-string))
+           (GET "/search/all" [search-term query-string] (search-all search-term query-string))
 
            (GET "/create/from-url" [url title query-string :as req] (create-from-url-handler url title req query-string))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req) (req :query-string))))

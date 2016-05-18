@@ -17,7 +17,7 @@
 
     <div class="swirl-list search-results">
         {% for swirl in swirls %}
-        {% include "components/mini-swirl.html" with swirl=swirl %}
+        {% include "components/mini-swirl.html" with search="true" swirl=swirl %}
         {% endfor %}
     </div>
 
