@@ -359,13 +359,15 @@
                        movies (future (convert-to-swirl-list (tmdb/search-movies query nil) "movie"))
                        tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
                        games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))]
-                   (utils/interleave-differing-lengths
-                     @existing-swirls
-                     @albums
-                     @books
-                     @movies
-                     @tv
-                     @games))]
+                   (concat
+                     (take 5 @existing-swirls)
+                     (utils/interleave-differing-lengths
+                       (nthrest @existing-swirls 5)
+                       @albums
+                       @books
+                       @movies
+                       @tv
+                       @games)))]
       (layout/render "swirls/swirl-list-for-rest-api.html"
                      {:swirls swirls}))))
 
