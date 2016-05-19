@@ -112,12 +112,6 @@
                                        :countFrom         (str from)
                                        :countTo           (+ from swirls-per-page)})))
 
-(defn search [query user]
-  (let [swirls (if (clojure.string/blank? query) [] (lookups/search-for-swirls 100 0 user query))]
-    (layout/render "swirls/search-swirls.html" {:title  "Search results"
-                                                :swirls swirls
-                                                :query  query})))
-
 
 (defn view-inbox-by-response [count current-user submitted-response]
   (let [swirls (lookups/get-swirls-by-response current-user 2000 count submitted-response)
@@ -351,23 +345,34 @@
                 :create-url    (:create-url r)
                 }) (:results search-results)))
 
+(defn get-swirls-from-search [query user]
+  (let [existing-swirls (future (lookups/search-for-swirls 100 0 user query))
+        albums (future (convert-to-swirl-list (itunes/search-albums query nil) "album"))
+        books (future (convert-to-swirl-list (amazon/search-books query nil) "book"))
+        movies (future (convert-to-swirl-list (tmdb/search-movies query nil) "movie"))
+        tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
+        games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))
+        itunes-apps (future (convert-to-swirl-list (itunes/search-apps query nil) "app"))]
+    (concat
+      (take 5 @existing-swirls)
+      (utils/interleave-differing-lengths
+        (nthrest @existing-swirls 5)
+        @albums
+        @books
+        @movies
+        @tv
+        @games
+        @itunes-apps))))
+
+(defn search [query user]
+  (let [swirls (if (clojure.string/blank? query) [] (get-swirls-from-search query user))]
+    (layout/render "swirls/search-swirls.html" {:title  "Search results"
+                                                :swirls swirls
+                                                :query  query})))
+
 (defn search-for-swirls []
   (GET "/search" [query :as req]
-    (let [swirls (let [existing-swirls (future (lookups/search-for-swirls 100 0 (session-from req) query))
-                       albums (future (convert-to-swirl-list (itunes/search-albums query nil) "album"))
-                       books (future (convert-to-swirl-list (amazon/search-books query nil) "book"))
-                       movies (future (convert-to-swirl-list (tmdb/search-movies query nil) "movie"))
-                       tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
-                       games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))]
-                   (concat
-                     (take 5 @existing-swirls)
-                     (utils/interleave-differing-lengths
-                       (nthrest @existing-swirls 5)
-                       @albums
-                       @books
-                       @movies
-                       @tv
-                       @games)))]
+    (let [swirls (get-swirls-from-search query (session-from req))]
       (layout/render "swirls/swirl-list-for-rest-api.html"
                      {:swirls swirls}))))
 
