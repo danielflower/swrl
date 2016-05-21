@@ -59,6 +59,14 @@
     (let [swirl (repo/save-draft-swirl "app" (user :id) title review thumbnail-url)]
       (redirect (links/edit-swirl (swirl :id) query-string)))))
 
+(defn handle-itunes-podcast-creation [itunes-collection-id user query-string]
+  (let [podcast (itunes/get-itunes-podcast itunes-collection-id)
+        title (podcast :title)
+        thumbnail-url (podcast :thumbnail-url)
+        review (str "<p data-ph=\"Why should your friends listen to this podcast?\"></p>")]
+    (let [swirl (repo/save-draft-swirl "podcast" (user :id) title review thumbnail-url)]
+      (redirect (links/edit-swirl (swirl :id) query-string)))))
+
 (defn handle-book-creation [asin user query-string]
   (let [book (amazon/get-book asin)
         publish-line (if (clojure.string/blank? (book :author)) "" (str " by " (book :author)))
@@ -228,6 +236,7 @@
            (GET "/create/from-url" [url title query-string :as req] (create-from-url-handler url title req query-string))
            (GET "/create/album" [itunes-album-id :as req] (guard/requires-login #(handle-album-creation itunes-album-id (session-from req) (req :query-string))))
            (GET "/create/itunes-app" [itunes-id :as req] (guard/requires-login #(handle-itunes-app-creation itunes-id (session-from req) (req :query-string))))
+           (GET "/create/itunes-podcast" [itunes-id :as req] (guard/requires-login #(handle-itunes-podcast-creation itunes-id (session-from req) (req :query-string))))
            (GET "/create/book" [book-id :as req] (guard/requires-login #(handle-book-creation book-id (session-from req) (req :query-string))))
            (GET "/create/game" [game-id :as req] (guard/requires-login #(handle-game-creation game-id (session-from req) (req :query-string))))
            (GET "/create/movie" [tmdb-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req) (req :query-string))))

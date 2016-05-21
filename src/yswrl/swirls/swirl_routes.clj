@@ -354,6 +354,7 @@
         tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
         games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))
         itunes-apps (future (convert-to-swirl-list (itunes/search-apps query nil) "app"))
+        itunes-podcasts (future (convert-to-swirl-list (itunes/search-podcasts query nil) "podcast"))
         website (future (let [metadata (website/get-metadata query)
                               query (links/url-encode query)]
                           (if (:title metadata)
@@ -366,6 +367,7 @@
         (nthrest @existing-swirls 5)
         @website
         @albums
+        @itunes-podcasts
         @books
         @movies
         @tv
