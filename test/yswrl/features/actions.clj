@@ -4,6 +4,10 @@
             [yswrl.test.scaffolding :as s]
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.swirls.swirl-routes :as routes]))
+(defn print-session [session]
+  (println session)
+  session)
+
 (defn log-out [session]
   (-> session
       (follow [:a.logout-link])
@@ -33,6 +37,6 @@
       (press "Login")
       (follow-redirect)))
 
-(defn respond-to-swirl [session test-state  user response]
+(defn respond-to-swirl [session test-state user response]
   (routes/handle-response (@test-state :swirl-id) nil response user)
   session)

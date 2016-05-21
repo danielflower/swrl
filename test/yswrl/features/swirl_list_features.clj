@@ -122,7 +122,7 @@
 
 
           (visit "/")
-          (follow "Add to Wishlist")
+          (follow :#add-to-wishlist)
 
           (fill-in "Album or Song Title" "Mellon Collie")
           (press :#album-search-go-button)

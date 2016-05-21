@@ -1,22 +1,22 @@
 <div class="start-boxes">
     <div class="start-box">
-        <form method="GET" action="/search/all">
-            <i class="fa fa-search fa-5x"></i>
-            <label for="book-search-box">Anything!</label>
-
-            <div class="searchbox"><input id="all-search-box" type="text" name="search-term">
-                <input type="submit" value="Go" class="button-primary">
-                <input type="hidden" name="query-string" value="{{query-string}}">
-            </div>
-        </form>
-    </div>
-    <div class="start-box">
         <form method="GET" action="/create/from-url">
             <i class="fa fa-link fa-5x"></i>
             <label for="url-box">Enter a website link</label>
 
             <div class="searchbox"><input id="url-box" type="url" name="url">
                 <input id="website-create-go-button" type="submit" value="Go" class="button-primary">
+                <input type="hidden" name="query-string" value="{{query-string}}">
+            </div>
+        </form>
+    </div>
+    <div class="start-box">
+        <form method="GET" action="/search/all">
+            <i class="fa fa-search fa-5x"></i>
+            <label for="book-search-box">Anything!</label>
+
+            <div class="searchbox"><input id="all-search-box" type="text" name="search-term">
+                <input type="submit" value="Go" class="button-primary">
                 <input type="hidden" name="query-string" value="{{query-string}}">
             </div>
         </form>

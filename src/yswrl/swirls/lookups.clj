@@ -74,16 +74,19 @@
 (defn get-home-swirls-with-weighting [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
       (fields (raw (str "(10 + "
-                        "(100 * is_recipient::int) + "
+                        "CASE WHEN is_recipient AND has_responded THEN 10
+                              WHEN is_recipient THEN (100 * is_recipient::int)
+                              ELSE 0
+                        END +"
                         "(30 * author_is_friend::int) + "
                         "(5 * number_of_comments) + "
                         "(20 * number_of_comments_from_friends) + "
                         "(15 * number_of_positive_responses) + "
                         "(30 * number_of_positive_responses_from_friends) - "
-                        "(20 * is_author::int) - "
+                        "(50 * is_author::int) - "
                         "CASE WHEN list_state = 'dismissed' THEN 10000
                               WHEN list_state = 'consuming' THEN 200
-                              WHEN list_state = 'done' THEN 1000
+                              WHEN list_state = 'done' THEN 500
                               WHEN list_state = 'wishlist' THEN 150
                               ELSE 0
                         END - "

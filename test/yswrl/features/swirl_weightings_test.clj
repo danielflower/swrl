@@ -79,6 +79,11 @@
           (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_positive_responses_from_friends 0)
           (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_positive_responses_from_friends 1)
 
+          ; multiple positive responses don't count up the value
+          (actions/submit [(enlive/attr= :value "Loved it")])
+          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_positive_responses 1)
+          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_positive_responses 1)
+
           ;let's add a comment
           (fill-in :.editor "a comment")
           (actions/submit [(enlive/attr= :value "Add comment")])

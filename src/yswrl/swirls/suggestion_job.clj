@@ -34,7 +34,9 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
 
 (defn send-unsent-suggestions []
   (try
+    (log/debug "Starting send-unsent-suggestions")
     (let [unsent (get-unsent)]
+      (log/debug "Found these unsent suggestions:" (apply str unsent))
       (log/debug "Suggestion emailer processing" (count unsent) "suggestions")
       (doseq [row unsent]
         (log/debug "About to process" row)
@@ -43,4 +45,4 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))
             (mark-suggestion-sent (:suggestion_id row) (:_id response))
             (mark-suggestion-failed (:suggestion_id row) (str (:status response) " " (:reject_reason response)))))))
-    (catch Exception e (log/error "Error sending suggestions" e))))
+    (catch Exception e (log/error e "Error sending suggestions"))))

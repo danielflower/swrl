@@ -57,17 +57,16 @@
       (if (-> (k/select db/positive-responses (k/fields :summary) (k/where {:summary summary}))
               count
               (> 0))
-        (do (k/update db/swirl-weightings
-                      (k/set-fields {:number_of_positive_responses (k/raw "1 + number_of_positive_responses")})
-                      (k/where {:swirl_id swirl-id}))
-            (db/execute (str "UPDATE swirl_weightings sw
+        (db/execute (str "UPDATE swirl_weightings sw
 SET
+number_of_positive_responses = (SELECT COUNT(1) FROM swirl_responses where swirl_id = sw.swirl_id and
+                                            summary in (SELECT summary from positive_responses)),
 number_of_positive_responses_from_friends = (SELECT COUNT(1) FROM swirl_responses r where r.swirl_id = sw.swirl_id and
                                              r.summary in (SELECT summary from positive_responses) and
                                              r.responder in (SELECT another_user_id from network_connections
                                                               where
                                                                user_id=sw.user_id and relation_type='knows'))
-WHERE sw.swirl_id = " swirl-id))))
+WHERE sw.swirl_id = " swirl-id)))
       (k/update db/suggestions
                 (k/set-fields {:response_id (response :id)})
                 (k/where (or
