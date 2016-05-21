@@ -2,10 +2,6 @@ import http from './http.js';
 
 var currentFilter = null;
 
-
-
-
-
 var respondAndRemove = function (element, response) {
     var swirlElement = $(element)[0].parentNode.parentNode;
     var swirlID = swirlElement.getAttribute('id');
@@ -77,6 +73,22 @@ function init($) {
         const clickedType = b.target.getAttribute('data-swirl-type');
         currentFilter = (clickedType === currentFilter) ? null : clickedType;
         filterVisibleSwirls($);
+    });
+
+    var swirlAndRemove = function (element) {
+        var swirlElement = $(element)[0].parentNode.parentNode;
+        var swirlTitle = swirlElement.getAttribute('data-title');
+        var swirlImageUrl = swirlElement.getAttribute('data-image-url');
+        var swirlReview = swirlElement.getAttribute('data-review');
+        var swirlType = swirlElement.getAttribute('data-swirl-type');
+        $(swirlElement).remove();
+        http.post('/swirls/create-swirl', {title: swirlTitle,
+                                           review: swirlReview,
+                                           type: swirlType,
+                                           imageUrl: swirlImageUrl});
+    };
+    $('.swirl-list').on('click', 'i.add-to-wishlist-button', function () {
+        swirlAndRemove(this);
     });
 
     $('.swirl-list').on('click', 'i.dismiss-button', function () {

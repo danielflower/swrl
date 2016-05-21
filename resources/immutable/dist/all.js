@@ -1501,6 +1501,22 @@ function init($) {
         filterVisibleSwirls($);
     });
 
+    var swirlAndRemove = function swirlAndRemove(element) {
+        var swirlElement = $(element)[0].parentNode.parentNode;
+        var swirlTitle = swirlElement.getAttribute('data-title');
+        var swirlImageUrl = swirlElement.getAttribute('data-image-url');
+        var swirlReview = swirlElement.getAttribute('data-review');
+        var swirlType = swirlElement.getAttribute('data-swirl-type');
+        $(swirlElement).remove();
+        _http2.default.post('/swirls/create-swirl', { title: swirlTitle,
+            review: swirlReview,
+            type: swirlType,
+            imageUrl: swirlImageUrl });
+    };
+    $('.swirl-list').on('click', 'i.add-to-wishlist-button', function () {
+        swirlAndRemove(this);
+    });
+
     $('.swirl-list').on('click', 'i.dismiss-button', function () {
         respondAndRemove(this, 'Dismissed');
     });

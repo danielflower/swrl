@@ -1,6 +1,7 @@
 (ns yswrl.test.swirls.swirl-routes-test
   (:require [yswrl.test.scaffolding :as s]
             [yswrl.swirls.swirl-routes :as routes]
+            [yswrl.links :as links]
             [yswrl.groups.groups-repo :as groups-repo]
             [yswrl.swirls.swirls-repo :as repo]
             [yswrl.user.notifications-repo :as notifications-repo]
@@ -37,17 +38,19 @@
                                                       ]
                                             } "album")
              => [{
-                  :author_id     nil,
-                  :thumbnail_url "http://is1.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.600x600-75.jpg",
-                  :username      nil,
-                  :type          "album",
-                  :title         "Mellon Collie and the Infinite Sadness (Deluxe Edition)",
-                  :creation_date nil,
-                  :id            nil,
-                  :email_md5     nil,
-                  :author        nil
-                  :artist        "Smashing Pumpkins"
-                  :platform      nil
-                  :create-url    "/create/album?itunes-album-id=721291853&"
+                  :author_id          nil,
+                  :thumbnail_url      "http://is1.mzstatic.com/image/pf/us/r30/Music4/v4/cc/13/f1/cc13f183-1cfb-4880-23a1-859f9c938ac6/05099997854159.600x600-75.jpg",
+                  :username           nil,
+                  :type               "album",
+                  :title              "Mellon Collie and the Infinite Sadness (Deluxe Edition)",
+                  :creation_date      nil,
+                  :id                 nil,
+                  :email_md5          nil,
+                  :author             nil
+                  :artist             "Smashing Pumpkins"
+                  :platform           nil
+                  :create-url         "/create/album?itunes-album-id=721291853&"
+                  :title-for-creation "Mellon Collie and the Infinite Sadness (Deluxe Edition) by Smashing Pumpkins"
+                  :review             nil
                   }]))
 

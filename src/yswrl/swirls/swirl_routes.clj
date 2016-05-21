@@ -323,6 +323,16 @@
                            :status 500}))]
       (json-response response (or (:status response) 200)))))
 
+(defn create-swirl-rest-route []
+  (POST "/create-swirl" [title review type imageUrl :as req]
+    (let [type (or (get-in types/types [type :name])
+                   "unknown")
+          review (or review "")
+          title (or title "unknown")
+          image-url (or imageUrl "http://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")]
+      (guard/requires-login
+        #(create-swirl-no-interaction title review type image-url (:id (session-from req)) false)))))
+
 
 (defn get-swirls-by-id []
   (GET "/" [swirl-list :as req]
@@ -332,18 +342,24 @@
                      {:swirls swirls}))))
 
 (defn convert-to-swirl-list [search-results type]
-  (map (fn [r] {:author_id     nil
-                :thumbnail_url (:thumbnail-url r)
-                :username      nil
-                :type          type
-                :title         (:title r)
-                :creation_date nil
-                :id            nil
-                :email_md5     nil
-                :author        (:author r)
-                :platform      (:platform r)
-                :artist        (:artist r)
-                :create-url    (:create-url r)
+  (map (fn [r] {:author_id          nil
+                :thumbnail_url      (:thumbnail-url r)
+                :username           nil
+                :type               type
+                :title              (:title r)
+                :creation_date      nil
+                :id                 nil
+                :email_md5          nil
+                :author             (:author r)
+                :platform           (:platform r)
+                :artist             (:artist r)
+                :create-url         (:create-url r)
+                :title-for-creation (str (:title r)
+                                         (if (:author r) (str " by " (:author r)))
+                                         (if (:platform r) (str " on " (:platform r)))
+                                         (if (:artist r) (str " by " (:artist r)))
+                                         )
+                :review             nil
                 }) (:results search-results)))
 
 (defn get-swirls-from-search [query user]

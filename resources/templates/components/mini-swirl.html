@@ -1,4 +1,7 @@
-<div class="swirl mini-swirl {{swirl.type}} {{extraclass}}" id="{{ swirl.id }}" data-weight="{{swirl.weighting}}">
+<div class="swirl mini-swirl {{swirl.type}} {{extraclass}}" id="{{ swirl.id }}"
+     data-weight="{{swirl.weighting}}" data-image-url="{{swirl.thumbnail_url}}"
+     data-title="{{swirl.title-for-creation}}" data-review="{{swirl.review}}"
+     data-swirl-type="{{swirl.type}}">
     <div class="mini-swirl__link">
         <a {% if swirl.id %}href="{{ swirl.id|swirlurl }}"{% else %}href="{{ swirl.create-url }}"{% endif %}>
             <div class="mini-swirl__bgimage {{swirl.type}}" style="background-image: url({{ swirl.thumbnail_url }})">
@@ -12,9 +15,14 @@
     {% if user %}
     <div class="mini-swirl__action-buttons">
         {% if search %}
+        <i class="fa fa-list-ul add-to-wishlist-button action-button" title="Add to Wishlist"></i>
+        {% if swirl.id %}
         {% else %}
-        <i class="fa fa-list-ul later-button" title="Add to Wishlist"></i>
-        <i class="fa fa-times-circle dismiss-button" title="Dismiss"></i>
+        <a href="{{ swirl.create-url }}"><i class="fa fa-user-plus recommend-button action-button" title="Swirl to someone"></i></a>
+        {% endif %}
+        {% else %}
+        <i class="fa fa-list-ul later-button action-button" title="Add to Wishlist"></i>
+        <i class="fa fa-times-circle dismiss-button action-button" title="Dismiss"></i>
         {% endif %}
     </div>
     {% endif %}
