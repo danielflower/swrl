@@ -9,7 +9,7 @@
     <!-- Shut up, connection pool -->
     <logger name="com.mchange.v2" level="WARN"/>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
