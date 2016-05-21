@@ -23,7 +23,8 @@
             [clj-json.core :as json]
             [yswrl.swirls.itunes :as itunes]
             [yswrl.swirls.amazon :as amazon]
-            [yswrl.swirls.tmdb :as tmdb])
+            [yswrl.swirls.tmdb :as tmdb]
+            [yswrl.swirls.website :as website])
   (:use ring.middleware.json-params)
   (:import (java.util UUID)))
 
@@ -352,11 +353,18 @@
         movies (future (convert-to-swirl-list (tmdb/search-movies query nil) "movie"))
         tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
         games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))
-        itunes-apps (future (convert-to-swirl-list (itunes/search-apps query nil) "app"))]
+        itunes-apps (future (convert-to-swirl-list (itunes/search-apps query nil) "app"))
+        website (future (let [metadata (website/get-metadata query)
+                              query (links/url-encode query)]
+                          (if (:title metadata)
+                            [(assoc metadata :thumbnail_url (:image-url metadata)
+                                             :create-url (str "/create/from-url?url=" query))]
+                            [])))]
     (concat
       (take 5 @existing-swirls)
       (utils/interleave-differing-lengths
         (nthrest @existing-swirls 5)
+        @website
         @albums
         @books
         @movies
