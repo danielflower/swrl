@@ -39,9 +39,10 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
       (log/debug "Found these unsent suggestions:" (apply str unsent))
       (log/debug "Suggestion emailer processing" (count unsent) "suggestions")
       (doseq [row unsent]
-        (log/debug "About to process" row)
-        (let [[response]
+          (log/debug "About to process" row)
+        (let [response
               (send-email (:recipient_email row) (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
+          (log/debug "Response from mail server: " response)
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))
             (mark-suggestion-sent (:suggestion_id row) (:_id response))
             (mark-suggestion-failed (:suggestion_id row) (str (:status response) " " (:reject_reason response)))))))
