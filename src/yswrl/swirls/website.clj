@@ -12,7 +12,7 @@
                                                  (catch Exception _
                                                    (try (:body (client/get (str "https://" url)))
                                                         (catch Exception e
-                                                          (log/warn "Getting website failed" url e)
+                                                          (log/debug "Getting website failed" url e)
                                                           "")))))
                                           ))))
 
