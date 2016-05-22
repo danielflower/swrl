@@ -10,7 +10,7 @@
                                                            placeholder="Search for Swirls"
                                                            title="Search for Swirls">
         <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
-            <strong class="result-count">{{ swirls|count }}</strong> results for <i
+            <strong class="result-count">{{ swirls-from-search|count }}</strong> results for <i
                     class="query-val">{{query}}</i>
         </p>
 

@@ -393,7 +393,7 @@
 
 (defn search [query user]
   (let [swirls (if (clojure.string/blank? query) [] (get-swirls-from-search query user))]
-    (home/home-page 0 user :swirls-from-search swirls)))
+    (home/home-page 0 user :swirls-from-search swirls :query query)))
 
 (defn search-for-swirls []
   (GET "/search" [query :as req]
