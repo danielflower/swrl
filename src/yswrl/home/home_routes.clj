@@ -4,12 +4,11 @@
             [clojure.string :refer [join]]
             [compojure.core :refer [defroutes GET]]
             [yswrl.swirls.lookups :as lookups]
-            [yswrl.user.notifications :as notifications]
-            [yswrl.swirls.swirl-routes :as swirl-routes]))
+            [yswrl.user.notifications :as notifications]))
 
 
 
-(defn home-page [from user]
+(defn home-page [from user & {:keys [swirls-from-search]}]
   (let [swirls-per-page 20]
     (if (nil? user)
       (let [swirls (lookups/get-all-swirls 100 from nil)]
@@ -29,7 +28,8 @@
                                            :paging-url-prefix "/?from="
                                            :swirls-per-page   swirls-per-page
                                            :countFrom         (str from)
-                                           :countTo           (+ from swirls-per-page)})))))
+                                           :countTo           (+ from swirls-per-page)
+                                           :swirls-from-search swirls-from-search})))))
 
 (defn bookmarklet []
   (str "javascript:(function(){location.href='" (linky/url-encode (linky/absolute "/create/from-url?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}());"))))

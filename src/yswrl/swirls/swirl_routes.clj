@@ -1,6 +1,7 @@
 (ns yswrl.swirls.swirl-routes
   (:require [yswrl.layout :as layout]
             [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.home.home-routes :as home]
             [yswrl.user.networking :as network]
             [yswrl.user.user-selector :as user-selector]
             [yswrl.swirls.suggestion-job :refer [send-unsent-suggestions]]
@@ -392,9 +393,7 @@
 
 (defn search [query user]
   (let [swirls (if (clojure.string/blank? query) [] (get-swirls-from-search query user))]
-    (layout/render "swirls/search-swirls.html" {:title  "Search results"
-                                                :swirls swirls
-                                                :query  query})))
+    (home/home-page 0 user :swirls-from-search swirls)))
 
 (defn search-for-swirls []
   (GET "/search" [query :as req]

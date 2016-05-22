@@ -5,7 +5,8 @@
 
 <p>
     To get started, you could <a href="/swirls/start">create a recommendation for one of your friends</a>
-    or <a href="/">see what's Swirling</a> or see the swirls you <a href="/swirls/inbox/later">see the swirls you saved for later</a>.
+    or <a href="/">see what's Swirling</a> or see the swirls you <a href="/swirls/inbox/later">see the swirls you saved
+    for later</a>.
 </p>
 {% else %}
 
@@ -25,6 +26,9 @@
 </div>
 
 <div class="swirl-list search-results">
+    {% for swirl in swirls-from-search %}
+    {% include "components/mini-swirl.html" with swirl=swirl search="true" extraclass="pending-to-appear" %}
+    {% endfor %}
 </div>
 
 <div class="swirl-list">
@@ -38,7 +42,8 @@
 {% if more-swirls|not-empty %}
 <div class="paging">
     <a href="{{paging-url-prefix}}{{countTo}}" class="button more-swirls-button" data-ids="{{more-swirls}}"
-       data-url-prefix="{{paging-url-prefix}}" data-per-page="{{swirls-per-page}}" data-start-index="{{countFrom}}" data-num-loads="0">View more</a>
+       data-url-prefix="{{paging-url-prefix}}" data-per-page="{{swirls-per-page}}" data-start-index="{{countFrom}}"
+       data-num-loads="0">View more</a>
 </div>
 {% endif %}
 
