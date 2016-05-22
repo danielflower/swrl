@@ -70,7 +70,7 @@
                                :author          (apply str (xml-> r :ItemAttributes :Author text))
                                :create-url      (str "/create/book?book-id=" (apply str (xml-> r :ASIN text)) "&" query-string)
                                :book-id         (apply str (xml-> r :ASIN text))
-                               :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
+                               :thumbnail-url   (apply str (xml-> r :LargeImage :URL text))
                                :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
         })))
   ([search-term]
@@ -86,7 +86,7 @@
                                :platform        (apply str (xml-> r :ItemAttributes :Platform text))
                                :create-url      (str "/create/game?game-id=" (apply str (xml-> r :ASIN text)) "&" query-string)
                                :game-id         (apply str (xml-> r :ASIN text))
-                               :thumbnail-url   (apply str (xml-> r :SmallImage :URL text))
+                               :thumbnail-url   (apply str (xml-> r :LargeImage :URL text))
                                :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
         })))
   ([search-term]
