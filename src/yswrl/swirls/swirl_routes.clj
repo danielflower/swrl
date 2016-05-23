@@ -382,14 +382,14 @@
       (take 5 @existing-swirls)
       (utils/interleave-differing-lengths
         (nthrest @existing-swirls 5)
-        @website
-        @albums
-        @itunes-podcasts
-        @books
-        @movies
-        @tv
-        @games
-        @itunes-apps))))
+        (deref website 5000 [])
+        (deref albums 5000 [])
+        (deref itunes-podcasts 5000 [])
+        (deref books 5000 [])
+        (deref movies 5000 [])
+        (deref tv 5000 [])
+        (deref games 5000 [])
+        (deref itunes-apps 5000 [])))))
 
 (defn search [query user]
   (let [swirls (if (clojure.string/blank? query) [] (get-swirls-from-search query user))]
