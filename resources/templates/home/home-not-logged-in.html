@@ -1,19 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="home">
-
-    <div class="bpb-wrapper">
-        <a href="/swirls/start" class="bpb">
-            <span>TOUCH ME TO</span>
-            <img src="/immutable/images/swrl-logo-white.svg"/>
-        </a>
-    </div>
-
     <div class="center-wrapper">
-        <div class="home--content">
-            <img class="biglogo" src="/immutable/images/swrlogo.png" width="115" height="70" alt="Swirl"/>
-
-            <h2>Reviews for your friends</h2>
+        <div>
+            <h2>Recommendations for your friends</h2>
             <p>
                 Create recommendations for your friends based on what you love.
                 Respond and discuss what you all thought, all in one place.
@@ -22,9 +11,20 @@
 
             {% include "auth/logister.html" %}
         <h1 class="padded-lr" id="page-title">Discover</h1>
+        <form method="get" action="/search" class="search-form">
+            <label for="search-query-box">Search</label><input id="search-query-box" type="search" class="query"
+                                                               name="query"
+                                                               value="{{query}}" required
+                                                               placeholder="Search for Swirls"
+                                                               title="Search for Swirls">
+            <p class="search-result-summary{% if not query %} no-query{% endif %}">Showing
+                <strong class="result-count">{{ swirls-from-search|count }}</strong> results for <i
+                        class="query-val">{{query}}</i>
+            </p>
+            <button hidden type="submit" class="submit">Go</button>
+
+        </form>
         {% include "components/swirls-list-with-paging.html" with swirls=swirls %}
     </div>
-
-</div>
 
 {% endblock %}

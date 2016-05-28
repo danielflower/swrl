@@ -365,13 +365,34 @@
 
 (defn get-swirls-from-search [query user]
   (let [existing-swirls (future (lookups/search-for-swirls 100 0 user query))
-        albums (future (convert-to-swirl-list (itunes/search-albums query nil) "album"))
-        books (future (convert-to-swirl-list (amazon/search-books query nil) "book"))
-        movies (future (convert-to-swirl-list (tmdb/search-movies query nil) "movie"))
-        tv (future (convert-to-swirl-list (tmdb/search-tv query nil) "tv"))
-        games (future (convert-to-swirl-list (amazon/search-games query nil) "game"))
-        itunes-apps (future (convert-to-swirl-list (itunes/search-apps query nil) "app"))
-        itunes-podcasts (future (convert-to-swirl-list (itunes/search-podcasts query nil) "podcast"))
+        albums (future (try (convert-to-swirl-list (itunes/search-albums query nil) "album")
+                            (catch Exception e
+                              (log/warn e "search failed for query=\"" query "\"")
+                              [])))
+        books (future (try (convert-to-swirl-list (amazon/search-books query nil) "book")
+                           (catch Exception e
+                             (log/warn e "search failed for query=\"" query "\"")
+                             [])))
+        movies (future (try (convert-to-swirl-list (tmdb/search-movies query nil) "movie")
+                            (catch Exception e
+                              (log/warn e "search failed for query=\"" query "\"")
+                              [])))
+        tv (future (try (convert-to-swirl-list (tmdb/search-tv query nil) "tv")
+                        (catch Exception e
+                          (log/warn e "search failed for query=\"" query "\"")
+                          [])))
+        games (future (try (convert-to-swirl-list (amazon/search-games query nil) "game")
+                           (catch Exception e
+                             (log/warn e "search failed for query=\"" query "\"")
+                             [])))
+        itunes-apps (future (try (convert-to-swirl-list (itunes/search-apps query nil) "app")
+                                 (catch Exception e
+                                   (log/warn e "search failed for query=\"" query "\"")
+                                   [])))
+        itunes-podcasts (future (try (convert-to-swirl-list (itunes/search-podcasts query nil) "podcast")
+                                     (catch Exception e
+                                       (log/warn e "search failed for query=\"" query "\"")
+                                       [])))
         website (future (let [metadata (website/get-metadata query)
                               query (links/url-encode query)]
                           (if (:title metadata)
@@ -436,6 +457,7 @@
            (GET "/swirls" [from :as req] (view-firehose (Long/parseLong (if (clojure.string/blank? from) "0" from)) (session-from req)))
 
            (GET "/search" [query :as req] (search query (session-from req)))
+           (GET "/search_deprecated" [query :as req] (search query (session-from req)))
 
            (GET "/swirls/groups" [] (groups-page))
 

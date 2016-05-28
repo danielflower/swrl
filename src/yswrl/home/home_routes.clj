@@ -13,6 +13,8 @@
     (if (nil? user)
       (let [swirls (lookups/get-all-swirls 100 from nil)]
         (layout/render "home/home-not-logged-in.html" {:swirls            (take swirls-per-page swirls)
+                                                       :swirls-from-search swirls-from-search
+                                                       :query query
                                                        :more-swirls       (join "," (map :id (nthrest swirls swirls-per-page)))
                                                        :paging-url-prefix "/?from="
                                                        :return-url        "/"
