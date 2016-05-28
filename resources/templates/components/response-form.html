@@ -2,7 +2,6 @@
     {% csrf-field %}
     <input type="hidden" class="swirl-id-field" name="swirl-id" value="{{model.swirl.id}}">
 
-    <h2 class="title-color">What did you think?</h2>
 
     <div class="response-buttons">
 
@@ -16,7 +15,7 @@
     <input type="text" name="response-summary" maxlength="{{constraints.swirl_responses.summary.max-length}}"
            value="{{model.response-summary}}" class="custom-response" required
            placeholder="Or enter a custom response">
-    <button type="submit" name="responseButton" value="Add" data-button-type="custom"
+    <button hidden type="submit" name="responseButton" value="Add" data-button-type="custom"
             class="custom-response-button">Add
     </button>
     </div>

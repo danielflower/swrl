@@ -22,8 +22,8 @@ class RespondForm {
         });
 
 
-        customInputBox.keypress((e) => {
-            if (e.keyCode === 13) {
+        customInputBox.keydown((e) => {
+            if (e.which == 13 || e.which == 9 ) {
                 $(form).find('.custom-response-button').click();
                 return false;
             }

@@ -471,7 +471,8 @@
           (visit (@test-state :view-swirl-uri))
           (assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
-          (follow [:a.re-swirl])
+          (press :#re-swirl)
+
           (follow-redirect)
           (actions/save-swirl)
 

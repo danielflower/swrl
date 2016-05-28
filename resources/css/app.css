@@ -87,9 +87,6 @@ nav ul{
     margin-left: 10px;
 }
 
-h1.headline {
-    margin-top: 20px;
-}
 
 .comment {
     clear: both;
@@ -318,4 +315,110 @@ button.expand-toggle-button.expanded::before {
 }
 #show-edit-profile-button {
     background-color: var(--book-color);
+}
+
+.swirl-headline {
+    box-shadow: 3px 3px rgba(0,0,0,0.1);
+    border: solid;
+    border-width: thin;
+    margin:0 10px 20px 10px;
+}
+.swirl-headline-title {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.swirl-headline-title > span {
+    white-space: nowrap;
+}
+.swirl-headline .headline {
+    flex-grow: 1;
+}
+
+.swirl-headline hr {
+    width: 60%;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+    height: 1px;
+}
+.swirl-headline h1, .swirl-headline .avatar-with-name {
+    padding: 5px 20px 10px 20px;
+}
+
+.swirl-headline .avatar-with-name{
+    font-size: 1.2rem;
+    margin-bottom: 0px;
+}
+.swirl-details {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    padding:0 5px;
+}
+.swirl-details article {
+    padding: 10px;
+    margin: 0;
+}
+.swirl-detail {
+    margin:0 10px 20px 10px;
+    border: solid;
+    border-width: thin;
+    width: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+    background-color: #FFFFFF;
+    box-shadow: 3px 3px rgba(0,0,0,0.1);
+    transition:all 200ms ease;
+    position:relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.swirl-detail-header {
+    border-bottom: solid;
+    border-bottom-width: thin;
+    text-color: #FFFFFF;
+    background-color: var(--generic-color)
+}
+.swirl-detail-header h2 {
+    padding: 5px 20px 10px 20px;
+    margin: 0;
+    display: block;
+    text-decoration: none;
+    font-size: 20px;
+    line-height: normal;
+    color: #FFFFFF;;
+}
+
+.tv .swirl-type, .tv .swirl-detail-header, .tv-background-color {
+    background-color: var(--tv-color);
+}
+.album .swirl-type, .album .swirl-detail-header, .album-background-color {
+    background-color: var(--album-color);
+}
+.movie .swirl-type, .movie .swirl-detail-header, .movie-background-color {
+    background-color: var(--movie-color);
+}
+.book .swirl-type, .book .swirl-detail-header, .book-background-color {
+    background-color: var(--book-color);
+}
+.video .swirl-type, .video .swirl-detail-header, .video-background-color {
+    background-color: var(--video-color);
+}
+.game .swirl-type, .game .swirl-detail-header, .game-background-color {
+    background-color: var(--game-color);
+}
+.app .swirl-type, .app .swirl-detail-header, .app-background-color {
+    background-color: var(--app-color);
+}
+.podcast .swirl-type, .podcast .swirl-detail-header, .podcast-background-color {
+    background-color: var(--podcast-color);
 }

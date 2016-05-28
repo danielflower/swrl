@@ -807,6 +807,26 @@ $(document).ready(function () {
     _swirlList2.default.init($);
     _search2.default.init($);
     _ga2.default.addAnalyticsIfProd();
+    !function (d, s, id) {
+        var js,
+            fjs = d.getElementsByTagName(s)[0],
+            p = /^http:/.test(d.location) ? 'http' : 'https';
+        if (!d.getElementById(id)) {
+            js = d.createElement(s);
+            js.id = id;
+            js.src = p + '://platform.twitter.com/widgets.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }
+    }(document, 'script', 'twitter-wjs');
+    !function (d, s, id) {
+        var js,
+            fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk');
 
     $('.show-notifications-button').click(function () {
         $('.notification li').css('display', 'list-item');
@@ -814,28 +834,6 @@ $(document).ready(function () {
     });
 
     $('.expansion-content').hide();
-    $('#show-share-button').click(function (e) {
-        !function (d, s, id) {
-            var js,
-                fjs = d.getElementsByTagName(s)[0],
-                p = /^http:/.test(d.location) ? 'http' : 'https';
-            if (!d.getElementById(id)) {
-                js = d.createElement(s);
-                js.id = id;
-                js.src = p + '://platform.twitter.com/widgets.js';
-                fjs.parentNode.insertBefore(js, fjs);
-            }
-        }(document, 'script', 'twitter-wjs');
-        !function (d, s, id) {
-            var js,
-                fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.4&appId=893395944039576";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk');
-    });
 
     $('.expand-toggle-button').click(function (e, i) {
         var content = $(e.currentTarget).closest('.expansion-area').find('.expansion-content');
@@ -1287,8 +1285,8 @@ var RespondForm = function () {
             return false;
         });
 
-        customInputBox.keypress(function (e) {
-            if (e.keyCode === 13) {
+        customInputBox.keydown(function (e) {
+            if (e.which == 13 || e.which == 9) {
                 $(form).find('.custom-response-button').click();
                 return false;
             }
