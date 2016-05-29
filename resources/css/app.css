@@ -317,27 +317,33 @@ button.expand-toggle-button.expanded::before {
     background-color: var(--book-color);
 }
 
-.swirl-headline {
-    box-shadow: 3px 3px rgba(0,0,0,0.1);
-    border: solid;
-    border-width: thin;
-    margin:0 10px 20px 10px;
+.swirl-headline , .swirl-headline h1{
+    margin:0 10px 10px 0px;
 }
-.swirl-headline-title {
+
+.swirl-review {
     display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    padding-bottom: 15px;
 }
 
-.swirl-headline-title > span {
-    white-space: nowrap;
-}
-.swirl-headline .headline {
-    flex-grow: 1;
+.swirl-review > article {
+    max-width: 75%;
 }
 
-.swirl-headline hr {
-    width: 60%;
+.swirl-review > .fa-quote-left{
+    align-self: flex-start;
+}
+
+.swirl-review > .fa-quote-right, .swirl-review  .avatar-with-name{
+    align-self: flex-end;
+}
+
+
+.swirl-headline hr{
+    width: 90%;
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -346,6 +352,10 @@ button.expand-toggle-button.expanded::before {
     border-style: inset;
     border-width: 1px;
     height: 1px;
+}
+hr.swirl-headline-hr--bottom {
+    margin-bottom: 30px;
+
 }
 .swirl-headline h1, .swirl-headline .avatar-with-name {
     padding: 5px 20px 10px 20px;

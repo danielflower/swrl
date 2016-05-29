@@ -11,18 +11,22 @@
     <div class="swirl-headline">
         <div class="swirl-headline-title">
             <h1 class="headline type-color">{{model.swirl.title}}</h1>
-
+            {% if not model.swirl.review|empty-review? %}
+        </div>
+        <div class="swirl-review">
+            <i class="fa fa-quote-left"></i>
+            <article>
+                {{model.swirl.review|safe }}
+            </article>
+            <i class="fa fa-quote-right"></i>
+        </div>
+        <div class="swirl-review">
             <span class="avatar-with-name">{{ model.swirl.username|gravatar-img:30 }}
-                <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
-                {{model.swirl.creation_date|timetag}}
+                    <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
+                    {{model.swirl.creation_date|timetag}}
             </span>
         </div>
-        {% if not model.swirl.review|empty-review? %}
-        <hr>
-        <article>
-            <h2>User Review</h2>
-            {{model.swirl.review|safe }}
-        </article>
+        <hr class="swirl-headline-hr--bottom">
         {% endif %}
     </div>
 
@@ -105,9 +109,10 @@
                 <article>
                     {% include "components/respond-with-swirl-form.html" %}
                     {% if model.swirl.is_private %}
-                    <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share with
+                    <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To share
+                        with
                         others:
-                    {% endif %}
+                        {% endif %}
                     <form method="GET" action="/create/reswirl?id={{model.swirl.id}}">
                         <input id="re-swirl" type="submit" value="Re-Swirl to your friends" class="button-primary">
                     </form>
