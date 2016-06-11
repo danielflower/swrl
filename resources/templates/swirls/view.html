@@ -86,14 +86,8 @@
                 <div class="swirl-detail">
                     <article>
                         {% include "components/respond-with-swirl-form.html" %}
-                        {% if model.swirl.is_private %}
-                        <p class="private-swirl-message">This is a private Swirl so only those invited can see it. To
-                            share
-                            with
-                            others:
-                            {% endif %}
                         <form method="GET" action="/create/reswirl?id={{model.swirl.id}}">
-                            <input id="re-swirl" type="submit" value="Re-Swirl to your friends" class="button-primary">
+                            <input id="re-swirl" type="submit" value="Share" class="button-primary">
                         </form>
                     </article>
                 </div>
