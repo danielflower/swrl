@@ -1445,7 +1445,8 @@ var filterVisibleSwirls = function filterVisibleSwirls($) {
 function init($) {
 
     $(window).scroll(function () {
-        if ($(window).scrollTop() + $(window).height() + 1 >= $(document).height()) {
+        if ($(window).scrollTop() + $(window).height() + 320 >= $(document).height()) {
+            // 320 is the height of a swrl
             $('.more-swirls-button').click();
         }
     });
