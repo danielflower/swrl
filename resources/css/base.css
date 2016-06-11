@@ -176,12 +176,12 @@ p {
 
 
 .standard-page {
-    max-width: 1000px;
+    max-width: 80%;
     margin: 0 auto;
     background-color: #FFFFFF;
 }
 .list-page {
-    max-width: 1000px;
+    max-width: 80%;
     margin: 0 auto;
 }
 
