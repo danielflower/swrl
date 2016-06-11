@@ -19,6 +19,12 @@ var filterVisibleSwirls = function ($) {
 };
 function init($) {
 
+    $(window).scroll(function() {
+       if($(window).scrollTop() + $(window).height() + 1 >= $(document).height()) {
+           $('.more-swirls-button').click();
+       }
+    });
+
     $('.more-swirls-button').click((e) => {
         const b = $(e.target);
         if (b.attr('data-disabled')) {

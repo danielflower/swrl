@@ -1444,6 +1444,12 @@ var filterVisibleSwirls = function filterVisibleSwirls($) {
 };
 function init($) {
 
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() + 1 >= $(document).height()) {
+            $('.more-swirls-button').click();
+        }
+    });
+
     $('.more-swirls-button').click(function (e) {
         var b = $(e.target);
         if (b.attr('data-disabled')) {
