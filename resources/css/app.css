@@ -262,15 +262,6 @@ article{
 
 }
 
-button.expand-toggle-button::before {
-    content: "+ ";
-    font-size: larger;
-}
-button.expand-toggle-button.expanded::before {
-    content: "- ";
-    font-size: larger;
-}
-
 .expansion-content {
     padding-top: 20px;
     padding-bottom: 50px;
@@ -373,41 +364,27 @@ hr.swirl-headline-hr--bottom {
     align-items: stretch;
     padding:0 5px;
 }
-.swirl-details article {
+.swirl-detail article {
     padding: 10px;
+    margin: 0;
+}
+
+.swirl-detail form {
     margin: 0;
 }
 .swirl-detail {
     margin:0 10px 20px 10px;
-    border: solid;
-    border-width: thin;
+    border: 1px solid #CCCCCC;
     width: auto;
     flex-grow: 1;
     flex-shrink: 0;
     background-color: #FFFFFF;
-    box-shadow: 3px 3px rgba(0,0,0,0.1);
     transition:all 200ms ease;
     position:relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
-.swirl-detail-header {
-    border-bottom: solid;
-    border-bottom-width: thin;
-    text-color: #FFFFFF;
-    background-color: var(--generic-color)
-}
-.swirl-detail-header h2 {
-    padding: 5px 20px 10px 20px;
-    margin: 0;
-    display: block;
-    text-decoration: none;
-    font-size: 20px;
-    line-height: normal;
-    color: #FFFFFF;;
-}
-
 .tv .swirl-type, .tv .swirl-detail-header, .tv-background-color {
     background-color: var(--tv-color);
 }
