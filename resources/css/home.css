@@ -80,6 +80,10 @@
     max-width: 80%;
 }
 
+.center-wrapper .center{
+    text-align: center;
+}
+
 .home .notification li:nth-child(n+5) {
     display: none;
 }
