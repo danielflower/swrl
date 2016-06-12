@@ -11,9 +11,10 @@
     <div class="swirl-headline">
         <div class="swirl-headline-title">
             <h1 class="headline type-color">{{model.swirl.title}}</h1>
-            {% if not model.swirl.review|empty-review? %}
+
         </div>
         <div class="w3-row">
+            {% if not model.swirl.review|empty-review? %}
             <div class="w3-col m8">
                 <div class="swirl-review">
                     <i class="fa fa-quote-left"></i>
@@ -29,22 +30,16 @@
             </span>
                 </div>
             </div>
+            {% endif %}
             <div class="w3-col m4">
 
-                {% if model.external-website-link %}
                 <div class="swirl-detail">
                     <article>
-                        <div class="swirl-link">
-                            <i class="fa fa-link"></i> <a href="{{ model.external-website-link }}" target="_blank">Go to
-                            website
-                            &gt;&gt;</a>
-                        </div>
                         <div>
                             {% include "swirls/affiliate-links.html" %}
                         </div>
                     </article>
                 </div>
-                {% endif %}
                 {% if model.can-respond %}
                 <div class="swirl-detail">
                     <article>
@@ -109,7 +104,6 @@
 
         </div>
         <hr class="swirl-headline-hr--bottom">
-        {% endif %}
     </div>
 
     <div class="w3-row">
