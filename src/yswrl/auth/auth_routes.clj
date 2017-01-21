@@ -119,7 +119,9 @@
                             (.contains (.getMessage e) "duplicate key value violates unique constraint \"users_email_key\"") {:email '("A user with that email already exists. Please select a different email, or log in if you already have an account.")}
                             :else {:unknown '("There was an unexpected error. Please try again later.")})
                   password-redacted-user (dissoc user :password :confirmPassword)]
-              (log/error "Error while registering user" password-redacted-user e)
+              (if (not (nil? (get message :unknown)))
+                (log/error "Error while registering user" password-redacted-user e)
+                (log/info "User tried to register user that already exists" password-redacted-user message))
               (registration-page (assoc user :errors message)))))))))
 
 (defn fixed-length-password
