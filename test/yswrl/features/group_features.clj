@@ -17,6 +17,10 @@
 
 (defn now [] (System/currentTimeMillis))
 
+(defn print-session [session]
+  (println session)
+  session)
+
 (defn save-state [session map key value]
   (swap! map (fn [old-val] (assoc old-val key value)))
   session)
@@ -91,7 +95,6 @@
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
           (follow-redirect)
           (actions/save-swirl)
-          (within [:.private-swirl-message] (has (some-text? "This is a private Swirl so only those invited can see it.")))
           (visit "/swirls/groups")
           (follow "My special group")
           (follow "Mellon Collie and the Infinite Sadness (Remastered)")
