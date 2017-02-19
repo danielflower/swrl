@@ -21,6 +21,7 @@
            result (client/get url {:accept :json :as :json})]
        {:results (map (fn [r] {:title           (str (r :title) " (" (release-year (r :release_date)) ")")
                                :tmdb-id         (r :id)
+                               :overview        (r :overview)
                                :create-url      (str "/create/movie?tmdb-id=" (r :id) "&" query-string)
                                :large-image-url (str LARGE-IMAGE-URL-PREFIX (r :poster_path))
                                :thumbnail-url   (str THUMBNAIL-URL-PREFIX (r :poster_path))}) ((result :body) :results))

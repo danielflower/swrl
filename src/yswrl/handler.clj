@@ -9,6 +9,7 @@
             [yswrl.user.preference-routes :refer [preference-routes]]
             [yswrl.groups.group-management :refer [group-routes]]
             [yswrl.rest.swirl-resource :refer :all]
+            [yswrl.rest.search-service :refer :all]
             [yswrl.rest.website-service :refer [website-rest-routes]]
             [yswrl.user.notifications :refer [notification-routes]]
             [yswrl.rest.user-resource :as user-resource]
@@ -70,6 +71,7 @@
         (wrap-api-routes swirl-app-rest-routes)
         (wrap-api-routes website-rest-routes)
         (wrap-api-routes user-resource/user-resource-rest-routes)
+        (wrap-api-routes swirl-search-routes)
         (wrap-site-pages home-routes)
         (wrap-site-pages auth-routes)
         (wrap-site-pages swirl-routes)

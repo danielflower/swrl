@@ -13,12 +13,14 @@
                         {:title           "Garden State (2004)"
                          :tmdb-id         401
                          :create-url      "/create/movie?tmdb-id=401&"
+                         :overview        "Movie about Zach Braff being Zach Braff"
                          :thumbnail-url   "http://image.tmdb.org/t/p/original/u7IASCZ02Q94SYklSIR2609inis.jpg"
                          :large-image-url "http://image.tmdb.org/t/p/original/u7IASCZ02Q94SYklSIR2609inis.jpg"}
 
                         {:title           "The Marshall Tucker Band - Live From The Garden State 1981 (2004)"
                          :tmdb-id         324409
                          :create-url      "/create/movie?tmdb-id=324409&"
+                         :overview        "no idea, some live music rubbish"
                          :thumbnail-url   "http://image.tmdb.org/t/p/original/gQU9pdJ4rGN8GvxaL2auvJ5mmXw.jpg"
                          :large-image-url "http://image.tmdb.org/t/p/original/gQU9pdJ4rGN8GvxaL2auvJ5mmXw.jpg"}
 
