@@ -23,7 +23,7 @@
 (defn session-from [req] (:user (:session req)))
 
 (defn imdb-url [imdb-id]
-  (str "http://www.imdb.com/title/" imdb-id))
+  (str "https://www.imdb.com/title/" imdb-id))
 
 (defn handle-website-creation [url author title query-string]
   (let [metadata (website/get-metadata url)

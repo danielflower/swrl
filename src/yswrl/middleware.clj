@@ -12,7 +12,7 @@
             [buddy.auth.middleware :refer [wrap-authentication]]
             [buddy.auth.backends.session :refer [session-backend]]
             [yswrl.links :as linky]
-            ))
+            [clojure.string :as str]))
 
 (defn permanent-redirect
   "Returns a Ring response for an HTTP 301 redirect."
@@ -49,17 +49,22 @@
   (let [stack-strings (map #(str %) (.getStackTrace ex))]
     (str "Unhandled exception: " ex \newline " at " (clojure.string/join (str \newline "    ") stack-strings))))
 
+
 (defn production-middleware [handler]
-  (-> handler
-      (wrap-url-canonicalizer-policy)
-      (wrap-authentication (session-backend))
-      (wrap-restful-format :formats [:json-kw :edn :transit-json :transit-msgpack])
-      (wrap-defaults
-        (-> site-defaults
-            (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") unsecure-key-for-dev-mode)}))
-            (assoc-in [:session :cookie-name] "swirl-session")
-            (assoc-in [:security :anti-forgery] false)
-            (assoc-in [:security :xss-protection :enable?] false)
-            ))
-      #_(wrap-gzip)
-      (wrap-internal-error :log #(log/error (get-unhandled-error-text %)))))
+  (let [is-production (not (nil? (env :production)))]
+    (-> handler
+        (wrap-url-canonicalizer-policy)
+        (wrap-authentication (session-backend))
+        (wrap-restful-format :formats [:json-kw :edn :transit-json :transit-msgpack])
+        (wrap-defaults
+          (-> site-defaults
+              (assoc-in [:session :store] (cookie-store {:key (or (System/getenv "SECRET_COOKIE_KEY") unsecure-key-for-dev-mode)}))
+              (assoc-in [:session :cookie-name] "swirl-session")
+              (assoc-in [:security :anti-forgery] false)
+              (assoc-in [:security :hsts] is-production)
+              (assoc-in [:security :ssl-redirect] is-production)
+              (assoc-in [:security :xss-protection :enable?] false)
+              (assoc-in [:proxy] true)
+              ))
+        #_(wrap-gzip)
+        (wrap-internal-error :log #(log/error (get-unhandled-error-text %))))))

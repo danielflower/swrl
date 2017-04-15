@@ -57,9 +57,9 @@ To run the scheduled jobs:
 ## Client side development
 
 You will need:
-* nodejs & npm
-* gulp - `npm install -g gulp`
-* bower - `npm install -g bower`
+* nodejs and npm
+* gulp: `npm install -g gulp`
+* bower: `npm install -g bower`
 
 To update dependencies:
 `npm install`
@@ -70,8 +70,6 @@ To generate the CSS and JavaScript artifacts run `gulp` but during development y
 `gulp watch`
 
 ## Testing
-
-NB - We have changed from `lein test` to `lein midje`
 
 While you can run `lein midje` from the command line, it takes many seconds to
 start up and is too slow for TDD. Instead, start an interactive lein session
@@ -84,7 +82,7 @@ OR if you like working in the REPL and would also like to enjoy auto-loading of 
     (use 'midje.repl)
     (autotest)
 
-NB.
+Notes:
 1. Ignore the errors midje throws when launching
 2. Autotest works by reloading only the current namespace after the first run (so it's quick). This means it may hide failures from other namespaces, so is recommended to run a full `lein midje` before pushing.
 3. Midje runs all previously written clojure.test tests, so worry not.
@@ -117,9 +115,3 @@ Just run the tests a few times to generate fake data.
 1. Uninstall the Swirl extension if you have it already.
 2. Go to extensions, enable developer mode, and add the chrome folder as an extension.
 3. Once debugged, increment the version in `manifest.js`, zip the folder and upload to the Chrome store.
-
-## Takipi
-
-Playing with Takipi on a free trial. Probably will remove it immediately when it expires this week, so if you wanna play, play soon!!
-
-URL: https://app.takipi.com/

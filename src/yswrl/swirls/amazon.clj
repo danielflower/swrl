@@ -37,7 +37,7 @@
         encoded (clojure.string/replace to-sign "+" "%20")
         signed (sign amazon-key encoded)
         encodedSignature (ring.util.codec/form-encode signed)]
-    (str "http://webservices.amazon.com/onca/xml?" (ring.util.codec/form-encode paz) "&Signature=" encodedSignature)))
+    (str "https://webservices.amazon.com/onca/xml?" (ring.util.codec/form-encode paz) "&Signature=" encodedSignature)))
 
 (defn search-url [bookname]
   (createEncryptedUrl (assoc (timestamp params) :Keywords bookname :Operation "ItemSearch" :SearchIndex "Books"

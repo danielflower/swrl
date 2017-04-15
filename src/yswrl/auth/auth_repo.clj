@@ -1,6 +1,7 @@
 (ns yswrl.auth.auth-repo
   (:require [yswrl.db :refer [users]]
             [yswrl.db :as db]
+            [clojure.tools.logging :as log]
             [buddy.core.hash :as hash]
             [buddy.core.codecs :refer :all]
             [yswrl.user.networking :as networking]
@@ -16,10 +17,11 @@
   (let [user (k/insert users
                   (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email) :avatar_type "gravatar"}))]
     ;update the weightings table
-    (k/insert db/swirl-weightings
-              (k/values (k/select db/swirls
-                                  (k/fields [(k/raw (:id user)) :user_id]
-                                            [:swirls.id :swirl_id]))))
+    (try (k/insert db/swirl-weightings
+                   (k/values (k/select db/swirls
+                                       (k/fields [(k/raw (:id user)) :user_id]
+                                                 [:swirls.id :swirl_id]))))
+         (catch Exception e (log/info "Error while inserting weightings" e)))
     user))
 
 (defn change-password [user-id hashed-password]

@@ -9,7 +9,7 @@
 
   (testing "url Params are in order"
     (let [urlToCall (amazon/search-url "javainterviewbootcamp")]
-      (is (.contains urlToCall (str "http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAIO3J752UN7X4HUWA&AssociateTag=corejavaint0d-20&Keywords=javainterviewbootcamp&Operation=ItemSearch&ResponseGroup=Images%2CItemAttributes%2CEditorialReview&SearchIndex=Books&Service=AWSECommerceService&")) urlToCall)))
+      (is (.contains urlToCall (str "https://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAIO3J752UN7X4HUWA&AssociateTag=corejavaint0d-20&Keywords=javainterviewbootcamp&Operation=ItemSearch&ResponseGroup=Images%2CItemAttributes%2CEditorialReview&SearchIndex=Books&Service=AWSECommerceService&")) urlToCall)))
 
   (testing "Amazon URL is correctly generated"
     (let [urlToCall (amazon/createEncryptedUrl (sorted-map
@@ -25,7 +25,7 @@
                                                  ))]
       (is
         (.equals urlToCall
-                 (str "http://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAIO3J752UN7X4HUWA&AssociateTag=corejavaint0d-20&Keywords=horcrux&Operation=ItemSearch&ResponseGroup=Images%2CItemAttributes&SearchIndex=Books&Service=AWSECommerceService&Timestamp=2015-05-14T04%3A26%3A12.000Z&Version=2011-08-01&Signature=NpX9t1jcz6wR2CCLKfG%2B8Pt2RxQli9QbAZu3dHpifXc%3D")) urlToCall)))
+                 (str "https://webservices.amazon.com/onca/xml?AWSAccessKeyId=AKIAIO3J752UN7X4HUWA&AssociateTag=corejavaint0d-20&Keywords=horcrux&Operation=ItemSearch&ResponseGroup=Images%2CItemAttributes&SearchIndex=Books&Service=AWSECommerceService&Timestamp=2015-05-14T04%3A26%3A12.000Z&Version=2011-08-01&Signature=NpX9t1jcz6wR2CCLKfG%2B8Pt2RxQli9QbAZu3dHpifXc%3D")) urlToCall)))
 
 
   (testing "Example 1 from http://docs.aws.amazon.com/AWSECommerceService/latest/DG/rest-signature.html"
