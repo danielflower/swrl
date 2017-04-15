@@ -59,11 +59,9 @@ To run the scheduled jobs:
 You will need:
 * nodejs and npm
 * gulp: `npm install -g gulp`
-* bower: `npm install -g bower`
 
 To update dependencies:
 `npm install`
-`bower install`
 
 To generate the CSS and JavaScript artifacts run `gulp` but during development you can auto generate files by running:
 

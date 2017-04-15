@@ -1,5 +1,3 @@
-import '../../bower_components/es6-promise/promise.min.js';
-import '../../bower_components/fetch/fetch.js';
 import setupChromeExtension from './chrome-extension';
 import editor from './editor';
 import setupSwirlEdit from './edit-swirl';
@@ -9,6 +7,16 @@ import menu from './menu';
 import search from './search';
 import swirlList from './swirl-list';
 import ga from './ga';
+
+(function () {
+    const fill = function (skip, filename) {
+        if (!skip) {
+            document.write('<scr' + 'ipt type="text/javascript" src="/immutable/js/' + filename + '"></scr' + 'ipt>');
+        }
+    };
+    fill(window.Promise, 'promise-6.0.2.min.js');
+    fill(window.fetch, 'fetch-2.0.3.js');
+})();
 
 $(document).ready(function () {
     editor.init($);
