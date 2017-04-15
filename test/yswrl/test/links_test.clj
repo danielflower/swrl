@@ -17,7 +17,7 @@
     (is (= "/profile/Dan%20%26%20%2F%20co" (links/user "Dan & / co"))))
 
   (testing "absolute URLs"
-    (is (= "http://www.swrl.co/swirls/10" (links/absolute "/swirls/10"))))
+    (is (= "https://www.swrl.co/swirls/10" (links/absolute "/swirls/10"))))
 
   (testing "inbox by response"
     (is (= "/swirls/inbox/hot" (links/inbox "hot")))
@@ -27,7 +27,7 @@
     (is (= "https://itunes.apple.com/us/album/id721224313?at=1001l55M" (links/itunes-album 721224313))))
 
   (testing "gravatar URLs include the hash"
-    (is (= "http://www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346?s=40&d=monsterid&r=pg"
+    (is (= "https://www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346?s=40&d=monsterid&r=pg"
            (links/gravatar-url "0bc83cb571cd1c50ba6f3e8a78ef1346" 40)))
     )
 

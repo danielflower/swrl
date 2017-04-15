@@ -4,8 +4,8 @@
             [yswrl.links :as links]))
 
 (def TMDB-API-KEY "c3356e66739e40233c7870d42b30bc34")
-(def THUMBNAIL-URL-PREFIX "http://image.tmdb.org/t/p/original")
-(def LARGE-IMAGE-URL-PREFIX "http://image.tmdb.org/t/p/original")
+(def THUMBNAIL-URL-PREFIX "https://image.tmdb.org/t/p/original")
+(def LARGE-IMAGE-URL-PREFIX "https://image.tmdb.org/t/p/original")
 
 (defn release-year [rd]
   (if rd

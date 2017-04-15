@@ -94,7 +94,7 @@ class RichTextEditor {
                         // split the text node into 3 bits - the 'nextBit' is the part containing the URL
                         var nextBit = e.splitText(index);
                         nextBit.splitText(htmlEncodedLink.length);
-                        var target = (htmlEncodedLink.indexOf('http://www.swrl.co') === 0) ? '' : ' target="_blank"';
+                        var target = (htmlEncodedLink.indexOf('https://www.swrl.co') === 0) ? '' : ' target="_blank"';
                         $(nextBit).before('<a href="' + htmlEncodedLink + '"' + target + '>' + htmlEncodedLink + '</a>');
                         nextBit.data = '\u00A0';
                         return false; // stop processing this bit - we've changed it so processing will be weird

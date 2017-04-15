@@ -3,7 +3,7 @@
   "name": "Swirl it",
   "short_name": "Swirl",
   "description": "Recommend the page you are on to one of your friends",
-  "homepage_url": "http://www.swrl.co/",
+  "homepage_url": "https://www.swrl.co/",
   "version": "1.2",
   "browser_action": {
     "default_icon": "icon19.png"

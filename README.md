@@ -1,7 +1,7 @@
 # Swirl
 
 ...a.k.a. swrl. This is a social network site specifically for recommending movies/albums/books/websites/games
-to people you know. See it here: [http://swrl.co/](http://swrl.co/)
+to people you know. See it here: [https://www.swrl.co/](https://www.swrl.co/)
 
 # Development / running locally
 

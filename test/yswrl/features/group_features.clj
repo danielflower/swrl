@@ -69,7 +69,7 @@
                   (has (some-text? (member :username))))
           (save-url test-state :group-url)
           (within [:.join-url]
-                  (has (some-text? (str "http://www.swrl.co" (@test-state :group-url) "/join/"))))
+                  (has (some-text? (str "https://www.swrl.co" (@test-state :group-url) "/join/"))))
 
           ; Create a swirl
           (actions/follow-create-link)

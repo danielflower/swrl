@@ -2,7 +2,7 @@
 
 (defn url-encode [val] (.replaceAll (java.net.URLEncoder/encode (or val "") "UTF-8") "\\+" "%20"))
 
-(def base-url "http://www.swrl.co")
+(def base-url "https://www.swrl.co")
 
 (defn absolute [relative]
   (str base-url relative))
@@ -39,10 +39,10 @@
   (str "https://itunes.apple.com/us/album/id" album-id "?at=1001l55M"))
 
 (defn gravatar-url [hash size]
-  (str "http://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid&r=pg"))
+  (str "https://www.gravatar.com/avatar/" hash "?s=" size "&d=monsterid&r=pg"))
 
 (defn facebook-image-url [facebook-id size]
-  (str "http://graph.facebook.com/" facebook-id "/picture?width=" size "&height=" size))
+  (str "https://graph.facebook.com/" facebook-id "/picture?width=" size "&height=" size))
 
 (defn create-swirl []
   "/swirls/start")
