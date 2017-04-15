@@ -44,6 +44,9 @@
     z-index:1;
 }
 
+.reply-buttons form {
+    display: inline;
+}
 
 .swirl-header__image {
     position:absolute;
@@ -84,4 +87,9 @@
 .non-responders a {
     color: #AAAAAA;
     padding-left: 10px;
+}
+
+.swirl-admin-panel {
+    width: 100%;
+    text-align: center;
 }

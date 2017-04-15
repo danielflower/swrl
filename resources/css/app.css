@@ -313,35 +313,17 @@ article{
 }
 
 .swirl-review {
-    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
-    padding-bottom: 15px;
-}
-
-.swirl-review > article {
-    max-width: 75%;
-}
-
-.swirl-review > .fa-quote-left{
-    align-self: flex-start;
-}
-
-.swirl-review > .fa-quote-right, .swirl-review  .avatar-with-name{
-    align-self: flex-end;
+    padding: 10px 10px 15px;
 }
 
 
 .swirl-headline hr{
     width: 90%;
     display: block;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: inset;
-    border-width: 1px;
+    margin: 10px auto;
+    border: 1px inset;
     height: 1px;
 }
 hr.swirl-headline-hr--bottom {
@@ -354,19 +336,10 @@ hr.swirl-headline-hr--bottom {
 
 .swirl-headline .avatar-with-name{
     font-size: 1.2rem;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 .swirl-details {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
     padding:0 5px;
-}
-.swirl-detail article {
-    padding: 10px;
-    margin: 0;
 }
 
 .swirl-detail form {
@@ -374,16 +347,6 @@ hr.swirl-headline-hr--bottom {
 }
 .swirl-detail {
     margin:0 10px 20px 10px;
-    border: 1px solid #CCCCCC;
-    width: auto;
-    flex-grow: 1;
-    flex-shrink: 0;
-    background-color: #FFFFFF;
-    transition:all 200ms ease;
-    position:relative;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
 }
 .tv .swirl-type, .tv .swirl-detail-header, .tv-background-color {
     background-color: var(--tv-color);

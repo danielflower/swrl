@@ -11,99 +11,69 @@
     <div class="swirl-headline">
         <div class="swirl-headline-title">
             <h1 class="headline type-color">{{model.swirl.title}}</h1>
-
         </div>
-        <div class="w3-row">
-            {% if not model.swirl.review|empty-review? %}
-            <div class="w3-col m8">
-                <div class="swirl-review">
-                    <i class="fa fa-quote-left"></i>
-                    <article>
-                        {{model.swirl.review|safe }}
-                    </article>
-                    <i class="fa fa-quote-right"></i>
-                </div>
-                <div class="swirl-review">
+        {% if not model.swirl.review|empty-review? %}
+        <article class="swirl-review">
+            {{model.swirl.review|safe }}
+        </article>
+
+        <div class="swirl-review">
             <span class="avatar-with-name">{{ model.swirl.username|gravatar-img:30 }}
                     <a rel="author" href="{{model.swirl.username|user-url}}">{{model.swirl.username}}</a>
                     {{model.swirl.creation_date|timetag}}
             </span>
+        </div>
+        {% endif %}
+
+        {% if model.can-edit %}
+        <div class="swirl-admin-panel">
+            <a href="{{ model.swirl.id|swirlediturledit }}" class="button">Edit Swirl</a>
+            <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
+        </div>
+        {% endif %}
+
+        <div>
+
+            {% if model.can-respond %}
+            <div class="swirl-detail">
+                {% include "components/response-form.html" %}
+                {% if model.non-responders|not-empty %}
+                <div class="non-responders">
+                    Yet to respond:
+
+                    {% for non-responder in model.non-responders %}
+                    {% if forloop.counter = 3 %}
+                    <input type=radio class="more-radio" id="more-responders">
+                    <label class="more-link" for="more-responders">more...</label>
+                    {% endif %}
+                    <a class="username {% if forloop.counter >= 3 %}more-content{% endif %}"
+                       rel="author"
+                       href="{{non-responder.username|user-url}}">{{ non-responder.username|gravatar-img:25
+                        }}{{non-responder.username}}</a>
+                    {% endfor %}
+
                 </div>
+                {% endif %}
             </div>
             {% endif %}
-            <div class="w3-col m4">
 
-                <div class="swirl-detail">
-                    <article>
-                        <div>
-                            {% include "swirls/affiliate-links.html" %}
-                        </div>
-                    </article>
-                </div>
-                {% if model.can-respond %}
-                <div class="swirl-detail">
-                    <article>
-                        <div>
-                            {% include "components/response-form.html" %}
-                            {% if model.non-responders|not-empty %}
-                            <div class="non-responders">
-                                Yet to respond:
-
-                                {% for non-responder in model.non-responders %}
-                                {% if forloop.counter = 3 %}
-                                <input type=radio class="more-radio" id="more-responders">
-                                <label class="more-link" for="more-responders">more...</label>
-                                {% endif %}
-                                <a class="username {% if forloop.counter >= 3 %}more-content{% endif %}"
-                                   rel="author"
-                                   href="{{non-responder.username|user-url}}">{{ non-responder.username|gravatar-img:25
-                                    }}{{non-responder.username}}</a>
-                                {% endfor %}
-
-                            </div>
-                            {% endif %}
-                        </div>
-                    </article>
-                </div>
-                {% endif %}
-
-                {% if model.can-edit %}
-                <div class="swirl-detail">
-                    <article>
-                        <div class="swirl-admin-panel">
-                            <a href="{{ model.swirl.id|swirlediturledit }}" class="button">Edit Swirl</a>
-                            <a href="{{ model.swirl.id|swirldeleteurl }}" class="button button-destructive">Delete</a>
-                        </div>
-                    </article>
-                </div>
-                {% endif %}
-                {% if model.can-respond %}
-                <div class="swirl-detail">
-                    <article>
-                        {% include "components/respond-with-swirl-form.html" %}
-                        <form method="GET" action="/create/reswirl?id={{model.swirl.id}}">
-                            <input id="re-swirl" type="submit" value="Share" class="button-primary">
-                        </form>
-                    </article>
-                </div>
-                {% endif %}
-                {% if not model.swirl.is_private %}
-                <div class="swirl-detail">
-                    <article>
-                        <div class="no-wrap">
-                            <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="swirl"
-                               data-dnt="true">Tweet</a>
-
-                    <span class="fb-share-button" data-href="{{model.swirl.id|swirlurl|absoluteurl}}"
-                          data-layout="button_count"></span>
-                        </div>
-                    </article>
-                </div>
-                {% endif %}
+            <div class="swirl-detail">
+                <h2>Links</h2>
+                {% include "swirls/affiliate-links.html" %}
             </div>
 
+
+            {% if model.can-respond %}
+            <div class="swirl-detail reply-buttons">
+                {% include "components/respond-with-swirl-form.html" %}
+                <form method="GET" action="/create/reswirl">
+                    <input type="hidden" name="id" value="{{model.swirl.id}}">
+                    <input id="re-swirl" type="submit" value="Copy to new swirl" class="button-primary">
+                </form>
+            </div>
+            {% endif %}
         </div>
-        <hr class="swirl-headline-hr--bottom">
+
     </div>
 
 
