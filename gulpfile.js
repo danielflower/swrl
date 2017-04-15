@@ -10,6 +10,7 @@ var path = require('path');
 var exec = require('gulp-exec');
 var dist = 'resources/immutable/dist';
 var babelify = require('babelify');
+var minify = require('gulp-minify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 
@@ -46,19 +47,28 @@ gulp.task('browsify-javascript', ['generate-css'], function () {
 
 gulp.task('process-javascript', ['browsify-javascript'], function () {
     return gulp.src(dist + '/all.js')
+        .pipe(minify({
+            ext: {
+                src: '.js',
+                min: '.js'
+            },
+            noSource: true
+        }))
         .pipe(rev())
         .pipe(gulp.dest(dist))
         .pipe(tap(function (file) {
             var fileRegex = /all-([a-g0-9]+)\.js/g;
+            console.log('here I am', file);
+            console.log('uh huh', path.basename(file.path, '.map'));
             return gulp.src(templateHtml)
-                .pipe(replace(fileRegex, path.baseName(file.path, '.map')))
+                .pipe(replace(fileRegex, path.basename(file.path, '.map')))
                 .pipe(gulp.dest(path.dirname(templateHtml)));
         }));
 });
 
 gulp.task('default', ['process-javascript'], function () {
     return gulp.src(dist + '/**/*')
-        .pipe(sizereport({gzip:true}))
+        .pipe(sizereport({gzip: true}))
         .pipe(exec('git add --all resources/immutable/dist/'));
 });
 
