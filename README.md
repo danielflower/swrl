@@ -57,11 +57,10 @@ To run the scheduled jobs:
 ## Client side development
 
 You will need:
-* nodejs and npm
-* gulp: `npm install -g gulp`
+* nodejs and yarn
 
 To update dependencies:
-`npm install`
+`yarn`
 
 To generate the CSS and JavaScript artifacts run `gulp` but during development you can auto generate files by running:
 

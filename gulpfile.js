@@ -51,7 +51,7 @@ gulp.task('process-javascript', ['browsify-javascript'], function () {
         .pipe(tap(function (file) {
             var fileRegex = /all-([a-g0-9]+)\.js/g;
             return gulp.src(templateHtml)
-                .pipe(replace(fileRegex, path.basename(file.path, '.map')))
+                .pipe(replace(fileRegex, path.baseName(file.path, '.map')))
                 .pipe(gulp.dest(path.dirname(templateHtml)));
         }));
 });
