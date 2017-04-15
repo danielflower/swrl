@@ -66,5 +66,5 @@
               (assoc-in [:security :xss-protection :enable?] false)
               (assoc-in [:proxy] true)
               ))
-        #_(wrap-gzip)
+        (wrap-gzip)
         (wrap-internal-error :log #(log/error (get-unhandled-error-text %))))))
