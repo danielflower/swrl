@@ -14,7 +14,8 @@
                     "b3ef0cc194e2abcfacd1ba32b085da2f"))
 
 (defn facebook_redirect_uri [req]
-  (str (clojure.string/replace (req :scheme) #":" "") "://" (req :server-name) ":" (req :server-port) "/facebook_auth"))
+  #_(str (clojure.string/replace (req :scheme) #":" "") "://" (req :server-name) ":" (req :server-port) "/facebook_auth")
+  "https://www.swrl.co/facebook_auth")
 
 (defn facebook-oauth2 [req]
   {:authorization-uri  "https://graph.facebook.com/oauth/authorize"

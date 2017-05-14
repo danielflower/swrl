@@ -16,7 +16,7 @@
     (let [req {:scheme ":http" :server-port 6000 :server-name "my_domain" :someother "token" :session "some_session"}]
       (is (= {:authorization-uri "https://graph.facebook.com/oauth/authorize"
             :access-token-uri  "https://graph.facebook.com/oauth/access_token"
-            :redirect-uri      "http://my_domain:6000/facebook_auth"
+            :redirect-uri      "https://www.swrl.co/facebook_auth"
             :client-id APP_ID
             :client-secret APP_SECRET
             :access-query-param :access_token
