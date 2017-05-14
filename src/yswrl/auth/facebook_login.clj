@@ -42,6 +42,7 @@
                                                       "&redirect_uri=" (facebook_redirect_uri req)
                                                       "&client_secret=" APP_SECRET
                                                       "&code=" code)))]
+    (log/debug "Facebook access token body:" access-token-response)
     (get (re-find #"access_token=(.*?)&expires=" access-token-response) 1))
   )
 
