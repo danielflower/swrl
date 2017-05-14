@@ -10,7 +10,7 @@
                                :watch    "read"
                                :watching "Reading"
                                :seen     "read"
-                               :seen-it  "seen it"
+                               :seen-it  "read it"
                                }
                        }
 

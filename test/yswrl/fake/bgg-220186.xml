@@ -1,0 +1,43 @@
+<boardgames termsofuse="http://boardgamegeek.com/xmlapi/termsofuse">
+    <boardgame objectid="220186">
+        <yearpublished>2017</yearpublished>
+        <minplayers>2</minplayers>
+        <maxplayers>5</maxplayers>
+        <playingtime>0</playingtime>
+        <minplaytime>0</minplaytime>
+        <maxplaytime>0</maxplaytime>
+        <age>0</age>
+
+        <name primary="true" sortindex="1">Mottainai: Wutai Mountain</name>
+
+        <description>Mottainai: Wutai Mountain, an expansion for Mottainai that you need only one copy of regardless of
+            player count, is a deck of &amp;quot;Om&amp;quot; works. Each such work can gather its own set of helpers,
+            materials, and sales tucked underneath it, and it has a special ability that grants benefits based on those
+            cards. Expect even more exciting and powerful combinations!&lt;br/&gt;&lt;br/&gt;</description>
+
+        <thumbnail>//cf.geekdo-images.com/images/pic3406882_t.jpg</thumbnail>
+        <image>//cf.geekdo-images.com/images/pic3406882.jpg</image>
+
+        <boardgamefamily objectid="22184">Admin: Unreleased Games</boardgamefamily>
+        <boardgamepublisher objectid="5407">Asmadi Games</boardgamepublisher>
+        <boardgamecategory objectid="1002">Card Game</boardgamecategory>
+        <boardgamedesigner objectid="6001">Carl Chudyk</boardgamedesigner>
+        <boardgameversion objectid="343126">English first edition</boardgameversion>
+        <boardgamecategory objectid="1042">Expansion for Base-game</boardgamecategory>
+        <boardgameexpansion objectid="175199" inbound="true">Mottainai</boardgameexpansion>
+
+        <poll name="suggested_numplayers" title="User Suggested Number of Players" totalvotes="0">
+
+            <results numplayers="5+">
+            </results>
+        </poll>
+
+        <poll name="language_dependence" title="Language Dependence" totalvotes="0">
+        </poll>
+
+        <poll name="suggested_playerage" title="User Suggested Player Age" totalvotes="0">
+        </poll>
+
+
+    </boardgame>
+</boardgames>

@@ -4,7 +4,9 @@
             [compojure.core :refer [defroutes context GET POST]]
             [yswrl.swirls.tmdb :as tmdb]
             [yswrl.swirls.itunes :as itunes]
-            [yswrl.swirls.amazon :as amazon]))
+            [yswrl.swirls.amazon :as amazon]
+            [yswrl.swirls.boardgamegeek :as bgg]
+            ))
 
 (defn json-response [data & [status]]
   {:status  (or status 200)
@@ -49,6 +51,11 @@
     (-> (amazon/search-games query)
         json-response)))
 
+(defn search-board-game-route []
+  (GET "/boardgame" [query]
+    (-> (bgg/search query)
+        json-response)))
+
 (defroutes swirl-search-routes
            (context "/api/v1/search" []
              (search-films-route)
@@ -58,5 +65,6 @@
              (search-podcast-route)
              (search-app-route)
              (search-video-game-route)
+             (search-board-game-route)
              ))
 
