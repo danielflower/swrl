@@ -28,7 +28,7 @@
                            (-> parsed-result
                                zip/node
                                :content))
-           detailed-results (pmap (fn [id]
+           detailed-results (map (fn [id]
                                     (-> (get-raw-details id)
                                         xml-data/parse-str
                                         zip/xml-zip))
