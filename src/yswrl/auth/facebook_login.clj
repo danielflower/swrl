@@ -41,9 +41,11 @@
                                                       "client_id=" APP_ID
                                                       "&redirect_uri=" (facebook_redirect_uri req)
                                                       "&client_secret=" APP_SECRET
-                                                      "&code=" code)))]
+                                                      "&code=" code)
+                                                 {:as :json
+                                                  :accept :json}))]
     (log/info "Facebook access token body:" access-token-response)
-    (get (re-find #"access_token=(.*?)&expires=" access-token-response) 1))
+    (:access_token access-token-response))
   )
 
 (defn get-facebook-user-details [access-token]

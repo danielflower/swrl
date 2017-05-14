@@ -39,7 +39,7 @@
     (let [req {:scheme ":http" :server-port 6000 :server-name "my_domain" :someother "token" :session "some_session"}
           code "abcde"]
       (with-faked-responses
-        (is (= "CAAMtYQ85KN8BAKV3yyrXof7tRSMtw9JP62rx0y6MlLcsZBFBok7laFFgIyO0w8pyGQsDdZAVeZAQQDAnT1G5uDnaYeRJNy1678F4mxuYV30Qw4s4Q8EePRCcQKPnHfClUmzeDB8FlbjFTyAQqt59HI3yfvKlkWjtFJN8cZCRFXZBUchimsre7lLOPMJVfb8sJOS1W6qJMgpDEA8zza6VB"
+        (is (= "EAAMsifPjZAJgBAMP4uxVTc2elTwYpRZBVuZAqQvRxtXyxlTtuOXdDUkLeXQsg4HW9D4yW9ZCZAKZAwMgzmoboXbWhHhyV3ZAjMtrqtAgsuhpb93AnKWuZBNChqoZCWNIE9ufbSaY19Hiht8mqwwMZBtIw9wYyjGRgXb00ZD"
                (facebook-login/get-facebook-access-token code req))))))
 
   (testing "returns nil when response has no token"
