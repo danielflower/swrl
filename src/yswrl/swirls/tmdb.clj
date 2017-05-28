@@ -42,7 +42,7 @@
      :imdb-id         (body :imdb_id)
      :url             (body :homepage)
      :tagline         (let [tagline (body :tagline)] (if (clojure.string/blank? tagline) "None" tagline))
-     :genres          (map (fn [r] {:genre (r :name)}) (body :genres))}
+     :genres          (map (fn [r] (r :name)) (body :genres))}
     ))
 
 (defn get-tmdb-id-from-imdb-id [imdb-id]

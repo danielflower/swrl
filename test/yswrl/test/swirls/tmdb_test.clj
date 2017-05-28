@@ -59,9 +59,9 @@
               :imdb-id         "tt0333766"
               :tagline         "None"
               :release-year    "2004"
-              :genres          [{:genre "Comedy"}
-                                {:genre "Drama"}
-                                {:genre "Romance"}]}
+              :genres          ["Comedy"
+                                "Drama"
+                                "Romance"]}
              (tmdb/get-movie-from-tmdb-id 401)))))
 
   (testing "Can get the tv details from a tmdb ID"
