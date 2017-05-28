@@ -55,13 +55,30 @@
               :thumbnail-url   "https://image.tmdb.org/t/p/original/u7IASCZ02Q94SYklSIR2609inis.jpg"
               :large-image-url "https://image.tmdb.org/t/p/original/u7IASCZ02Q94SYklSIR2609inis.jpg"
               :url             "http://www2.foxsearchlight.com/gardenstate/"
-              :overview        "Andrew returns to his hometown for the funeral of his mother, a journey that reconnects him with past friends. The trip coincides with his decision to stop taking his powerful antidepressants. A chance meeting with Sam - a girl also suffering from various maladies - opens up the possibility of rekindling emotional attachments, confronting his psychologist father, and perhaps beginning a new life."
+              :overview        "A quietly troubled young man returns home for his mother's funeral after being estranged from his family for a decade."
               :imdb-id         "tt0333766"
               :tagline         "None"
               :release-year    "2004"
               :genres          ["Comedy"
                                 "Drama"
-                                "Romance"]}
+                                "Romance"]
+              :director        "Zach Braff"
+              :ratings         [
+                                {
+                                 :Source "Internet Movie Database",
+                                 :Value  "7.6/10"
+                                 },
+                                {
+                                 :Source "Rotten Tomatoes",
+                                 :Value  "86%"
+                                 },
+                                {
+                                 :Source "Metacritic",
+                                 :Value  "67/100"
+                                 }
+                                ]
+              :runtime         "102 min"
+              :actors          "Zach Braff, Kenneth Graymez, George C. Wolfe, Austin Lysy"}
              (tmdb/get-movie-from-tmdb-id 401)))))
 
   (testing "Can get the tv details from a tmdb ID"

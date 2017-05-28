@@ -54,6 +54,11 @@
                            (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/tmdb.tmdb-find-by-imdb-id." (get (re-find #"\/3\/find\/(.+)$" (req :uri)) 1) ".json"))})
                            ;
 
+                           ;get a movie from omdb http://www.omdbapi.com/?apikey=d33a4ae1&i=tt0333766
+                           #"http:\/\/www\.omdbapi\.com\/\?apikey=d33a4ae1&i=tt0333766"
+                           (fn [req] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/omdb-tt0333766.json"))})
+                           ;
+
                            ;get metadata from an imdb url
                            #"http:\/\/www\.imdb\.com\/title\/tt1486217\/\?ref_=nv_sr_1"
                            (fn [_] {:status 200 :headers {} :body (slurp (str "test/yswrl/fake/website.get-metadata.imdb.html"))})

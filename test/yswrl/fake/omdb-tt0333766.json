@@ -1,0 +1,40 @@
+{
+  "Title": "Garden State",
+  "Year": "2004",
+  "Rated": "R",
+  "Released": "20 Aug 2004",
+  "Runtime": "102 min",
+  "Genre": "Comedy, Drama, Romance",
+  "Director": "Zach Braff",
+  "Writer": "Zach Braff",
+  "Actors": "Zach Braff, Kenneth Graymez, George C. Wolfe, Austin Lysy",
+  "Plot": "A quietly troubled young man returns home for his mother's funeral after being estranged from his family for a decade.",
+  "Language": "English, Klingon",
+  "Country": "USA",
+  "Awards": "13 wins & 38 nominations.",
+  "Poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjc5MDE0NjkxOF5BMl5BanBnXkFtZTcwNzA0NTkyMw@@._V1_SX300.jpg",
+  "Ratings": [
+    {
+      "Source": "Internet Movie Database",
+      "Value": "7.6/10"
+    },
+    {
+      "Source": "Rotten Tomatoes",
+      "Value": "86%"
+    },
+    {
+      "Source": "Metacritic",
+      "Value": "67/100"
+    }
+  ],
+  "Metascore": "67",
+  "imdbRating": "7.6",
+  "imdbVotes": "192,195",
+  "imdbID": "tt0333766",
+  "Type": "movie",
+  "DVD": "N/A",
+  "BoxOffice": "$26,706,668",
+  "Production": "Fox Searchlight",
+  "Website": "http://www2.foxsearchlight.com/gardenstate/",
+  "Response": "True"
+}

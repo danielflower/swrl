@@ -32,9 +32,10 @@
 (defn get-movie-from-tmdb-id [tmdb-id]
   (let [url (str "https://api.themoviedb.org/3/movie/" tmdb-id "?api_key=" TMDB-API-KEY)
         result (client/get url {:accept :json :as :json})
-        body (result :body)]
+        body (result :body)
+        omdb-body (:body (client/get (str "http://www.omdbapi.com/?apikey=d33a4ae1&i=" (:imdb_id body)) {:accept :json :as :json}))]
     {:title           (body :title)
-     :overview        (body :overview)
+     :overview        (or (:Plot omdb-body) (body :overview))
      :release-year    (release-year (body :release_date))
      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
@@ -42,7 +43,11 @@
      :imdb-id         (body :imdb_id)
      :url             (body :homepage)
      :tagline         (let [tagline (body :tagline)] (if (clojure.string/blank? tagline) "None" tagline))
-     :genres          (map (fn [r] (r :name)) (body :genres))}
+     :genres          (map (fn [r] (r :name)) (body :genres))
+     :director        (:Director omdb-body)
+     :ratings         (:Ratings omdb-body)
+     :runtime         (:Runtime omdb-body)
+     :actors          (:Actors omdb-body)}
     ))
 
 (defn get-tmdb-id-from-imdb-id [imdb-id]
