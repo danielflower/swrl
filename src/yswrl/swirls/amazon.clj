@@ -107,6 +107,7 @@
      :author      (apply str (xml-> book :ItemAttributes :Author text))
      :big-img-url (apply str (xml-> book :LargeImage :URL text))
      :blurb       (apply str (xml-> book :EditorialReviews :EditorialReview :Content text))
+     :book-id     asin
      }
     ))
 (defn get-game [asin]
@@ -120,6 +121,7 @@
      :platform    (apply str (xml-> game :ItemAttributes :Platform text))
      :big-img-url (apply str (xml-> game :LargeImage :URL text))
      :blurb       (apply str (xml-> game :EditorialReviews :EditorialReview :Content text))
+     :game-id asin
      }
     ))
 
