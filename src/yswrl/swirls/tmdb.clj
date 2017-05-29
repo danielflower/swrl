@@ -1,7 +1,8 @@
 (ns yswrl.swirls.tmdb
   (:require [clj-http.client :as client]
             [clj-time.format :as f]
-            [yswrl.links :as links]))
+            [yswrl.links :as links]
+            [clojure.string :as string]))
 
 (def TMDB-API-KEY "c3356e66739e40233c7870d42b30bc34")
 (def THUMBNAIL-URL-PREFIX "https://image.tmdb.org/t/p/original")
@@ -90,6 +91,8 @@
      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
      :tmdb-id         (body :id)
+     :overview        (body :overview)
+     :creator         (string/join "," (map :name (body :created_by)))
      ;;:imdb-id (body :imdb_id) ;; API doesn't provide this yet, sadface
      :url             (body :homepage)
      }

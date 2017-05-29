@@ -85,6 +85,8 @@
     (with-faked-responses
       (is (= {:title           "Black Mirror"
               :tmdb-id         42009
+              :creator         "Charlie Brooker, Another Creator"
+              :overview        "Black Mirror is a British television drama series created by Charlie Brooker and shows the dark side of life and technology. The series is produced by Zeppotron for Endemol. Regarding the programme's content and structure, Brooker noted, \"each episode has a different cast, a different setting, even a different reality. But they're all about the way we live now – and the way we might be living in 10 minutes' time if we're clumsy.\"\n\nAn Endemol press release describes the series as \"a hybrid of The Twilight Zone and Tales of the Unexpected which taps into our contemporary unease about our modern world\", with the stories having a \"techno-paranoia\" feel. Channel 4 describes the first episode as \"a twisted parable for the Twitter age\". Black Mirror Series 1 was released on DVD on 27 February 2012.\n\nIn November 2012, Black Mirror won the Best TV movie/mini-series award at the International Emmys.\n\nAnnounced on 12 July 2012, the second series began broadcasting on 11 February 2013. Like the first series, it is made up of three episodes with unconnected narratives.\n\nRobert Downey, Jr. has optioned the episode The Entire History of You, to potentially be made into a film by Warner Bros. and his own production company Team Downey."
               :thumbnail-url   "https://image.tmdb.org/t/p/original/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
               :large-image-url "https://image.tmdb.org/t/p/original/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
               :url             "http://www.channel4.com/programmes/black-mirror/"
