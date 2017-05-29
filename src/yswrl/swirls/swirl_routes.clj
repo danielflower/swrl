@@ -244,8 +244,7 @@
     (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id) nil)
     (if (not= (swirl :author_id) (commentor :id))
       (do (network/store (swirl :author_id) :knows (commentor :id))
-          (network/store (commentor :id) :knows (swirl :author_id))
-          (repo/update-weightings-for-friend-changes [(:id commentor) (:author_id swirl)])))
+          (network/store (commentor :id) :knows (swirl :author_id))))
     (redirect (yswrl.links/swirl swirl-id (comment :id)))))
 
 

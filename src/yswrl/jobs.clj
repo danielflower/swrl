@@ -2,7 +2,9 @@
   (:require [yswrl.swirls.suggestion-job :as suggs]
             [clojure.tools.logging :as log]
             [yswrl.user.notifications :as notifications]
-            [yswrl.user.nagbot :as nagbot])
+            [yswrl.user.nagbot :as nagbot]
+            [yswrl.swirls.swirls-repo :as repo]
+            [yswrl.auth.auth-repo :as auth-repo])
   (:use yswrl.layout)
   (:gen-class))
 
@@ -20,4 +22,10 @@
       (log/error "Error while sending reminders" e)))
 
   (suggs/send-unsent-suggestions)
-  (log/info "Scheduled jobs complete"))
+
+  (log/info "Starting Friend Weighting Updates")
+  (repo/update-weightings-for-friend-changes (mapv :user-id (auth-repo/get-all-users)))
+  (log/info "Friend Weighting Updates complete")
+
+  (log/info "Scheduled jobs complete")
+  )

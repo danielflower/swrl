@@ -21,14 +21,14 @@
 
 (selmer.parser/cache-off!)
 
-(defn assert-swirl-weightings-value [session swirl-id user-id weighting-to-check value-to-check]
+(defn assert-swirl-weightings-value [session comment swirl-id user-id weighting-to-check value-to-check]
   (is (= value-to-check
          (-> (select db/swirl-weightings
                      (fields weighting-to-check)
                      (where {:swirl_id swirl-id
                              :user_id  user-id}))
              first
-             weighting-to-check)))
+             weighting-to-check)) comment)
   session)
 
 (deftest weightings-table-gets-updated-correctly
@@ -52,10 +52,10 @@
           (features/save-swirl-id test-state :swirl-id)
           (features/save-url test-state :view-swirl-uri)
 
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :is_author true)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :is_author false)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :is_recipient false)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :is_recipient false)
+          (assert-swirl-weightings-value "author test1" (@test-state :swirl-id) (:id user1) :is_author true)
+          (assert-swirl-weightings-value "author test2" (@test-state :swirl-id) (:id user2) :is_author false)
+          (assert-swirl-weightings-value "recipient test1" (@test-state :swirl-id) (:id user1) :is_recipient false)
+          (assert-swirl-weightings-value "recipient test2" (@test-state :swirl-id) (:id user2) :is_recipient false)
 
           (features/assert-swirl-title-in-header "watch" "How to chop an ONION using CRYSTALS with Jamie Oliver")
 
@@ -66,41 +66,40 @@
           (fill-in :.recipients (:email user2))
           (actions/save-swirl)
 
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :is_recipient true)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :author_is_friend true)
+          (assert-swirl-weightings-value "recipient test3" (@test-state :swirl-id) (:id user2) :is_recipient true)
 
           (visit (@test-state :view-swirl-uri))
           (actions/submit [(enlive/attr= :value "Loved it")])
 
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :has_responded true)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :has_responded false)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_positive_responses 1)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_positive_responses 1)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_positive_responses_from_friends 0)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_positive_responses_from_friends 1)
+          (assert-swirl-weightings-value "has responded test1" (@test-state :swirl-id) (:id user1) :has_responded true)
+          (assert-swirl-weightings-value "has responded test1" (@test-state :swirl-id) (:id user2) :has_responded false)
+          (assert-swirl-weightings-value "number of positives test1" (@test-state :swirl-id) (:id user1) :number_of_positive_responses 1)
+          (assert-swirl-weightings-value "number of positives test2" (@test-state :swirl-id) (:id user2) :number_of_positive_responses 1)
+          (assert-swirl-weightings-value "number of positives from friends test1" (@test-state :swirl-id) (:id user1) :number_of_positive_responses_from_friends 0)
+          (assert-swirl-weightings-value "number of positives from friends test2" (@test-state :swirl-id) (:id user2) :number_of_positive_responses_from_friends 1)
 
           ; multiple positive responses don't count up the value
           (actions/submit [(enlive/attr= :value "Loved it")])
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_positive_responses 1)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_positive_responses 1)
+          (assert-swirl-weightings-value "number of positives test3" (@test-state :swirl-id) (:id user1) :number_of_positive_responses 1)
+          (assert-swirl-weightings-value "number of positives test4" (@test-state :swirl-id) (:id user2) :number_of_positive_responses 1)
 
           ;let's add a comment
           (fill-in :.editor "a comment")
           (actions/submit [(enlive/attr= :value "Add comment")])
 
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_comments 1)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_comments_from_friends 0)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_comments 1)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_comments_from_friends 1)
+          (assert-swirl-weightings-value "number of comments test1" (@test-state :swirl-id) (:id user1) :number_of_comments 1)
+          (assert-swirl-weightings-value "number of comments from friends test1" (@test-state :swirl-id) (:id user1) :number_of_comments_from_friends 0)
+          (assert-swirl-weightings-value "number of comments test2" (@test-state :swirl-id) (:id user2) :number_of_comments 1)
+          (assert-swirl-weightings-value "number of comments from friends test2" (@test-state :swirl-id) (:id user2) :number_of_comments_from_friends 1)
 
           ;let's add another comment!
           (fill-in :.editor "a comment")
           (actions/submit [(enlive/attr= :value "Add comment")])
 
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_comments 2)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user1) :number_of_comments_from_friends 0)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_comments 2)
-          (assert-swirl-weightings-value (@test-state :swirl-id) (:id user2) :number_of_comments_from_friends 2)
+          (assert-swirl-weightings-value "number of comments test3" (@test-state :swirl-id) (:id user1) :number_of_comments 2)
+          (assert-swirl-weightings-value "number of comments from friends test3" (@test-state :swirl-id) (:id user1) :number_of_comments_from_friends 0)
+          (assert-swirl-weightings-value "number of comments test4" (@test-state :swirl-id) (:id user2) :number_of_comments 2)
+          (assert-swirl-weightings-value "number of comments from friends test4" (@test-state :swirl-id) (:id user2) :number_of_comments_from_friends 2)
 
           ))))
 

@@ -8,7 +8,8 @@
             [yswrl.swirls.swirl-states :as states]
             [yswrl.user.notifications :as notifications]
             [yswrl.utils :as utils]
-            [korma.core :as k])
+            [korma.core :as k]
+            [clj-time.core :as time])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.db)
 
@@ -57,7 +58,8 @@
       (if (-> (k/select db/positive-responses (k/fields :summary) (k/where {:summary summary}))
               count
               (> 0))
-        (db/execute (str "UPDATE swirl_weightings sw
+        (do (log/debug "START: update respond to swirl: " (time/now))
+            (db/execute (str "UPDATE swirl_weightings sw
 SET
 number_of_positive_responses = (SELECT COUNT(1) FROM swirl_responses where swirl_id = sw.swirl_id and
                                             summary in (SELECT summary from positive_responses)),
@@ -66,7 +68,8 @@ number_of_positive_responses_from_friends = (SELECT COUNT(1) FROM swirl_response
                                              r.responder in (SELECT another_user_id from network_connections
                                                               where
                                                                user_id=sw.user_id and relation_type='knows'))
-WHERE sw.swirl_id = " swirl-id)))
+WHERE sw.swirl_id = " swirl-id))
+            (log/debug "DONE: update respond to swirl: " (time/now))))
       (k/update db/suggestions
                 (k/set-fields {:response_id (response :id)})
                 (k/where (or
@@ -105,6 +108,7 @@ WHERE sw.swirl_id = " swirl-id)))
     (k/update db/swirl-weightings
               (k/set-fields {:number_of_comments (k/raw "1 + number_of_comments")})
               (k/where {:swirl_id swirl-id}))
+    (log/debug "START: create-comment: " (time/now))
     (db/execute (str "UPDATE swirl_weightings sw
 SET
 number_of_comments_from_friends = (SELECT COUNT(1) FROM comments c
@@ -114,6 +118,7 @@ number_of_comments_from_friends = (SELECT COUNT(1) FROM comments c
                                        where
                                        user_id=sw.user_id and relation_type='knows'))
 WHERE sw.swirl_id = " swirl-id))
+    (log/debug "END: create-comment: " (time/now))
     comment))
 
 (defn save-draft-swirl
@@ -191,7 +196,6 @@ AND sw.user_id IN (SELECT another_user_id from all_network_conns
                 (k/set-fields {:is_recipient true})
                 (k/where {:swirl_id swirl-id
                           :user_id  [in recipient-ids]}))
-      (update-weightings-for-friend-changes (vec (merge recipient-ids author-id)))
       )))
 
 (defn publish-swirl
