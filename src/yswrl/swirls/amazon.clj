@@ -90,7 +90,7 @@
                                :large-image-url (apply str (xml-> r :LargeImage :URL text))}) (xml-> result :Items :Item))
         })))
   ([search-term]
-   (search-books search-term "")))
+   (search-games search-term "")))
 
 
 (defn item-url [item-id]
