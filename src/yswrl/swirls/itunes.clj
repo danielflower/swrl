@@ -65,7 +65,9 @@
      :thumbnail-url (clojure.string/replace-first (album :artworkUrl100) "100x100" "600x600")
      :tracks        (map (fn [r] {:track-name (r :trackName)
                                   :title      (r :collectionName)}) (rest (body :results)))
-     :itunes-id     itunes-collection-id}
+     :itunes-id     itunes-collection-id
+     :genres        [(album :primaryGenreName)]
+     }
     ))
 
 (defn get-itunes-app [itunes-collection-id]
@@ -76,6 +78,9 @@
     {:title         (app :trackName)
      :thumbnail-url (clojure.string/replace-first (app :artworkUrl100) "100x100" "600x600")
      :itunes-id     itunes-collection-id
+     :genres        (app :genres)
+     :artist-name   (app :artistName)
+     :description   (app :description)
      }
     ))
 
@@ -87,5 +92,7 @@
     {:title         (app :trackName)
      :thumbnail-url (clojure.string/replace-first (app :artworkUrl100) "100x100" "600x600")
      :itunes-id     itunes-collection-id
+     :genres        (app :genres)
+     :artist-name   (app :artistName)
      }
     ))

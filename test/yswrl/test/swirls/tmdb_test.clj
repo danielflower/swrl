@@ -90,11 +90,12 @@
               :thumbnail-url   "https://image.tmdb.org/t/p/original/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
               :large-image-url "https://image.tmdb.org/t/p/original/djUxgzSIdfS5vNP2EHIBDIz9I8A.jpg"
               :url             "http://www.channel4.com/programmes/black-mirror/"
+              :genres          ["Drama" "Sci-Fi & Fantasy"]
+              :runtime         60
               ;;:imdb-id "tt2085059" ;; API doesn't provide this yet, sadface
               }
              (tmdb/get-tv-from-tmdb-id 42009)))
-      )
-    )
+      ))
 
   (testing "Can get the tmdb id from an IMDB ID"
     (with-faked-responses

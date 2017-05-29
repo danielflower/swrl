@@ -92,8 +92,10 @@
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
      :tmdb-id         (body :id)
      :overview        (body :overview)
-     :creator         (string/join "," (map :name (body :created_by)))
+     :creator         (string/join ", " (map :name (body :created_by)))
      ;;:imdb-id (body :imdb_id) ;; API doesn't provide this yet, sadface
      :url             (body :homepage)
+     :genres          (map :name (body :genres))
+     :runtime         (reduce max (body :episode_run_time))
      }
     ))
