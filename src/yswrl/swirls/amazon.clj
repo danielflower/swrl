@@ -121,6 +121,8 @@
     {:url         (apply str (xml-> game :DetailPageURL text))
      :title       (apply str (xml-> game :ItemAttributes :Title text))
      :platform    (apply str (xml-> game :ItemAttributes :Platform text))
+     :genres      [(apply str (xml-> game :ItemAttributes :Genre text))]
+     :publisher      [(apply str (xml-> game :ItemAttributes :Publisher text))]
      :big-img-url (apply str (xml-> game :LargeImage :URL text))
      :blurb       (apply str (xml-> game :EditorialReviews :EditorialReview :Content text))
      :game-id     asin
