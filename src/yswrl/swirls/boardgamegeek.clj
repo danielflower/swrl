@@ -4,7 +4,8 @@
     [clj-http.client :as client]
     [clojure.data.xml :as xml-data]
     [clojure.zip :as zip]
-    [clojure.string :as string]))
+    [clojure.string :as string]
+    [clojure.string :as str]))
 
 (defn get-raw-results [search-term]
   (-> (client/get (str "https://www.boardgamegeek.com/xmlapi/search?search=" search-term))
@@ -22,8 +23,14 @@
    :categories      (xml-> raw-results :boardgame :boardgamecategory text)
    :bgg-id          (first (xml-> raw-results :boardgame (attr :objectid)))
    :designer        (string/join ", " (xml-> raw-results :boardgame :boardgamedesigner text))
-   :thumbnail-url   (str "https:" (apply str (xml-> raw-results :boardgame :image text)))
-   :large-image-url (str "https:" (apply str (xml-> raw-results :boardgame :image text)))})
+   :thumbnail-url   (let [url-from-xml (apply str (xml-> raw-results :boardgame :image text))]
+                      (if (string/starts-with? url-from-xml "http")
+                        url-from-xml
+                        (str "https:" url-from-xml)))
+   :large-image-url (let [url-from-xml (apply str (xml-> raw-results :boardgame :image text))]
+                      (if (string/starts-with? url-from-xml "http")
+                        url-from-xml
+                        (str "https:" url-from-xml)))})
 
 (defn search
   ([search-term query-string]
