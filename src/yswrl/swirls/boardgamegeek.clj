@@ -23,6 +23,10 @@
    :categories      (xml-> raw-results :boardgame :boardgamecategory text)
    :bgg-id          (first (xml-> raw-results :boardgame (attr :objectid)))
    :designer        (string/join ", " (xml-> raw-results :boardgame :boardgamedesigner text))
+   :min-players     (apply str (xml-> raw-results :boardgame :minplayers text))
+   :max-players     (apply str (xml-> raw-results :boardgame :maxplayers text))
+   :min-playtime    (apply str (xml-> raw-results :boardgame :minplaytime text))
+   :max-playtime    (apply str (xml-> raw-results :boardgame :maxplaytime text))
    :thumbnail-url   (let [url-from-xml (apply str (xml-> raw-results :boardgame :image text))]
                       (if (string/starts-with? url-from-xml "http")
                         url-from-xml
