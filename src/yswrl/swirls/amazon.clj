@@ -103,29 +103,30 @@
         zip-data (zip/xml-zip result-data)
         book (xml1-> zip-data :Items :Item)
         ]
-    {:url         (apply str (xml-> book :DetailPageURL text))
-     :title       (apply str (xml-> book :ItemAttributes :Title text))
-     :author      (apply str (xml-> book :ItemAttributes :Author text))
-     :big-img-url (apply str (xml-> book :LargeImage :URL text))
-     :blurb       (apply str (xml-> book :EditorialReviews :EditorialReview :Content text))
-     :book-id     asin
+    {:url              (apply str (xml-> book :DetailPageURL text))
+     :title            (apply str (xml-> book :ItemAttributes :Title text))
+     :author           (apply str (xml-> book :ItemAttributes :Author text))
+     :big-img-url      (apply str (xml-> book :LargeImage :URL text))
+     :blurb            (apply str (xml-> book :EditorialReviews :EditorialReview :Content text))
+     :publication-date (apply str (xml-> book :ItemAttributes :PublicationDate text))
+     :book-id          asin
      }
     ))
 (defn get-game [asin]
   (let [url (item-url asin)
         raw-data ((client/get url) :body)
-        _ (println raw-data)
         result-data (xml-data/parse-str raw-data)
         zip-data (zip/xml-zip result-data)
         game (xml1-> zip-data :Items :Item)]
-    {:url         (apply str (xml-> game :DetailPageURL text))
-     :title       (apply str (xml-> game :ItemAttributes :Title text))
-     :platform    (apply str (xml-> game :ItemAttributes :Platform text))
-     :genres      [(apply str (xml-> game :ItemAttributes :Genre text))]
-     :publisher   (apply str (xml-> game :ItemAttributes :Publisher text))
-     :big-img-url (apply str (xml-> game :LargeImage :URL text))
-     :blurb       (apply str (xml-> game :EditorialReviews :EditorialReview :Content text))
-     :game-id     asin
+    {:url              (apply str (xml-> game :DetailPageURL text))
+     :title            (apply str (xml-> game :ItemAttributes :Title text))
+     :platform         (apply str (xml-> game :ItemAttributes :Platform text))
+     :genres           [(apply str (xml-> game :ItemAttributes :Genre text))]
+     :publisher        (apply str (xml-> game :ItemAttributes :Publisher text))
+     :big-img-url      (apply str (xml-> game :LargeImage :URL text))
+     :blurb            (apply str (xml-> game :EditorialReviews :EditorialReview :Content text))
+     :publication-date (apply str (xml-> game :ItemAttributes :PublicationDate text))
+     :game-id          asin
      }
     ))
 
