@@ -49,7 +49,7 @@
   )
 
 (defn get-facebook-user-details [access-token]
-  (let [user-details (-> (client/get (str "https://graph.facebook.com/me?access_token=" access-token))
+  (let [user-details (-> (client/get (str "https://graph.facebook.com/me?fields=email,name&access_token=" access-token))
                          :body
                          (parse/parse-string))]
     (log/info "Facebook user details: " user-details)
