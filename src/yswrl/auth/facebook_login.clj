@@ -42,17 +42,18 @@
                                                       "&redirect_uri=" (facebook_redirect_uri req)
                                                       "&client_secret=" APP_SECRET
                                                       "&code=" code)
-                                                 {:as :json
+                                                 {:as     :json
                                                   :accept :json}))]
     (log/info "Facebook access token body:" access-token-response)
     (:access_token access-token-response))
   )
 
 (defn get-facebook-user-details [access-token]
-  (-> (client/get (str "https://graph.facebook.com/me?access_token=" access-token))
-      :body
-      (parse/parse-string))
-  )
+  (let [user-details (-> (client/get (str "https://graph.facebook.com/me?access_token=" access-token))
+                         :body
+                         (parse/parse-string))]
+    (log/info "Facebook user details: " user-details)
+    user-details))
 
 (defn handle-facebook-auth-response [req]
   (if-let [code (get-facebook-code req)]
@@ -60,8 +61,8 @@
       (if-let [user-details (get-facebook-user-details access-token)]
         (if-let [email (get user-details "email")]
           (if-let [username (get user-details "name")]
-            (routes/attempt-thirdparty-login username email {:id_type :facebook_id
-                                                             :id (get user-details "id")
+            (routes/attempt-thirdparty-login username email {:id_type     :facebook_id
+                                                             :id          (get user-details "id")
                                                              :avatar_type "facebook"} (get-in req [:session :return-url]) req)
             (facebook-error req "Cannot get username from Facebook details"))
           (facebook-error req "Cannot get email from Facebook details"))
@@ -72,7 +73,7 @@
 
 (defn handle-facebook-login [return-url req]
   (let [return-url (routes/redirect-url return-url)
-        newSession  (assoc (req :session) :return-url return-url)
+        newSession (assoc (req :session) :return-url return-url)
         response (redirect
                    (:uri (oauth2/make-auth-request (facebook-oauth2 req))))]
     (-> response (assoc :session newSession)))
