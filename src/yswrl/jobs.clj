@@ -27,17 +27,13 @@
   (repo/update-weightings-for-friend-changes (mapv :user-id (auth-repo/get-all-users)))
   (log/info "Friend Weighting Updates complete")
 
-  (log/info "Updating movie external ids")
-  (repo/update-movie-external-ids)
-  (log/info "Updating movie external ids complete")
+  (log/info "Updating game external ids")
+  (repo/update-game-external-ids)
+  (log/info "Updating game external ids complete")
 
-  (log/info "Updating album external ids")
-  (repo/update-album-external-ids)
-  (log/info "Updating movie external ids complete")
-
-  (log/info "Updating book external ids")
-  (repo/update-book-external-ids)
-  (log/info "Updating book external ids complete")
+  (log/info "Updating website external ids")
+  (repo/update-website-external-ids)
+  (log/info "Updating website external ids complete")
 
 
   (log/info "Scheduled jobs complete")

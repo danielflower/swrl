@@ -317,3 +317,39 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
                     (k/where {:id (:id swrl)}))))))
   (log/info "Finished updating book external IDs"))
 
+(defn update-game-external-ids []
+  (log/info "Updating game external IDs")
+  (let [swrls-with-no-external-id (-> (lookups/multiple-live-swirls-admin)
+                                      (k/where {:external_id nil
+                                                :type        "game"})
+                                      (k/select))]
+    (doseq [swrl swrls-with-no-external-id]
+      (log/info "updating external id for: " swrl)
+      (if-let [asin-link (->> (get-links (:id swrl))
+                               (filter #(= "A" (:type_code %)))
+                               first)]
+        (do
+          (log/info "asin link: " asin-link)
+          (k/update db/swirls
+                    (k/set-fields {:external_id (:code asin-link)})
+                    (k/where {:id (:id swrl)}))))))
+  (log/info "Finished updating game external IDs"))
+
+(defn update-website-external-ids []
+  (log/info "Updating website external IDs")
+  (let [swrls-with-no-external-id (-> (lookups/multiple-live-swirls-admin)
+                                      (k/where {:external_id nil
+                                                :type        "website"})
+                                      (k/select))]
+    (doseq [swrl swrls-with-no-external-id]
+      (log/info "updating external id for: " swrl)
+      (if-let [web-link (->> (get-links (:id swrl))
+                               (filter #(= "W" (:type_code %)))
+                               first)]
+        (do
+          (log/info "web link: " web-link)
+          (k/update db/swirls
+                    (k/set-fields {:external_id (:code web-link)})
+                    (k/where {:id (:id swrl)}))))))
+  (log/info "Finished updating website external IDs"))
+
