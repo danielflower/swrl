@@ -57,9 +57,6 @@
 
   (log/info "Running DB migration")
   (yswrl.db/update-db)
-  (log/info "Updating video external ids")
-  (repo/update-video-external-ids)
-  (log/info "Updating video external ids complete")
   (log/info "DB migration complete")
   (if (env :dev) (parser/cache-off!)))
 (log/info "-=[ yswrl started successfully"
