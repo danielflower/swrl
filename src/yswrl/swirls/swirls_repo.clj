@@ -269,11 +269,15 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
                                                 :type        "movie"})
                                       (k/select))]
     (doseq [swrl swrls-with-no-external-id]
+      (log/info "updating external id for: " swrl)
       (if-let [movie-link (->> (get-links (:id swrl))
                                (filter #(= "M" (:type_code %)))
                                first)]
-        (let [tmdb-id (:tmdb-id (tmdb/get-tmdb-id-from-imdb-id (:code movie-link)))]
-          (k/update db/swirls
-                    (k/set-fields {:external_id tmdb-id})
-                    (k/where {:id (:id swrl)})))))))
+        (do
+          (log/info "movie link: " movie-link)
+          (let [tmdb-id (:tmdb-id (tmdb/get-tmdb-id-from-imdb-id (:code movie-link)))]
+           (log/info "tmdb id: " tmdb-id)
+            (k/update db/swirls
+                     (k/set-fields {:external_id tmdb-id})
+                     (k/where {:id (:id swrl)}))))))))
 
