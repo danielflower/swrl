@@ -31,5 +31,14 @@
   (repo/update-movie-external-ids)
   (log/info "Updating movie external ids complete")
 
+  (log/info "Updating album external ids")
+  (repo/update-album-external-ids)
+  (log/info "Updating movie external ids complete")
+
+  (log/info "Updating book external ids")
+  (repo/update-book-external-ids)
+  (log/info "Updating book external ids complete")
+
+
   (log/info "Scheduled jobs complete")
   )
