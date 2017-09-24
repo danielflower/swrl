@@ -298,8 +298,8 @@
   (map #(Long/parseLong % 10) strings))
 
 (defn create-swirl-no-interaction
-  [title review type image-url user-id private]
-  (let [swirl (repo/save-draft-swirl type user-id title review image-url)
+  [title review type image-url user-id private external-id]
+  (let [swirl (repo/save-draft-swirl type user-id title review image-url external-id)
         swirl-id (:id swirl)
         _ (publish-swirl {:id user-id} swirl-id nil title review nil nil private type image-url true)
         swirl (lookups/get-swirl (:id swirl))]
@@ -308,7 +308,7 @@
 
 
 (defn create-swirl-app-api []
-  (POST "/create-swirl" [title review type image-url user-id private]
+  (POST "/create-swirl" [title external-id review type image-url user-id private]
     (let [type (or (get-in types/types [type :name])
                    "unknown")
           user-id (Long/parseLong (str user-id))
@@ -316,7 +316,7 @@
           title (or title "unknown")
           private (not= "false" private)
           image-url (or image-url "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
-          response (try (create-swirl-no-interaction title review type image-url user-id private)
+          response (try (create-swirl-no-interaction title review type image-url user-id private external-id)
                         (catch Exception e
                           (log/error "Failure creating swirl from api. Exception:" e)
                           {:error  (.getMessage e)
@@ -324,14 +324,14 @@
       (json-response response (or (:status response) 200)))))
 
 (defn create-swirl-rest-route []
-  (POST "/create-swirl" [title review type imageUrl :as req]
+  (POST "/create-swirl" [title external-id review type imageUrl :as req]
     (let [type (or (get-in types/types [type :name])
                    "unknown")
           review (or review "")
           title (or title "unknown")
           image-url (or imageUrl "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")]
       (guard/requires-login
-        #(create-swirl-no-interaction title review type image-url (:id (session-from req)) false)))))
+        #(create-swirl-no-interaction title review type image-url (:id (session-from req)) false external-id)))))
 
 
 (defn get-swirls-by-id []
@@ -403,13 +403,14 @@
       (utils/interleave-differing-lengths
         (nthrest @existing-swirls 5)
         (deref website 5000 [])
-        (deref albums 5000 [])
-        (deref itunes-podcasts 5000 [])
-        (deref books 5000 [])
         (deref movies 5000 [])
+        (deref books 5000 [])
         (deref tv 5000 [])
+        (deref albums 5000 [])
+        (deref itunes-apps 5000 [])
+        (deref itunes-podcasts 5000 [])
         (deref games 5000 [])
-        (deref itunes-apps 5000 [])))))
+        ))))
 
 (defn search [query user]
   (let [swirls (if (clojure.string/blank? query) [] (get-swirls-from-search query user))]
@@ -431,19 +432,19 @@
                                                      :wishlist wishlist)))
            (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type image-url wishlist :as req]
              (guard/requires-login #(publish-swirl
-                                     (session-from req)
-                                     (Long/parseLong id)
-                                     (user-selector/usernames-and-emails-from-request who emails)
-                                     subject
-                                     review
-                                     (if (clojure.string/blank? origin-swirl-id) nil (Long/parseLong origin-swirl-id))
-                                     (numberise (vectorise groups))
-                                     (if private
-                                       true
-                                       false)
-                                     swirl-type
-                                     image-url
-                                     (= wishlist "true"))))
+                                      (session-from req)
+                                      (Long/parseLong id)
+                                      (user-selector/usernames-and-emails-from-request who emails)
+                                      subject
+                                      review
+                                      (if (clojure.string/blank? origin-swirl-id) nil (Long/parseLong origin-swirl-id))
+                                      (numberise (vectorise groups))
+                                      (if private
+                                        true
+                                        false)
+                                      swirl-type
+                                      image-url
+                                      (= wishlist "true"))))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))

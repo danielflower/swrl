@@ -18,7 +18,9 @@
             [compojure.route :as route]
             [clojure.tools.logging :as log]
             [selmer.parser :as parser]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [yswrl.swirls.lookups :as lookups]
+            [yswrl.swirls.swirls-repo :as repo]))
 
 (defn wrap-site-pages [handler]
   (ring.middleware.anti-forgery/wrap-anti-forgery
@@ -56,9 +58,9 @@
   (log/info "Running DB migration")
   (yswrl.db/update-db)
   (log/info "DB migration complete")
-  (if (env :dev) (parser/cache-off!))
-  (log/info "-=[ yswrl started successfully"
-            (when (env :dev) "using the development profile") "]=-"))
+  (if (env :dev) (parser/cache-off!)))
+(log/info "-=[ yswrl started successfully"
+          (when (env :dev) "using the development profile") "]=-")
 
 (defn destroy
   "destroy will be called when your application

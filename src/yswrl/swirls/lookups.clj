@@ -9,7 +9,7 @@
 ; Queries to get a single swirl with author information
 (defn select-single-swirl [id]
   (-> (select* db/swirls)
-      (fields :id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5 :is_private)
+      (fields :id :external_id :type :author_id :title :review :creation_date :itunes_collection_id :thumbnail_url :users.username :users.email_md5 :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (where {:id id :state [not= states/deleted]})
       (limit 1)))
@@ -53,6 +53,12 @@
 
 ; Queries to get multiple swirls
 
+(defn multiple-live-swirls-admin
+  "For use by admin functions only"
+  []
+  (-> (select* db/swirls)
+      (where {:state states/live})))
+
 (defn multiple-live-swirls [requestor]
   (-> (select* db/swirls)
       (where {:state states/live})                          ; this almost looks like duplication but stops a users draft and deleted swirls from showing in list views
@@ -61,7 +67,7 @@
 
 (defn select-multiple-swirls [requestor max-results skip]
   (-> (multiple-live-swirls requestor)
-      (fields :type :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url :author_id :is_private)
+      (fields :type :external_id :creation_date, :review, :title, :id, :users.username :users.email_md5 :thumbnail_url :author_id :is_private)
       (join :inner db/users (= :users.id :swirls.author_id))
       (offset skip)
       (limit max-results)))
@@ -71,7 +77,7 @@
       (order :id :desc)
       (select)))
 
-(defn get-home-swirls-with-weighting [max-results skip requestor]
+(defn get-home-swirls-with-weighting* [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
       (fields (raw (str "(10 + "
                         "CASE WHEN is_recipient AND has_responded THEN 10
@@ -94,10 +100,19 @@
                         " AS weighting"))
               :swirl_weightings.is_recipient :swirl_weightings.author_is_friend
               :swirl_weightings.number_of_comments :swirl_weightings.number_of_positive_responses
-              :swirl_weightings.number_of_comments_from_friends :swirl_weightings.number_of_positive_responses_from_friends)
+              :swirl_weightings.number_of_comments_from_friends :swirl_weightings.number_of_positive_responses_from_friends
+              :swirl_weightings.is_author)
       (join :inner db/swirl-weightings (= :swirls.id :swirl_weightings.swirl_id))
       (where {:swirl_weightings.user_id (:id requestor)})
-      (order (raw "weighting") :desc)
+      (order (raw "weighting") :desc)))
+
+(defn get-home-swirls-with-weighting [max-results skip requestor]
+  (-> (get-home-swirls-with-weighting* max-results skip requestor)
+      (select)))
+
+(defn get-weighted-swirls-with-external-id [max-results skip requestor]
+  (-> (get-home-swirls-with-weighting* max-results skip requestor)
+      (where {:external_id [not= nil]})
       (select)))
 
 (defn search-for-swirls [max-results skip requestor search-query]
@@ -116,12 +131,6 @@
       (where {:swirls.id [in ids]})
       (order :id :desc)
       (select)))
-
-;TODO: select swirls by weighting!
-;select * from swirl_weightings sw
-;join swirls s on s.id = sw.swirl_id
-;where user_id = 634
-;order by (is_recipient::int * 90000 + author_is_friend::int * 50000 + (EXTRACT(EPOCH FROM NOW()) - EXTRACT(EPOCH FROM updated)) ) desc, updated desc;
 
 (defn get-swirls-authored-by [author-id requestor]
   (-> (select-multiple-swirls requestor 1000 0)
@@ -186,3 +195,4 @@
 
 (defn get-response-count-for-user [user-id]
   (db/query "SELECT r.summary, count(1) AS count FROM swirl_responses r INNER JOIN swirls s ON s.id = r.swirl_id WHERE s.state = ? AND r.responder = ? GROUP BY r.summary ORDER BY r.summary" states/live user-id))
+

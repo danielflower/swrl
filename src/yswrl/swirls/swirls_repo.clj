@@ -9,7 +9,10 @@
             [yswrl.user.notifications :as notifications]
             [yswrl.utils :as utils]
             [korma.core :as k]
-            [clj-time.core :as time])
+            [clj-time.core :as time]
+            [yswrl.swirls.lookups :as lookups]
+            [yswrl.swirls.types :as types]
+            [yswrl.swirls.tmdb :as tmdb])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.db)
 
@@ -123,9 +126,9 @@ WHERE sw.swirl_id = " swirl-id))
 
 (defn save-draft-swirl
   "Returns the swirl if created"
-  [type author-id title review image-thumbnail]
+  [type author-id title review image-thumbnail external_id]
   (let [swirl (k/insert db/swirls
-                        (k/values {:type       type :author_id author-id :title title
+                        (k/values {:type       type :author_id author-id :title title :external_id external_id
                                    :review     review :thumbnail_url image-thumbnail :state states/draft
                                    :is_private false}))]
     ;now add the new rows into the weighting table
@@ -257,4 +260,20 @@ AND sw.user_id IN (SELECT another_user_id from all_network_conns
   (suggestions INNER JOIN users ON users.id = suggestions.recipient_id)
   LEFT JOIN swirl_responses ON swirl_responses.swirl_id = suggestions.swirl_id AND swirl_responses.responder = suggestions.recipient_id
 WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
+
+(defn update-movie-external-ids []
+  (log/info "Updating movie external IDs")
+  (log/info "Finished updating movie external IDs")
+  (let [swrls-with-no-external-id (-> (lookups/multiple-live-swirls-admin)
+                                      (k/where {:external_id nil
+                                                :type        "movie"})
+                                      (k/select))]
+    (doseq [swrl swrls-with-no-external-id]
+      (if-let [movie-link (->> (get-links (:id swrl))
+                               (filter #(= "M" (:type_code %)))
+                               first)]
+        (let [tmdb-id (:tmdb-id (tmdb/get-tmdb-id-from-imdb-id (:code movie-link)))]
+          (k/update db/swirls
+                    (k/set-fields {:external_id tmdb-id})
+                    (k/where {:id (:id swrl)})))))))
 

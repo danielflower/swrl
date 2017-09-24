@@ -27,5 +27,9 @@
   (repo/update-weightings-for-friend-changes (mapv :user-id (auth-repo/get-all-users)))
   (log/info "Friend Weighting Updates complete")
 
+  (log/info "Updating movie external ids")
+  (repo/update-movie-external-ids)
+  (log/info "Updating movie external ids complete")
+
   (log/info "Scheduled jobs complete")
   )

@@ -17,7 +17,7 @@
         outsider (s/create-test-user)
         swirl (s/create-swirl "website" (author :id) (str "Animals " unique-string) "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
         another-swirl (s/create-swirl "website" (author :id) "Yeah" (str "Animals " unique-string) [])
-        draft-swirl (repo/save-draft-swirl "website" (author :id) "Animals (draft)" "What to write...." nil)
+        draft-swirl (repo/save-draft-swirl "website" (author :id) "Animals (draft)" "What to write...." nil "url")
         deleted-swirl-id (repo/delete-swirl (:id (s/create-swirl "website" (author :id) "Gonna delete this" "I'm going to delete this" [])) (author :id))
         _ (repo/respond-to-swirl (swirl :id) "Loved it" responder)]
 
