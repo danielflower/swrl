@@ -5,6 +5,7 @@
             [yswrl.swirls.creation :refer [creation-routes]]
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
+            [yswrl.rest.discover-swirls :refer [discover-routes]]
             [yswrl.auth.facebook-login :refer [facebook-routes]]
             [yswrl.user.preference-routes :refer [preference-routes]]
             [yswrl.groups.group-management :refer [group-routes]]
@@ -76,6 +77,7 @@
         (wrap-api-routes user-resource/user-resource-rest-routes)
         (wrap-api-routes swirl-search-routes)
         (wrap-api-routes swirl-details-routes)
+        (wrap-api-routes discover-routes)
         (wrap-site-pages home-routes)
         (wrap-site-pages auth-routes)
         (wrap-site-pages swirl-routes)

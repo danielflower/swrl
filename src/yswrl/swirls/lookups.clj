@@ -95,6 +95,16 @@
         (order :id :desc)
         (select))))
 
+(defn get-all-swirls-with-details [max-results skip requestor]
+  (map
+    #(update % :details db/from-jsonb)
+    (-> (select-multiple-swirls requestor max-results skip)
+        (fields :swirl_details.details)
+        (where {:external_id [not= nil]
+                :swirl_details.details [not= nil]})
+        (order :id :desc)
+        (select))))
+
 (defn get-home-swirls-with-weighting* [max-results skip requestor]
   (-> (select-multiple-swirls requestor max-results skip)
       (fields (raw (str "(10 + "

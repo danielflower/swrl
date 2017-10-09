@@ -27,7 +27,8 @@
   (repo/update-weightings-for-friend-changes (mapv :user-id (auth-repo/get-all-users)))
   (log/info "Friend Weighting Updates complete")
 
-  (repo/update-all-details)
+  ; Probably shouldn't run this all the time as I think the APIs limit calls per day
+  ; (repo/update-all-details)
 
   (log/info "Scheduled jobs complete")
   )
