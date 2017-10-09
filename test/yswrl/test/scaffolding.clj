@@ -31,8 +31,8 @@
 (defn equal-ignoring-order? [& colls]
   (apply = (map frequencies colls)))
 
-(defn create-swirl ([type authorId title review recipientNames & {:keys [is-private? external-id] :or {is-private? false}}]
-  (let [swirl (swirls-repo/save-draft-swirl type authorId title review nil external-id)]
+(defn create-swirl ([type authorId title review recipientNames & {:keys [is-private? external-id details] :or {is-private? false}}]
+  (let [swirl (swirls-repo/save-draft-swirl details type authorId title review nil external-id)]
     (swirls-repo/publish-swirl (swirl :id) authorId title review recipientNames is-private? (:type swirl) (:thumbnail_url swirl))
     swirl)))
 

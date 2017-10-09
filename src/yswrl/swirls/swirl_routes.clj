@@ -299,7 +299,7 @@
 
 (defn create-swirl-no-interaction
   [title review type image-url user-id private external-id]
-  (let [swirl (repo/save-draft-swirl type user-id title review image-url external-id)
+  (let [swirl (repo/save-draft-swirl nil type user-id title review image-url external-id)
         swirl-id (:id swirl)
         _ (publish-swirl {:id user-id} swirl-id nil title review nil nil private type image-url true)
         swirl (lookups/get-swirl (:id swirl))]

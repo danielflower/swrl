@@ -18,7 +18,7 @@
         group (groups-repo/create-group (author :id) "My Group" "This is a group for the ages")
         _ (groups-repo/add-group-member (group :id) (recipient :id))
         _ (groups-repo/add-group-member (group :id) (author :id))
-        draft-swirl (repo/save-draft-swirl "website" (author :id) "Animals (draft)" "What to write...." nil "url")]
+        draft-swirl (repo/save-draft-swirl nil "website" (author :id) "Animals (draft)" "What to write...." nil "url")]
 
     (testing "Users can be added via the select box and via groups and they are notified only once"
       (routes/publish-swirl author (draft-swirl :id) ["somebody"] "The published swirl" "It is a great swirl" nil [(group :id)] false "movie" "http://fake" false)

@@ -32,7 +32,7 @@
                      ""
                      (str (metadata :embed-html) "<p data-h=\"....or write something here\"></p>"))
         review (str "<p data-ph=\"Why should your friends see this?\"></p>" embed-html)
-        swirl (repo/save-draft-swirl (metadata :type) (author :id) swirl-title review (metadata :image-url) (str url))]
+        swirl (repo/save-draft-swirl metadata (metadata :type) (author :id) swirl-title review (metadata :image-url) (str url))]
     (repo/add-link (swirl :id) (link-types/website-url :code) (str url))
     (redirect (links/edit-swirl (swirl :id) query-string))))
 
@@ -47,7 +47,7 @@
         track-html (clojure.string/join (map #(str "<li>" (% :track-name) "</li>") (album :tracks)))
         review (str "<p data-ph=\"Why should your friends listen to this album?\"></p>"
                     "<p>Track listing:</p><ol>" track-html "</ol>")]
-    (let [swirl (repo/save-draft-swirl "album" (user :id) title review thumbnail-url itunes-collection-id)]
+    (let [swirl (repo/save-draft-swirl album "album" (user :id) title review thumbnail-url itunes-collection-id)]
       (repo/add-link (swirl :id) (link-types/itunes-id :code) itunes-collection-id)
       (redirect (links/edit-swirl (swirl :id) query-string)))))
 
@@ -56,7 +56,7 @@
         title (app :title)
         thumbnail-url (app :thumbnail-url)
         review (str "<p data-ph=\"Why should your friends use this app?\"></p>")]
-    (let [swirl (repo/save-draft-swirl "app" (user :id) title review thumbnail-url itunes-collection-id)]
+    (let [swirl (repo/save-draft-swirl app "app" (user :id) title review thumbnail-url itunes-collection-id)]
       (redirect (links/edit-swirl (swirl :id) query-string)))))
 
 (defn handle-itunes-podcast-creation [itunes-collection-id user query-string]
@@ -64,7 +64,7 @@
         title (podcast :title)
         thumbnail-url (podcast :thumbnail-url)
         review (str "<p data-ph=\"Why should your friends listen to this podcast?\"></p>")]
-    (let [swirl (repo/save-draft-swirl "podcast" (user :id) title review thumbnail-url itunes-collection-id)]
+    (let [swirl (repo/save-draft-swirl podcast "podcast" (user :id) title review thumbnail-url itunes-collection-id)]
       (redirect (links/edit-swirl (swirl :id) query-string)))))
 
 (defn handle-book-creation [asin user query-string]
@@ -74,7 +74,7 @@
         big-img-url (book :big-img-url)
         url (book :url)
         review "<p data-ph=\"Why should your friends read this book?\"></p>"
-        swirl (repo/save-draft-swirl "book" (user :id) title review big-img-url asin)]
+        swirl (repo/save-draft-swirl book "book" (user :id) title review big-img-url asin)]
     (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
     (redirect (links/edit-swirl (swirl :id) query-string))))
@@ -86,7 +86,7 @@
         big-img-url (game :big-img-url)
         url (game :url)
         review "<p data-ph=\"Why should your friends play this game?\"></p>"
-        swirl (repo/save-draft-swirl "game" (user :id) title review big-img-url asin)]
+        swirl (repo/save-draft-swirl game "game" (user :id) title review big-img-url asin)]
     (repo/add-link (swirl :id) (link-types/amazon-asin :code) asin)
     (repo/add-link (swirl :id) (link-types/amazon-url :code) url)
     (redirect (links/edit-swirl (swirl :id) query-string))))
@@ -97,10 +97,9 @@
      (let [movie (tmdb/get-movie-from-tmdb-id tmdb-id)
            review "<p data-ph=\"Why should your friends watch this movie?\"></p>"
            title (str (movie :title) " (" (movie :release-year) ")")
-           swirl (repo/save-draft-swirl "movie" (user :id) title review (movie :large-image-url) tmdb-id)]
+           swirl (repo/save-draft-swirl movie "movie" (user :id) title review (movie :large-image-url) tmdb-id)]
        (repo/add-link (swirl :id) (link-types/imdb-id :code) (movie :imdb-id))
-       (redirect (links/edit-swirl (swirl :id) query-string))
-       )
+       (redirect (links/edit-swirl (swirl :id) query-string)))
      (handle-website-creation url user nil query-string))
     )
   ([tmdb-id user query-string]
@@ -111,7 +110,7 @@
    (if tmdb-id
      (let [tv-show (tmdb/get-tv-from-tmdb-id tmdb-id)
            review "<p data-ph=\"Why should your friends watch this TV show?\"></p>"
-           swirl (repo/save-draft-swirl "tv" (user :id) (tv-show :title) review (tv-show :large-image-url) tmdb-id)]
+           swirl (repo/save-draft-swirl tv-show "tv" (user :id) (tv-show :title) review (tv-show :large-image-url) tmdb-id)]
        (repo/add-link (swirl :id) (link-types/website-url :code) (tv-show :url))
        (redirect (links/edit-swirl (swirl :id) query-string))
        )
@@ -123,7 +122,7 @@
 (defn handle-reswirl-creation [swirl-id author]
   (let [swirl (lookups/get-swirl swirl-id)
         review "<p data-ph=\"Why should your friends see this?\"></p>"
-        new-swirl (repo/save-draft-swirl (:type swirl) (author :id) (:title swirl) review (:thumbnail_url swirl) (:external_id swirl))]
+        new-swirl (repo/save-draft-swirl (:details swirl) (:type swirl) (author :id) (:title swirl) review (:thumbnail_url swirl) (:external_id swirl))]
     (if-let [link (first (repo/get-links swirl-id))]
       (repo/add-link (new-swirl :id) (:type_code link) (:code link)))
     (redirect (links/edit-swirl (new-swirl :id) nil))))
@@ -214,7 +213,7 @@
   (try
     ((handler-for url) url author title query-string)
     (catch Exception e
-      (log/warn (str "Error while handling " url author title query-string " so will fall back to generic handler. Error was") e)
+      (log/warn (str "Error while handling " url author title query-string " so will fall back to generic handler. Error was") (.getNextException e))
       (handle-website-creation url author title query-string))))
 
 (defn create-from-url-handler [url title req query-string]

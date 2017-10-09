@@ -4,7 +4,11 @@
             [ragtime.repl :as repl]
             [korma.core
              :refer [defentity database prepare transform table exec-raw
-                     insert values where join fields set-fields select raw modifier]]))
+                     insert values where join fields set-fields select raw modifier]]
+            [clojure.data.json :as json]
+            [clojure.tools.logging :as log])
+  (:import (org.postgresql.util PGobject)
+           (java.sql Timestamp)))
 (use 'korma.db)
 
 
@@ -30,7 +34,7 @@
      :migrations (map (fn [m] (raggy/sql-migration {:id (clojure.string/replace (:id m) #".*/" "") :down (:down m) :up (:up m)})) resources-with-wrong-ids-on-windows)}))
 
 (defn update-db []
-    (repl/migrate (ragtime-config)))
+  (repl/migrate (ragtime-config)))
 (defn rollback-db []
   (repl/rollback (ragtime-config)))
 
@@ -39,6 +43,7 @@
 (defentity swirls (database db)
            (prepare (fn [v] (rename-keys v {:itunes-collection-id :itunes_collection_id})))
            (transform (fn [v] (rename-keys v {:itunes_collection_id :itunes-collection-id}))))
+(defentity swirl-details (table :swirl_details) (database db))
 (defentity suggestions (database db))
 (defentity swirl-links (table :swirl_links) (database db))
 (defentity swirl-responses (table :swirl_responses) (database db))
@@ -71,3 +76,22 @@
 
 (defn exists? [sql & args]
   (> (count (apply query sql args)), 0))
+
+(extend-type Timestamp
+  json/JSONWriter
+  (-write [date out]
+    (json/-write (str date) out)))
+
+(defn as-jsonb [value]
+  (doto (PGobject.)
+    (.setType "jsonb")
+    (.setValue (json/write-str value))))
+
+(defn from-jsonb [jsonb]
+  (if (nil? jsonb)
+    nil
+    (try (json/read-str (.getValue jsonb)
+                        :key-fn keyword)
+         (catch Exception e
+           (log/error e "Couldn't convert jsonb details")
+           nil))))

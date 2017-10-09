@@ -12,7 +12,11 @@
             [clj-time.core :as time]
             [yswrl.swirls.lookups :as lookups]
             [yswrl.swirls.types :as types]
-            [yswrl.swirls.tmdb :as tmdb])
+            [yswrl.swirls.tmdb :as tmdb]
+            [clojure.data.json :as json]
+            [yswrl.swirls.amazon :as amazon]
+            [yswrl.swirls.itunes :as itunes]
+            [yswrl.swirls.website :as website])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.db)
 
@@ -124,13 +128,27 @@ WHERE sw.swirl_id = " swirl-id))
     (log/debug "END: create-comment: " (time/now))
     comment))
 
+(defn save-details [swirl-details external_id type]
+  (if (and (not= nil swirl-details)
+           (not= nil external_id))
+    (if (= 0 (k/update db/swirl-details
+                       (k/set-fields {:external_id external_id :type type :details (db/as-jsonb swirl-details)})
+                       (k/where {:external_id external_id :type type})))
+      (k/insert db/swirl-details
+                (k/values {:external_id external_id :type type :details (db/as-jsonb swirl-details)})))))
+
 (defn save-draft-swirl
   "Returns the swirl if created"
-  [type author-id title review image-thumbnail external_id]
+  [swirl-details type author-id title review image-thumbnail external_id]
   (let [swirl (k/insert db/swirls
                         (k/values {:type       type :author_id author-id :title title :external_id external_id
                                    :review     review :thumbnail_url image-thumbnail :state states/draft
-                                   :is_private false}))]
+                                   :is_private false}))
+        external_id (if-let [external_id external_id]
+                      (str external_id))]
+    (try (save-details swirl-details external_id type)
+         (catch Exception e
+           (log/error e "Couldn't save details for swirl: " swirl " with details: " swirl-details)))
     ;now add the new rows into the weighting table
     (k/insert db/swirl-weightings
               (k/values (k/select db/users
@@ -275,10 +293,10 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
         (do
           (log/info "movie link: " movie-link)
           (let [tmdb-id (:tmdb-id (tmdb/get-tmdb-id-from-imdb-id (:code movie-link)))]
-           (log/info "tmdb id: " tmdb-id)
+            (log/info "tmdb id: " tmdb-id)
             (k/update db/swirls
-                     (k/set-fields {:external_id tmdb-id})
-                     (k/where {:id (:id swrl)})))))))
+                      (k/set-fields {:external_id tmdb-id})
+                      (k/where {:id (:id swrl)})))))))
   (log/info "Finished updating movie external IDs"))
 
 (defn update-album-external-ids []
@@ -290,8 +308,8 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
     (doseq [swrl swrls-with-no-external-id]
       (log/info "updating external id for: " swrl)
       (if-let [itunes-link (->> (get-links (:id swrl))
-                               (filter #(= "I" (:type_code %)))
-                               first)]
+                                (filter #(= "I" (:type_code %)))
+                                first)]
         (do
           (log/info "itunes link: " itunes-link)
           (k/update db/swirls
@@ -308,8 +326,8 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
     (doseq [swrl swrls-with-no-external-id]
       (log/info "updating external id for: " swrl)
       (if-let [asin-link (->> (get-links (:id swrl))
-                               (filter #(= "A" (:type_code %)))
-                               first)]
+                              (filter #(= "A" (:type_code %)))
+                              first)]
         (do
           (log/info "asin link: " asin-link)
           (k/update db/swirls
@@ -326,8 +344,8 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
     (doseq [swrl swrls-with-no-external-id]
       (log/info "updating external id for: " swrl)
       (if-let [asin-link (->> (get-links (:id swrl))
-                               (filter #(= "A" (:type_code %)))
-                               first)]
+                              (filter #(= "A" (:type_code %)))
+                              first)]
         (do
           (log/info "asin link: " asin-link)
           (k/update db/swirls
@@ -344,8 +362,8 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
     (doseq [swrl swrls-with-no-external-id]
       (log/info "updating external id for: " swrl)
       (if-let [web-link (->> (get-links (:id swrl))
-                               (filter #(= "W" (:type_code %)))
-                               first)]
+                             (filter #(= "W" (:type_code %)))
+                             first)]
         (do
           (log/info "web link: " web-link)
           (k/update db/swirls
@@ -362,8 +380,8 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
     (doseq [swrl swrls-with-no-external-id]
       (log/info "updating external id for: " swrl)
       (if-let [web-link (->> (get-links (:id swrl))
-                               (filter #(= "W" (:type_code %)))
-                               first)]
+                             (filter #(= "W" (:type_code %)))
+                             first)]
         (do
           (log/info "web link: " web-link)
           (k/update db/swirls
@@ -371,3 +389,27 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
                     (k/where {:id (:id swrl)}))))))
   (log/info "Finished updating video external IDs"))
 
+(defn update-all-details []
+  (log/info "Updating all details")
+  (let [details-to-update (-> (lookups/multiple-live-swirls-admin)
+                              (k/where {:external_id [not= nil]})
+                              (k/fields :external_id :type)
+                              (k/select)
+                              set)]
+    (doseq [detail-to-update details-to-update]
+      (if-let [details (try (case (:type detail-to-update)
+                              "book" (amazon/get-book (:external_id detail-to-update))
+                              "game" (amazon/get-game (:external_id detail-to-update))
+                              "album" (itunes/get-itunes-album (:external_id detail-to-update))
+                              "video" (website/get-metadata (:external_id detail-to-update))
+                              "movie" (tmdb/get-movie-from-tmdb-id (:external_id detail-to-update))
+                              "tv" (tmdb/get-tv-from-tmdb-id (:external_id detail-to-update))
+                              "website" (website/get-metadata (:external_id detail-to-update))
+                              "podcast" (itunes/get-itunes-podcast (:external_id detail-to-update))
+                              "app" (itunes/get-itunes-app (:external_id detail-to-update))
+                              nil)
+                            (catch Exception _ nil))]
+        (do
+          (log/info "updating " detail-to-update)
+          (save-details details (:external_id detail-to-update) (:type detail-to-update)))))
+    (log/info "Finished updating all details")))

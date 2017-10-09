@@ -3,7 +3,9 @@
             [yswrl.swirls.lookups :as lookups]
             [yswrl.groups.groups-repo :as group-repo]
             [yswrl.swirls.swirl-links :as swirl-links]
-            [yswrl.swirls.swirls-repo :as repo])
+            [yswrl.swirls.swirls-repo :as repo]
+            [korma.core :as k]
+            [yswrl.db :as db])
   (:use clojure.test)
   (:use clj-http.fake)
   (:use yswrl.fake.faker))
@@ -15,14 +17,19 @@
         responder (s/create-test-user)
         non-responder (s/create-test-user)
         outsider (s/create-test-user)
+        friend-of-details (s/create-test-user)
         swirl (s/create-swirl "website" (author :id) (str "Animals " unique-string) "Yeah" [(responder :username) (non-responder :username) "nonuser@example.org"])
+        swirl-with-details (s/create-swirl "website" (author :id) (str "My glorious swirl") (str "Yeah " unique-string) [(friend-of-details :username)] :external-id unique-string :details {:genres ["glorious"]})
         another-swirl (s/create-swirl "website" (author :id) "Yeah" (str "Animals " unique-string) [])
-        draft-swirl (repo/save-draft-swirl "website" (author :id) "Animals (draft)" "What to write...." nil "url")
+        draft-swirl (repo/save-draft-swirl nil "website" (author :id) "Animals (draft)" "What to write...." nil "url")
         deleted-swirl-id (repo/delete-swirl (:id (s/create-swirl "website" (author :id) "Gonna delete this" "I'm going to delete this" [])) (author :id))
-        _ (repo/respond-to-swirl (swirl :id) "Loved it" responder)]
+        _ (repo/respond-to-swirl (swirl :id) "Loved it" responder)
+        _ (repo/respond-to-swirl (swirl-with-details :id) "Later" responder)
+        _ (repo/add-swirl-to-wishlist (swirl-with-details :id) "wishlist" responder)
+        ]
 
     (testing "Search matches title or review but title has more weight"
-      (is (= [(:id swirl) (:id another-swirl)] (map :id (lookups/search-for-swirls 20 0 outsider unique-string)))))
+      (is (= [(:id swirl) (:id swirl-with-details) (:id another-swirl)] (map :id (lookups/search-for-swirls 20 0 outsider unique-string)))))
 
     (testing "Responses can be gotten and changed"
       (is (= [{:responder (responder :id),
@@ -60,6 +67,55 @@
         (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id non-responder)))
         (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id nil)))
         (is (nil? (lookups/get-swirl-if-allowed-to-view deleted-swirl-id outsider)))))
+
+    (testing "Swirls have the details attached when looked up"
+      (is (= ["glorious"] (-> (lookups/get-swirl (:id swirl-with-details))
+                              :details
+                              :genres)))
+      (is (= ["glorious"] (-> (lookups/get-swirl-if-allowed-to-view (:id swirl-with-details) author)
+                              :details
+                              :genres)))
+      (is (= ["glorious"] (-> (lookups/get-swirl-if-allowed-to-edit (:id swirl-with-details) (:id author))
+                              :details
+                              :genres)))
+
+      (is (= [["glorious"]] (mapv #(let [parsed (update % :details db/from-jsonb)]
+                                     (-> parsed :details :genres))
+                                  (-> (lookups/multiple-live-swirls-admin)
+                                      (k/fields :* :swirl_details.details)
+                                      (k/where {:swirls.id (:id swirl-with-details)})
+                                      (k/select)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-all-swirls 10000 0 author)
+                                 (filter #(= (:id swirl-with-details) (:id %)))
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-home-swirls-with-weighting 10000 0 author)
+                                 (filter #(= (:id swirl-with-details) (:id %)))
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/search-for-swirls 10000 0 author unique-string)
+                                 (filter #(= (:id swirl-with-details) (:id %)))
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-swirls-by-id [(:id swirl-with-details)] author)
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-swirls-authored-by (:id author) author)
+                                 (filter #(= (:id swirl-with-details) (:id %)))
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-swirls-authored-by-friends friend-of-details)
+                                 (filter #(= (:id swirl-with-details) (:id %)))
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-swirls-awaiting-response friend-of-details 10000 0)
+                                 (map #(-> % :details :genres)))))
+
+      (is (= [["glorious"]] (->> (lookups/get-swirls-in-user-swrl-list responder 10000 0 responder)
+                                 (filter #(= (:id swirl-with-details) (:id %)))
+                                 (map #(-> % :details :genres)))))
+      )
 
     (testing "private swirls can be viewed by the author, suggested users, or group members of a shared group"
       (let [author (s/create-test-user)
@@ -150,12 +206,12 @@
         (is (= swirl-links/itunes-id (itunes :type)))))
 
     (testing "all responses for a user can be gotten"
-      (is (= [{:summary "Loved it" :count 1}] (lookups/get-response-count-for-user (responder :id))))
+      (is (= [{:summary "Later" :count 1} {:summary "Loved it" :count 1}] (lookups/get-response-count-for-user (responder :id))))
       (is (= [] (lookups/get-response-count-for-user (non-responder :id)))))
 
     (testing "most recent respones by type can be gotten"
-      (is (= ["Loved it"] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["blah"])))
-      (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["Loved it"])))
+      (is (= ["Later" "Loved it"] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["blah"])))
+      (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["Loved it" "Later"])))
       (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) "whatever" []))))
 
     (testing "People who have not responded can be got"

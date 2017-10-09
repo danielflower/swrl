@@ -15,7 +15,7 @@
 (let [user (s/create-test-user)
       title (str "Some swirl " (System/currentTimeMillis))
       _ (s/create-swirl "website" (user :id) title "This is an review" [])
-      draft (swirls-repo/save-draft-swirl "website" (user :id) (str "Draft" (System/currentTimeMillis)) "This is a draft" nil "www.google.com")]
+      draft (swirls-repo/save-draft-swirl nil "website" (user :id) (str "Draft" (System/currentTimeMillis)) "This is a draft" nil "www.google.com")]
   (deftest anon-users-can-search-public-swirls
     (-> (session app)
         (visit "/search")
