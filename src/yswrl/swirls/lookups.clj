@@ -99,9 +99,9 @@
   (map
     #(update % :details (fn [s]
                           (assoc (db/from-jsonb s)
-                            :website_url (:website_url %))))
+                            :website_url (:website-url %))))
     (-> (select-multiple-swirls requestor max-results skip)
-        (fields :swirl_details.details [:swirl_links.code :website_url])
+        (fields :swirl_details.details [:swirl_links.code :website-url])
         (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
                                   (= "W" :swirl_links.type_code)))
         (where {:external_id           [not= nil]
