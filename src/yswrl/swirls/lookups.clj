@@ -98,8 +98,11 @@
 (defn get-all-swirls-with-details [max-results skip requestor]
   (map
     #(update % :details (fn [s]
-                          (assoc (db/from-jsonb s)
-                            :website-url (:website-url %))))
+                          (let [details (db/from-jsonb s)]
+                            (if-let [website-url (:website-url %)]
+                              (assoc details
+                                :website-url website-url)
+                              details))))
     (-> (select-multiple-swirls requestor max-results skip)
         (fields :swirl_details.details [:swirl_links.code :website-url])
         (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
