@@ -97,10 +97,14 @@
 
 (defn get-all-swirls-with-details [max-results skip requestor]
   (map
-    #(update % :details db/from-jsonb)
+    #(update % :details (fn [s]
+                          (assoc (db/from-jsonb s)
+                            :website_url (:website_url %))))
     (-> (select-multiple-swirls requestor max-results skip)
-        (fields :swirl_details.details)
-        (where {:external_id [not= nil]
+        (fields :swirl_details.details [:swirl_links.code :website_url])
+        (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
+                                  (= "W" :swirl_links.type_code)))
+        (where {:external_id           [not= nil]
                 :swirl_details.details [not= nil]})
         (order :id :desc)
         (select))))
