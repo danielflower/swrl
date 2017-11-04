@@ -8,6 +8,7 @@
             [korma.core :as k])
   )
 
+(def auth-token-hash-options {:algorithm :bcrypt+sha512})
 
 (defn gravatar-code [email]
   (-> (hash/md5 (clojure.string/lower-case email))
@@ -15,7 +16,7 @@
 
 (defn create-user [username email password]
   (let [user (k/insert users
-                  (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email) :avatar_type "gravatar"}))]
+                       (k/values {:username username :email email :password password :admin false :is_active true :email_md5 (gravatar-code email) :avatar_type "gravatar"}))]
     ;update the weightings table
     (try (k/insert db/swirl-weightings
                    (k/values (k/select db/swirls
@@ -26,8 +27,8 @@
 
 (defn change-password [user-id hashed-password]
   (k/update users
-          (k/set-fields {:password hashed-password})
-          (k/where {:id user-id})))
+            (k/set-fields {:password hashed-password})
+            (k/where {:id user-id})))
 
 (defn update-thirdparty-id [user-id id_type id]
   (k/update users
@@ -86,21 +87,43 @@
 (defn migrate-suggestions-from-email [user-id user-email]
   (let [where-map {:recipient_email user-email}
         updates (k/select db/suggestions
-                        (k/fields :swirls.author_id)
-                        (k/join :inner db/swirls (= :swirls.id :suggestions.swirl_id))
-                        (k/where where-map))]
+                          (k/fields :swirls.author_id)
+                          (k/join :inner db/swirls (= :swirls.id :suggestions.swirl_id))
+                          (k/where where-map))]
     (networking/store-multiple user-id :knows (map #(% :author_id) updates))
     (k/update db/suggestions
-            (k/set-fields {:recipient_id user-id :recipient_email nil})
-            (k/where where-map))))
+              (k/set-fields {:recipient_id user-id :recipient_email nil})
+              (k/where where-map))))
 
 (defn users-for-dropdown []
   (k/select db/users
-          (k/fields :username :email_md5)
-          (k/order :username :asc)
-          (k/limit 100)))
+            (k/fields :username :email_md5)
+            (k/order :username :asc)
+            (k/limit 100)))
 
 (defn update-user [user-id new-username new-email]
   (k/update db/users
-          (k/set-fields {:username new-username :email new-email :email_md5 (gravatar-code new-email)})
-          (k/where {:id user-id})))
+            (k/set-fields {:username new-username :email new-email :email_md5 (gravatar-code new-email)})
+            (k/where {:id user-id})))
+
+(defn get-app-auth-token-for-user [user]
+  (->
+    (k/select db/users
+              (k/fields :app_auth_token)
+              (k/where {:id (:id user)}))
+    first
+    :app_auth_token))
+
+(defn- fixed-length-password
+  ([] (fixed-length-password 8))
+  ([n]
+   (let [chars (map char (range 33 127))
+         password (take n (repeatedly #(rand-nth chars)))]
+     (reduce str password))))
+
+(defn generate-app-auth-token-for-user [user]
+  (let [auth_token (fixed-length-password 128)]
+    (k/update db/users
+              (k/set-fields {:app_auth_token auth_token})
+              (k/where {:id (:id user)}))
+    (get-app-auth-token-for-user user)))

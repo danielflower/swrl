@@ -1,0 +1,1 @@
+ALTER TABLE users DROP COLUMN app_auth_token;

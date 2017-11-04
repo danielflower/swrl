@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN app_auth_token VARCHAR NULL;

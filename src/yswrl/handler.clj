@@ -1,7 +1,7 @@
 (ns yswrl.handler
   (:require [compojure.core :refer [defroutes routes]]
             [yswrl.home.home-routes :refer [home-routes]]
-            [yswrl.auth.auth-routes :refer [auth-routes]]
+            [yswrl.auth.auth-routes :refer [auth-routes auth-api-routes]]
             [yswrl.swirls.creation :refer [creation-routes]]
             [yswrl.auth.password-reset :refer [password-reset-routes]]
             [yswrl.swirls.swirl-routes :refer [swirl-routes]]
@@ -78,6 +78,7 @@
         (wrap-api-routes swirl-search-routes)
         (wrap-api-routes swirl-details-routes)
         (wrap-api-routes discover-routes)
+        (wrap-api-routes auth-api-routes)
         (wrap-site-pages home-routes)
         (wrap-site-pages auth-routes)
         (wrap-site-pages swirl-routes)
