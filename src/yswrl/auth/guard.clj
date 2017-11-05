@@ -25,10 +25,11 @@
                       nil))
                id)
           auth-token (get-in request [:params :auth_token])]
-      (try (let [auth-token-from-db (auth-repo/get-app-auth-token-for-user {:id id})]
-             (if (and (not= nil auth-token-from-db) (= auth-token auth-token-from-db))
-               (handler)
-               (utils/json-response {:message "Auth-token is not valid"} 403)))
-           (catch Exception e
-             (log/error e "Failed to verify app-auth-token for user. Request: " request)
-             (utils/json-response {:message "Failed to verify app-auth-token for user."} 500))))))
+      (let [auth-token-from-db (try (auth-repo/get-app-auth-token-for-user {:id id})
+                                    (catch Exception e
+                                      (log/error e "Failed to verify app-auth-token for user. Request: " request)
+                                      nil))]
+        (if (and (not= nil auth-token-from-db) (= auth-token auth-token-from-db))
+          (handler)
+          (utils/json-response {:message "Auth-token is not valid"} 403)))
+      )))
