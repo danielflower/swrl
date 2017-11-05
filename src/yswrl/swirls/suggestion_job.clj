@@ -1,8 +1,8 @@
 (ns yswrl.swirls.suggestion-job
   (:require [yswrl.db :as db]
-            [yswrl.swirls.postman :refer [send-email email-body]]
             [clojure.tools.logging :as log]
-            [korma.core :as k])
+            [korma.core :as k]
+            [yswrl.swirls.mailgun :as mailgun])
   (:import (java.sql Timestamp)))
 
 ; Checks the suggestions table and emails any outstanding suggestions
@@ -30,7 +30,7 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
           (k/where {:id [= suggestion-id]})))
 
 (defn suggestion-email-html [row]
-  (email-body "swirls/suggestion-email.html" row))
+  (mailgun/email-body "swirls/suggestion-email.html" row))
 
 (defn send-unsent-suggestions []
   (try
@@ -41,7 +41,7 @@ WHERE (suggestions.recipient_id IS NULL AND suggestions.mandrill_id IS NULL AND 
       (doseq [row unsent]
           (log/debug "About to process" row)
         (let [response
-              (send-email (:recipient_email row) (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
+              (mailgun/send-email (:recipient_email row) (str "New recommendation from " (:author_name row)) (suggestion-email-html row))]
           (log/debug "Response from mail server: " response)
           (if (or (= (:status response) "sent") (= (:status response) "queued") (= (:status response) "scheduled"))
             (mark-suggestion-sent (:suggestion_id row) (:_id response))

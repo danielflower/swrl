@@ -6,13 +6,13 @@
             [yswrl.auth.auth-routes :refer [hash-password password-hash-options attempt-login]]
             [clojure.string :refer [trim]]
             [ring.util.response :refer [redirect response]]
-            [yswrl.swirls.postman :as postman]
             [yswrl.db :as db]
             [clj-time.core :as t]
             [clj-time.coerce :as coerce]
             [korma.core
              :refer [insert delete values where join fields set-fields select raw modifier]]
-            [yswrl.constraints :refer [max-length]])
+            [yswrl.constraints :refer [max-length]]
+            [yswrl.swirls.mailgun :as mailgun])
   (:import (java.util UUID)))
 
 (defn forgot-password-page [usernameOrEmail error]
@@ -29,7 +29,7 @@
           (values {:hashed_token hashed-code :user_id user-id})))
 
 (defn create-forgotten-email-body [username token]
-  (postman/email-body "auth/password-reset-email.html" {:username username :token token}))
+  (mailgun/email-body "auth/password-reset-email.html" {:username username :token token}))
 
 (defn hash-token [token]
   (hashers/encrypt token {:algorithm :sha256 :salt "salthylskjdflaskjdfkl"}))
@@ -44,7 +44,7 @@
     (if user
       (let [token (create-reset-token)]
         (create-password-reset-request (:id user) (:hashed token))
-        (postman/send-email (:email user) "Password reset request" (create-forgotten-email-body (user :username) (:unhashed token)))
+        (mailgun/send-email (:email user) "Password reset request" (create-forgotten-email-body (user :username) (:unhashed token)))
         (redirect "/forgot-password-sent"))
       (forgot-password-page usernameOrEmail "No user with that email or username was found. <a href=\"/register\">Click here to register</a>."))))
 

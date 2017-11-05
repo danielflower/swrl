@@ -2,13 +2,13 @@
   (:require [yswrl.layout :as layout]
             [compojure.core :refer [defroutes GET POST]]
             [yswrl.db :as db]
-            [yswrl.swirls.postman :as postman]
             [ring.util.response :refer [redirect response]]
             [yswrl.auth.guard :as guard]
             [yswrl.auth.auth-repo :as users]
             [korma.core
              :as k
-             :refer [insert values where join fields set-fields select raw modifier]])
+             :refer [insert values where join fields set-fields select raw modifier]]
+            [yswrl.swirls.mailgun :as mailgun])
   (:import (org.postgresql.util PGInterval)))
 
 (defn notification-options-page [email]
@@ -19,7 +19,7 @@
   (if (clojure.string/blank? email)
     (notification-options-page "")
     (do
-      (postman/blacklist email)
+      (mailgun/blacklist email)
       (layout/render "users/updated.html" {:message (str "Your email address " email " has been added to our blacklist and you will not be emailed again.")}))))
 
 (defn session-from [req] (:user (:session req)))

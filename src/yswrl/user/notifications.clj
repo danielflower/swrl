@@ -5,12 +5,12 @@
     [ring.util.response :refer [status redirect response not-found]]
     [yswrl.auth.guard :as guard]
     [yswrl.db :as db]
-    [yswrl.swirls.postman :as postman]
     [yswrl.swirls.lookups :as lookups]
     [korma.core
      :as k
      :refer [insert values where join fields set-fields select raw modifier]]
-    [yswrl.user.notifications-repo :as notifications-repo])
+    [yswrl.user.notifications-repo :as notifications-repo]
+    [yswrl.swirls.mailgun :as mailgun])
   (:import (java.sql Timestamp)))
 
 
@@ -117,7 +117,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
 
 
 (defn create-notification-email-body [recipient notes]
-  (postman/email-body "notifications/notification-email.html"
+  (mailgun/email-body "notifications/notification-email.html"
                       {:recipient recipient
                        :notifications (group-by-swirl notes)
                        :non-swirl-notifications (filter #(nil? (% :swirl_id)) notes)}))
@@ -130,7 +130,7 @@ AND id != ?" swirl-id swirl-id swirl-id user-id-to-exclude))
       (let [notifications (notifications-repo/get-for-user-email (user :id))
             html (create-notification-email-body user notifications)]
         (mark-email-sent user)
-        (postman/send-email (:email user) "Swirl updates" html)))))
+        (mailgun/send-email (:email user) "Swirl updates" html)))))
 
 (defn get-notification-view-model [user]
   (let [raw (notifications-repo/get-for-user-page (user :id))]
