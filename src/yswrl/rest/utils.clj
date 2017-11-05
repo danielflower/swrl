@@ -7,5 +7,5 @@
    :headers {"Content-Type" "application/json"}
    :body    (try (json/generate-string data)
                  (catch Exception e
-                   (log/error "Unable to parse JSON response. Exception: " e)
+                   (log/info "Unable to parse JSON response. Exception: " e)
                    (json/generate-string {:error (str "Unable to parse JSON response. Exception: " e)})))})

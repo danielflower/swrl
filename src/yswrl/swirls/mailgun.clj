@@ -53,8 +53,10 @@
                           :throw-exceptions false})
               status (if (= 200 (:status response))
                        "sent"
-                       "error")]
-          {:_id           (:id (:body response))
-           :email         to-email
-           :status        status
-           :reject_reason (str (:status response) " " (:body response))})))))
+                       "error")
+              result {:_id           (:id (:body response))
+                     :email         to-email
+                     :status        status
+                     :reject_reason (str (:status response) " " (:body response))}]
+          (log/info "Email sent: " result)
+          result)))))

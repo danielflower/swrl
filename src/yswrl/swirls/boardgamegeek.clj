@@ -5,7 +5,8 @@
     [clojure.data.xml :as xml-data]
     [clojure.zip :as zip]
     [clojure.string :as string]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [clojure.tools.logging :as log]))
 
 (defn get-raw-results [search-term]
   (-> (client/get (str "https://www.boardgamegeek.com/xmlapi/search?search=" search-term))
@@ -38,31 +39,38 @@
 
 (defn search
   ([search-term query-string]
-   (if (clojure.string/blank? search-term)
-     {:results []}
-     (let [result (get-raw-results search-term)
-           parsed-result (-> result
-                             xml-data/parse-str
-                             zip/xml-zip)
-           result-ids (mapv (fn [xml]
-                              (-> xml
-                                  :attrs
-                                  :objectid))
-                            (-> parsed-result
-                                zip/node
-                                :content))
-           detailed-results (map (fn [id]
-                                   (-> (get-raw-details id)
-                                       xml-data/parse-str
-                                       zip/xml-zip))
-                                 result-ids)]
-       {:results (map raw-details-to-swrl-map detailed-results)}
-       )))
+   (try
+     (if (clojure.string/blank? search-term)
+       {:results []}
+       (let [result (get-raw-results search-term)
+             parsed-result (-> result
+                               xml-data/parse-str
+                               zip/xml-zip)
+             result-ids (mapv (fn [xml]
+                                (-> xml
+                                    :attrs
+                                    :objectid))
+                              (-> parsed-result
+                                  zip/node
+                                  :content))
+             detailed-results (map (fn [id]
+                                     (-> (get-raw-details id)
+                                         xml-data/parse-str
+                                         zip/xml-zip))
+                                   result-ids)]
+         {:results (map raw-details-to-swrl-map detailed-results)}
+         ))
+     (catch Exception e
+       (log/info e "couldn't search for boardgames with: " search-term)
+       {:results []})))
   ([search-term]
    (search search-term "")))
 
 (defn get-by-id [id]
-  (let [details (-> (get-raw-details id)
-                    xml-data/parse-str
-                    zip/xml-zip)]
-    (raw-details-to-swrl-map details)))
+  (try (let [details (-> (get-raw-details id)
+                         xml-data/parse-str
+                         zip/xml-zip)]
+         (raw-details-to-swrl-map details))
+       (catch Exception e
+         (log/info e "couldn't get details for boardgame with ID: " id)
+         {})))
