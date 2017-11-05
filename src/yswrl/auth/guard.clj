@@ -18,7 +18,14 @@
 (defn requires-app-auth-token [handler]
   (fn [request]
     (let [id (get-in request [:params :user_id])
+          id (if (string? id)
+               (try (Integer/parseInt id)
+                    (catch Exception e
+                      (log/error e "Request for app api used an invalid user ID which couldn't be parsed to int")
+                      nil))
+               id)
           auth-token (get-in request [:params :auth_token])]
+      (println "guard id: " id " token: " auth-token " req: " request)
       (try (let [auth-token-from-db (auth-repo/get-app-auth-token-for-user {:id id})]
              (if (and (not= nil auth-token-from-db) (= auth-token auth-token-from-db))
                (handler)

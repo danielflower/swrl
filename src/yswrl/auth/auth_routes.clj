@@ -204,6 +204,7 @@
 
 (defroutes auth-api-routes
            (POST "/app-login" [username password] (attempt-app-login username password))
+           (GET "/test-app" [] (guard/requires-app-auth-token (fn [] (utils/json-response {:hello "world"}))))
            (POST "/test-app" [] (guard/requires-app-auth-token (fn [] (utils/json-response {:hello "world"}))))
            (POST "/app-register" [username email password confirmPassword]
              (handle-app-registration {:username (trim username) :email (trim email) :password password :confirmPassword confirmPassword} password-hash-options))

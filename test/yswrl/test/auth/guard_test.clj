@@ -15,7 +15,11 @@
     (let [user (s/create-test-user)
           auth-token (yswrl.auth.auth-repo/generate-app-auth-token-for-user user)]
       (is (= :ok
-            ((guard/requires-app-auth-token (fn [] :ok)) {:params {:user_id (:id user) :auth_token auth-token}})))
+             ((guard/requires-app-auth-token (fn [] :ok)) {:params {:user_id (:id user) :auth_token auth-token}})))
+
+      ;Requests can look like strings for ID
+      (is (= :ok
+             ((guard/requires-app-auth-token (fn [] :ok)) {:params {:user_id (str (:id user)) :auth_token auth-token}})))
       (is (= 403
              (:status ((guard/requires-app-auth-token (fn [] :ok)) {:params {:user_id (:id user) :auth_token "not the token"}}))))))
   )
