@@ -18,8 +18,19 @@
                                                                                      (Integer/parseInt user_id)
                                                                                      user_id)))
            rest-utils/json-response))))
+
+(defn get-inbox-route []
+  (GET "/inbox" [user_id]
+    (guard/requires-app-auth-token
+      #(-> (lookups/get-swirls-awaiting-response (auth-repo/get-user-by-id (if (string? user_id)
+                                                                             (Integer/parseInt user_id)
+                                                                             user_id))
+                                                 500 0)
+           rest-utils/json-response))))
+
 (defroutes discover-routes
            (context "/api/v1/discover" []
              (get-all-public-swirls-route)
              (get-weighted-route)
+             (get-inbox-route)
              ))
