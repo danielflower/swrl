@@ -64,10 +64,7 @@
 
 
 (defn get-avatar-link [username size]
-  (let [user (users/get-user username)]
-    (case (:avatar_type user)
-      "facebook" (links/facebook-image-url (:facebook_id user) size)
-      (links/gravatar-url (:email_md5 user) size))))
+  (users/get-avatar-link-from-username username size))
 
 (filters/add-filter! :gravatar-img (fn [username size]
                                      [:safe (generate-avatar-img-html (get-avatar-link username size) size)]))

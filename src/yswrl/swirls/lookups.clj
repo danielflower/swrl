@@ -2,9 +2,25 @@
   (:require [yswrl.db :as db]
             [yswrl.swirls.swirl-states :as states]
             [korma.core :refer [select* limit subselect aggregate offset order where join fields select raw modifier group]]
-            [yswrl.user.networking :as network]))
+            [yswrl.user.networking :as network]
+            [yswrl.auth.auth-repo :as users]))
 (use 'korma.db)
 
+
+(defn add-stuff-for-app [swrl]
+  (let [swrl (update swrl :details (fn [details-jsonb]
+                                     (let [details (db/from-jsonb details-jsonb)
+                                           details (if-let [website-url (:website-url swrl)]
+                                                     (assoc details
+                                                       :website-url website-url)
+                                                     details)
+                                           details (if-let [external-id (:external_id swrl)]
+                                                     (assoc details
+                                                       :id external-id)
+                                                     details)]
+                                       details)))
+        swrl (assoc swrl :author_avatar_url (users/get-avatar-link-from-user-id (:author_id swrl) 35))]
+    swrl))
 
 ; Queries to get a single swirl with author information
 (defn select-single-swirl [id]
@@ -97,17 +113,7 @@
 
 (defn get-all-swirls-with-details [max-results skip requestor]
   (map
-    #(update % :details (fn [s]
-                          (let [details (db/from-jsonb s)
-                                details (if-let [website-url (:website-url %)]
-                                          (assoc details
-                                            :website-url website-url)
-                                          details)
-                                details (if-let [external-id (:external_id %)]
-                                          (assoc details
-                                            :id external-id)
-                                          details)]
-                            details)))
+    add-stuff-for-app
     (-> (select-multiple-swirls requestor max-results skip)
         (fields :swirl_details.details [:swirl_links.code :website-url])
         (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
@@ -155,23 +161,14 @@
 
 (defn get-weighted-swirls-with-external-id [max-results skip requestor]
   (map
-    #(update % :details (fn [s]
-                          (let [details (db/from-jsonb s)
-                                details (if-let [website-url (:website-url %)]
-                                          (assoc details
-                                            :website-url website-url)
-                                          details)
-                                details (if-let [external-id (:external_id %)]
-                                          (assoc details
-                                            :id external-id)
-                                          details)]
-                            details)))
+    add-stuff-for-app
     (-> (get-home-swirls-with-weighting* max-results skip requestor)
-        (fields  [:swirl_links.code :website-url])
+        (fields [:swirl_links.code :website-url])
         (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
                                   (= "W" :swirl_links.type_code)))
         (where {:external_id           [not= nil]
-                :swirl_details.details [not= nil]})
+                :swirl_details.details [not= nil]
+                :author_id             [not= (:id requestor)]})
         (select))))
 
 (defn search-for-swirls [max-results skip requestor search-query]
@@ -228,17 +225,7 @@
 
 (defn get-swirls-awaiting-response-with-external-id [requestor max-results skip]
   (map
-    #(update % :details (fn [s]
-                          (let [details (db/from-jsonb s)
-                                details (if-let [website-url (:website-url %)]
-                                          (assoc details
-                                            :website-url website-url)
-                                          details)
-                                details (if-let [external-id (:external_id %)]
-                                          (assoc details
-                                            :id external-id)
-                                          details)]
-                            details)))
+    add-stuff-for-app
     (-> (select-multiple-swirls requestor max-results skip)
         (fields :swirl_details.details [:swirl_links.code :website-url])
         (join :inner db/suggestions (= :swirls.id :suggestions.swirl_id))

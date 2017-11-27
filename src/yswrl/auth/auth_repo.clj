@@ -5,7 +5,8 @@
             [buddy.core.hash :as hash]
             [buddy.core.codecs :refer :all]
             [yswrl.user.networking :as networking]
-            [korma.core :as k])
+            [korma.core :as k]
+            [yswrl.links :as links])
   )
 
 (def auth-token-hash-options {:algorithm :bcrypt+sha512})
@@ -127,3 +128,14 @@
               (k/set-fields {:app_auth_token auth_token})
               (k/where {:id (:id user)}))
     (get-app-auth-token-for-user user)))
+
+(defn get-avatar-link [user size]
+  (case (:avatar_type user)
+    "facebook" (links/facebook-image-url (:facebook_id user) size)
+    (links/gravatar-url (:email_md5 user) size)))
+
+(defn get-avatar-link-from-username [username size]
+  (get-avatar-link (get-user username) size))
+
+(defn get-avatar-link-from-user-id [id size]
+  (get-avatar-link (get-user-by-id id) size))
