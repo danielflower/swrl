@@ -19,7 +19,7 @@
                                                        :id external-id)
                                                      details)]
                                        details)))
-        swrl (assoc swrl :author_avatar_url (users/get-avatar-link-from-user-id (:author_id swrl) 35))]
+        swrl (assoc swrl :author_avatar_url (users/get-avatar-link-from-user-id (:author_id swrl) 200))]
     swrl))
 
 ; Queries to get a single swirl with author information
