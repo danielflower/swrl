@@ -247,10 +247,12 @@
 
 (defn get-swirls-by-response [requestor max-results skip response]
   (map
-    #(update % :details db/from-jsonb)
+    add-stuff-for-app
     (-> (select-multiple-swirls requestor max-results skip)
-        (fields :swirl_details.details)
+        (fields :swirl_details.details [:swirl_links.code :website-url])
         (join :inner db/swirl-responses (= :swirls.id :swirl_responses.swirl_id))
+        (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
+                                  (= "W" :swirl_links.type_code)))
         (where {:swirl_responses.responder (requestor :id)})
         (where {(raw "LOWER(swirl_responses.summary)") (clojure.string/lower-case response)})
         (order :id :desc)

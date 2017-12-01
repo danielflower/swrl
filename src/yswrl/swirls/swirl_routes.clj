@@ -18,6 +18,7 @@
             [yswrl.user.notifications :as notifications]
             [yswrl.swirls.swirl-links :as link-types]
             [yswrl.utils :as utils]
+            [yswrl.rest.utils :as rest-utils]
             [clojure.string :refer [join lower-case]]
             [yswrl.groups.groups-repo :as group-repo]
             [yswrl.swirls.types :as types]
@@ -25,7 +26,8 @@
             [yswrl.swirls.itunes :as itunes]
             [yswrl.swirls.amazon :as amazon]
             [yswrl.swirls.tmdb :as tmdb]
-            [yswrl.swirls.website :as website])
+            [yswrl.swirls.website :as website]
+            [yswrl.auth.auth-repo :as auth-repo])
   (:use ring.middleware.json-params)
   (:import (java.util UUID)))
 
@@ -219,23 +221,35 @@
 
 (defn session-from [req] (:user (:session req)))
 
+(defn- process-response [swirl-id response-button custom-response responder]
+  (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
+        swrl-list-state (get {"Later"     "wishlist"
+                              "Reading"   "consuming"
+                              "Playing"   "consuming"
+                              "Listening" "consuming"
+                              "Watching"  "consuming"
+                              "Looking"   "consuming"
+                              "Using"     "consuming"
+                              "Dismissed" "dismissed"}
+                             summary "done")
+        swirl-response (repo/respond-to-swirl swirl-id summary responder)]
+    (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder)
+    (if (should-notify-users-of-response summary)
+      (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))))
+
 (defn handle-response [swirl-id response-button custom-response responder]
   (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
-    (let [summary (if (clojure.string/blank? custom-response) response-button custom-response)
-          swrl-list-state (get {"Later"     "wishlist"
-                                "Reading"   "consuming"
-                                "Playing"   "consuming"
-                                "Listening" "consuming"
-                                "Watching"  "consuming"
-                                "Looking"   "consuming"
-                                "Using"     "consuming"
-                                "Dismissed" "dismissed"}
-                               summary "done")
-          swirl-response (repo/respond-to-swirl swirl-id summary responder)]
-      (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder)
-      (if (should-notify-users-of-response summary)
-        (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))
-      (redirect (yswrl.links/swirl swirl-id)))))
+    (do (process-response swirl-id response-button custom-response responder)
+        (redirect (yswrl.links/swirl swirl-id)))))
+
+(defn handle-response-api [swirl-id custom-response responder]
+  (if (lookups/get-swirl-if-allowed-to-view swirl-id responder)
+    (try (process-response swirl-id nil custom-response responder)
+         (rest-utils/json-response {:message "Success"})
+         (catch Exception e
+           (log/error e "Failed to respond to Swrl via API, swrl-id: " swirl-id " responder: " responder " custom-response: " custom-response)
+           (rest-utils/json-response {:message "Something went wrong responding to the Swrl"} 500)))
+    (rest-utils/json-response {:message "You are not allowed to respond to this Swrl"} 403)))
 
 (defn handle-comment [swirl-id comment-content commentor]
   (log/info "Handling comment: " swirl-id " : " comment-content " : " commentor)
@@ -286,6 +300,10 @@
 (defn post-response-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
 
+(defn post-response-api-route []
+  (POST (str "/:id{[0-9]+}/respond") [id response-summary user_id] (guard/requires-app-auth-token #(handle-response-api (Long/parseLong id) response-summary (auth-repo/get-user-by-id (if (string? user_id)
+                                                                                                                                                                                         (Long/parseLong user_id)
+                                                                                                                                                                                         user_id))))))
 
 (defn post-comment-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
@@ -298,40 +316,53 @@
   (map #(Long/parseLong % 10) strings))
 
 (defn create-swirl-no-interaction
-  [title review type image-url user-id private external-id]
-  (let [swirl (repo/save-draft-swirl nil type user-id title review image-url external-id)
+  [title review type image-url user-id private external-id details users-and-emails-to-notify]
+  (let [swirl (repo/save-draft-swirl details type user-id title review image-url external-id)
         swirl-id (:id swirl)
-        _ (publish-swirl {:id user-id} swirl-id nil title review nil nil private type image-url true)
+        _ (publish-swirl {:id user-id} swirl-id users-and-emails-to-notify title review nil nil private type image-url false)
         swirl (lookups/get-swirl (:id swirl))]
     (assoc swirl :creation_date (str (:creation_date swirl)))
     ))
 
 
-(defn create-swirl-app-api []
-  (POST "/create-swirl" [title external-id review type image-url user-id private]
-    (let [type (or (get-in types/types [type :name])
-                   "unknown")
-          user-id (Long/parseLong (str user-id))
-          review (or review "")
-          title (or title "unknown")
-          private (not= "false" private)
-          image-url (or image-url "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
-          response (try (create-swirl-no-interaction title review type image-url user-id private external-id)
-                        (catch Exception e
-                          (log/error "Failure creating swirl from api. Exception:" e)
-                          {:error  (.getMessage e)
-                           :status 500}))]
-      (json-response response (or (:status response) 200)))))
+(defn create-swrl-app-api []
+  (POST "/create-swrl" [title external-id review type image-url user_id private details users-and-emails-to-notify quick-response]
+    (guard/requires-app-auth-token #(let [type (or (get-in types/types [type :name])
+                                                   "unknown")
+                                          user_id (Long/parseLong (str user_id))
+                                          review (or review "")
+                                          title (or title "unknown")
+                                          private (not= "false" private)
+                                          image-url (or image-url "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
+                                          details (try (json/parse-string details)
+                                                       (catch Exception e
+                                                         (log/error e "couldn't read details: " details)
+                                                         nil))
+                                          swrl (try (create-swirl-no-interaction title review type image-url user_id private external-id details users-and-emails-to-notify)
+                                                    (catch Exception e
+                                                      (log/error "Failure creating swirl from api. Exception:" e)
+                                                      {:error  (.getMessage e)
+                                                       :status 500}))
+                                          user (auth-repo/get-user-by-id user_id)]
+                                     (try (if (and swrl quick-response)
+                                            (process-response (:id swrl) nil quick-response user))
+                                          (catch Exception e
+                                            (log/error e "Failed to respond to Swrl via API, swrl-id: " (:id swrl) " responder: " user " custom-response: " quick-response)))
+                                     (json-response swrl (or (:status swrl) 200))))))
 
 (defn create-swirl-rest-route []
-  (POST "/create-swirl" [title external-id review type imageUrl :as req]
+  (POST "/create-swirl" [title external-id review type imageUrl details users-and-emails-to-notify :as req]
     (let [type (or (get-in types/types [type :name])
                    "unknown")
           review (or review "")
           title (or title "unknown")
-          image-url (or imageUrl "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")]
+          image-url (or imageUrl "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
+          details (try (json/parse-string details)
+                       (catch Exception e
+                         (log/error e "couldn't read details: " details)
+                         nil))]
       (guard/requires-login
-        #(create-swirl-no-interaction title review type image-url (:id (session-from req)) false external-id)))))
+        #(create-swirl-no-interaction title review type image-url (:id (session-from req)) false external-id details users-and-emails-to-notify)))))
 
 
 (defn get-swirls-by-id []
@@ -432,19 +463,19 @@
                                                      :wishlist wishlist)))
            (POST "/swirls/:id{[0-9]+}/edit" [id origin-swirl-id who emails subject review groups private swirl-type image-url wishlist :as req]
              (guard/requires-login #(publish-swirl
-                                      (session-from req)
-                                      (Long/parseLong id)
-                                      (user-selector/usernames-and-emails-from-request who emails)
-                                      subject
-                                      review
-                                      (if (clojure.string/blank? origin-swirl-id) nil (Long/parseLong origin-swirl-id))
-                                      (numberise (vectorise groups))
-                                      (if private
-                                        true
-                                        false)
-                                      swirl-type
-                                      image-url
-                                      (= wishlist "true"))))
+                                     (session-from req)
+                                     (Long/parseLong id)
+                                     (user-selector/usernames-and-emails-from-request who emails)
+                                     subject
+                                     review
+                                     (if (clojure.string/blank? origin-swirl-id) nil (Long/parseLong origin-swirl-id))
+                                     (numberise (vectorise groups))
+                                     (if private
+                                       true
+                                       false)
+                                     swirl-type
+                                     image-url
+                                     (= wishlist "true"))))
 
            (GET "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl-page (session-from req) (Long/parseLong id))))
            (POST "/swirls/:id{[0-9]+}/delete" [id :as req] (guard/requires-login #(delete-swirl (session-from req) (Long/parseLong id))))

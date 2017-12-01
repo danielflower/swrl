@@ -28,9 +28,21 @@
                                                                   500 0)
            rest-utils/json-response))))
 
+(defn get-swrls-by-response-route []
+  (GET "/response/:response" [user_id response]
+    (guard/requires-app-auth-token
+      #(-> (lookups/get-swirls-by-response (auth-repo/get-user-by-id (if (string? user_id)
+                                                                       (Integer/parseInt user_id)
+                                                                       user_id))
+                                           500
+                                           0
+                                           response)
+           rest-utils/json-response))))
+
 (defroutes discover-routes
            (context "/api/v1/discover" []
              (get-all-public-swirls-route)
              (get-weighted-route)
              (get-inbox-route)
+             (get-swrls-by-response-route)
              ))
