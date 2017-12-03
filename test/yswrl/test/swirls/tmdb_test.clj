@@ -113,4 +113,14 @@
       (is (= nil
              (tmdb/get-tmdb-id-from-imdb-id "nope")))))
 
+  (testing "getting the best overview"
+    (is (= "omdb overview"
+           (tmdb/get-the-best-overview "omdb overview" "tmdb overview")))
+    (is (= "tmdb overview"
+           (tmdb/get-the-best-overview "" "tmdb overview")))
+    (is (= "tmdb overview"
+           (tmdb/get-the-best-overview nil "tmdb overview")))
+    (is (= "tmdb overview"
+           (tmdb/get-the-best-overview "N/A" "tmdb overview"))))
+
   )

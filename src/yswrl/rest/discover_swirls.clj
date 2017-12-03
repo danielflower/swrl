@@ -15,8 +15,8 @@
   (GET "/weighted" [user_id]
     (guard/requires-app-auth-token
       #(-> (lookups/get-weighted-swirls-with-external-id 5000 0 (auth-repo/get-user-by-id (if (string? user_id)
-                                                                                           (Integer/parseInt user_id)
-                                                                                           user_id)))
+                                                                                            (Integer/parseInt user_id)
+                                                                                            user_id)))
            rest-utils/json-response))))
 
 (defn get-inbox-route []
@@ -31,12 +31,12 @@
 (defn get-swrls-by-response-route []
   (GET "/response/:response" [user_id response]
     (guard/requires-app-auth-token
-      #(-> (lookups/get-swirls-by-response (auth-repo/get-user-by-id (if (string? user_id)
-                                                                       (Integer/parseInt user_id)
-                                                                       user_id))
-                                           5000
-                                           0
-                                           response)
+      #(-> (lookups/get-swirls-by-response-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
+                                                                                        (Integer/parseInt user_id)
+                                                                                        user_id))
+                                                            5000
+                                                            0
+                                                            response)
            rest-utils/json-response))))
 
 (defroutes discover-routes

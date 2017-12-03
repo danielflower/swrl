@@ -35,6 +35,14 @@
   ([search-term]
    (search-movies search-term "")))
 
+(defn get-the-best-overview [omdb-overview tmdb-overview]
+  (if (and
+        omdb-overview
+        (not= "" omdb-overview)
+        (not= "N/A" omdb-overview))
+    omdb-overview
+    tmdb-overview))
+
 (defn get-movie-from-tmdb-id [tmdb-id]
   (let [url (str "https://api.themoviedb.org/3/movie/" tmdb-id "?api_key=" TMDB-API-KEY)
         result (try (client/get url {:accept :json :as :json})
@@ -44,7 +52,7 @@
         body (result :body)
         omdb-body (:body (client/get (str "http://www.omdbapi.com/?apikey=d33a4ae1&i=" (:imdb_id body)) {:accept :json :as :json}))]
     {:title           (body :title)
-     :overview        (or (:Plot omdb-body) (body :overview))
+     :overview        (get-the-best-overview (:Plot omdb-body) (body :overview))
      :release-year    (release-year (body :release_date))
      :thumbnail-url   (str THUMBNAIL-URL-PREFIX (body :poster_path))
      :large-image-url (str LARGE-IMAGE-URL-PREFIX (body :poster_path))
