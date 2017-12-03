@@ -68,10 +68,22 @@
     <div class="start-box">
         <form method="GET" action="/search/games">
             <i class="fa fa-gamepad fa-5x"></i>
-            <label for="games-search-box">Game Title</label>
+            <label for="games-search-box">Video Game Title</label>
 
             <div class="searchbox"><input id="games-search-box" type="text" name="search-term">
                 <input id="games-search-go-button" type="submit" value="Go" class="button-primary">
+                <input type="hidden" name="query-string" value="{{query-string}}">
+            </div>
+        </form>
+    </div>
+
+    <div class="start-box">
+        <form method="GET" action="/search/boardgames">
+            <i class="fa fa-gamepad fa-5x"></i>
+            <label for="boardgames-search-box">Board Game Title</label>
+
+            <div class="searchbox"><input id="boardgames-search-box" type="text" name="search-term">
+                <input id="boardgames-search-go-button" type="submit" value="Go" class="button-primary">
                 <input type="hidden" name="query-string" value="{{query-string}}">
             </div>
         </form>

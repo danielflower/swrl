@@ -8,13 +8,13 @@
 
 (defn get-all-public-swirls-route []
   (GET "/public" []
-    (-> (lookups/get-all-swirls-with-details 500 0 nil)
+    (-> (lookups/get-all-swirls-with-details 5000 0 nil)
         rest-utils/json-response)))
 
 (defn get-weighted-route []
   (GET "/weighted" [user_id]
     (guard/requires-app-auth-token
-      #(-> (lookups/get-weighted-swirls-with-external-id 500 0 (auth-repo/get-user-by-id (if (string? user_id)
+      #(-> (lookups/get-weighted-swirls-with-external-id 5000 0 (auth-repo/get-user-by-id (if (string? user_id)
                                                                                            (Integer/parseInt user_id)
                                                                                            user_id)))
            rest-utils/json-response))))
@@ -25,7 +25,7 @@
       #(-> (lookups/get-swirls-awaiting-response-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
                                                                                               (Integer/parseInt user_id)
                                                                                               user_id))
-                                                                  500 0)
+                                                                  5000 0)
            rest-utils/json-response))))
 
 (defn get-swrls-by-response-route []
@@ -34,7 +34,7 @@
       #(-> (lookups/get-swirls-by-response (auth-repo/get-user-by-id (if (string? user_id)
                                                                        (Integer/parseInt user_id)
                                                                        user_id))
-                                           500
+                                           5000
                                            0
                                            response)
            rest-utils/json-response))))

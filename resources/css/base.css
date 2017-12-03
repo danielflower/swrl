@@ -265,6 +265,9 @@ nav .nav-count {
 .podcast .border-bottom, .podcast .border-bottom-thin {
       border-bottom-color: var(--podcast-color);
  }
+.boardgame .border-bottom, .boardgame .border-bottom-thin {
+      border-bottom-color: var(--boardgame-color);
+ }
 
 
 .padded {
@@ -304,6 +307,9 @@ nav .nav-count {
  }
 .podcast .type-color{
  color: var(--podcast-color);
+}
+.boardgame .type-color{
+ color: var(--boardgame-color);
 }
 .app .type-color{
  color: var(--app-color);

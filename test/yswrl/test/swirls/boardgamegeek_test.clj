@@ -4,7 +4,7 @@
 
 (facts "about parsing search results from boardgamegeek api"
        (fact "can parse a response with results"
-             (bgg/search "mottainai")
+             (bgg/search "mottainai" "queryString")
              => {:results [{:title           "Mottainai"
                             :url             "https://boardgamegeek.com/boardgame/175199"
                             :bgg-id          "175199"
@@ -17,6 +17,7 @@
                             :max-players     "5"
                             :min-playtime    "15"
                             :max-playtime    "30"
+                            :create-url      "/create/boardgame?bgg-id=175199&queryString"
                             }
                            {:title           "Mottainai: Wutai Mountain"
                             :url             "https://boardgamegeek.com/boardgame/220186"
@@ -30,6 +31,7 @@
                             :max-players     "5"
                             :min-playtime    "0"
                             :max-playtime    "0"
+                            :create-url      "/create/boardgame?bgg-id=220186&queryString"
                             }]}
              (provided
                (bgg/get-raw-results "mottainai")

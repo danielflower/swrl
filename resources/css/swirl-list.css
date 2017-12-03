@@ -126,6 +126,9 @@
 .swrl-list .mini-swirl__bgimage.podcast, .mini-swirl__bgimage.podcast,.type-filter .podcast {
     border-bottom-color: var(--podcast-color);
 }
+.swrl-list .mini-swirl__bgimage.boardgame, .mini-swirl__bgimage.boardgame,.type-filter .boardgame {
+    border-bottom-color: var(--boardgame-color);
+}
 
 
 .mini-swirl h2 {
@@ -281,6 +284,9 @@
 }
 .podcast .swirl-type, .podcast-background-color {
     background-color: var(--podcast-color);
+}
+.boardgame .swirl-type, .boardgame-background-color {
+    background-color: var(--boardgame-color);
 }
 
 .type-filter button.hidden {

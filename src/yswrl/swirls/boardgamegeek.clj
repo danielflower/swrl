@@ -58,7 +58,9 @@
                                          xml-data/parse-str
                                          zip/xml-zip))
                                    result-ids)]
-         {:results (map raw-details-to-swrl-map detailed-results)}
+         {:results (->> detailed-results
+                        (map raw-details-to-swrl-map)
+                        (map #(assoc % :create-url (str "/create/boardgame?bgg-id=" (:bgg-id %) "&" query-string))))}
          ))
      (catch Exception e
        (log/info e "couldn't search for boardgames with: " search-term)

@@ -11,6 +11,7 @@
             [yswrl.swirls.tmdb :as tmdb]
             [yswrl.swirls.website :as website]
             [yswrl.swirls.tmdb :as tmdb]
+            [yswrl.swirls.boardgamegeek :as bgg]
             [clojure.tools.logging :as log]
             [yswrl.swirls.swirl-links :as link-types]
             [yswrl.swirls.lookups :as lookups]
@@ -119,6 +120,20 @@
   ([tmdb-id user query-string]
    (handle-tv-creation tmdb-id user nil query-string)))
 
+(defn handle-boardgame-creation
+  ([bgg-id user url query-string]
+   (if bgg-id
+     (let [boardgame (bgg/get-by-id bgg-id)
+           review "<p data-ph=\"Why should your friends play this Board Game?\"></p>"
+           swirl (repo/save-draft-swirl boardgame "boardgame" (user :id) (boardgame :title) review (boardgame :large-image-url) bgg-id)]
+       (repo/add-link (swirl :id) (link-types/website-url :code) (boardgame :url))
+       (redirect (links/edit-swirl (swirl :id) query-string))
+       )
+     (handle-website-creation url user nil query-string))
+    )
+  ([bgg-id user query-string]
+   (handle-boardgame-creation bgg-id user nil query-string)))
+
 (defn handle-reswirl-creation [swirl-id author]
   (let [swirl (lookups/get-swirl swirl-id)
         review "<p data-ph=\"Why should your friends see this?\"></p>"
@@ -163,6 +178,11 @@
   (let [search-result (tmdb/search-tv search-term query-string)]
     (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
                                          :search-box-placeholder "TV show title" :query-string query-string})))
+
+(defn search-boardgames-page [search-term query-string]
+  (let [search-result (bgg/search search-term query-string)]
+    (layout/render "swirls/search.html" {:search-term            search-term :search-result search-result
+                                         :search-box-placeholder "Board Game title" :query-string query-string})))
 
 (defn search-all [search-term query-string]
   (let [search-result {:results (let [albums (future (:results (itunes/search-albums search-term query-string)))
@@ -230,6 +250,7 @@
            (GET "/search/movies" [search-term query-string] (search-movies-page search-term query-string))
            (GET "/search/games" [search-term query-string] (search-games-page search-term query-string))
            (GET "/search/tv" [search-term query-string] (search-tv-page search-term query-string))
+           (GET "/search/boardgames" [search-term query-string] (search-boardgames-page search-term query-string))
            (GET "/search/all" [search-term query-string] (search-all search-term query-string))
 
            (GET "/create/from-url" [url title query-string :as req] (create-from-url-handler url title req query-string))
@@ -240,5 +261,6 @@
            (GET "/create/game" [game-id :as req] (guard/requires-login #(handle-game-creation game-id (session-from req) (req :query-string))))
            (GET "/create/movie" [tmdb-id :as req] (guard/requires-login #(handle-movie-creation tmdb-id (session-from req) (req :query-string))))
            (GET "/create/tv" [tmdb-id :as req] (guard/requires-login #(handle-tv-creation tmdb-id (session-from req) (req :query-string))))
+           (GET "/create/boardgame" [bgg-id :as req] (guard/requires-login #(handle-boardgame-creation bgg-id (session-from req) (req :query-string))))
            (GET "/create/reswirl" [id :as req] (guard/requires-login #(handle-reswirl-creation (Long/parseLong id) (session-from req))))
            )

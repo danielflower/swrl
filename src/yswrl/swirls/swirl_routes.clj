@@ -27,7 +27,8 @@
             [yswrl.swirls.amazon :as amazon]
             [yswrl.swirls.tmdb :as tmdb]
             [yswrl.swirls.website :as website]
-            [yswrl.auth.auth-repo :as auth-repo])
+            [yswrl.auth.auth-repo :as auth-repo]
+            [yswrl.swirls.boardgamegeek :as bgg])
   (:use ring.middleware.json-params)
   (:import (java.util UUID)))
 
@@ -415,6 +416,10 @@
                            (catch Exception e
                              (log/warn e "search failed for query=\"" query "\"")
                              [])))
+        boardgames (future (try (convert-to-swirl-list (bgg/search query nil) "boardgame")
+                                (catch Exception e
+                                  (log/warn e "search failed for query=\"" query "\"")
+                                  [])))
         itunes-apps (future (try (convert-to-swirl-list (itunes/search-apps query nil) "app")
                                  (catch Exception e
                                    (log/warn e "search failed for query=\"" query "\"")
@@ -441,6 +446,7 @@
         (deref itunes-apps 5000 [])
         (deref itunes-podcasts 5000 [])
         (deref games 5000 [])
+        (deref boardgames 5000 [])
         ))))
 
 (defn search [query user]

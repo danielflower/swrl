@@ -372,3 +372,6 @@ hr.swirl-headline-hr--bottom {
 .podcast .swirl-type, .podcast .swirl-detail-header, .podcast-background-color {
     background-color: var(--podcast-color);
 }
+.boardgame .swirl-type, .boardgame .swirl-detail-header, .boardgame-background-color {
+    background-color: var(--boardgame-color);
+}
