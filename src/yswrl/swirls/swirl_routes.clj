@@ -335,10 +335,6 @@
                                           title (or title "unknown")
                                           private (and private (not= "false" private))
                                           image-url (or image-url "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
-                                          details (try (json/parse-string details)
-                                                       (catch Exception e
-                                                         (log/error e "couldn't read details: " details)
-                                                         nil))
                                           swrl (try (create-swirl-no-interaction title review type image-url user_id private external-id details users-and-emails-to-notify)
                                                     (catch Exception e
                                                       (log/error "Failure creating swirl from api. Exception:" e)
@@ -357,11 +353,7 @@
                    "unknown")
           review (or review "")
           title (or title "unknown")
-          image-url (or imageUrl "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
-          details (try (json/parse-string details)
-                       (catch Exception e
-                         (log/error e "couldn't read details: " details)
-                         nil))]
+          image-url (or imageUrl "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")]
       (guard/requires-login
         #(create-swirl-no-interaction title review type image-url (:id (session-from req)) false external-id details users-and-emails-to-notify)))))
 
