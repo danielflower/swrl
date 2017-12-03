@@ -333,7 +333,7 @@
                                           user_id (Long/parseLong (str user_id))
                                           review (or review "")
                                           title (or title "unknown")
-                                          private (not= "false" private)
+                                          private (and private (not= "false" private))
                                           image-url (or image-url "https://orig12.deviantart.net/6043/f/2010/093/c/c/request___unown_alphabet_2_by_xxshirushixx.jpg")
                                           details (try (json/parse-string details)
                                                        (catch Exception e
