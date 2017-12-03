@@ -28,6 +28,6 @@
   (log/info "Friend Weighting Updates complete")
 
   ; Probably shouldn't run this all the time as I think the APIs limit calls per day
-  ;(repo/update-all-details)
+  (repo/update-all-details)
 
   (log/info "Scheduled jobs complete"))

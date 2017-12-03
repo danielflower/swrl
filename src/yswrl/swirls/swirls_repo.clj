@@ -16,7 +16,8 @@
             [clojure.data.json :as json]
             [yswrl.swirls.amazon :as amazon]
             [yswrl.swirls.itunes :as itunes]
-            [yswrl.swirls.website :as website])
+            [yswrl.swirls.website :as website]
+            [yswrl.swirls.boardgamegeek :as bgg])
   (:import (org.postgresql.util PSQLException)))
 (use 'korma.db)
 
@@ -398,15 +399,16 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
                               set)]
     (doseq [detail-to-update details-to-update]
       (if-let [details (try (case (:type detail-to-update)
-                              "book" (amazon/get-book (:external_id detail-to-update))
-                              "game" (amazon/get-game (:external_id detail-to-update))
-                              "album" (itunes/get-itunes-album (:external_id detail-to-update))
-                              "video" (website/get-metadata (:external_id detail-to-update))
-                              "movie" (tmdb/get-movie-from-tmdb-id (:external_id detail-to-update))
-                              "tv" (tmdb/get-tv-from-tmdb-id (:external_id detail-to-update))
-                              "website" (website/get-metadata (:external_id detail-to-update))
-                              "podcast" (itunes/get-itunes-podcast (:external_id detail-to-update))
-                              "app" (itunes/get-itunes-app (:external_id detail-to-update))
+                              ;"book" (amazon/get-book (:external_id detail-to-update))
+                              ;"game" (amazon/get-game (:external_id detail-to-update))
+                              ;"album" (itunes/get-itunes-album (:external_id detail-to-update))
+                              ;"video" (website/get-metadata (:external_id detail-to-update))
+                              ;"movie" (tmdb/get-movie-from-tmdb-id (:external_id detail-to-update))
+                              ;"tv" (tmdb/get-tv-from-tmdb-id (:external_id detail-to-update))
+                              ;"website" (website/get-metadata (:external_id detail-to-update))
+                              ;"podcast" (itunes/get-itunes-podcast (:external_id detail-to-update))
+                              "boardgame" (bgg/get-by-id (:external_id detail-to-update))
+                              ;"app" (itunes/get-itunes-app (:external_id detail-to-update))
                               nil)
                             (catch Exception _ nil))]
         (do
