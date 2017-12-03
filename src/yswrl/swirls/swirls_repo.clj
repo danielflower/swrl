@@ -390,6 +390,25 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
                     (k/where {:id (:id swrl)}))))))
   (log/info "Finished updating video external IDs"))
 
+(defn- update-details [details-to-update]
+  (doseq [detail-to-update details-to-update]
+    (if-let [details (try (case (:type detail-to-update)
+                            "book" (amazon/get-book (:external_id detail-to-update))
+                            "game" (amazon/get-game (:external_id detail-to-update))
+                            "album" (itunes/get-itunes-album (:external_id detail-to-update))
+                            "video" (website/get-metadata (:external_id detail-to-update))
+                            "movie" (tmdb/get-movie-from-tmdb-id (:external_id detail-to-update))
+                            "tv" (tmdb/get-tv-from-tmdb-id (:external_id detail-to-update))
+                            "website" (website/get-metadata (:external_id detail-to-update))
+                            "podcast" (itunes/get-itunes-podcast (:external_id detail-to-update))
+                            "boardgame" (bgg/get-by-id (:external_id detail-to-update))
+                            "app" (itunes/get-itunes-app (:external_id detail-to-update))
+                            nil)
+                          (catch Exception _ nil))]
+      (do
+        (log/info "updating " detail-to-update)
+        (save-details details (:external_id detail-to-update) (:type detail-to-update))))))
+
 (defn update-all-details []
   (log/info "Updating all details")
   (let [details-to-update (-> (lookups/multiple-live-swirls-admin)
@@ -397,21 +416,16 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
                               (k/fields :external_id :type)
                               (k/select)
                               set)]
-    (doseq [detail-to-update details-to-update]
-      (if-let [details (try (case (:type detail-to-update)
-                              ;"book" (amazon/get-book (:external_id detail-to-update))
-                              ;"game" (amazon/get-game (:external_id detail-to-update))
-                              ;"album" (itunes/get-itunes-album (:external_id detail-to-update))
-                              ;"video" (website/get-metadata (:external_id detail-to-update))
-                              ;"movie" (tmdb/get-movie-from-tmdb-id (:external_id detail-to-update))
-                              ;"tv" (tmdb/get-tv-from-tmdb-id (:external_id detail-to-update))
-                              ;"website" (website/get-metadata (:external_id detail-to-update))
-                              ;"podcast" (itunes/get-itunes-podcast (:external_id detail-to-update))
-                              "boardgame" (bgg/get-by-id (:external_id detail-to-update))
-                              ;"app" (itunes/get-itunes-app (:external_id detail-to-update))
-                              nil)
-                            (catch Exception _ nil))]
-        (do
-          (log/info "updating " detail-to-update)
-          (save-details details (:external_id detail-to-update) (:type detail-to-update)))))
+    (update-details details-to-update)
     (log/info "Finished updating all details")))
+
+(defn update-swrls-with-no-details []
+  (log/info "Updating swrls with no details")
+  (let [details-to-update (-> (lookups/multiple-live-swirls-admin)
+                              (k/where {:external_id [not= nil]
+                                        :swirl_details.details nil})
+                              (k/fields :external_id :type)
+                              (k/select)
+                              set)]
+    (update-details details-to-update)
+    (log/info "Finished updating swrls with no details")))
