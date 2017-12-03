@@ -254,6 +254,8 @@
         (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
                                   (= "W" :swirl_links.type_code)))
         (where {:swirl_responses.responder (requestor :id)})
+        (where {:external_id           [not= nil]
+                :swirl_details.details [not= nil]})
         (where {(raw "LOWER(swirl_responses.summary)") (clojure.string/lower-case response)})
         (order :id :desc)
         (select))))
