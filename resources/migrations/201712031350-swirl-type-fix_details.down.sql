@@ -1,0 +1,1 @@
+ALTER TABLE swirl_details ALTER COLUMN type TYPE VARCHAR(8);
