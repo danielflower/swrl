@@ -37,7 +37,7 @@
 
 
 (defn should-notify-users-of-response [response]
-  (not (some #{(lower-case response)} #{"dismissed" "later"})))
+  (not (or (nil? response) (some #{(lower-case response)} #{"dismissed" "later"}))))
 (def responses-to-hide-on-view-page #{"dismissed"})
 
 (defn json-response [data & [status]]
@@ -234,7 +234,7 @@
                               "Dismissed" "dismissed"}
                              summary "done")
         swirl-response (repo/respond-to-swirl swirl-id summary responder)]
-    (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder)
+    (if (not (clojure.string/blank? summary)) (repo/add-swirl-to-wishlist swirl-id swrl-list-state responder))
     (if (should-notify-users-of-response summary)
       (notifications/add-to-watchers-of-swirl notifications/new-response swirl-id (swirl-response :id) (responder :id) summary))))
 
