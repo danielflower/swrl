@@ -68,7 +68,10 @@
       (k/update db/swirl-weightings
                 (k/set-fields {:has_responded false})
                 (k/where {:swirl_id swirl-id
-                          :user_id  (:id author)})))
+                          :user_id  (:id author)}))
+      (k/update db/swirl-weightings
+                (k/set-fields {:list_state nil})
+                (k/where {:swirl_id swirl-id :user_id (:id author)})))
     (transaction
       (let [response
             (if (= 0 (k/update db/swirl-responses (k/set-fields {:summary summary}) (k/where {:swirl_id swirl-id :responder (author :id)})))
@@ -108,10 +111,10 @@ WHERE sw.swirl_id = " swirl-id))
                         (k/set-fields {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)})
                         (k/where {:swirl_id swirl-id :owner (:id owner)})))
     (k/insert db/swirl-lists
-              (k/values {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)}))
-    (k/update db/swirl-weightings
-              (k/set-fields {:list_state state})
-              (k/where {:swirl_id swirl-id :user_id (:id owner)}))))
+              (k/values {:swirl_id swirl-id :owner (:id owner) :state state :date_added (now)})))
+  (k/update db/swirl-weightings
+            (k/set-fields {:list_state state})
+            (k/where {:swirl_id swirl-id :user_id (:id owner)})))
 
 
 (defn remove-from-watchlist [swirl-id user]
