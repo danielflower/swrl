@@ -59,7 +59,8 @@
 (defn respond-to-swirl [swirl-id summary author]
   (if (or (nil? summary) (= "" summary))
     (transaction
-      (k/delete db/suggestions
+      (k/update db/suggestions
+                (k/set-fields {:response_id nil})
                 (k/where (or
                            {:swirl_id swirl-id :recipient_id (author :id)}
                            {:swirl_id swirl-id :recipient_email (author :email)}
