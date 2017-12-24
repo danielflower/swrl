@@ -29,9 +29,11 @@
         ]
 
     (testing "Search matches title or review but title has more weight"
-      (is (= [(:id swirl) (:id swirl-with-details) (:id another-swirl)] (map :id (lookups/search-for-swirls 20 0 outsider unique-string)))))
+      (is (let [swrls-found (map :id (lookups/search-for-swirls 20 0 outsider unique-string))]
+            (and (= (:id swirl) (first swrls-found))
+                 (= #{(:id swirl) (:id another-swirl) (:id swirl-with-details)} (set swrls-found))))))
 
-    (testing "Responses can be gotten and changed"
+    (testing "Responses can be gotten and changed and removed"
       (is (= [{:responder (responder :id),
                :email_md5 (responder :email_md5),
                :username  (responder :username),
@@ -44,6 +46,9 @@
                :username  (responder :username),
                :summary   "Not interested"}]
              (map #(dissoc % :date_responded) (repo/get-swirl-responses (swirl :id) ["gah"]))))
+      (repo/respond-to-swirl (swirl :id) "" responder)
+      (is (= []
+             (repo/get-swirl-responses (swirl :id) [])))
       (repo/respond-to-swirl (swirl :id) "Loved it" responder))
 
 
@@ -80,7 +85,7 @@
                               :genres)))
 
       (is (= [["glorious"]] (mapv #(let [parsed (update % :details db/from-jsonb)]
-                                     (-> parsed :details :genres))
+                                    (-> parsed :details :genres))
                                   (-> (lookups/multiple-live-swirls-admin)
                                       (k/fields :* :swirl_details.details)
                                       (k/where {:swirls.id (:id swirl-with-details)})
@@ -157,8 +162,7 @@
 
     (testing "the same user can not be suggested twice"
       (repo/add-suggestions (swirl :id) (author :id) [(non-responder :username)])
-      (is (= [{:username (responder :username) :user-id (responder :id) :email_md5 (responder :email_md5)}
-              {:username (non-responder :username) :user-id (non-responder :id) :email_md5 (non-responder :email_md5)}]
+      (is (= [{:username (non-responder :username) :user-id (non-responder :id) :email_md5 (non-responder :email_md5)}]
              (repo/get-suggestion-usernames (swirl :id))))
       (is (= 1 (count (repo/get-non-responders (swirl :id))))))
 
@@ -210,7 +214,7 @@
       (is (= [] (lookups/get-response-count-for-user (non-responder :id)))))
 
     (testing "most recent respones by type can be gotten"
-      (is (= ["Later" "Loved it"] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["blah"])))
+      (is (= ["Loved it" "Later"] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["blah"])))
       (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) (swirl :type) ["Loved it" "Later"])))
       (is (= [] (repo/get-recent-responses-by-user-and-type (responder :id) "whatever" []))))
 

@@ -57,17 +57,29 @@
 (defn now [] (java.sql.Timestamp. (System/currentTimeMillis)))
 
 (defn respond-to-swirl [swirl-id summary author]
-  (transaction
-    (let [response
-          (if (= 0 (k/update db/swirl-responses (k/set-fields {:summary summary}) (k/where {:swirl_id swirl-id :responder (author :id)})))
-            (k/insert db/swirl-responses
-                      (k/values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
-            (first (k/select db/swirl-responses (k/where {:swirl_id swirl-id :responder (author :id)}))))]
-      (if (-> (k/select db/positive-responses (k/fields :summary) (k/where {:summary summary}))
-              count
-              (> 0))
-        (do (log/debug "START: update respond to swirl: " (time/now))
-            (db/execute (str "UPDATE swirl_weightings sw
+  (if (or (nil? summary) (= "" summary))
+    (transaction
+      (k/delete db/suggestions
+                (k/where (or
+                           {:swirl_id swirl-id :recipient_id (author :id)}
+                           {:swirl_id swirl-id :recipient_email (author :email)}
+                           )))
+      (k/delete db/swirl-responses (k/where {:swirl_id swirl-id :responder (author :id)}))
+      (k/update db/swirl-weightings
+                (k/set-fields {:has_responded false})
+                (k/where {:swirl_id swirl-id
+                          :user_id  (:id author)})))
+    (transaction
+      (let [response
+            (if (= 0 (k/update db/swirl-responses (k/set-fields {:summary summary}) (k/where {:swirl_id swirl-id :responder (author :id)})))
+              (k/insert db/swirl-responses
+                        (k/values {:swirl_id swirl-id :responder (:id author) :summary summary :date_responded (now)}))
+              (first (k/select db/swirl-responses (k/where {:swirl_id swirl-id :responder (author :id)}))))]
+        (if (-> (k/select db/positive-responses (k/fields :summary) (k/where {:summary summary}))
+                count
+                (> 0))
+          (do (log/debug "START: update respond to swirl: " (time/now))
+              (db/execute (str "UPDATE swirl_weightings sw
 SET
 number_of_positive_responses = (SELECT COUNT(1) FROM swirl_responses where swirl_id = sw.swirl_id and
                                             summary in (SELECT summary from positive_responses)),
@@ -77,19 +89,19 @@ number_of_positive_responses_from_friends = (SELECT COUNT(1) FROM swirl_response
                                                               where
                                                                user_id=sw.user_id and relation_type='knows'))
 WHERE sw.swirl_id = " swirl-id))
-            (log/debug "DONE: update respond to swirl: " (time/now))))
-      (k/update db/suggestions
-                (k/set-fields {:response_id (response :id)})
-                (k/where (or
-                           {:swirl_id swirl-id :recipient_id (author :id)}
-                           {:swirl_id swirl-id :recipient_email (author :email)}
-                           )))
-      ; update the weightings table with the response
-      (k/update db/swirl-weightings
-                (k/set-fields {:has_responded true})
-                (k/where {:swirl_id swirl-id
-                          :user_id  (:id author)}))
-      response)))
+              (log/debug "DONE: update respond to swirl: " (time/now))))
+        (k/update db/suggestions
+                  (k/set-fields {:response_id (response :id)})
+                  (k/where (or
+                             {:swirl_id swirl-id :recipient_id (author :id)}
+                             {:swirl_id swirl-id :recipient_email (author :email)}
+                             )))
+        ; update the weightings table with the response
+        (k/update db/swirl-weightings
+                  (k/set-fields {:has_responded true})
+                  (k/where {:swirl_id swirl-id
+                            :user_id  (:id author)}))
+        response))))
 
 (defn add-swirl-to-wishlist [swirl-id state owner]
   (while (= 0 (k/update db/swirl-lists
@@ -422,7 +434,7 @@ WHERE (suggestions.swirl_id = ? AND swirl_responses.id IS NULL)" swirl-id))
 (defn update-swrls-with-no-details []
   (log/info "Updating swrls with no details")
   (let [details-to-update (-> (lookups/multiple-live-swirls-admin)
-                              (k/where {:external_id [not= nil]
+                              (k/where {:external_id           [not= nil]
                                         :swirl_details.details nil})
                               (k/fields :external_id :type)
                               (k/select)
