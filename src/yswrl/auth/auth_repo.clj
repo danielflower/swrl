@@ -100,7 +100,7 @@
   (k/select db/users
             (k/fields :username :email_md5)
             (k/order :username :asc)
-            (k/limit 100)))
+            (k/limit 500)))
 
 (defn update-user [user-id new-username new-email]
   (k/update db/users
