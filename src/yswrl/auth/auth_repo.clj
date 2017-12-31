@@ -99,8 +99,16 @@
 (defn users-for-dropdown []
   (k/select db/users
             (k/fields :username :email_md5)
+            (k/join db/swirls (= :swirls.author_id :users.id))
             (k/order :username :asc)
             (k/limit 500)))
+
+(defn users-for-dropdown-app []
+  (db/query "select username, email_md5 from users u
+  full join swirls s on u.id = s.author_id
+  group by username, email_md5
+  order by count(s.id) desc
+  limit 500"))
 
 (defn update-user [user-id new-username new-email]
   (k/update db/users

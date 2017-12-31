@@ -11,7 +11,8 @@
 
 (defroutes user-resource-rest-routes
            (GET "/api/v1/users" []
-             (response (user-repo/users-for-dropdown)))
+             (response (user-repo/users-for-dropdown-app)))
+
 
            (GET "/api/v1/contacts" [user_id]
              (guard/requires-app-auth-token #(response (network/get-relations (if (string? user_id)
