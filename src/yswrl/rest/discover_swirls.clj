@@ -56,5 +56,6 @@
              (get-all-public-swirls-route)
              (get-weighted-route)
              (get-inbox-route)
+             (get-swrls-responded-to)
              (get-swrls-by-response-route)
              ))
