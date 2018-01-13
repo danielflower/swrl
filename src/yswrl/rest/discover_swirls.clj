@@ -28,8 +28,20 @@
                                                                   5000 0)
            rest-utils/json-response))))
 
+
+
+(defn get-swrls-responded-to []
+  (GET "/responses" [user_id]
+    (guard/requires-app-auth-token
+      #(-> (lookups/get-responded-to-swirls-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
+                                                                                        (Integer/parseInt user_id)
+                                                                                        user_id))
+                                                            5000
+                                                            0)
+           rest-utils/json-response))))
+
 (defn get-swrls-by-response-route []
-  (GET "/response/:response" [user_id response]
+  (GET "/responses/:response" [user_id response]
     (guard/requires-app-auth-token
       #(-> (lookups/get-swirls-by-response-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
                                                                                         (Integer/parseInt user_id)
