@@ -108,7 +108,7 @@
   full join swirls s on u.id = s.author_id
   group by username, email_md5
   order by count(s.id) desc
-  limit 500"))
+  limit 5000"))
 
 (defn update-user [user-id new-username new-email]
   (k/update db/users

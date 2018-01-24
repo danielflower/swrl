@@ -34,10 +34,10 @@
   (GET "/responses" [user_id]
     (guard/requires-app-auth-token
       #(-> (lookups/get-responded-to-swirls-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
-                                                                                        (Integer/parseInt user_id)
-                                                                                        user_id))
-                                                            5000
-                                                            0)
+                                                                                         (Integer/parseInt user_id)
+                                                                                         user_id))
+                                                             5000
+                                                             0)
            rest-utils/json-response))))
 
 (defn get-swrls-by-response-route []
@@ -51,6 +51,27 @@
                                                             response)
            rest-utils/json-response))))
 
+(defn get-swrls-in-lists []
+  (GET "/lists" [user_id]
+    (guard/requires-app-auth-token
+      #(-> (lookups/get-swirls-in-list-states-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
+                                                                                           (Integer/parseInt user_id)
+                                                                                           user_id))
+                                                               5000
+                                                               0)
+           rest-utils/json-response))))
+
+(defn get-swrls-by-list-state-route []
+  (GET "/lists/:list-state" [user_id list-state]
+    (guard/requires-app-auth-token
+      #(-> (lookups/get-swirls-by-list-state-with-external-id (auth-repo/get-user-by-id (if (string? user_id)
+                                                                                          (Integer/parseInt user_id)
+                                                                                          user_id))
+                                                              5000
+                                                              0
+                                                              list-state)
+           rest-utils/json-response))))
+
 (defroutes discover-routes
            (context "/api/v1/discover" []
              (get-all-public-swirls-route)
@@ -58,4 +79,6 @@
              (get-inbox-route)
              (get-swrls-responded-to)
              (get-swrls-by-response-route)
+             (get-swrls-in-lists)
+             (get-swrls-by-list-state-route)
              ))

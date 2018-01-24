@@ -275,17 +275,52 @@
   (group-by
     :response
     (map
-     add-stuff-for-app
-     (-> (select-multiple-swirls requestor max-results skip)
-         (fields :swirl_details.details [:swirl_links.code :website-url] [:swirl_responses.summary :response])
-         (join :inner db/swirl-responses (= :swirls.id :swirl_responses.swirl_id))
-         (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
-                                   (= "W" :swirl_links.type_code)))
-         (where {:swirl_responses.responder (requestor :id)})
-         (where {:external_id           [not= nil]
-                 :swirl_details.details [not= nil]})
-         (order :id :desc)
-         (select)))))
+      add-stuff-for-app
+      (-> (select-multiple-swirls requestor max-results skip)
+          (fields :swirl_details.details [:swirl_links.code :website-url] [:swirl_responses.summary :response])
+          (join :inner db/swirl-responses (= :swirls.id :swirl_responses.swirl_id))
+          (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
+                                    (= "W" :swirl_links.type_code)))
+          (where {:swirl_responses.responder (requestor :id)})
+          (where {:external_id           [not= nil]
+                  :swirl_details.details [not= nil]})
+          (order :id :desc)
+          (select)))))
+
+(defn get-swirls-in-list-states-with-external-id [requestor max-results skip]
+  (group-by
+    :list-state
+    (->>
+      (-> (select-multiple-swirls requestor max-results skip)
+          (fields :swirl_details.details [:swirl_links.code :website-url] [:swirl_responses.summary :response])
+          (join :inner db/swirl-responses (= :swirls.id :swirl_responses.swirl_id))
+          (join db/swirl-links (and (= :swirls.id :swirl_links.swirl_id)
+                                    (= "W" :swirl_links.type_code)))
+          (where {:swirl_responses.responder (requestor :id)})
+          (where {:external_id           [not= nil]
+                  :swirl_details.details [not= nil]})
+          (order :id :desc)
+          (select))
+      (map add-stuff-for-app)
+      (map (fn [swrl]
+             (assoc swrl :list-state (get {"Later"                 "active"
+                                           "Want to watch"         "active"
+                                           "Read this!"            "active"
+                                           "Reading"               "active"
+                                           "Looking forward to it" "active"
+                                           "Can't wait to see"     "active"
+                                           "Watching"              "active"
+                                           "Purchased"             "active"
+                                           "Book list"             "active"
+                                           "Dismissed"             "dismissed"
+                                           "Swrled"                "swrled"}
+                                          (:response swrl)
+                                          "done"))))
+      )))
+
+(defn get-swirls-by-list-state-with-external-id [requestor max-results skip list-state]
+  (or (get (get-swirls-in-list-states-with-external-id requestor max-results skip) list-state)
+      []))
 
 (defn get-swirls-in-user-swrl-list [requestor max-results skip user]
   (map
