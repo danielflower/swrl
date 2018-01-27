@@ -8,5 +8,6 @@
 (defroutes swirl-actions-routes
            (context "/api/v1/swrl-actions" []
              (swirl-routes/post-response-api-route)
+             (swirl-routes/post-comment-api-route)
              (swirl-routes/create-swrl-app-api)
                     ))

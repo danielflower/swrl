@@ -262,6 +262,19 @@
           (network/store (commentor :id) :knows (swirl :author_id))))
     (redirect (yswrl.links/swirl swirl-id (comment :id)))))
 
+(defn handle-comment-api [swirl-id comment-content commentor]
+  (log/info "Handling comment for api: " swirl-id " : " comment-content " : " commentor)
+  (if-let [swirl (lookups/get-swirl-if-allowed-to-view swirl-id commentor)]
+    (try (let [comment (repo/create-comment swirl-id comment-content commentor)]
+           (notifications/add-to-watchers-of-swirl notifications/new-comment swirl-id (comment :id) (commentor :id) nil)
+           (if (not= (swirl :author_id) (commentor :id))
+             (do (network/store (swirl :author_id) :knows (commentor :id))
+                 (network/store (commentor :id) :knows (swirl :author_id))))
+           (rest-utils/json-response {:message "Success"}))
+         (catch Exception e
+           (log/error e "Failed to comment on Swrl via API, swrl-id: " swirl-id " commentor: " commentor " comment: " comment-content)
+           (rest-utils/json-response {:message "Something went wrong commenting on the Swrl"} 500)))
+    (rest-utils/json-response {:message "You are not allowed to comment on this Swrl"} 403)))
 
 (defn publish-swirl
   ([author id usernames-and-emails-to-notify subject review origin-swirl-id group-ids private? type image-url wishlist]
@@ -302,12 +315,17 @@
   (POST (str url-prefix "/:id{[0-9]+}/respond") [id responseButton response-summary :as req] (guard/requires-login #(handle-response (Long/parseLong id) responseButton response-summary (session-from req)))))
 
 (defn post-response-api-route []
-  (POST (str "/:id{[0-9]+}/respond") [id response-summary user_id] (guard/requires-app-auth-token #(handle-response-api (Long/parseLong id) response-summary (auth-repo/get-user-by-id (if (string? user_id)
+  (POST "/:id{[0-9]+}/respond" [id response-summary user_id] (guard/requires-app-auth-token #(handle-response-api (Long/parseLong id) response-summary (auth-repo/get-user-by-id (if (string? user_id)
                                                                                                                                                                                          (Long/parseLong user_id)
                                                                                                                                                                                          user_id))))))
 
 (defn post-comment-route [url-prefix]
   (POST (str url-prefix "/:id{[0-9]+}/comment") [id comment :as req] (guard/requires-login #(handle-comment (Long/parseLong id) comment (session-from req)))))
+
+(defn post-comment-api-route []
+  (POST "/:id{[0-9]+}/comment" [id comment user_id] (guard/requires-app-auth-token #(handle-comment-api (Long/parseLong id) comment (auth-repo/get-user-by-id (if (string? user_id)
+                                                                                                                                                                             (Long/parseLong user_id)
+                                                                                                                                                                             user_id))))))
 
 (defn vectorise [value-or-vector]
   (if (nil? value-or-vector) []
